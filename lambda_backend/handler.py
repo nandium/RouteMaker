@@ -23,22 +23,11 @@ layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 def predict(event, context):
-    content_type = event["headers"]["Content-Type"]
-    body_dec = base64.b64decode(event["body"])
-
-    multipart_data = decoder.MultipartDecoder(body_dec, content_type)
-
-    binary_content = []
-    for part in multipart_data.parts:
-        binary_content.append(part.content)
-
-    imageStream = io.BytesIO(binary_content[0])
-    imageFile = Image.open(imageStream)
-    img  = np.array(imageFile) 
+    img = retrieve_numpy_image(event)
 
     height, width, channels = img.shape
 
-    # Detecting objects
+    # Image Blob
     blob = cv2.dnn.blobFromImage( 
         img, 
         0.00392, 
@@ -85,3 +74,16 @@ def predict(event, context):
         }), 
         "headers": { 'Access-Control-Allow-Origin': "*" }
     }
+
+def retrieve_numpy_image(event):
+    content_type = event["headers"]["Content-Type"]
+    body_dec = base64.b64decode(event["body"])
+
+    multipart_data = decoder.MultipartDecoder(body_dec, content_type)
+    binary_content = []
+    for part in multipart_data.parts:
+        binary_content.append(part.content)
+    imageStream = io.BytesIO(binary_content[0])
+    imageFile = Image.open(imageStream)
+    
+    return np.array(imageFile) 
