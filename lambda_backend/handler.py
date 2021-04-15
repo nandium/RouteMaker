@@ -10,6 +10,8 @@ import json
 import base64
 import io
 
+ALLOWED_TYPES = ["image/jpeg"]
+
 # Load Yolo
 net = cv2.dnn.readNet(
     join("weights", "yolov4-tiny-obj_2000.weights"),
@@ -21,6 +23,7 @@ classes = ["hold", "volume"]
 
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+
 
 def predict(event, context):
     """Given an image with multipart/form-data, 
@@ -40,15 +43,22 @@ def predict(event, context):
     """
     img = retrieve_numpy_image(event)
 
+    if img is None:
+        return {
+            "statusCode": "400",
+            "body": "Image was not correctly parsed",
+            "headers": {'Access-Control-Allow-Origin': "*"}
+        }
+
     height, width, channels = img.shape
 
     # Image Blob
-    blob = cv2.dnn.blobFromImage( 
-        img, 
-        0.00392, 
-        (416, 416), 
-        (0, 0, 0), 
-        True, 
+    blob = cv2.dnn.blobFromImage(
+        img,
+        0.00392,
+        (416, 416),
+        (0, 0, 0),
+        True,
         crop=False
     )
 
@@ -83,30 +93,62 @@ def predict(event, context):
                 })
 
     return {
-        "statusCode": "200", 
-        "body": json.dumps({ 
+        "statusCode": "200",
+        "body": json.dumps({
             'boxes': boxes
-        }), 
-        "headers": { 'Access-Control-Allow-Origin': "*" }
+        }),
+        "headers": {'Access-Control-Allow-Origin': "*"}
     }
 
+
 def retrieve_numpy_image(event):
-    """Given an API Gateway event, returns the image attached in a numpy format
+    """Given an API Gateway event, validates the input data and returns the attached image attached in a numpy format
 
     Args:
         event (dict): API Gateway Format
 
     Returns:
         Decoded Image: Numpy array of shape (height, width, channels)
+        OR 
+        None
     """
     content_type = event["headers"]["Content-Type"]
     body_dec = base64.b64decode(event["body"])
 
-    multipart_data = decoder.MultipartDecoder(body_dec, content_type)
-    binary_content = []
-    for part in multipart_data.parts:
-        binary_content.append(part.content)
-    imageStream = io.BytesIO(binary_content[0])
+    multipart_items = parse_multipart_data(body_dec, content_type)
+
+    if (
+        len(multipart_items) != 1 or
+        multipart_items[0]["type"] not in ALLOWED_TYPES
+    ):
+        return None
+
+    imageStream = io.BytesIO(multipart_items[0]["content"])
     imageFile = Image.open(imageStream)
-    
-    return np.array(imageFile) 
+
+    return np.array(imageFile)
+
+
+def parse_multipart_data(body_dec, content_type):
+    """Parser for transforming multipart form data into readable key value pairs
+
+    Args:
+        body_dec (byte),
+        content_type (str)
+
+    Returns:
+        Parsed Form Data (list): List of key value pairs describing each form data
+    """
+    items = []
+
+    for part in decoder.MultipartDecoder(body_dec, content_type).parts:
+        disposition = part.headers[b'Content-Disposition']
+        params = {}
+        for dispPart in str(disposition).split(';'):
+            kv = dispPart.split('=', 2)
+            params[str(kv[0]).strip()] = str(kv[1]).strip('\"\'\t \r\n') if len(kv) > 1 else str(kv[0]).strip()
+
+        type = part.headers[b'Content-Type'].decode("utf-8") if b'Content-Type' in part.headers else None
+        items.append({"content": part.content, "type": type, "params": params })
+
+    return items
