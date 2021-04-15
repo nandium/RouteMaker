@@ -23,6 +23,21 @@ layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 def predict(event, context):
+    """Given an image with multipart/form-data, 
+    YOLO model is ran to return bounding boxes of climbing holds.
+
+    Args:
+        event (dict): API Gateway Format,
+        context (dict): API Gateway Format
+
+    Returns:
+        API Gateway Response (dict): {
+            "statusCode": <>, 
+            "body": <>, 
+            "headers": <>
+        }
+
+    """
     img = retrieve_numpy_image(event)
 
     height, width, channels = img.shape
@@ -76,6 +91,14 @@ def predict(event, context):
     }
 
 def retrieve_numpy_image(event):
+    """Given an API Gateway event, returns the image attached in a numpy format
+
+    Args:
+        event (dict): API Gateway Format
+
+    Returns:
+        Decoded Image: Numpy array of shape (height, width, channels)
+    """
     content_type = event["headers"]["Content-Type"]
     body_dec = base64.b64decode(event["body"])
 
