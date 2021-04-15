@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 numpy = "*"
 opencv-python = "*"
+autopep8 = "*"
+requests-toolbelt = "*"
+pillow = "*"
 
 [dev-packages]
 

@@ -1,0 +1,40 @@
+app: yolo-bouldering
+
+service: yolo-bouldering-predictor
+
+provider:
+  name: aws
+  stage: dev
+  runtime: python3.7
+  region: ap-southeast-1
+  apiGateway:
+    binaryMediaTypes:
+      - "multipart/form-data"
+  environment:
+    PYTHON_ENV: ${self:custom.stage}
+
+functions:
+  PredictImage:
+    handler: handler.predict
+    timeout: 30
+    events:
+      - http:
+          path: /predict
+          method: post
+          cors: true
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  pythonRequirements:
+    dockerizePip: true
+  apiGatewayThrottling:
+    maxRequestsPerSecond: 10
+    maxConcurrentRequests: 5
+
+plugins:
+  - serverless-python-requirements
+  - serverless-api-gateway-throttling
+
+package:
+  exclude:
+    - node_modules/**
