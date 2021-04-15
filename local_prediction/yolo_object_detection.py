@@ -8,8 +8,8 @@ import os
 
 # Load Yolo
 net = cv2.dnn.readNet(
-    join("weights", "yolov4-tiny-obj_2000.weights"), 
-    join("weights", "yolov4-tiny-obj.cfg")
+    join(os.pardir, "lambda_backend", "weights", "yolov4-tiny-obj_2000.weights"), 
+    join(os.pardir, "lambda_backend", "weights", "yolov4-tiny-obj.cfg")
 )
 
 # Name custom object

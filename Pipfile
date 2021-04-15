@@ -6,8 +6,11 @@ name = "pypi"
 [packages]
 numpy = "*"
 opencv-python = "*"
+autopep8 = "*"
+requests-toolbelt = "*"
+pillow = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"
