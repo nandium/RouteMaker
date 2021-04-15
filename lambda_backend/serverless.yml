@@ -10,6 +10,7 @@ provider:
   apiGateway:
     binaryMediaTypes:
       - "multipart/form-data"
+  logRetentionInDays: 30
   environment:
     PYTHON_ENV: ${self:custom.stage}
 
