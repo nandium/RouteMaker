@@ -26,6 +26,7 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 
 def predict(event, context):
+    print(event)
     """Given an image with multipart/form-data, 
     YOLO model is ran to return bounding boxes of climbing holds.
 
@@ -112,7 +113,11 @@ def retrieve_numpy_image(event):
         OR 
         None
     """
-    content_type = event["headers"]["Content-Type"]
+    headers = event["headers"]
+
+    # Bug where headers sent from Postman and Axios are different
+    content_type = headers["Content-Type"] if "Content-Type" in headers else headers["content-type"]
+
     body_dec = base64.b64decode(event["body"])
 
     multipart_items = parse_multipart_data(body_dec, content_type)
