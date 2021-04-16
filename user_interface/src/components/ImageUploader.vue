@@ -1,20 +1,13 @@
 <template>
-  <b-container fluid class="m-1">
+  <b-container fluid class="m-2">
     <b-row class="m-1 justify-content-center">
       <b-col md="4" sm="10">
         <b-form-file
           v-model="imageFile"
-          placeholder="Choose a file..."
+          :placeholder="loading ? 'Loading..' : 'Insert an image..'"
           drop-placeholder="Drop file here..."
+          :disabled="loading"
         ></b-form-file>
-      </b-col>
-    </b-row>
-    <b-row class="m-1">
-      <b-col>
-        <b-button :disabled="loading" @click="processFile">{{
-          loading ? "Loading.." : "Insert"
-        }}</b-button>
-        <div class="mt-1 font-italic text-danger">{{ errorString }}</div>
       </b-col>
     </b-row>
   </b-container>
@@ -32,6 +25,14 @@ export default {
       loading: false,
       errorString: "",
     };
+  },
+  watch: {
+    /**
+     * When image file is attached, triggers file processing
+     */
+    async imageFile() {
+      this.processFile();
+    },
   },
   methods: {
     ...mapMutations("home", {

@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="m-2">
     <v-stage class="canva" v-if="isImageUploaded" :config="configKonva">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
@@ -7,8 +7,6 @@
         <v-circle :config="configCircle2"></v-circle>
       </v-layer>
     </v-stage>
-
-    <!-- <div class="font-weight-normal" v-else>Insert an image!</div> -->
   </b-container>
 </template>
 
