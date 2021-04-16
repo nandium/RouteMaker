@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <ImageViewer />
     <ImageUploader />
+    <ImageViewer />
   </div>
 </template>
 

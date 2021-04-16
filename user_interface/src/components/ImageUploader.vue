@@ -1,17 +1,23 @@
 <template>
-  <div class="m-1">
-    <b-form-file
-      v-model="imageFile"
-      placeholder="Choose a file or drop it here..."
-      drop-placeholder="Drop file here..."
-    ></b-form-file>
-    <div class="mt-1">
-      <b-button :disabled="loading" @click="processFile">{{
-        loading ? "Loading.." : "Insert"
-      }}</b-button>
-    </div>
-    <div class="mt-1 font-italic text-danger">{{ errorString }}</div>
-  </div>
+  <b-container fluid class="m-1">
+    <b-row class="m-1 justify-content-center">
+      <b-col md="4" sm="10">
+        <b-form-file
+          v-model="imageFile"
+          placeholder="Choose a file..."
+          drop-placeholder="Drop file here..."
+        ></b-form-file>
+      </b-col>
+    </b-row>
+    <b-row class="m-1">
+      <b-col>
+        <b-button :disabled="loading" @click="processFile">{{
+          loading ? "Loading.." : "Insert"
+        }}</b-button>
+        <div class="mt-1 font-italic text-danger">{{ errorString }}</div>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -37,7 +43,7 @@ export default {
      * Retrieves the bounding boxes from the backend.
      */
     async processFile() {
-      if(!this.validate()) return;
+      if (!this.validate()) return;
 
       try {
         this.loading = true;
