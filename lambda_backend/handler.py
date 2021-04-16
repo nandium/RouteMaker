@@ -26,7 +26,6 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 
 def predict(event, context):
-    print(event)
     """Given an image with multipart/form-data, 
     YOLO model is ran to return bounding boxes of climbing holds.
 
