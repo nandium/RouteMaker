@@ -1,5 +1,3 @@
-from requests_toolbelt.multipart import decoder
-from PIL import Image
 import numpy as np
 import cv2
 
@@ -8,7 +6,8 @@ import os
 import glob
 import json
 import base64
-import io
+
+from utils import exception_handler, retrieve_numpy_image, parse_multipart_data
 
 ALLOWED_TYPES = ["image/jpeg"]
 
@@ -25,6 +24,7 @@ layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 
+@exception_handler
 def predict(event, context):
     """Given an image with multipart/form-data, 
     YOLO model is ran to return bounding boxes of climbing holds.
@@ -41,16 +41,28 @@ def predict(event, context):
         }
 
     """
-    img = retrieve_numpy_image(event)
+    headers = event["headers"]
 
-    if img is None:
-        return {
-            "statusCode": "400",
-            "body": "Image was not correctly parsed",
-            "headers": {'Access-Control-Allow-Origin': "*"}
-        }
+    # Bug where headers sent from Postman and Axios are different
+    content_type = headers["Content-Type"] if "Content-Type" in headers else headers["content-type"]
+    body_dec = base64.b64decode(event["body"])
+    multipart_items = parse_multipart_data(body_dec, content_type)
 
+    image_dict = list(filter(lambda x: x["params"]
+                        ["name"] == "image", multipart_items))[0]
+    width_dict = list(filter(lambda x: x["params"]
+                        ["name"] == "width", multipart_items))[0]
+
+    assert image_dict["type"] in ALLOWED_TYPES, "Unallowed file type"
+
+    img = retrieve_numpy_image(image_dict["content"])
     height, width, channels = img.shape
+
+    scaled_width = int(width_dict["content"].decode("utf-8"))
+
+    # If given width is 0, do not scale
+    scaled_width = scaled_width if scaled_width != 0 else width
+    scaled_height = int((scaled_width / width) * height)
 
     # Image Blob
     blob = cv2.dnn.blobFromImage(
@@ -74,10 +86,10 @@ def predict(event, context):
             confidence = scores[class_id]
             if confidence > 0.3:
                 # Object detected
-                center_x = int(detection[0] * width)
-                center_y = int(detection[1] * height)
-                w = int(detection[2] * width)
-                h = int(detection[3] * height)
+                center_x = int(detection[0] * scaled_width)
+                center_y = int(detection[1] * scaled_height)
+                w = int(detection[2] * scaled_width)
+                h = int(detection[3] * scaled_height)
 
                 # Rectangle coordinates
                 x = int(center_x - w / 2)
@@ -95,64 +107,9 @@ def predict(event, context):
     return {
         "statusCode": "200",
         "body": json.dumps({
-            'boxes': boxes
+            'boxes': boxes,
+            'width': scaled_width,
+            'height': scaled_height
         }),
         "headers": {'Access-Control-Allow-Origin': "*"}
     }
-
-
-def retrieve_numpy_image(event):
-    """Given an API Gateway event, validates the input data and returns the attached image attached in a numpy format
-
-    Args:
-        event (dict): API Gateway Format
-
-    Returns:
-        Decoded Image: Numpy array of shape (height, width, channels)
-        OR 
-        None
-    """
-    headers = event["headers"]
-
-    # Bug where headers sent from Postman and Axios are different
-    content_type = headers["Content-Type"] if "Content-Type" in headers else headers["content-type"]
-
-    body_dec = base64.b64decode(event["body"])
-
-    multipart_items = parse_multipart_data(body_dec, content_type)
-
-    if (
-        len(multipart_items) != 1 or
-        multipart_items[0]["type"] not in ALLOWED_TYPES
-    ):
-        return None
-
-    imageStream = io.BytesIO(multipart_items[0]["content"])
-    imageFile = Image.open(imageStream)
-
-    return np.array(imageFile)
-
-
-def parse_multipart_data(body_dec, content_type):
-    """Parser for transforming multipart form data into readable key value pairs
-
-    Args:
-        body_dec (byte),
-        content_type (str)
-
-    Returns:
-        Parsed Form Data (list): List of key value pairs describing each form data
-    """
-    items = []
-
-    for part in decoder.MultipartDecoder(body_dec, content_type).parts:
-        disposition = part.headers[b'Content-Disposition']
-        params = {}
-        for dispPart in str(disposition).split(';'):
-            kv = dispPart.split('=', 2)
-            params[str(kv[0]).strip()] = str(kv[1]).strip('\"\'\t \r\n') if len(kv) > 1 else str(kv[0]).strip()
-
-        type = part.headers[b'Content-Type'].decode("utf-8") if b'Content-Type' in part.headers else None
-        items.append({"content": part.content, "type": type, "params": params })
-
-    return items
