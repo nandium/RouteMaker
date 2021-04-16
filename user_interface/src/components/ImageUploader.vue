@@ -1,10 +1,10 @@
 <template>
   <b-container fluid class="m-2">
-    <b-row class="m-1 justify-content-center">
+    <b-row class="justify-content-center">
       <b-col md="4" sm="10">
         <b-form-file
           v-model="imageFile"
-          :placeholder="loading ? 'Loading..' : 'Insert an image..'"
+          :placeholder="loading ? 'Loading..' : 'Climb wall image..'"
           drop-placeholder="Drop file here..."
           :disabled="loading"
         ></b-form-file>
@@ -24,7 +24,15 @@ export default {
       imageFile: null,
       loading: false,
       errorString: "",
+      windowWidth: window.innerWidth
     };
+  },
+  async mounted() {
+    this.$store.subscribe(async (mutation, state) => {
+      if (mutation.type == "home/setWindowWidth") {
+        this.windowWidth = state.home.windowWidth;
+      }
+    });
   },
   watch: {
     /**
@@ -57,10 +65,13 @@ export default {
         this.loading = false;
       }
     },
+    /**
+     * FormData is sent with image attached and the desired rescaled width
+     */
     async uploadFile() {
       const formData = new FormData();
       formData.append("image", this.imageFile);
-      console.log(this.imageFile);
+      formData.append("width", this.windowWidth);
 
       const data = await getBoundingBox(formData);
       console.log(data);
