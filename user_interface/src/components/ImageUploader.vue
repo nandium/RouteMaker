@@ -16,7 +16,7 @@
 
 <script>
 import { mapMutations } from "vuex";
-import getBoundingBox from "../api/getBoundingBox";
+import getBoundingBox from "@/common/getBoundingBox";
 
 export default {
   name: "ImageUploader",

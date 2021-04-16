@@ -13,13 +13,16 @@
 </template>
 
 <script>
+import { getHeightAndWidthFromDataUrl } from "@/common/utils";
+import { IMAGE_WIDTH } from "@/config";
+
 export default {
   name: "ImageViewer",
   data() {
     return {
       configKonva: {
-        width: 500,
-        height: 500,
+        width: IMAGE_WIDTH,
+        height: IMAGE_WIDTH * 1.5,
       },
       configCircle1: {
         x: 100,
@@ -47,13 +50,20 @@ export default {
   },
   /**
    * When Image URL is set, the Konva image component is re-rendered
+   * Image is set to a fixed width, the height is rescaled
    */
   mounted() {
-    this.$store.subscribe((mutation, state) => {
+    this.$store.subscribe(async (mutation, state) => {
       if (mutation.type == "home/setImageURL") {
         const image = new window.Image();
-        image.src = state.home.imageURL;
-        this.configImage = { image };
+        const imageURL = state.home.imageURL;
+        const { height , width } = await getHeightAndWidthFromDataUrl(imageURL);
+        image.src = imageURL;
+        this.configImage = { 
+          image, 
+          width: IMAGE_WIDTH,
+          height: (height / width) * IMAGE_WIDTH
+        };
       }
       if (mutation.type == "home/setIsImageUploaded") {
         this.isImageUploaded = state.home.isImageUploaded;
