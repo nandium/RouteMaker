@@ -1,8 +1,8 @@
 <template>
   <b-container>
     <v-stage class="canva" v-if="isImageUploaded" :config="configKonva">
-      <v-layer>
-        <v-image :config="{ image: uploadedImage }"></v-image>
+      <v-layer ref="layer">
+        <v-image :config="configImage"></v-image>
         <v-circle :config="configCircle1"></v-circle>
         <v-circle :config="configCircle2"></v-circle>
       </v-layer>
@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-
 export default {
   name: "ImageViewer",
   data() {
@@ -41,18 +39,26 @@ export default {
         strokeWidth: 4,
         opacity: 0.5,
       },
+      configImage: {
+        image: null,
+      },
+      isImageUploaded: false,
     };
   },
-  computed: {
-    ...mapGetters("home", {
-      isImageUploaded: "getIsImageUploaded",
-      imageURL: "getImageURL",
-    }),
-    uploadedImage() {
-      const image = new window.Image();
-      image.src = this.imageURL;
-      return image;
-    },
+  /**
+   * When Image URL is set, the Konva image component is re-rendered
+   */
+  mounted() {
+    this.$store.subscribe((mutation, state) => {
+      if (mutation.type == "home/setImageURL") {
+        const image = new window.Image();
+        image.src = state.home.imageURL;
+        this.configImage = { image };
+      }
+      if (mutation.type == "home/setIsImageUploaded") {
+        this.isImageUploaded = state.home.isImageUploaded;
+      }
+    });
   },
 };
 </script>
