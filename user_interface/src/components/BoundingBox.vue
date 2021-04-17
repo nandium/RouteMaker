@@ -1,10 +1,13 @@
 <template>
-  <v-rect
-    :config="configRect"
-    @mouseover="onMouseOver"
-    @mouseout="onMouseOut"
-    @click="onClick"
-  ></v-rect>
+  <v-group :config="configGroup">
+    <v-rect
+      :config="configRect"
+      @mouseover="onMouseOver"
+      @mouseout="onMouseOut"
+      @click="onClick"
+    ></v-rect>
+    <v-text :config="configText"></v-text>
+  </v-group>
 </template>
 
 <script>
@@ -26,6 +29,9 @@ export default {
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type == "home/setSelectMode") {
         this.selectMode = state.home.selectMode;
+        if(this.selectMode === SelectModes.RESET) {
+          this.reset();
+        }
       }
     });
   },
@@ -38,8 +44,6 @@ export default {
   computed: {
     configRect() {
       return {
-        x: this.x,
-        y: this.y,
         width: this.w,
         height: this.h,
         fill: this.fill,
@@ -48,8 +52,32 @@ export default {
         opacity: this.opacity,
       };
     },
+    configGroup() {
+      return {
+        x: this.x,
+        y: this.y,
+        width: this.w,
+        height: this.h,
+      };
+    },
+    configText() {
+      return {
+        y: this.h,
+        text: '123',
+        fontSize: 14,
+        fontFamily: 'Calibri',
+        opacity: 1,
+      };
+    },
   },
   methods: {
+    reset() {
+      this.strokeWidth = 2;
+      this.opacity = 0.2;
+      this.fill = "yellow";
+      this.stroke = "black";
+      this.selected = false;
+    },
     onMouseOver() {
       this.strokeWidth = 4;
     },

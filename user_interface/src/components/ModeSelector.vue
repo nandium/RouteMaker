@@ -28,6 +28,11 @@ export default {
       isImageUploaded: false,
       buttons: [
         {
+          caption: "Reset",
+          state: false,
+          mode: SelectModes.RESET,
+        },
+        {
           caption: "HandHold",
           state: true,
           mode: SelectModes.HANDHOLD_NUMBER,
