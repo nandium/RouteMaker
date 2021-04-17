@@ -37,7 +37,7 @@ export default {
         }
         if(this.selectMode === SelectModes.EXPORT) {
           this.setDone();
-
+          if(this.getDownloadMode === false) this.setDownloadMode(true);
         }
       }
     });
@@ -50,7 +50,8 @@ export default {
   },
   computed: {
     ...mapGetters("home", {
-      getSelectNumber: "getSelectNumber"
+      getSelectNumber: "getSelectNumber",
+      getDownloadMode: "getDownloadMode"
     }),
     configRect() {
       return {
@@ -83,7 +84,8 @@ export default {
   },
   methods: {
     ...mapMutations("home", {
-      setSelectNumber: "setSelectNumber"
+      setSelectNumber: "setSelectNumber",
+      setDownloadMode: "setDownloadMode"
     }),
     reset() {
       this.strokeWidth = 2;
@@ -102,6 +104,11 @@ export default {
     onMouseOut() {
       this.strokeWidth = 2;
     },
+    /**
+     * If the box is selected, unselect it
+     * If the box is not selected, select and number if handhold
+     * If the box is nto selected, select only if foothold
+     */
     onClick() {
       if (this.selected) {
         this.boxOpacity = 0.2;
