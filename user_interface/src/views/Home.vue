@@ -1,6 +1,13 @@
 <template>
   <div class="home">
+    <b-jumbotron
+      header-level="4"
+      header="Route Maker V1"
+      lead="Quickly make custom climbing routes"
+    >
+    </b-jumbotron>
     <ImageUploader />
+    <ModeSelector />
     <ImageViewer />
   </div>
 </template>
@@ -9,6 +16,7 @@
 // @ is an alias to /src
 import ImageViewer from "@/components/ImageViewer.vue";
 import ImageUploader from "@/components/ImageUploader.vue";
+import ModeSelector from "@/components/ModeSelector.vue";
 import { mapMutations } from "vuex";
 
 export default {
@@ -16,6 +24,7 @@ export default {
   components: {
     ImageViewer,
     ImageUploader,
+    ModeSelector,
   },
   /**
    * On device window loaded, set a window size to display the picture
@@ -25,20 +34,17 @@ export default {
     window.onload = () => {
       this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
     };
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
-    })
+    });
   },
   methods: {
     ...mapMutations("home", {
       setWindowWidth: "setWindowWidth",
     }),
     calculateCanvaWindowWidth(innerWidth) {
-      return Math.min(
-        800,
-        Math.floor((innerWidth / 6) * 5)
-      )
-    }
+      return Math.min(800, Math.floor((innerWidth / 6) * 5));
+    },
   },
 };
 </script>

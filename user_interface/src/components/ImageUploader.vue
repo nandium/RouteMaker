@@ -46,6 +46,7 @@ export default {
     ...mapMutations("home", {
       setImageURL: "setImageURL",
       setIsImageUploaded: "setIsImageUploaded",
+      setBoxes: "setBoxes",
     }),
     /**
      * Creates a browser URL for displaying image.
@@ -67,14 +68,16 @@ export default {
     },
     /**
      * FormData is sent with image attached and the desired rescaled width
+     * 
+     * Existing boxes are reset before the new ones are added
      */
     async uploadFile() {
       const formData = new FormData();
       formData.append("image", this.imageFile);
       formData.append("width", this.windowWidth);
 
-      const data = await getBoundingBox(formData);
-      console.log(data);
+      const boxes = await getBoundingBox(formData);
+      this.setBoxes(boxes);
       this.setIsImageUploaded(true);
     },
     validate() {

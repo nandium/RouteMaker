@@ -1,8 +1,15 @@
+import SelectModes from "@/common/selectModes";
+
 const state = () => ({
   // items: [],
   isImageUploaded: false,
   imageURL: "",
-  windowWidth: 500
+  windowWidth: 500,
+  boxes: [],
+  selectMode: SelectModes.HANDHOLD,
+  selectNumber: 1,
+  downloadMode: false,
+  showNumberMode: true
 });
 
 const getters = {
@@ -15,23 +22,21 @@ const getters = {
   getWindowWidth: (state) => {
     return state.windowWidth;
   },
-
-  // cartProducts: (state, getters, rootState) => {
-  //   return state.items.map(({ id, quantity }) => {
-  //     const product = rootState.products.all.find(product => product.id === id)
-  //     return {
-  //       title: product.title,
-  //       price: product.price,
-  //       quantity
-  //     }
-  //   })
-  // },
-
-  // cartTotalPrice: (state, getters) => {
-  //   return getters.cartProducts.reduce((total, product) => {
-  //     return total + product.price * product.quantity
-  //   }, 0)
-  // }
+  getBoxes: (state) => {
+    return state.boxes;
+  },
+  getSelectMode: (state) => {
+    return state.selectMode;
+  },
+  getSelectNumber: (state) => {
+    return state.selectNumber;
+  },
+  getDownloadMode: (state) => {
+    return state.downloadMode;
+  },
+  getShowNumberMode: (state) => {
+    return state.showNumberMode;
+  },
 };
 
 const mutations = {
@@ -44,53 +49,24 @@ const mutations = {
   setWindowWidth: (state, windowWidth) => {
     state.windowWidth = windowWidth;
   },
-
-  // pushProductToCart (state, { id }) {
-  //   state.items.push({
-  //     id,
-  //     quantity: 1
-  //   })
-  // },
-
-  // incrementItemQuantity (state, { id }) {
-  //   const cartItem = state.items.find(item => item.id === id)
-  //   cartItem.quantity++
-  // },
-
-  // setCartItems (state, { items }) {
-  //   state.items = items
-  // },
+  setBoxes: (state, boxes) => {
+    state.boxes = [...boxes];
+  },
+  setSelectMode: (state, selectMode) => {
+    state.selectMode = selectMode;
+  },
+  setSelectNumber: (state, selectNumber) => {
+    state.selectNumber = selectNumber;
+  },
+  setDownloadMode: (state, downloadMode) => {
+    state.downloadMode = downloadMode;
+  },
+  setShowNumberMode: (state, showNumberMode) => {
+    state.showNumberMode = showNumberMode;
+  },
 };
 
 const actions = {
-  // checkout ({ commit, state }, products) {
-  //   const savedCartItems = [...state.items]
-  //   commit('setCheckoutStatus', null)
-  //   // empty cart
-  //   commit('setCartItems', { items: [] })
-  //   shop.buyProducts(
-  //     products,
-  //     () => commit('setCheckoutStatus', 'successful'),
-  //     () => {
-  //       commit('setCheckoutStatus', 'failed')
-  //       // rollback to the cart saved before sending the request
-  //       commit('setCartItems', { items: savedCartItems })
-  //     }
-  //   )
-  // },
-  // addProductToCart ({ state, commit }, product) {
-  //   commit('setCheckoutStatus', null)
-  //   if (product.inventory > 0) {
-  //     const cartItem = state.items.find(item => item.id === product.id)
-  //     if (!cartItem) {
-  //       commit('pushProductToCart', { id: product.id })
-  //     } else {
-  //       commit('incrementItemQuantity', cartItem)
-  //     }
-  //     // remove 1 item from stock
-  //     commit('products/decrementProductInventory', { id: product.id }, { root: true })
-  //   }
-  // }
 };
 
 export default {
