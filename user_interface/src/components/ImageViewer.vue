@@ -33,20 +33,8 @@ export default {
   data() {
     return {
       stageKey: 10,
-      windowWidth: 10,
+      windowWidth: 400,
       boxes: [],
-      configRects: [
-        {
-          x: -10,
-          y: -10,
-          width: 30,
-          height: 50,
-          fill: "red",
-          stroke: "black",
-          strokeWidth: 4,
-          opacity: 0.5,
-        },
-      ],
       configImage: {
         image: null,
       },
@@ -63,9 +51,7 @@ export default {
   },
   /**
    * When Image URL is set, the Konva image component is re-rendered
-   * Image is set to a fixed width, the height is rescaled
-   *
-   * Stage dimensions are in proportion to the user's device width
+   * Image is set to a fixed width relative to user's device, the height is rescaled
    */
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
