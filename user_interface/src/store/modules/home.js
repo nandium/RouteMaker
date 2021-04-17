@@ -1,9 +1,12 @@
+import SelectModes from "@/common/selectModes";
+
 const state = () => ({
   // items: [],
   isImageUploaded: false,
   imageURL: "",
   windowWidth: 500,
-  boxes: []
+  boxes: [],
+  selectMode: SelectModes.HANDHOLD_NUMBER,
 });
 
 const getters = {
@@ -18,7 +21,10 @@ const getters = {
   },
   getBoxes: (state) => {
     return state.boxes;
-  }
+  },
+  getSelectMode: (state) => {
+    return state.selectMode;
+  },
 
   // cartProducts: (state, getters, rootState) => {
   //   return state.items.map(({ id, quantity }) => {
@@ -49,8 +55,11 @@ const mutations = {
     state.windowWidth = windowWidth;
   },
   setBoxes: (state, boxes) => {
-    state.boxes = [...boxes]
-  }
+    state.boxes = [...boxes];
+  },
+  setSelectMode: (state, selectMode) => {
+    state.selectMode = selectMode;
+  },
 
   // pushProductToCart (state, { id }) {
   //   state.items.push({

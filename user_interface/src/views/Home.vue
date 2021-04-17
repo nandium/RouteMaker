@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <ImageUploader />
+    <ModeSelector />
     <ImageViewer />
   </div>
 </template>
@@ -9,6 +10,7 @@
 // @ is an alias to /src
 import ImageViewer from "@/components/ImageViewer.vue";
 import ImageUploader from "@/components/ImageUploader.vue";
+import ModeSelector from "@/components/ModeSelector.vue";
 import { mapMutations } from "vuex";
 
 export default {
@@ -16,6 +18,7 @@ export default {
   components: {
     ImageViewer,
     ImageUploader,
+    ModeSelector
   },
   /**
    * On device window loaded, set a window size to display the picture
