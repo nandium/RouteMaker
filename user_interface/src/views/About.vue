@@ -10,9 +10,13 @@
       and numbering them takes too much time too.
     </p>
     <hr class="my-4" />
-    <p class="lead">1. Upload the photo of a climbing wall</p>
-    <p class="lead">2. Label the holds as handholds or footholds</p>
-    <p class="lead">3. Export it to share with friends</p>
+    <p class="lead my-4">1. Upload the photo of a climbing wall</p>
+    <img src="@/assets/Screenshot_1.jpg" />
+    <p class="lead my-4">2. Label the holds as handholds or footholds</p>
+    <img src="@/assets/Screenshot_2.jpg" />
+    <p class="lead my-4">3. Export it to share with friends</p>
+    <img src="@/assets/Screenshot_3.jpg" />
+
     <hr class="my-4" />
     <b-button
       size="lg"
@@ -32,3 +36,8 @@
     >
   </b-jumbotron>
 </template>
+<style scoped>
+img {
+  border-radius: 1rem;
+}
+</style>
