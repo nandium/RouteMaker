@@ -104,7 +104,7 @@ export default {
      * Note: Requires page refresh afterwards as it messes up with html positions
      */
     async downloadKonva() {
-      const uri = this.$refs.stage.getNode().toDataURL();
+      const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg' });
       downloadURI(uri, "Route.jpg");
       this.setDownloadMode(false);
     },
