@@ -2,15 +2,18 @@ const state = () => ({
   // items: [],
   isImageUploaded: false,
   imageURL: "",
+  windowWidth: 500
 });
 
-// getters
 const getters = {
   getIsImageUploaded: (state) => {
     return state.isImageUploaded;
   },
   getImageURL: (state) => {
     return state.imageURL;
+  },
+  getWindowWidth: (state) => {
+    return state.windowWidth;
   },
 
   // cartProducts: (state, getters, rootState) => {
@@ -31,13 +34,15 @@ const getters = {
   // }
 };
 
-// mutations
 const mutations = {
   setIsImageUploaded: (state, isUploaded) => {
     state.isImageUploaded = isUploaded;
   },
   setImageURL: (state, imageURL) => {
     state.imageURL = imageURL;
+  },
+  setWindowWidth: (state, windowWidth) => {
+    state.windowWidth = windowWidth;
   },
 
   // pushProductToCart (state, { id }) {
@@ -55,13 +60,8 @@ const mutations = {
   // setCartItems (state, { items }) {
   //   state.items = items
   // },
-
-  // setCheckoutStatus (state, status) {
-  //   state.checkoutStatus = status
-  // }
 };
 
-// actions
 const actions = {
   // checkout ({ commit, state }, products) {
   //   const savedCartItems = [...state.items]

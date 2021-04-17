@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 
 import "./scripts/BootstrapScript";
+import "./scripts/KonvaScript";
 
 Vue.config.productionTip = false;
 

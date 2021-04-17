@@ -1,22 +1,21 @@
 <template>
-  <div class="m-1">
-    <b-form-file
-      v-model="imageFile"
-      placeholder="Choose a file or drop it here..."
-      drop-placeholder="Drop file here..."
-    ></b-form-file>
-    <div class="mt-1">
-      <b-button :disabled="loading" @click="processFile">{{
-        loading ? "Loading.." : "Insert"
-      }}</b-button>
-    </div>
-    <div class="mt-1 font-italic text-danger">{{ errorString }}</div>
-  </div>
+  <b-container fluid class="m-2">
+    <b-row class="justify-content-center">
+      <b-col md="4" sm="10">
+        <b-form-file
+          v-model="imageFile"
+          :placeholder="loading ? 'Loading..' : 'Climb wall image..'"
+          drop-placeholder="Drop file here..."
+          :disabled="loading"
+        ></b-form-file>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
 import { mapMutations } from "vuex";
-import getBoundingBox from "../api/getBoundingBox";
+import getBoundingBox from "@/common/getBoundingBox";
 
 export default {
   name: "ImageUploader",
@@ -25,7 +24,23 @@ export default {
       imageFile: null,
       loading: false,
       errorString: "",
+      windowWidth: window.innerWidth
     };
+  },
+  async mounted() {
+    this.$store.subscribe(async (mutation, state) => {
+      if (mutation.type == "home/setWindowWidth") {
+        this.windowWidth = state.home.windowWidth;
+      }
+    });
+  },
+  watch: {
+    /**
+     * When image file is attached, triggers file processing
+     */
+    async imageFile() {
+      this.processFile();
+    },
   },
   methods: {
     ...mapMutations("home", {
@@ -37,7 +52,7 @@ export default {
      * Retrieves the bounding boxes from the backend.
      */
     async processFile() {
-      if(!this.validate()) return;
+      if (!this.validate()) return;
 
       try {
         this.loading = true;
@@ -50,10 +65,13 @@ export default {
         this.loading = false;
       }
     },
+    /**
+     * FormData is sent with image attached and the desired rescaled width
+     */
     async uploadFile() {
       const formData = new FormData();
       formData.append("image", this.imageFile);
-      console.log(this.imageFile);
+      formData.append("width", this.windowWidth);
 
       const data = await getBoundingBox(formData);
       console.log(data);
