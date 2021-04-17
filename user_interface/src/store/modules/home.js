@@ -2,7 +2,8 @@ const state = () => ({
   // items: [],
   isImageUploaded: false,
   imageURL: "",
-  windowWidth: 500
+  windowWidth: 500,
+  boxes: []
 });
 
 const getters = {
@@ -15,6 +16,9 @@ const getters = {
   getWindowWidth: (state) => {
     return state.windowWidth;
   },
+  getBoxes: (state) => {
+    return state.boxes;
+  }
 
   // cartProducts: (state, getters, rootState) => {
   //   return state.items.map(({ id, quantity }) => {
@@ -44,6 +48,9 @@ const mutations = {
   setWindowWidth: (state, windowWidth) => {
     state.windowWidth = windowWidth;
   },
+  setBoxes: (state, boxes) => {
+    state.boxes = [...boxes]
+  }
 
   // pushProductToCart (state, { id }) {
   //   state.items.push({

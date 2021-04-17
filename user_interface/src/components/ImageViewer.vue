@@ -3,8 +3,7 @@
     <v-stage :key="stageKey" class="canva" v-if="isImageUploaded" :config="configKonva">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
-        <v-circle :config="configCircle1"></v-circle>
-        <v-circle :config="configCircle2"></v-circle>
+        <v-rect :key="idx" v-for="(configRect, idx) in configRects" :config="configRect"></v-rect>
       </v-layer>
     </v-stage>
   </b-container>
@@ -19,24 +18,17 @@ export default {
     return {
       stageKey: 10,
       windowWidth: 0,
-      configCircle1: {
-        x: 100,
-        y: 100,
-        radius: 30,
+      boxes: [],
+      configRects: [{
+        x: -10,
+        y: -10,
+        width: 30,
+        height: 50,
         fill: "red",
         stroke: "black",
         strokeWidth: 4,
         opacity: 0.5,
-      },
-      configCircle2: {
-        x: 120,
-        y: 120,
-        radius: 30,
-        fill: "red",
-        stroke: "black",
-        strokeWidth: 4,
-        opacity: 0.5,
-      },
+      }],
       configImage: {
         image: null,
       },
@@ -72,6 +64,9 @@ export default {
       }
       if (mutation.type == "home/setIsImageUploaded") {
         this.isImageUploaded = state.home.isImageUploaded;
+      }
+      if (mutation.type == "home/setBoxes") {
+        this.boxes = [...state.home.boxes];
       }
       if (mutation.type == "home/setWindowWidth") {
         this.windowWidth = state.home.windowWidth;

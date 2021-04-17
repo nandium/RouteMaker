@@ -1,8 +1,13 @@
 import axios from "axios";
 
+/**
+ * 
+ * @param {FormData} formData 
+ * @returns {Array} boxes
+ */
 const getBoundingBox = async (formData) => {
   try {
-    const { data } = await axios.post(
+    const { data: { boxes } } = await axios.post(
       process.env.VUE_APP_GET_BOUNDING_BOX_URL,
       formData,
       {
@@ -11,7 +16,7 @@ const getBoundingBox = async (formData) => {
         },
       }
     );
-    return data;
+    return boxes;
   } catch (error) {
     console.log(error.response.data);
   }
