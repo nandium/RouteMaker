@@ -53,7 +53,7 @@ export default {
         } else {
           this.textOpacity = 0;
         }
-        this.showNumberMode === state.home.showNumberMode;
+        this.showNumberMode = state.home.showNumberMode;
       }
     });
   },
@@ -131,16 +131,16 @@ export default {
         this.fill = "yellow";
         this.textOpacity = 0;
         this.selected = false;
-      } else if (this.selectMode === SelectModes.HANDHOLD) {
+      } else {
+        if (this.selectMode === SelectModes.HANDHOLD) {
+          this.textOpacity = this.showNumberMode ? 1 : 0;
+          this.text = this.getSelectNumber;
+          // Increment global select count (Not the best way for now)
+          this.setSelectNumber(this.text + 1);
+        } else if (this.selectMode === SelectModes.FOOTHOLD) {
+          this.fill = "blue";
+        }
         this.boxOpacity = 0.6;
-        this.textOpacity = this.showNumberMode ? 1 : 0;
-        this.text = this.getSelectNumber;
-
-        this.setSelectNumber(this.text + 1);
-        this.selected = true;
-      } else if (this.selectMode === SelectModes.FOOTHOLD) {
-        this.boxOpacity = 0.6;
-        this.fill = "blue";
         this.selected = true;
       }
     },
