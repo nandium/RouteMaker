@@ -97,6 +97,10 @@ export default {
         height: (height / width) * this.windowWidth,
       };
     },
+    /**
+     * Creates an link html and downloads it
+     * Note: Requires page refresh afterwards as it messes up with html positions
+     */
     async downloadKonva() {
       const uri = this.$refs.stage.getNode().toDataURL();
       downloadURI(uri, "Route.jpg");

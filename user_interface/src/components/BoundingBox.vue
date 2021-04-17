@@ -41,6 +41,9 @@ export default {
           if(this.getDownloadMode === false) this.setDownloadMode(true);
         }
       }
+      /**
+       * ShowNumberMode unhides the numbering of handholds
+       */
       if (mutation.type == "home/setShowNumberMode") {
         if(state.home.showNumberMode) {
           if(this.selected){
