@@ -49,9 +49,9 @@ def predict(event, context):
     multipart_items = parse_multipart_data(body_dec, content_type)
 
     image_dict = list(filter(lambda x: x["params"]
-                        ["name"] == "image", multipart_items))[0]
+                             ["name"] == "image", multipart_items))[0]
     width_dict = list(filter(lambda x: x["params"]
-                        ["name"] == "width", multipart_items))[0]
+                             ["name"] == "width", multipart_items))[0]
 
     assert image_dict["type"] in ALLOWED_TYPES, "Unallowed file type"
 
@@ -77,7 +77,9 @@ def predict(event, context):
     net.setInput(blob)
     outs = net.forward(output_layers)
 
-    boxes = []
+    box_dimensions = []
+    box_confidences = []
+    class_ids = []
 
     for out in outs:
         for detection in out:
@@ -95,14 +97,27 @@ def predict(event, context):
                 x = int(center_x - w / 2)
                 y = int(center_y - h / 2)
 
-                boxes.append({
-                    "x": x,
-                    "y": y,
-                    "w": w,
-                    "h": h,
-                    "confidence": float(confidence),
-                    "class": classes[class_id]
-                })
+                box_dimensions.append([x, y, w, h])
+                box_confidences.append(float(confidence))
+                class_ids.append(class_id)
+
+    boxes = []
+    # Non Maximum Suppression
+    indexes = cv2.dnn.NMSBoxes(box_dimensions, box_confidences, 0.5, 0.4)
+    for i in range(len(box_dimensions)):
+        if i in indexes:
+            x, y, w, h = box_dimensions[i]
+            boxes.append({
+                "x": x,
+                "y": y,
+                "w": w,
+                "h": h,
+                "confidence": float(box_confidences[i]),
+                "class": str(classes[class_ids[i]])
+            })
+
+    # Sort boxes in descending sizes
+    boxes = sorted(boxes, key=lambda box: box["w"] * box["h"], reverse=True)
 
     return {
         "statusCode": "200",

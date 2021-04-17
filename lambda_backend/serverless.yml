@@ -7,6 +7,7 @@ provider:
   stage: dev
   runtime: python3.7
   region: ap-southeast-1
+  memorySize: 2048
   apiGateway:
     binaryMediaTypes:
       - "multipart/form-data"
@@ -17,7 +18,7 @@ provider:
 functions:
   PredictImage:
     handler: handler.predict
-    timeout: 30
+    timeout: 15
     events:
       - http:
           path: /predict
