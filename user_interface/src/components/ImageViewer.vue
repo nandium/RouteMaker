@@ -85,6 +85,7 @@ export default {
     /**
      * When Image URL is set, the Konva image component is re-rendered
      * Image is set to a fixed width relative to user's device, the height is rescaled
+     * StageKey is changed to force update Konva canvas
      */
     async rerenderKonva(state) {
       const image = new window.Image();
@@ -96,6 +97,7 @@ export default {
         width: this.windowWidth,
         height: (height / width) * this.windowWidth,
       };
+      this.stageKey += 1;
     },
     /**
      * Creates an link html and downloads it
