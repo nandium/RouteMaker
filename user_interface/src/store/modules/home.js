@@ -7,6 +7,7 @@ const state = () => ({
   windowWidth: 500,
   boxes: [],
   selectMode: SelectModes.HANDHOLD_NUMBER,
+  selectNumber: 1
 });
 
 const getters = {
@@ -24,6 +25,9 @@ const getters = {
   },
   getSelectMode: (state) => {
     return state.selectMode;
+  },
+  getSelectNumber: (state) => {
+    return state.selectNumber;
   },
 
   // cartProducts: (state, getters, rootState) => {
@@ -59,6 +63,9 @@ const mutations = {
   },
   setSelectMode: (state, selectMode) => {
     state.selectMode = selectMode;
+  },
+  setSelectNumber: (state, selectNumber) => {
+    state.selectNumber = selectNumber;
   },
 
   // pushProductToCart (state, { id }) {

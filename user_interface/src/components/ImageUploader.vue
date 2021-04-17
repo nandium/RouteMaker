@@ -46,7 +46,7 @@ export default {
     ...mapMutations("home", {
       setImageURL: "setImageURL",
       setIsImageUploaded: "setIsImageUploaded",
-      setBoxes: "setBoxes"
+      setBoxes: "setBoxes",
     }),
     /**
      * Creates a browser URL for displaying image.
@@ -68,6 +68,8 @@ export default {
     },
     /**
      * FormData is sent with image attached and the desired rescaled width
+     * 
+     * Existing boxes are reset before the new ones are added
      */
     async uploadFile() {
       const formData = new FormData();

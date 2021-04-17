@@ -12,13 +12,16 @@
 
 <script>
 import SelectModes from "@/common/selectModes";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "BoundingBox",
   data() {
     return {
       strokeWidth: 2,
-      opacity: 0.2,
+      boxOpacity: 0.2,
+      textOpacity: 0,
+      text: "0",
       fill: "yellow",
       stroke: "black",
       selected: false,
@@ -32,6 +35,10 @@ export default {
         if(this.selectMode === SelectModes.RESET) {
           this.reset();
         }
+        if(this.selectMode === SelectModes.EXPORT) {
+          this.setDone();
+
+        }
       }
     });
   },
@@ -42,6 +49,9 @@ export default {
     h: Number,
   },
   computed: {
+    ...mapGetters("home", {
+      getSelectNumber: "getSelectNumber"
+    }),
     configRect() {
       return {
         width: this.w,
@@ -49,7 +59,7 @@ export default {
         fill: this.fill,
         stroke: "black",
         strokeWidth: this.strokeWidth,
-        opacity: this.opacity,
+        opacity: this.boxOpacity,
       };
     },
     configGroup() {
@@ -63,20 +73,28 @@ export default {
     configText() {
       return {
         y: this.h,
-        text: '123',
-        fontSize: 14,
+        text: this.text,
+        fontSize: 18,
         fontFamily: 'Calibri',
-        opacity: 1,
+        fontStyle: 'bold',
+        opacity: this.textOpacity,
       };
     },
   },
   methods: {
+    ...mapMutations("home", {
+      setSelectNumber: "setSelectNumber"
+    }),
     reset() {
       this.strokeWidth = 2;
-      this.opacity = 0.2;
+      this.boxOpacity = 0.2;
+      this.textOpacity = 0;
+      this.text = "0";
       this.fill = "yellow";
       this.stroke = "black";
       this.selected = false;
+
+      this.setSelectNumber(1);
     },
     onMouseOver() {
       this.strokeWidth = 4;
@@ -86,18 +104,28 @@ export default {
     },
     onClick() {
       if (this.selected) {
-        this.opacity = 0.2;
+        this.boxOpacity = 0.2;
         this.fill = "yellow";
         this.selected = false;
       } else if (this.selectMode === SelectModes.HANDHOLD_NUMBER) {
-        this.opacity = 0.6;
+        this.boxOpacity = 0.6;
+        this.textOpacity = 1;
+        this.text = this.getSelectNumber;
+
+        this.setSelectNumber(this.text + 1);
         this.selected = true;
       } else if (this.selectMode === SelectModes.FOOTHOLD_NO_NUMBER) {
-        this.opacity = 0.6;
+        this.boxOpacity = 0.6;
         this.fill = "blue";
         this.selected = true;
       }
     },
+    setDone() {
+      if(!this.selected) {
+        this.boxOpacity = 0;
+        this.textOpacity = 0;
+      }
+    }
   },
 };
 </script>

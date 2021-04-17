@@ -1,8 +1,8 @@
 <template>
   <b-container fluid class="m-2">
-    <b-row class="justify-content-center">
+    <b-row class="justify-content-center" v-if="isImageUploaded" >
       <b-col md="4" sm="10">
-        <b-button-group size="md">
+        <b-button-group size="md" class="mx-1">
           <b-button
             v-for="(btn, idx) in buttons"
             :key="idx"
@@ -12,6 +12,8 @@
             {{ btn.caption }}
           </b-button>
         </b-button-group>
+
+        <b-button>Hide #</b-button>
       </b-col>
     </b-row>
   </b-container>
@@ -23,6 +25,13 @@ import { mapMutations } from "vuex";
 
 export default {
   name: "ModeSelector",
+  mounted() {
+    this.$store.subscribe(async (mutation, state) => {
+      if (mutation.type == "home/setIsImageUploaded") {
+        this.isImageUploaded = state.home.isImageUploaded;
+      }
+    });
+  },
   data() {
     return {
       isImageUploaded: false,
@@ -43,16 +52,16 @@ export default {
           mode: SelectModes.FOOTHOLD_NO_NUMBER,
         },
         {
-          caption: "Done",
+          caption: "Export",
           state: false,
-          mode: SelectModes.DONE,
+          mode: SelectModes.EXPORT,
         },
       ],
     };
   },
   methods: {
     ...mapMutations("home", {
-      setSelectMode: "setSelectMode"
+      setSelectMode: "setSelectMode",
     }),
     /**
      * Unselect the rest of the buttons
@@ -65,8 +74,8 @@ export default {
       this.buttons = [
         { ...this.buttons[idx], state: true },
         ...this.buttons
-          .filter(button => this.buttons[idx].caption !== button.caption)
-          .map(button => {
+          .filter((button) => this.buttons[idx].caption !== button.caption)
+          .map((button) => {
             return { ...button, state: false };
           }),
       ].sort((a, b) => (a.caption < b.caption ? 1 : -1));
@@ -77,13 +86,6 @@ export default {
       if (state) return "secondary";
       return "outline-secondary";
     },
-  },
-  mounted() {
-    this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type == "home/setIsImageUploaded") {
-        this.isImageUploaded = state.home.isImageUploaded;
-      }
-    });
   },
 };
 </script>

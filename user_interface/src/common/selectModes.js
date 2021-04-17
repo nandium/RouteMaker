@@ -5,16 +5,14 @@
 class SelectModes {
   // Private Fields
   static #_HANDHOLD_NUMBER = 0;
-  static #_HANDHOLD_NO_NUMBER = 1;
-  static #_FOOTHOLD_NO_NUMBER = 2;
-  static #_DONE = 3;
-  static #_RESET = 4;
+  static #_FOOTHOLD_NO_NUMBER = 1;
+  static #_EXPORT = 2;
+  static #_RESET = 3;
 
   // Accessors for "get" functions only (no "set" functions)
   static get HANDHOLD_NUMBER() { return this.#_HANDHOLD_NUMBER; }
-  static get HANDHOLD_NO_NUMBER() { return this.#_HANDHOLD_NO_NUMBER; }
   static get FOOTHOLD_NO_NUMBER() { return this.#_FOOTHOLD_NO_NUMBER; }
-  static get DONE() { return this.#_DONE; }
+  static get EXPORT() { return this.#_EXPORT; }
   static get RESET() { return this.#_RESET; }
 }
 
