@@ -88,7 +88,8 @@ export default {
     },
     configText() {
       return {
-        y: this.h,
+        x: 5,
+        y: this.h / 2,
         text: this.text,
         fontSize: 24,
         fontFamily: "Calibri",
@@ -128,6 +129,7 @@ export default {
       if (this.selected) {
         this.boxOpacity = 0.2;
         this.fill = "yellow";
+        this.textOpacity = 0;
         this.selected = false;
       } else if (this.selectMode === SelectModes.HANDHOLD) {
         this.boxOpacity = 0.6;
