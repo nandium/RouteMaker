@@ -1,9 +1,21 @@
 <template>
   <b-container fluid class="m-2">
-    <v-stage :key="stageKey" class="canva" v-if="isImageUploaded" :config="configKonva">
+    <v-stage
+      :key="stageKey"
+      class="canva"
+      v-if="isImageUploaded"
+      :config="configKonva"
+    >
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
-        <v-rect :key="idx" v-for="(configRect, idx) in configRects" :config="configRect"></v-rect>
+        <BoundingBox
+          :key="idx"
+          v-for="(box, idx) in boxes"
+          :x="box.x"
+          :y="box.y"
+          :w="box.w"
+          :h="box.h"
+        />
       </v-layer>
     </v-stage>
   </b-container>
@@ -11,24 +23,30 @@
 
 <script>
 import { getHeightAndWidthFromDataUrl } from "@/common/utils";
+import BoundingBox from "./BoundingBox";
 
 export default {
   name: "ImageViewer",
+  components: {
+    BoundingBox,
+  },
   data() {
     return {
       stageKey: 10,
-      windowWidth: 0,
+      windowWidth: 10,
       boxes: [],
-      configRects: [{
-        x: -10,
-        y: -10,
-        width: 30,
-        height: 50,
-        fill: "red",
-        stroke: "black",
-        strokeWidth: 4,
-        opacity: 0.5,
-      }],
+      configRects: [
+        {
+          x: -10,
+          y: -10,
+          width: 30,
+          height: 50,
+          fill: "red",
+          stroke: "black",
+          strokeWidth: 4,
+          opacity: 0.5,
+        },
+      ],
       configImage: {
         image: null,
       },
@@ -46,7 +64,7 @@ export default {
   /**
    * When Image URL is set, the Konva image component is re-rendered
    * Image is set to a fixed width, the height is rescaled
-   * 
+   *
    * Stage dimensions are in proportion to the user's device width
    */
   mounted() {
@@ -66,7 +84,7 @@ export default {
         this.isImageUploaded = state.home.isImageUploaded;
       }
       if (mutation.type == "home/setBoxes") {
-        this.boxes = [...state.home.boxes];
+        this.boxes = state.home.boxes.filter(box => box.class === "hold");
       }
       if (mutation.type == "home/setWindowWidth") {
         this.windowWidth = state.home.windowWidth;
