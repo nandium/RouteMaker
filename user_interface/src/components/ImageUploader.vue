@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="m-2">
-    <b-row class="justify-content-center">
+    <b-row class="justify-content-center m-1">
       <b-col md="4" sm="10">
         <b-form-file
           v-model="imageFile"
@@ -8,6 +8,11 @@
           drop-placeholder="Drop file here..."
           :disabled="loading"
         ></b-form-file>
+      </b-col>
+    </b-row>
+    <b-row class="justify-content-center m-1">
+      <b-col class="text-danger font-italic" md="4" sm="10">
+        {{ errorString }}
       </b-col>
     </b-row>
   </b-container>
@@ -101,5 +106,5 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 </style>
