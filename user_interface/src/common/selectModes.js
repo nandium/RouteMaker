@@ -14,6 +14,7 @@ class SelectModes {
   static get HANDHOLD_NUMBER() { return this.#_HANDHOLD_NUMBER; }
   static get HANDHOLD_NO_NUMBER() { return this.#_HANDHOLD_NO_NUMBER; }
   static get FOOTHOLD_NO_NUMBER() { return this.#_FOOTHOLD_NO_NUMBER; }
+  static get DONE() { return this.#_DONE; }
   static get RESET() { return this.#_RESET; }
 }
 
