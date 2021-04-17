@@ -21,7 +21,7 @@ export default {
       strokeWidth: 2,
       boxOpacity: 0.2,
       textOpacity: 0,
-      text: "0",
+      text: "",
       fill: "yellow",
       stroke: "black",
       selected: false,
