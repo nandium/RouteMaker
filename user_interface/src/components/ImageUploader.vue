@@ -7,6 +7,7 @@
           :placeholder="loading ? 'Loading..' : 'Climb wall image..'"
           drop-placeholder="Drop file here..."
           :disabled="loading"
+          accept="image/jpeg"
         ></b-form-file>
       </b-col>
     </b-row>
@@ -92,8 +93,8 @@ export default {
         this.errorString = "Please attach a file";
         return false;
       }
-      if (this.imageFile.size > 4 * 1024 * 1024) {
-        this.errorString = "Max image size is 4 MB";
+      if (this.imageFile.size > 8 * 1024 * 1024) {
+        this.errorString = "Max image size is 8 MB";
         return false;
       }
       if (!["image/jpeg"].includes(this.imageFile.type)) {
