@@ -75,7 +75,7 @@ export default {
       return {
         y: this.h,
         text: this.text,
-        fontSize: 18,
+        fontSize: 24,
         fontFamily: 'Calibri',
         fontStyle: 'bold',
         opacity: this.textOpacity,
