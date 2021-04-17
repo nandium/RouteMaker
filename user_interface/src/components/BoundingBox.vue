@@ -25,7 +25,8 @@ export default {
       fill: "yellow",
       stroke: "black",
       selected: false,
-      selectMode: SelectModes.HANDHOLD_NUMBER,
+      selectMode: SelectModes.HANDHOLD,
+      showNumberMode: true
     };
   },
   mounted() {
@@ -40,6 +41,16 @@ export default {
           if(this.getDownloadMode === false) this.setDownloadMode(true);
         }
       }
+      if (mutation.type == "home/setShowNumberMode") {
+        if(state.home.showNumberMode) {
+          if(this.selected){
+            this.textOpacity = 1;
+          }
+        } else {
+          this.textOpacity = 0;
+        }
+        this.showNumberMode === state.home.showNumberMode;
+      }
     });
   },
   props: {
@@ -51,7 +62,7 @@ export default {
   computed: {
     ...mapGetters("home", {
       getSelectNumber: "getSelectNumber",
-      getDownloadMode: "getDownloadMode"
+      getDownloadMode: "getDownloadMode",
     }),
     configRect() {
       return {
@@ -114,14 +125,14 @@ export default {
         this.boxOpacity = 0.2;
         this.fill = "yellow";
         this.selected = false;
-      } else if (this.selectMode === SelectModes.HANDHOLD_NUMBER) {
+      } else if (this.selectMode === SelectModes.HANDHOLD) {
         this.boxOpacity = 0.6;
-        this.textOpacity = 1;
+        this.textOpacity = this.showNumberMode ? 1 : 0;
         this.text = this.getSelectNumber;
 
         this.setSelectNumber(this.text + 1);
         this.selected = true;
-      } else if (this.selectMode === SelectModes.FOOTHOLD_NO_NUMBER) {
+      } else if (this.selectMode === SelectModes.FOOTHOLD) {
         this.boxOpacity = 0.6;
         this.fill = "blue";
         this.selected = true;

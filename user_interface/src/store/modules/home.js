@@ -6,9 +6,10 @@ const state = () => ({
   imageURL: "",
   windowWidth: 500,
   boxes: [],
-  selectMode: SelectModes.HANDHOLD_NUMBER,
+  selectMode: SelectModes.HANDHOLD,
   selectNumber: 1,
-  downloadMode: false
+  downloadMode: false,
+  showNumberMode: true
 });
 
 const getters = {
@@ -33,7 +34,9 @@ const getters = {
   getDownloadMode: (state) => {
     return state.downloadMode;
   },
-
+  getShowNumberMode: (state) => {
+    return state.showNumberMode;
+  },
 };
 
 const mutations = {
@@ -58,7 +61,9 @@ const mutations = {
   setDownloadMode: (state, downloadMode) => {
     state.downloadMode = downloadMode;
   },
-
+  setShowNumberMode: (state, showNumberMode) => {
+    state.showNumberMode = showNumberMode;
+  },
 };
 
 const actions = {

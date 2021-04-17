@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="m-2">
-    <b-row class="justify-content-center" v-if="isImageUploaded" >
+    <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col md="4" sm="10">
         <b-button-group size="md" class="mx-1">
           <b-button
@@ -13,7 +13,7 @@
           </b-button>
         </b-button-group>
 
-        <b-button>Hide #</b-button>
+        <b-button @click="toggleShowNumbers">Hide #</b-button>
       </b-col>
     </b-row>
   </b-container>
@@ -21,7 +21,7 @@
 
 <script>
 import SelectModes from "@/common/selectModes";
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 
 export default {
   name: "ModeSelector",
@@ -35,6 +35,7 @@ export default {
   data() {
     return {
       isImageUploaded: false,
+      showNumberMode: this.getShowNumberMode,
       buttons: [
         {
           caption: "Reset",
@@ -44,12 +45,12 @@ export default {
         {
           caption: "HandHold",
           state: true,
-          mode: SelectModes.HANDHOLD_NUMBER,
+          mode: SelectModes.HANDHOLD,
         },
         {
           caption: "FootHold",
           state: false,
-          mode: SelectModes.FOOTHOLD_NO_NUMBER,
+          mode: SelectModes.FOOTHOLD,
         },
         {
           caption: "Export",
@@ -59,9 +60,15 @@ export default {
       ],
     };
   },
+  computed: {
+    ...mapGetters("home", {
+      getShowNumberMode: "getShowNumberMode",
+    }),
+  },
   methods: {
     ...mapMutations("home", {
       setSelectMode: "setSelectMode",
+      setShowNumberMode: "setShowNumberMode",
     }),
     /**
      * Unselect the rest of the buttons
@@ -85,6 +92,10 @@ export default {
     getButtonVariant(state) {
       if (state) return "secondary";
       return "outline-secondary";
+    },
+    toggleShowNumbers() {
+      this.showNumberMode = !this.getShowNumberMode;
+      this.setShowNumberMode(this.showNumberMode);
     },
   },
 };
