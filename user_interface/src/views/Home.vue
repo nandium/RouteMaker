@@ -23,16 +23,22 @@ export default {
    */
   created() {
     window.onload = () => {
-      this.setWindowWidth(Math.floor((window.innerWidth / 6) * 5));
+      this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
     };
     window.addEventListener('resize', () => {
-      this.setWindowWidth(Math.floor((window.innerWidth / 6) * 5));
+      this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
     })
   },
   methods: {
     ...mapMutations("home", {
       setWindowWidth: "setWindowWidth",
     }),
+    calculateCanvaWindowWidth(innerWidth) {
+      return Math.min(
+        800,
+        Math.floor((innerWidth / 6) * 5)
+      )
+    }
   },
 };
 </script>
