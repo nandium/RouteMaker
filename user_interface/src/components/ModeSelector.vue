@@ -2,7 +2,7 @@
   <b-container fluid class="m-2">
     <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col md="4" sm="10">
-        <b-button-group size="md" class="mx-1">
+        <b-button-group size="md" class="m-2">
           <b-button
             v-for="(btn, idx) in buttons"
             :key="idx"
@@ -13,7 +13,7 @@
           </b-button>
         </b-button-group>
 
-        <b-button @click="toggleShowNumbers">Hide #</b-button>
+        <b-button @click="toggleShowNumbers">{{ this.getShowNumberMode ? "Hide" : "Unhide" }} Numbers</b-button>
       </b-col>
     </b-row>
   </b-container>

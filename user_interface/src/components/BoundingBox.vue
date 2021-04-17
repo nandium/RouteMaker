@@ -5,6 +5,7 @@
       @mouseover="onMouseOver"
       @mouseout="onMouseOut"
       @click="onClick"
+      @tap="onTap"
     ></v-rect>
     <v-text :config="configText"></v-text>
   </v-group>
@@ -26,27 +27,27 @@ export default {
       stroke: "black",
       selected: false,
       selectMode: SelectModes.HANDHOLD,
-      showNumberMode: true
+      showNumberMode: true,
     };
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type == "home/setSelectMode") {
         this.selectMode = state.home.selectMode;
-        if(this.selectMode === SelectModes.RESET) {
+        if (this.selectMode === SelectModes.RESET) {
           this.reset();
         }
-        if(this.selectMode === SelectModes.EXPORT) {
+        if (this.selectMode === SelectModes.EXPORT) {
           this.setDone();
-          if(this.getDownloadMode === false) this.setDownloadMode(true);
+          if (this.getDownloadMode === false) this.setDownloadMode(true);
         }
       }
       /**
        * ShowNumberMode unhides the numbering of handholds
        */
       if (mutation.type == "home/setShowNumberMode") {
-        if(state.home.showNumberMode) {
-          if(this.selected){
+        if (state.home.showNumberMode) {
+          if (this.selected) {
             this.textOpacity = 1;
           }
         } else {
@@ -90,8 +91,8 @@ export default {
         y: this.h,
         text: this.text,
         fontSize: 24,
-        fontFamily: 'Calibri',
-        fontStyle: 'bold',
+        fontFamily: "Calibri",
+        fontStyle: "bold",
         opacity: this.textOpacity,
       };
     },
@@ -99,7 +100,7 @@ export default {
   methods: {
     ...mapMutations("home", {
       setSelectNumber: "setSelectNumber",
-      setDownloadMode: "setDownloadMode"
+      setDownloadMode: "setDownloadMode",
     }),
     reset() {
       this.strokeWidth = 2;
@@ -141,12 +142,15 @@ export default {
         this.selected = true;
       }
     },
+    onTap() {
+      this.onClick();
+    },
     setDone() {
-      if(!this.selected) {
+      if (!this.selected) {
         this.boxOpacity = 0;
         this.textOpacity = 0;
       }
-    }
+    },
   },
 };
 </script>
