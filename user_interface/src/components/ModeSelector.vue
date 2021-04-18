@@ -34,15 +34,19 @@ export default {
     this.showNumberMode = this.getShowNumberMode;
 
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type == "home/setIsImageUploaded") {
+      if (mutation.type === "home/setIsImageUploaded") {
         this.isImageUploaded = state.home.isImageUploaded;
       }
+      if (mutation.type === "home/setSelectMode") {
+        this.updateDisplayButtons(state.home.selectMode);
+      }
     });
+
+    this.updateDisplayButtons(this.getSelectMode);
   },
   data() {
     return {
       isImageUploaded: false,
-      showNumberMode: true,
       buttons: [
         {
           caption: "HandHold",
@@ -65,7 +69,8 @@ export default {
   computed: {
     ...mapGetters("home", {
       getShowNumberMode: "getShowNumberMode",
-      getIsImageUploaded: "getIsImageUploaded"
+      getIsImageUploaded: "getIsImageUploaded",
+      getSelectMode: "getSelectMode",
     }),
   },
   methods: {
@@ -84,15 +89,7 @@ export default {
     onButtonClick(selectedButton) {
       if (selectedButton.state) return;
 
-      this.buttons = [
-        { ...selectedButton, state: true },
-        ...this.buttons
-          .filter((button) => button.mode !== selectedButton.mode)
-          .map((button) => {
-            return { ...button, state: false };
-          }),
-      ].sort((a, b) => (a.caption < b.caption ? 1 : -1));
-
+      this.updateDisplayButtons(selectedButton.mode);
       this.setSelectMode(selectedButton.mode);
     },
     getButtonVariant(state) {
@@ -105,6 +102,14 @@ export default {
     toggleShowNumbers() {
       this.showNumberMode = !this.getShowNumberMode;
       this.setShowNumberMode(this.showNumberMode);
+    },
+    updateDisplayButtons(newMode) {
+      this.buttons = this.buttons.map((button) => {
+        if (button.mode === newMode) {
+          return { ...button, state: true };
+        }
+        return { ...button, state: false };
+      }).sort((a, b) => (a.caption < b.caption ? 1 : -1));
     },
   },
 };
