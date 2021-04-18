@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions, mapGetters } from "vuex";
 import { getHeightAndWidthFromDataUrl, downloadURI } from "@/common/utils";
 import BoundingBox from "./BoundingBox";
 
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       stageKey: 10,
-      windowWidth: 400,
+      windowWidth: 0,
       boxes: [],
       configImage: {
         image: null,
@@ -44,12 +44,18 @@ export default {
     };
   },
   computed: {
+    ...mapGetters("home", {
+      getWindowWidth: "getWindowWidth"
+    }),
     configKonva() {
       return {
         width: this.windowWidth,
         height: this.windowWidth * 1.5,
       };
     },
+  },
+  created() {
+    this.windowWidth = this.getWindowWidth;
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
@@ -67,13 +73,13 @@ export default {
         this.stageKey += 1;
       }
       /**
-       * Downloads and refresh the entire page
+       * Downloads the image
+       * Resets the changes and change mode to HANDHOLD
        */
       if (mutation.type == "home/setDownloadMode") {
         if (state.home.downloadMode === true) {
           await new Promise((resolve) => setTimeout(resolve, 500));
           this.downloadKonva();
-          this.$router.go(0);
         }
       }
     });
@@ -81,6 +87,9 @@ export default {
   methods: {
     ...mapMutations("home", {
       setDownloadMode: "setDownloadMode",
+    }),
+    ...mapActions("home", {
+      resetBoundingBoxChanges: "resetBoundingBoxChanges",
     }),
     /**
      * When Image URL is set, the Konva image component is re-rendered
@@ -104,7 +113,9 @@ export default {
      * Note: Requires page refresh afterwards as it messes up with html positions
      */
     async downloadKonva() {
-      const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg' });
+      const uri = this.$refs.stage
+        .getNode()
+        .toDataURL({ mimeType: "image/jpeg" });
       downloadURI(uri, "Route.jpg");
       this.setDownloadMode(false);
     },
