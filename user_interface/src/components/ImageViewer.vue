@@ -16,6 +16,7 @@
           :y="box.y"
           :w="box.w"
           :h="box.h"
+          :boxId="idx"
         />
       </v-layer>
     </v-stage>
