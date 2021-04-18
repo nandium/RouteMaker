@@ -57,13 +57,13 @@ const mutations = {
     state.selectMode = selectMode;
   },
   addBoxIdToSelected: (state, boxId) => {
-    state.selectNumberToBoxIdArray.push(boxId);
+    state.selectNumberToBoxIdArray = [...state.selectNumberToBoxIdArray, boxId];
     state.boxIdToSelectNumberMapping.set(boxId, state.selectNumberToBoxIdArray.length);
   },
   removeBoxIdFromSelected: (state, boxId) => {
     const removedSelectNumber = state.boxIdToSelectNumberMapping.get(boxId);
     state.boxIdToSelectNumberMapping.delete(boxId);
-    for (var i = removedSelectNumber; i < state.selectNumberToBoxIdArray.length; i++) {
+    for (let i = removedSelectNumber; i < state.selectNumberToBoxIdArray.length; i++) {
       state.boxIdToSelectNumberMapping.set(state.selectNumberToBoxIdArray[i], i);
     }
     state.selectNumberToBoxIdArray.splice(removedSelectNumber - 1, 1);

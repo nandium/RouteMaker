@@ -54,13 +54,13 @@ export default {
         this.showNumberMode = state.home.showNumberMode;
       }
     });
-    this.$store.subscribeAction((action) => {
+    this.$store.subscribeAction((action, state) => {
       if (action.type == "home/resetBoundingBoxChanges") {
         this.reset();
       }
       if (action.type == "home/updateBoundingBoxNumbers") {
         if (this.selected) {
-          this.text = this.$store.state.home.boxIdToSelectNumberMapping.get(this.boxId);
+          this.text = state.home.boxIdToSelectNumberMapping.get(this.boxId);
         }
       }
     });
