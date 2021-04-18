@@ -73,6 +73,7 @@ export default {
         this.stageKey += 1;
       }
       /**
+       * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
        * Downloads the image
        * Resets the changes and change mode to HANDHOLD
        */
