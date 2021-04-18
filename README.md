@@ -11,15 +11,22 @@ Application: https://yarkhinephyo.github.io/RouteMaker/
 The Object Detection model is trained on yolov4-tiny. Hence it is sufficiently small for Serverless deployment on AWS Lambda. The user interface is built with Vue and is deployed on Github pages.
 
 ## Usage
-#### 1. Take photo of a climbing wall
-
+#### 1. Upload the photo of a climbing wall
 ![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_1.jpg)
 
-#### 2. Select handholds and footholds
+#### 2. The holds will be marked automatically
 ![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_2.jpg)
 
-#### 3. Export as a picture to share with friends
+#### 3. Select your handholds
 ![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_3.jpg)
+
+#### 4. Select your footholds
+![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_4.jpg)
+
+#### 5. Export as an image to share with friends
+![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_5.jpg)
+
+
 ## Deployment
 
 ```bash

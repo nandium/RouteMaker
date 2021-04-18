@@ -4,7 +4,7 @@ const state = () => ({
   // items: [],
   isImageUploaded: false,
   imageURL: "",
-  windowWidth: 500,
+  windowWidth: 0,
   boxes: [],
   selectMode: SelectModes.HANDHOLD,
   selectNumber: 1,
@@ -67,6 +67,13 @@ const mutations = {
 };
 
 const actions = {
+  /**
+   * BoundingBoxes also subscribe to this action to reset individually
+   */
+  resetBoundingBoxChanges({ commit }) {
+    commit("setSelectNumber", 1);
+    commit("setSelectMode", SelectModes.HANDHOLD);
+  }
 };
 
 export default {

@@ -34,9 +34,6 @@ export default {
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type == "home/setSelectMode") {
         this.selectMode = state.home.selectMode;
-        if (this.selectMode === SelectModes.RESET) {
-          this.reset();
-        }
         if (this.selectMode === SelectModes.EXPORT) {
           this.setDone();
           if (this.getDownloadMode === false) this.setDownloadMode(true);
@@ -54,6 +51,11 @@ export default {
           this.textOpacity = 0;
         }
         this.showNumberMode = state.home.showNumberMode;
+      }
+    });
+    this.$store.subscribeAction((action) => {
+      if (action.type == "home/resetBoundingBoxChanges") {
+        this.reset();
       }
     });
   },

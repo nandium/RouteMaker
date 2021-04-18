@@ -7,13 +7,11 @@ class SelectModes {
   static #_HANDHOLD = 0;
   static #_FOOTHOLD = 1;
   static #_EXPORT = 2;
-  static #_RESET = 3;
 
   // Accessors for "get" functions only (no "set" functions)
   static get HANDHOLD() { return this.#_HANDHOLD; }
   static get FOOTHOLD() { return this.#_FOOTHOLD; }
   static get EXPORT() { return this.#_EXPORT; }
-  static get RESET() { return this.#_RESET; }
 }
 
 export default SelectModes;
