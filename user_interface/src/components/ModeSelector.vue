@@ -2,8 +2,6 @@
   <b-container fluid class="m-2">
     <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col md="4" sm="10">
-        <b-button @click="onReset" variant="outline-info">Reset</b-button>
-
         <b-button-group size="md" class="m-2">
           <b-button
             v-for="(btn, idx) in buttons"
@@ -15,7 +13,10 @@
           </b-button>
         </b-button-group>
 
-        <b-button @click="toggleShowNumbers"
+        <b-button @click="onReset" class="m-1" variant="outline-info"
+          >Reset</b-button
+        >
+        <b-button @click="toggleShowNumbers" variant="outline-info"
           >{{ this.getShowNumberMode ? "Hide" : "Unhide" }} Numbers</b-button
         >
       </b-col>
@@ -104,12 +105,14 @@ export default {
       this.setShowNumberMode(this.showNumberMode);
     },
     updateDisplayButtons(newMode) {
-      this.buttons = this.buttons.map((button) => {
-        if (button.mode === newMode) {
-          return { ...button, state: true };
-        }
-        return { ...button, state: false };
-      }).sort((a, b) => (a.caption < b.caption ? 1 : -1));
+      this.buttons = this.buttons
+        .map((button) => {
+          if (button.mode === newMode) {
+            return { ...button, state: true };
+          }
+          return { ...button, state: false };
+        })
+        .sort((a, b) => (a.caption < b.caption ? 1 : -1));
     },
   },
 };
