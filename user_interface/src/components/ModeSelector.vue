@@ -2,7 +2,7 @@
   <b-container fluid class="m-2">
     <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col md="4" sm="10">
-        <b-button-group size="md" class="m-2">
+        <b-button-group size="md" class="m-2" v-if="showAllButtons">
           <b-button
             v-for="(btn, idx) in buttons"
             :key="idx"
@@ -40,6 +40,9 @@ export default {
       }
       if (mutation.type === "home/setSelectMode") {
         this.updateDisplayButtons(state.home.selectMode);
+        if (state.home.selectMode === SelectModes.EXPORT) {
+          this.showAllButtons = false;
+        }
       }
     });
 
@@ -47,6 +50,7 @@ export default {
   },
   data() {
     return {
+      showAllButtons: true,
       isImageUploaded: false,
       buttons: [
         {
@@ -94,6 +98,7 @@ export default {
     },
     onReset() {
       this.resetBoundingBoxChanges();
+      this.showAllButtons = true;
     },
     toggleShowNumbers() {
       this.showNumberMode = !this.getShowNumberMode;
