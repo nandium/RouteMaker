@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 import { getHeightAndWidthFromDataUrl, downloadURI } from "@/common/utils";
 import BoundingBox from "./BoundingBox";
 
@@ -87,9 +87,6 @@ export default {
   methods: {
     ...mapMutations("home", {
       setDownloadMode: "setDownloadMode",
-    }),
-    ...mapActions("home", {
-      resetBoundingBoxChanges: "resetBoundingBoxChanges",
     }),
     /**
      * When Image URL is set, the Konva image component is re-rendered
