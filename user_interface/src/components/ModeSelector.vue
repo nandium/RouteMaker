@@ -82,11 +82,6 @@ export default {
     ...mapActions("home", {
       resetBoundingBoxChanges: "resetBoundingBoxChanges",
     }),
-    /**
-     * Unselect the rest of the buttons
-     * Sort them by alphebetical to maintain the order
-     * Update the selected mode state
-     */
     onButtonClick(selectedButton) {
       if (selectedButton.state) return;
 
@@ -104,6 +99,11 @@ export default {
       this.showNumberMode = !this.getShowNumberMode;
       this.setShowNumberMode(this.showNumberMode);
     },
+    /**
+     * Unselect the rest of the buttons
+     * Sort them by alphebetical to maintain the order
+     * Update the selected mode state
+     */
     updateDisplayButtons(newMode) {
       this.buttons = this.buttons
         .map((button) => {
