@@ -2,7 +2,7 @@
   <loading
     :active.sync="isLoading"
     :can-cancel="false"
-    :is-full-page="fullPage"
+    :is-full-page="true"
   ></loading>
 </template>
 
