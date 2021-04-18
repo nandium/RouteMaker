@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations , mapGetters } from "vuex";
 import getBoundingBox from "@/common/getBoundingBox";
 
 export default {
@@ -30,8 +30,11 @@ export default {
       imageFile: null,
       loading: false,
       errorString: "",
-      windowWidth: window.innerWidth
+      windowWidth: 0,
     };
+  },
+  created() {
+    this.windowWidth = this.getWindowWidth;
   },
   async mounted() {
     this.$store.subscribe(async (mutation, state) => {
@@ -47,6 +50,11 @@ export default {
     async imageFile() {
       this.processFile();
     },
+  },
+  computed: {
+    ...mapGetters("home", {
+      getWindowWidth: "getWindowWidth"
+    }),
   },
   methods: {
     ...mapMutations("home", {
