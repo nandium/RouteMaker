@@ -9,6 +9,7 @@
     <ImageUploader />
     <ModeSelector />
     <ImageViewer />
+    <Loader :isLoading="isLoading" />
   </div>
 </template>
 
@@ -17,6 +18,7 @@
 import ImageViewer from "@/components/ImageViewer.vue";
 import ImageUploader from "@/components/ImageUploader.vue";
 import ModeSelector from "@/components/ModeSelector.vue";
+import Loader from "@/components/Loader.vue";
 import { mapMutations } from "vuex";
 
 export default {
@@ -25,6 +27,12 @@ export default {
     ImageViewer,
     ImageUploader,
     ModeSelector,
+    Loader
+  },
+  data() {
+    return {
+      isLoading: true
+    }
   },
   /**
    * On device window loaded, set a window size to display the picture
@@ -33,6 +41,7 @@ export default {
   created() {
     window.onload = () => {
       this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
+      this.isLoading = false;
     };
     window.addEventListener("resize", () => {
       this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
