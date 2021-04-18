@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapMutations , mapGetters } from "vuex";
+import { mapMutations , mapGetters , mapActions } from "vuex";
 import getBoundingBox from "@/common/getBoundingBox";
 
 export default {
@@ -62,6 +62,9 @@ export default {
       setIsImageUploaded: "setIsImageUploaded",
       setBoxes: "setBoxes",
     }),
+    ...mapActions("home", {
+      resetBoundingBoxChanges: "resetBoundingBoxChanges",
+    }),
     /**
      * Creates a browser URL for displaying image.
      * Retrieves the bounding boxes from the backend.
@@ -92,6 +95,7 @@ export default {
 
       const boxes = await getBoundingBox(formData);
       this.setBoxes(boxes);
+      this.resetBoundingBoxChanges();
       this.setIsImageUploaded(true);
     },
     validate() {
