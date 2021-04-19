@@ -36,14 +36,6 @@
       role="button"
       ><b-icon-github /> Github</b-button
     >
-    <b-button
-      size="lg"
-      variant="primary"
-      class="mx-2"
-      href="https://www.linkedin.com/in/yar-khine-phyo/"
-      role="button"
-      ><b-icon-linkedin /> Linkedin</b-button
-    >
   </b-jumbotron>
   
 </template>
