@@ -20,7 +20,7 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex';
 import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
-import BoundingBox from './BoundingBox';
+import BoundingBox from '@/components/BoundingBox.vue';
 
 export default {
   name: 'ImageViewer',
