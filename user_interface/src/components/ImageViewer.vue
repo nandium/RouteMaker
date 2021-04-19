@@ -100,12 +100,7 @@ export default {
         height: (height / width) * this.windowWidth,
       };
       this.stageKey += 1;
-
-      /**
-       * Rerendering causes race condition where this.$refs are not immediately ready
-       */
-      await waitForKonvaStageLoad(this.$refs, 100);
-      this.setStageZoom();
+      await this.setStageZoom();
     },
     /**
      * Creates an link html and downloads it
@@ -115,7 +110,11 @@ export default {
       downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
     },
-    setStageZoom() {
+    async setStageZoom() {
+      /**
+       * Rerendering causes race condition where this.$refs are not immediately ready
+       */
+      await waitForKonvaStageLoad(this.$refs, 100);
       const stage = this.$refs.stage.getNode();
       addPinchZoomToStage(stage);
     },

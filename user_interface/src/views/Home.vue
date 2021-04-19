@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div>
     <b-jumbotron header-level="4" header="Route Maker" lead="Quickly make custom climbing routes">
     </b-jumbotron>
     <ImageUploader />
@@ -39,7 +39,7 @@ export default {
       setWindowWidth: 'setWindowWidth',
     }),
     calculateCanvaWindowWidth(innerWidth) {
-      return Math.min(800, Math.floor((innerWidth / 6) * 5));
+      return Math.min(800, Math.floor((innerWidth / 10) * 9));
     },
   },
 };
