@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="m-2">
-    <v-stage ref="stage" :key="stageKey" class="canva" v-if="isImageUploaded" :config="configKonva">
+    <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configKonva">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
         <BoundingBox
@@ -30,7 +30,6 @@ export default {
   },
   data() {
     return {
-      stageKey: 10,
       windowWidth: 0,
       boxes: [],
       configImage: {
@@ -66,7 +65,6 @@ export default {
       }
       if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
-        this.stageKey += 1;
       }
       /**
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
@@ -87,7 +85,6 @@ export default {
     /**
      * When Image URL is set, the Konva image component is re-rendered
      * Image is set to a fixed width relative to user's device, the height is rescaled
-     * StageKey is changed to force update Konva canvas
      */
     async rerenderKonva(state) {
       const image = new window.Image();
@@ -99,7 +96,6 @@ export default {
         width: this.windowWidth,
         height: (height / width) * this.windowWidth,
       };
-      this.stageKey += 1;
       await this.setStageZoom();
     },
     /**
