@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home">
     <b-jumbotron header-level="4" header="Route Maker" lead="Quickly make custom climbing routes">
     </b-jumbotron>
     <ImageUploader />
@@ -44,3 +44,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.home {
+  margin: 0 !important;
+}
+</style>
