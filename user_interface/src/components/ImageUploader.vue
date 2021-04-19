@@ -20,16 +20,16 @@
 </template>
 
 <script>
-import { mapMutations , mapGetters , mapActions } from "vuex";
-import getBoundingBox from "@/common/getBoundingBox";
+import { mapMutations, mapGetters, mapActions } from 'vuex';
+import getBoundingBox from '@/common/getBoundingBox';
 
 export default {
-  name: "ImageUploader",
+  name: 'ImageUploader',
   data() {
     return {
       imageFile: null,
       loading: false,
-      errorString: "",
+      errorString: '',
       windowWidth: 0,
     };
   },
@@ -38,7 +38,7 @@ export default {
   },
   async mounted() {
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type === "home/setWindowWidth") {
+      if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
       }
     });
@@ -52,18 +52,18 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("home", {
-      getWindowWidth: "getWindowWidth"
+    ...mapGetters('home', {
+      getWindowWidth: 'getWindowWidth',
     }),
   },
   methods: {
-    ...mapMutations("home", {
-      setImageURL: "setImageURL",
-      setIsImageUploaded: "setIsImageUploaded",
-      setBoxes: "setBoxes",
+    ...mapMutations('home', {
+      setImageURL: 'setImageURL',
+      setIsImageUploaded: 'setIsImageUploaded',
+      setBoxes: 'setBoxes',
     }),
-    ...mapActions("home", {
-      resetBoundingBoxChanges: "resetBoundingBoxChanges",
+    ...mapActions('home', {
+      resetBoundingBoxChanges: 'resetBoundingBoxChanges',
     }),
     /**
      * Creates a browser URL for displaying image.
@@ -85,13 +85,13 @@ export default {
     },
     /**
      * FormData is sent with image attached and the desired rescaled width
-     * 
+     *
      * Existing boxes are reset before the new ones are added
      */
     async uploadFile() {
       const formData = new FormData();
-      formData.append("image", this.imageFile);
-      formData.append("width", this.windowWidth);
+      formData.append('image', this.imageFile);
+      formData.append('width', this.windowWidth);
 
       const boxes = await getBoundingBox(formData);
       this.setBoxes(boxes);
@@ -99,18 +99,18 @@ export default {
       this.setIsImageUploaded(true);
     },
     validate() {
-      this.errorString = "";
+      this.errorString = '';
       this.setIsImageUploaded(false);
       if (!this.imageFile) {
-        this.errorString = "Please attach a file";
+        this.errorString = 'Please attach a file';
         return false;
       }
       if (this.imageFile.size > 8 * 1024 * 1024) {
-        this.errorString = "Max image size is 8 MB";
+        this.errorString = 'Max image size is 8 MB';
         return false;
       }
-      if (!["image/jpeg"].includes(this.imageFile.type)) {
-        this.errorString = "Only JPG is allowed";
+      if (!['image/jpeg'].includes(this.imageFile.type)) {
+        this.errorString = 'Only JPG is allowed';
         return false;
       }
       return true;

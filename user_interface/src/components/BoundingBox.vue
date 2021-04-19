@@ -18,19 +18,19 @@
 </template>
 
 <script>
-import SelectModes from "@/common/selectModes";
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import SelectModes from '@/common/selectModes';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
-  name: "BoundingBox",
+  name: 'BoundingBox',
   data() {
     return {
       strokeWidth: 2,
       boxOpacity: 0.2,
       textOpacity: 0,
-      text: "",
-      fill: "yellow",
-      stroke: "black",
+      text: '',
+      fill: 'yellow',
+      stroke: 'black',
       selected: false,
       selectMode: SelectModes.HANDHOLD,
       showNumberMode: true,
@@ -39,7 +39,7 @@ export default {
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type === "home/setSelectMode") {
+      if (mutation.type === 'home/setSelectMode') {
         this.selectMode = state.home.selectMode;
         if (this.selectMode === SelectModes.EXPORT) {
           this.setDone();
@@ -49,7 +49,7 @@ export default {
       /**
        * ShowNumberMode unhides the numbering of handholds
        */
-      if (mutation.type === "home/setShowNumberMode") {
+      if (mutation.type === 'home/setShowNumberMode') {
         if (state.home.showNumberMode) {
           if (this.selected) {
             this.textOpacity = 1;
@@ -61,10 +61,10 @@ export default {
       }
     });
     this.$store.subscribeAction((action, state) => {
-      if (action.type === "home/resetBoundingBoxChanges") {
+      if (action.type === 'home/resetBoundingBoxChanges') {
         this.reset();
       }
-      if (action.type === "home/updateBoundingBoxNumbers") {
+      if (action.type === 'home/updateBoundingBoxNumbers') {
         if (this.selected) {
           this.text = state.home.boxIdToSelectNumberMapping.get(this.boxId);
         }
@@ -79,15 +79,15 @@ export default {
     boxId: Number,
   },
   computed: {
-    ...mapGetters("home", {
-      getDownloadMode: "getDownloadMode",
+    ...mapGetters('home', {
+      getDownloadMode: 'getDownloadMode',
     }),
     configRect() {
       return {
         width: this.w,
         height: this.h,
         fill: this.fill,
-        stroke: "black",
+        stroke: 'black',
         strokeWidth: this.strokeWidth,
         opacity: this.boxOpacity,
       };
@@ -106,27 +106,27 @@ export default {
         y: this.h / 2,
         text: this.text,
         fontSize: 24,
-        fontFamily: "Calibri",
-        fontStyle: "bold",
+        fontFamily: 'Calibri',
+        fontStyle: 'bold',
         opacity: this.textOpacity,
       };
     },
   },
   methods: {
-    ...mapMutations("home", {
-      addBoxIdToSelected: "addBoxIdToSelected",
-      removeBoxIdFromSelected: "removeBoxIdFromSelected",
-      setDownloadMode: "setDownloadMode",
+    ...mapMutations('home', {
+      addBoxIdToSelected: 'addBoxIdToSelected',
+      removeBoxIdFromSelected: 'removeBoxIdFromSelected',
+      setDownloadMode: 'setDownloadMode',
     }),
-    ...mapActions("home", {
-      updateBoundingBoxNumbers: "updateBoundingBoxNumbers",
+    ...mapActions('home', {
+      updateBoundingBoxNumbers: 'updateBoundingBoxNumbers',
     }),
     reset() {
       this.strokeWidth = 2;
       this.boxOpacity = 0.2;
       this.textOpacity = 0;
-      this.fill = "yellow";
-      this.stroke = "black";
+      this.fill = 'yellow';
+      this.stroke = 'black';
       if (this.selected) {
         this.removeBoxIdFromSelected(this.boxId);
         this.selected = false;
@@ -146,7 +146,7 @@ export default {
     onClick() {
       if (this.selected) {
         this.boxOpacity = 0.2;
-        this.fill = "yellow";
+        this.fill = 'yellow';
         this.textOpacity = 0;
         this.selected = false;
         this.removeBoxIdFromSelected(this.boxId);
@@ -159,7 +159,7 @@ export default {
           this.addBoxIdToSelected(this.boxId);
           this.updateBoundingBoxNumbers();
         } else if (this.selectMode === SelectModes.FOOTHOLD) {
-          this.fill = "blue";
+          this.fill = 'blue';
         }
       }
     },
@@ -176,5 +176,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

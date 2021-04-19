@@ -1,10 +1,6 @@
 <template>
   <div class="home">
-    <b-jumbotron
-      header-level="4"
-      header="Route Maker"
-      lead="Quickly make custom climbing routes"
-    >
+    <b-jumbotron header-level="4" header="Route Maker" lead="Quickly make custom climbing routes">
     </b-jumbotron>
     <ImageUploader />
     <ModeSelector />
@@ -14,13 +10,13 @@
 
 <script>
 // @ is an alias to /src
-import ImageViewer from "@/components/ImageViewer.vue";
-import ImageUploader from "@/components/ImageUploader.vue";
-import ModeSelector from "@/components/ModeSelector.vue";
-import { mapMutations } from "vuex";
+import ImageViewer from '@/components/ImageViewer.vue';
+import ImageUploader from '@/components/ImageUploader.vue';
+import ModeSelector from '@/components/ModeSelector.vue';
+import { mapMutations } from 'vuex';
 
 export default {
-  name: "Home",
+  name: 'Home',
   components: {
     ImageViewer,
     ImageUploader,
@@ -34,13 +30,13 @@ export default {
     window.onload = () => {
       this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
     };
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
     });
   },
   methods: {
-    ...mapMutations("home", {
-      setWindowWidth: "setWindowWidth",
+    ...mapMutations('home', {
+      setWindowWidth: 'setWindowWidth',
     }),
     calculateCanvaWindowWidth(innerWidth) {
       return Math.min(800, Math.floor((innerWidth / 6) * 5));

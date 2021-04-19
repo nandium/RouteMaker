@@ -13,11 +13,9 @@
           </b-button>
         </b-button-group>
 
-        <b-button @click="onReset" class="m-1" variant="outline-info"
-          >Reset</b-button
-        >
+        <b-button @click="onReset" class="m-1" variant="outline-info">Reset</b-button>
         <b-button @click="toggleShowNumbers" variant="outline-info"
-          >{{ this.getShowNumberMode ? "Hide" : "Unhide" }} Numbers</b-button
+          >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
         >
       </b-col>
     </b-row>
@@ -25,20 +23,20 @@
 </template>
 
 <script>
-import SelectModes from "@/common/selectModes";
-import { mapMutations, mapGetters, mapActions } from "vuex";
+import SelectModes from '@/common/selectModes';
+import { mapMutations, mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: "ModeSelector",
+  name: 'ModeSelector',
   mounted() {
     this.isImageUploaded = this.getIsImageUploaded;
     this.showNumberMode = this.getShowNumberMode;
 
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type === "home/setIsImageUploaded") {
+      if (mutation.type === 'home/setIsImageUploaded') {
         this.isImageUploaded = state.home.isImageUploaded;
       }
-      if (mutation.type === "home/setSelectMode") {
+      if (mutation.type === 'home/setSelectMode') {
         this.updateDisplayButtons(state.home.selectMode);
         if (state.home.selectMode === SelectModes.EXPORT) {
           this.showAllButtons = false;
@@ -54,17 +52,17 @@ export default {
       isImageUploaded: false,
       buttons: [
         {
-          caption: "HandHold",
+          caption: 'HandHold',
           state: true,
           mode: SelectModes.HANDHOLD,
         },
         {
-          caption: "FootHold",
+          caption: 'FootHold',
           state: false,
           mode: SelectModes.FOOTHOLD,
         },
         {
-          caption: "Export",
+          caption: 'Export',
           state: false,
           mode: SelectModes.EXPORT,
         },
@@ -72,19 +70,19 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("home", {
-      getShowNumberMode: "getShowNumberMode",
-      getIsImageUploaded: "getIsImageUploaded",
-      getSelectMode: "getSelectMode",
+    ...mapGetters('home', {
+      getShowNumberMode: 'getShowNumberMode',
+      getIsImageUploaded: 'getIsImageUploaded',
+      getSelectMode: 'getSelectMode',
     }),
   },
   methods: {
-    ...mapMutations("home", {
-      setSelectMode: "setSelectMode",
-      setShowNumberMode: "setShowNumberMode",
+    ...mapMutations('home', {
+      setSelectMode: 'setSelectMode',
+      setShowNumberMode: 'setShowNumberMode',
     }),
-    ...mapActions("home", {
-      resetBoundingBoxChanges: "resetBoundingBoxChanges",
+    ...mapActions('home', {
+      resetBoundingBoxChanges: 'resetBoundingBoxChanges',
     }),
     onButtonClick(selectedButton) {
       if (selectedButton.state) return;
@@ -93,8 +91,8 @@ export default {
       this.setSelectMode(selectedButton.mode);
     },
     getButtonVariant(state) {
-      if (state) return "secondary";
-      return "outline-secondary";
+      if (state) return 'secondary';
+      return 'outline-secondary';
     },
     onReset() {
       this.resetBoundingBoxChanges();
@@ -122,5 +120,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

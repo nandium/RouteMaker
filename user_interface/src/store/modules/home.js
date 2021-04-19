@@ -1,16 +1,16 @@
-import SelectModes from "@/common/selectModes";
+import SelectModes from '@/common/selectModes';
 
 const state = () => ({
   // items: [],
   isImageUploaded: false,
-  imageURL: "",
+  imageURL: '',
   windowWidth: 0,
   boxes: [],
   selectMode: SelectModes.HANDHOLD,
   boxIdToSelectNumberMapping: new Map(),
   selectNumberToBoxIdArray: [],
   downloadMode: false,
-  showNumberMode: true
+  showNumberMode: true,
 });
 
 const getters = {
@@ -85,9 +85,9 @@ const actions = {
    * BoundingBoxes also subscribe to this action to reset individually
    */
   resetBoundingBoxChanges({ commit }) {
-    commit("setSelectMode", SelectModes.HANDHOLD);
+    commit('setSelectMode', SelectModes.HANDHOLD);
   },
-  updateBoundingBoxNumbers() {}
+  updateBoundingBoxNumbers() {},
 };
 
 export default {

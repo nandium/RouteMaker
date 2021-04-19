@@ -1,12 +1,6 @@
 <template>
   <b-container fluid class="m-2">
-    <v-stage
-      ref="stage"
-      :key="stageKey"
-      class="canva"
-      v-if="isImageUploaded"
-      :config="configKonva"
-    >
+    <v-stage ref="stage" :key="stageKey" class="canva" v-if="isImageUploaded" :config="configKonva">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
         <BoundingBox
@@ -24,12 +18,12 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from "vuex";
-import { getHeightAndWidthFromDataUrl, downloadURI } from "@/common/utils";
-import BoundingBox from "./BoundingBox";
+import { mapMutations, mapGetters } from 'vuex';
+import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
+import BoundingBox from './BoundingBox';
 
 export default {
-  name: "ImageViewer",
+  name: 'ImageViewer',
   components: {
     BoundingBox,
   },
@@ -45,8 +39,8 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("home", {
-      getWindowWidth: "getWindowWidth"
+    ...mapGetters('home', {
+      getWindowWidth: 'getWindowWidth',
     }),
     configKonva() {
       return {
@@ -60,16 +54,16 @@ export default {
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type === "home/setImageURL") {
+      if (mutation.type === 'home/setImageURL') {
         await this.rerenderKonva(state);
       }
-      if (mutation.type === "home/setIsImageUploaded") {
+      if (mutation.type === 'home/setIsImageUploaded') {
         this.isImageUploaded = state.home.isImageUploaded;
       }
-      if (mutation.type === "home/setBoxes") {
-        this.boxes = state.home.boxes.filter((box) => box.class === "hold");
+      if (mutation.type === 'home/setBoxes') {
+        this.boxes = state.home.boxes.filter((box) => box.class === 'hold');
       }
-      if (mutation.type === "home/setWindowWidth") {
+      if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
         this.stageKey += 1;
       }
@@ -77,7 +71,7 @@ export default {
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
        * Downloads the image
        */
-      if (mutation.type === "home/setDownloadMode") {
+      if (mutation.type === 'home/setDownloadMode') {
         if (state.home.downloadMode === true) {
           await new Promise((resolve) => setTimeout(resolve, 500));
           this.downloadKonva();
@@ -86,8 +80,8 @@ export default {
     });
   },
   methods: {
-    ...mapMutations("home", {
-      setDownloadMode: "setDownloadMode",
+    ...mapMutations('home', {
+      setDownloadMode: 'setDownloadMode',
     }),
     /**
      * When Image URL is set, the Konva image component is re-rendered
@@ -110,10 +104,8 @@ export default {
      * Creates an link html and downloads it
      */
     async downloadKonva() {
-      const uri = this.$refs.stage
-        .getNode()
-        .toDataURL({ mimeType: "image/jpeg" });
-      downloadURI(uri, "Route.jpg");
+      const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg' });
+      downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
     },
   },
