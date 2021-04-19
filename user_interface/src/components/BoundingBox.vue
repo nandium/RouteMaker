@@ -1,5 +1,6 @@
 <template>
   <v-group :config="configGroup">
+    <v-text :config="configText"></v-text>
     <v-rect
       :config="configRect"
       @mouseover="onMouseOver"
@@ -7,13 +8,6 @@
       @click="onClick"
       @tap="onTap"
     ></v-rect>
-    <v-text
-      :config="configText"
-      @mouseover="onMouseOver"
-      @mouseout="onMouseOut"
-      @click="onClick"
-      @tap="onTap"
-    ></v-text>
   </v-group>
 </template>
 
@@ -102,8 +96,8 @@ export default {
     },
     configText() {
       return {
-        x: 5,
-        y: this.h / 2,
+        x: 0,
+        y: this.h + 2,
         text: this.text,
         fontSize: 24,
         fontFamily: 'Calibri',
