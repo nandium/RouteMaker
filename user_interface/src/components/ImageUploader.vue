@@ -38,7 +38,7 @@ export default {
   },
   async mounted() {
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type == "home/setWindowWidth") {
+      if (mutation.type === "home/setWindowWidth") {
         this.windowWidth = state.home.windowWidth;
       }
     });
@@ -78,7 +78,7 @@ export default {
         this.setImageURL(imageURL);
         await this.uploadFile();
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         this.loading = false;
       }

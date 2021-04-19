@@ -39,7 +39,7 @@ export default {
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type == "home/setSelectMode") {
+      if (mutation.type === "home/setSelectMode") {
         this.selectMode = state.home.selectMode;
         if (this.selectMode === SelectModes.EXPORT) {
           this.setDone();
@@ -49,7 +49,7 @@ export default {
       /**
        * ShowNumberMode unhides the numbering of handholds
        */
-      if (mutation.type == "home/setShowNumberMode") {
+      if (mutation.type === "home/setShowNumberMode") {
         if (state.home.showNumberMode) {
           if (this.selected) {
             this.textOpacity = 1;
@@ -61,10 +61,10 @@ export default {
       }
     });
     this.$store.subscribeAction((action, state) => {
-      if (action.type == "home/resetBoundingBoxChanges") {
+      if (action.type === "home/resetBoundingBoxChanges") {
         this.reset();
       }
-      if (action.type == "home/updateBoundingBoxNumbers") {
+      if (action.type === "home/updateBoundingBoxNumbers") {
         if (this.selected) {
           this.text = state.home.boxIdToSelectNumberMapping.get(this.boxId);
         }

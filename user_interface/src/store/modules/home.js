@@ -60,6 +60,10 @@ const mutations = {
     state.selectNumberToBoxIdArray = [...state.selectNumberToBoxIdArray, boxId];
     state.boxIdToSelectNumberMapping.set(boxId, state.selectNumberToBoxIdArray.length);
   },
+  /**
+   * Box IDs are not changed,
+   * but their SelectNumbers propagate starting from the removed index
+   */
   removeBoxIdFromSelected: (state, boxId) => {
     const removedSelectNumber = state.boxIdToSelectNumberMapping.get(boxId);
     state.boxIdToSelectNumberMapping.delete(boxId);

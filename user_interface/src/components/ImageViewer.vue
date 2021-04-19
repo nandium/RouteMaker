@@ -60,16 +60,16 @@ export default {
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
-      if (mutation.type == "home/setImageURL") {
+      if (mutation.type === "home/setImageURL") {
         await this.rerenderKonva(state);
       }
-      if (mutation.type == "home/setIsImageUploaded") {
+      if (mutation.type === "home/setIsImageUploaded") {
         this.isImageUploaded = state.home.isImageUploaded;
       }
-      if (mutation.type == "home/setBoxes") {
+      if (mutation.type === "home/setBoxes") {
         this.boxes = state.home.boxes.filter((box) => box.class === "hold");
       }
-      if (mutation.type == "home/setWindowWidth") {
+      if (mutation.type === "home/setWindowWidth") {
         this.windowWidth = state.home.windowWidth;
         this.stageKey += 1;
       }
@@ -77,7 +77,7 @@ export default {
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
        * Downloads the image
        */
-      if (mutation.type == "home/setDownloadMode") {
+      if (mutation.type === "home/setDownloadMode") {
         if (state.home.downloadMode === true) {
           await new Promise((resolve) => setTimeout(resolve, 500));
           this.downloadKonva();
