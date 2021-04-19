@@ -19,7 +19,8 @@
 
 <script>
 import { mapMutations, mapGetters } from 'vuex';
-import { getHeightAndWidthFromDataUrl, downloadURI, waitForKonvaStageLoad } from '@/common/utils';
+import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
+import { waitForKonvaStageLoad } from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
 
 export default {
@@ -100,6 +101,9 @@ export default {
       };
       this.stageKey += 1;
 
+      /**
+       * Rerendering causes race condition where refs are not immediately ready
+       */
       await waitForKonvaStageLoad(this.$refs, 100);
       this.setStageZoom();
     },
