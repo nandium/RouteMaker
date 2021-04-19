@@ -13,7 +13,7 @@
 
 <script>
 import SelectModes from "@/common/selectModes";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "BoundingBox",
@@ -28,6 +28,7 @@ export default {
       selected: false,
       selectMode: SelectModes.HANDHOLD,
       showNumberMode: true,
+      selectNumber: 0
     };
   },
   mounted() {
@@ -53,9 +54,14 @@ export default {
         this.showNumberMode = state.home.showNumberMode;
       }
     });
-    this.$store.subscribeAction((action) => {
+    this.$store.subscribeAction((action, state) => {
       if (action.type == "home/resetBoundingBoxChanges") {
         this.reset();
+      }
+      if (action.type == "home/updateBoundingBoxNumbers") {
+        if (this.selected) {
+          this.text = state.home.boxIdToSelectNumberMapping.get(this.boxId);
+        }
       }
     });
   },
@@ -64,11 +70,11 @@ export default {
     y: Number,
     w: Number,
     h: Number,
+    boxId: Number
   },
   computed: {
     ...mapGetters("home", {
-      getSelectNumber: "getSelectNumber",
-      getDownloadMode: "getDownloadMode",
+      getDownloadMode: "getDownloadMode"
     }),
     configRect() {
       return {
@@ -102,19 +108,23 @@ export default {
   },
   methods: {
     ...mapMutations("home", {
-      setSelectNumber: "setSelectNumber",
+      addBoxIdToSelected: "addBoxIdToSelected",
+      removeBoxIdFromSelected: "removeBoxIdFromSelected",
       setDownloadMode: "setDownloadMode",
+    }),
+    ...mapActions("home", {
+      updateBoundingBoxNumbers: "updateBoundingBoxNumbers"
     }),
     reset() {
       this.strokeWidth = 2;
       this.boxOpacity = 0.2;
       this.textOpacity = 0;
-      this.text = "0";
       this.fill = "yellow";
       this.stroke = "black";
-      this.selected = false;
-
-      this.setSelectNumber(1);
+      if (this.selected) {
+        this.removeBoxIdFromSelected(this.boxId);
+        this.selected = false;
+      }
     },
     onMouseOver() {
       this.strokeWidth = 4;
@@ -125,7 +135,7 @@ export default {
     /**
      * If the box is selected, unselect it
      * If the box is not selected, select and number if handhold
-     * If the box is nto selected, select only if foothold
+     * If the box is not selected, select only if foothold
      */
     onClick() {
       if (this.selected) {
@@ -133,17 +143,18 @@ export default {
         this.fill = "yellow";
         this.textOpacity = 0;
         this.selected = false;
+        this.removeBoxIdFromSelected(this.boxId);
+        this.updateBoundingBoxNumbers();
       } else {
+        this.boxOpacity = 0.6;
+        this.selected = true;
         if (this.selectMode === SelectModes.HANDHOLD) {
           this.textOpacity = this.showNumberMode ? 1 : 0;
-          this.text = this.getSelectNumber;
-          // Increment global select count (Not the best way for now)
-          this.setSelectNumber(this.text + 1);
+          this.addBoxIdToSelected(this.boxId);
+          this.updateBoundingBoxNumbers();
         } else if (this.selectMode === SelectModes.FOOTHOLD) {
           this.fill = "blue";
         }
-        this.boxOpacity = 0.6;
-        this.selected = true;
       }
     },
     onTap() {

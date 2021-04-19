@@ -7,7 +7,8 @@ const state = () => ({
   windowWidth: 0,
   boxes: [],
   selectMode: SelectModes.HANDHOLD,
-  selectNumber: 1,
+  boxIdToSelectNumberMapping: new Map(),
+  selectNumberToBoxIdArray: [],
   downloadMode: false,
   showNumberMode: true
 });
@@ -28,8 +29,8 @@ const getters = {
   getSelectMode: (state) => {
     return state.selectMode;
   },
-  getSelectNumber: (state) => {
-    return state.selectNumber;
+  getSelectNumber: (state) => (boxId) => {
+    return state.boxIdToSelectNumberMapping.get(boxId);
   },
   getDownloadMode: (state) => {
     return state.downloadMode;
@@ -55,8 +56,17 @@ const mutations = {
   setSelectMode: (state, selectMode) => {
     state.selectMode = selectMode;
   },
-  setSelectNumber: (state, selectNumber) => {
-    state.selectNumber = selectNumber;
+  addBoxIdToSelected: (state, boxId) => {
+    state.selectNumberToBoxIdArray = [...state.selectNumberToBoxIdArray, boxId];
+    state.boxIdToSelectNumberMapping.set(boxId, state.selectNumberToBoxIdArray.length);
+  },
+  removeBoxIdFromSelected: (state, boxId) => {
+    const removedSelectNumber = state.boxIdToSelectNumberMapping.get(boxId);
+    state.boxIdToSelectNumberMapping.delete(boxId);
+    for (let i = removedSelectNumber; i < state.selectNumberToBoxIdArray.length; i++) {
+      state.boxIdToSelectNumberMapping.set(state.selectNumberToBoxIdArray[i], i);
+    }
+    state.selectNumberToBoxIdArray.splice(removedSelectNumber - 1, 1);
   },
   setDownloadMode: (state, downloadMode) => {
     state.downloadMode = downloadMode;
@@ -71,9 +81,9 @@ const actions = {
    * BoundingBoxes also subscribe to this action to reset individually
    */
   resetBoundingBoxChanges({ commit }) {
-    commit("setSelectNumber", 1);
     commit("setSelectMode", SelectModes.HANDHOLD);
-  }
+  },
+  updateBoundingBoxNumbers() {}
 };
 
 export default {
