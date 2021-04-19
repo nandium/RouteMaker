@@ -1,0 +1,30 @@
+# Directories to exclude
+build
+.venv
+venv
+assets
+.serverless
+node_modules
+weights
+docs
+
+# File extensions to exclude
+*.iynb
+*.sh
+*.log
+*.txt
+*.xml
+*.conf
+*.cer
+*.pem
+
+# Files to exclude
+package-lock.json
+LICENSE
+Dockerfile
+.gitignore
+.editorconfig
+.prettierignore
+.eslintignore
+.huskyrc
+.npmrc
