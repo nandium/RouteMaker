@@ -107,7 +107,6 @@ export default {
     /**
      * Unselect the rest of the buttons
      * Sort them by alphebetical to maintain the order
-     * Update the selected mode state
      */
     updateDisplayButtons(newMode) {
       this.buttons = this.buttons

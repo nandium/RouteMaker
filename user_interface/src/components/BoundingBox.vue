@@ -7,7 +7,13 @@
       @click="onClick"
       @tap="onTap"
     ></v-rect>
-    <v-text :config="configText"></v-text>
+    <v-text
+      :config="configText"
+      @mouseover="onMouseOver"
+      @mouseout="onMouseOut"
+      @click="onClick"
+      @tap="onTap"
+    ></v-text>
   </v-group>
 </template>
 
@@ -28,7 +34,7 @@ export default {
       selected: false,
       selectMode: SelectModes.HANDHOLD,
       showNumberMode: true,
-      selectNumber: 0
+      selectNumber: 0,
     };
   },
   mounted() {
@@ -70,11 +76,11 @@ export default {
     y: Number,
     w: Number,
     h: Number,
-    boxId: Number
+    boxId: Number,
   },
   computed: {
     ...mapGetters("home", {
-      getDownloadMode: "getDownloadMode"
+      getDownloadMode: "getDownloadMode",
     }),
     configRect() {
       return {
@@ -113,7 +119,7 @@ export default {
       setDownloadMode: "setDownloadMode",
     }),
     ...mapActions("home", {
-      updateBoundingBoxNumbers: "updateBoundingBoxNumbers"
+      updateBoundingBoxNumbers: "updateBoundingBoxNumbers",
     }),
     reset() {
       this.strokeWidth = 2;

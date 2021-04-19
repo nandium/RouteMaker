@@ -76,7 +76,6 @@ export default {
       /**
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
        * Downloads the image
-       * Resets the changes and change mode to HANDHOLD
        */
       if (mutation.type == "home/setDownloadMode") {
         if (state.home.downloadMode === true) {
@@ -109,7 +108,6 @@ export default {
     },
     /**
      * Creates an link html and downloads it
-     * Note: Requires page refresh afterwards as it messes up with html positions
      */
     async downloadKonva() {
       const uri = this.$refs.stage
