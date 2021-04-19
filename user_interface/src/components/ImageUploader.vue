@@ -4,9 +4,9 @@
       <b-col md="4" sm="10">
         <b-form-file
           v-model="imageFile"
-          :placeholder="loading ? 'Loading..' : 'Climb wall image..'"
+          :placeholder="isLoading ? 'Loading..' : 'Climb wall image..'"
           drop-placeholder="Drop file here..."
-          :disabled="loading"
+          :disabled="isLoading"
           accept="image/jpeg"
         ></b-form-file>
       </b-col>
@@ -16,19 +16,24 @@
         {{ errorString }}
       </b-col>
     </b-row>
+    <Loader :isLoading="isLoading" />
   </b-container>
 </template>
 
 <script>
 import { mapMutations, mapGetters, mapActions } from 'vuex';
 import getBoundingBox from '@/common/getBoundingBox';
+import Loader from '@/components/Loader.vue';
 
 export default {
   name: 'ImageUploader',
+  components: {
+    Loader,
+  },
   data() {
     return {
       imageFile: null,
-      loading: false,
+      isLoading: false,
       errorString: '',
       windowWidth: 0,
     };
@@ -73,14 +78,14 @@ export default {
       if (!this.validate()) return;
 
       try {
-        this.loading = true;
+        this.isLoading = true;
         const imageURL = URL.createObjectURL(this.imageFile);
         this.setImageURL(imageURL);
         await this.uploadFile();
       } catch (error) {
         console.error(error);
       } finally {
-        this.loading = false;
+        this.isLoading = false;
       }
     },
     /**
