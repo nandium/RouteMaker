@@ -19,7 +19,7 @@
 
 <script>
 import { mapMutations, mapGetters } from 'vuex';
-import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
+import { getHeightAndWidthFromDataUrl, downloadURI, waitForKonvaStageLoad } from '@/common/utils';
 import BoundingBox from '@/components/BoundingBox.vue';
 
 export default {
@@ -99,6 +99,9 @@ export default {
         height: (height / width) * this.windowWidth,
       };
       this.stageKey += 1;
+
+      await waitForKonvaStageLoad(this.$refs, 100);
+      this.setStageZoom();
     },
     /**
      * Creates an link html and downloads it
@@ -107,6 +110,32 @@ export default {
       const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg' });
       downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
+    },
+    setStageZoom() {
+      var scaleBy = 1.01;
+      const stage = this.$refs.stage.getNode();
+      stage.on('wheel', (e) => {
+        e.evt.preventDefault();
+        var oldScale = stage.scaleX();
+
+        var pointer = stage.getPointerPosition();
+
+        var mousePointTo = {
+          x: (pointer.x - stage.x()) / oldScale,
+          y: (pointer.y - stage.y()) / oldScale,
+        };
+
+        var newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+        stage.scale({ x: newScale, y: newScale });
+
+        var newPos = {
+          x: pointer.x - mousePointTo.x * newScale,
+          y: pointer.y - mousePointTo.y * newScale,
+        };
+        stage.position(newPos);
+        stage.batchDraw();
+      });
     },
   },
 };
