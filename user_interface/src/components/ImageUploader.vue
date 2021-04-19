@@ -120,4 +120,7 @@ export default {
 </script>
 
 <style scoped>
+.m-2 {
+  margin: 0 !important;
+}
 </style>
