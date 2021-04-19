@@ -20,7 +20,7 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex';
 import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
-import { waitForKonvaStageLoad } from '@/common/konvaMethods';
+import { waitForKonvaStageLoad, addPinchZoomToStage } from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
 
 export default {
@@ -102,7 +102,7 @@ export default {
       this.stageKey += 1;
 
       /**
-       * Rerendering causes race condition where refs are not immediately ready
+       * Rerendering causes race condition where this.$refs are not immediately ready
        */
       await waitForKonvaStageLoad(this.$refs, 100);
       this.setStageZoom();
@@ -116,30 +116,8 @@ export default {
       this.setDownloadMode(false);
     },
     setStageZoom() {
-      var scaleBy = 1.01;
       const stage = this.$refs.stage.getNode();
-      stage.on('wheel', (e) => {
-        e.evt.preventDefault();
-        var oldScale = stage.scaleX();
-
-        var pointer = stage.getPointerPosition();
-
-        var mousePointTo = {
-          x: (pointer.x - stage.x()) / oldScale,
-          y: (pointer.y - stage.y()) / oldScale,
-        };
-
-        var newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-
-        stage.scale({ x: newScale, y: newScale });
-
-        var newPos = {
-          x: pointer.x - mousePointTo.x * newScale,
-          y: pointer.y - mousePointTo.y * newScale,
-        };
-        stage.position(newPos);
-        stage.batchDraw();
-      });
+      addPinchZoomToStage(stage);
     },
   },
 };
