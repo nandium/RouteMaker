@@ -4,7 +4,7 @@
       <b-col md="4" sm="10">
         <b-form-file
           v-model="imageFile"
-          :placeholder="isLoading ? 'Loading..' : 'Climb wall image..'"
+          placeholder="Climb wall image"
           drop-placeholder="Drop file here..."
           :disabled="isLoading"
           accept="image/jpeg"
