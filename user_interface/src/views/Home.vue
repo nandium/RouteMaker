@@ -39,8 +39,13 @@ export default {
       setWindowWidth: 'setWindowWidth',
     }),
     calculateCanvaWindowWidth(innerWidth) {
-      return Math.min(800, Math.floor((innerWidth / 6) * 5));
+      return Math.min(800, Math.floor((innerWidth / 10) * 9));
     },
   },
 };
 </script>
+<style scoped>
+.home {
+  margin: 0 !important;
+}
+</style>

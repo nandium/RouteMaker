@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="m-2">
-    <v-stage ref="stage" :key="stageKey" class="canva" v-if="isImageUploaded" :config="configKonva">
+    <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configKonva">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
         <BoundingBox
@@ -20,6 +20,7 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex';
 import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
+import { waitForKonvaStageLoad, addPinchZoomToStage } from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
 
 export default {
@@ -29,7 +30,6 @@ export default {
   },
   data() {
     return {
-      stageKey: 10,
       windowWidth: 0,
       boxes: [],
       configImage: {
@@ -65,7 +65,6 @@ export default {
       }
       if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
-        this.stageKey += 1;
       }
       /**
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
@@ -86,7 +85,6 @@ export default {
     /**
      * When Image URL is set, the Konva image component is re-rendered
      * Image is set to a fixed width relative to user's device, the height is rescaled
-     * StageKey is changed to force update Konva canvas
      */
     async rerenderKonva(state) {
       const image = new window.Image();
@@ -98,7 +96,7 @@ export default {
         width: this.windowWidth,
         height: (height / width) * this.windowWidth,
       };
-      this.stageKey += 1;
+      await this.setStageZoom();
     },
     /**
      * Creates an link html and downloads it
@@ -107,6 +105,14 @@ export default {
       const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg' });
       downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
+    },
+    async setStageZoom() {
+      /**
+       * Rerendering causes race condition where this.$refs are not immediately ready
+       */
+      await waitForKonvaStageLoad(this.$refs, 100);
+      const stage = this.$refs.stage.getNode();
+      addPinchZoomToStage(stage);
     },
   },
 };
