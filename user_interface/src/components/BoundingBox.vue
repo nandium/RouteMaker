@@ -84,6 +84,8 @@ export default {
         stroke: 'black',
         strokeWidth: this.strokeWidth,
         opacity: this.boxOpacity,
+        perfectDrawEnabled: false,
+        transformsEnabled: 'position',
       };
     },
     configGroup() {
