@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="m-2">
     <b-row class="justify-content-center m-1">
-      <b-col class="input-group" md="4" sm="10">
+      <b-col class="input-group" md="6" sm="10">
         <span v-if="!imageFile" class="input-group-btn mx-1">
           <b-button variant="link" to="/about#section2"
             ><b-icon-question-circle class="align-middle" variant="info" scale="1.5"
@@ -9,15 +9,15 @@
         </span>
         <b-form-file
           v-model="imageFile"
-          placeholder="Climb wall image"
-          drop-placeholder="Drop file here..."
+          class="formFile"
+          placeholder="Wall image.."
           :disabled="isLoading"
           accept="image/jpeg"
         ></b-form-file>
       </b-col>
     </b-row>
     <b-row class="justify-content-center m-1">
-      <b-col class="text-danger font-italic" md="4" sm="10">
+      <b-col class="text-danger font-italic" md="6" sm="10">
         {{ errorString }}
       </b-col>
     </b-row>
@@ -135,5 +135,8 @@ export default {
 }
 .icon {
   vertical-align: middle;
+}
+.formFile {
+  text-align: left;
 }
 </style>
