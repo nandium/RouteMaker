@@ -14,6 +14,7 @@
 <script>
 import SelectModes from '@/common/selectModes';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { OPTIMIZATION_PARAMS } from '@/common/konvaMethods';
 
 export default {
   name: 'BoundingBox',
@@ -84,8 +85,7 @@ export default {
         stroke: 'black',
         strokeWidth: this.strokeWidth,
         opacity: this.boxOpacity,
-        perfectDrawEnabled: false,
-        transformsEnabled: 'position',
+        ...OPTIMIZATION_PARAMS,
       };
     },
     configGroup() {
@@ -105,6 +105,7 @@ export default {
         fontFamily: 'Calibri',
         fontStyle: 'bold',
         opacity: this.textOpacity,
+        ...OPTIMIZATION_PARAMS,
       };
     },
   },
