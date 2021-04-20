@@ -96,3 +96,10 @@ const getCenter = (p1, p2) => {
     y: (p1.y + p2.y) / 2,
   };
 };
+
+export const OPTIMIZATION_PARAMS = {
+  perfectDrawEnabled: false,
+  transformsEnabled: 'position',
+  shadowForStrokeEnabled: false,
+  hitStrokeWidth: 0,
+};

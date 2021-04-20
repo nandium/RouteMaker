@@ -1,7 +1,12 @@
 <template>
   <b-container fluid class="m-2">
     <b-row class="justify-content-center m-1">
-      <b-col md="4" sm="10">
+      <b-col class="input-group" md="4" sm="10">
+        <span v-if="!imageFile" class="input-group-btn mx-1">
+          <b-button variant="link" to="/about#section2"
+            ><b-icon-question-circle class="align-middle" variant="info" scale="1.5"
+          /></b-button>
+        </span>
         <b-form-file
           v-model="imageFile"
           placeholder="Climb wall image"
@@ -127,5 +132,8 @@ export default {
 <style scoped>
 .m-2 {
   margin: 0 !important;
+}
+.icon {
+  vertical-align: middle;
 }
 </style>

@@ -17,9 +17,6 @@
         <b-button @click="toggleShowNumbers" class="m-1" variant="outline-info"
           >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
         >
-        <router-link class="m-2" to="/about#section2"
-          ><b-icon-question-circle variant="info" scale="1.5"
-        /></router-link>
       </b-col>
     </b-row>
   </b-container>
