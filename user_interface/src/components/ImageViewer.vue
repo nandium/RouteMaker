@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="m-2">
+  <b-container fluid class="my-2">
     <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configKonva">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>

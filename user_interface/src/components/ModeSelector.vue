@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="m-2">
+  <b-container fluid class="my-2">
     <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col md="4" sm="10">
         <b-button-group size="md" class="m-2" v-if="showAllButtons">
