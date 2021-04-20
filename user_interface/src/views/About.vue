@@ -1,7 +1,7 @@
 <template>
   <b-jumbotron>
     <h1 class="display-4">Hello Climbers! &#129495;</h1>
-    <hr class="my-4" />
+    <hr class="my-4" id="section1" />
     <p class="lead">
       Personally, when people make routes for me at the gym,
       <br />
@@ -17,7 +17,7 @@
     </p>
     <p class="lead">This application aims to solve this issue.</p>
 
-    <hr class="my-4" />
+    <hr class="my-4" id="section2" />
     <p class="lead my-4">1. Upload the photo of a climbing wall</p>
     <img class="border border-secondary" src="@/assets/Screenshot_1.jpg" />
     <br /><br />
@@ -48,6 +48,21 @@
     >
   </b-jumbotron>
 </template>
+<script>
+export default {
+  name: 'About',
+  mounted() {
+    this.navigateToAncher();
+  },
+  methods: {
+    navigateToAncher() {
+      const section = this.$router.currentRoute.hash.replace('#', '');
+      if (section) this.$nextTick(() => window.document.getElementById(section).scrollIntoView());
+    },
+  },
+};
+</script>
+
 <style scoped>
 img {
   border-radius: 1rem;
