@@ -1,3 +1,5 @@
+import { throttle } from 'lodash';
+
 /**
  * Given refs object of Vue Konva, awaits for v-stageNode to load
  * @param {refs} vueKonvaRefs
@@ -24,118 +26,121 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
   let lastCenter = null;
   let lastDist = 0;
 
-  stageNode.on('touchmove', (e) => {
-    e.evt.preventDefault();
-    const touch1 = e.evt.touches[0];
-    const touch2 = e.evt.touches[1];
+  stageNode.on(
+    'touchmove',
+    throttle((e) => {
+      e.evt.preventDefault();
+      const touch1 = e.evt.touches[0];
+      const touch2 = e.evt.touches[1];
 
-    if (touch1 && touch2) {
-      if (stageNode.isDragging()) {
-        stageNode.stopDrag();
-      }
+      if (touch1 && touch2) {
+        if (stageNode.isDragging()) {
+          stageNode.stopDrag();
+        }
 
-      const p1 = {
-        x: touch1.clientX,
-        y: touch1.clientY,
-      };
-      const p2 = {
-        x: touch2.clientX,
-        y: touch2.clientY,
-      };
+        const p1 = {
+          x: touch1.clientX,
+          y: touch1.clientY,
+        };
+        const p2 = {
+          x: touch2.clientX,
+          y: touch2.clientY,
+        };
 
-      if (!lastCenter) {
-        lastCenter = getCenter(p1, p2);
-        return;
-      }
-      const newCenter = getCenter(p1, p2);
+        if (!lastCenter) {
+          lastCenter = getCenter(p1, p2);
+          return;
+        }
+        const newCenter = getCenter(p1, p2);
 
-      const dist = getDistance(p1, p2);
+        const dist = getDistance(p1, p2);
 
-      if (!lastDist) {
-        lastDist = dist;
-      }
+        if (!lastDist) {
+          lastDist = dist;
+        }
 
-      var pointTo = {
-        x: (newCenter.x - stageNode.x()) / stageNode.scaleX(),
-        y: (newCenter.y - stageNode.y()) / stageNode.scaleX(),
-      };
+        var pointTo = {
+          x: (newCenter.x - stageNode.x()) / stageNode.scaleX(),
+          y: (newCenter.y - stageNode.y()) / stageNode.scaleX(),
+        };
 
-      const scale = stageNode.scaleX() * (dist / lastDist);
+        const scale = stageNode.scaleX() * (dist / lastDist);
 
-      // calculate new position of the stageNode
-      const dx = newCenter.x - lastCenter.x;
-      const dy = newCenter.y - lastCenter.y;
+        // calculate new position of the stageNode
+        const dx = newCenter.x - lastCenter.x;
+        const dy = newCenter.y - lastCenter.y;
 
-      const newPos = {
-        x: newCenter.x - pointTo.x * scale + dx,
-        y: newCenter.y - pointTo.y * scale + dy,
-      };
+        const newPos = {
+          x: newCenter.x - pointTo.x * scale + dx,
+          y: newCenter.y - pointTo.y * scale + dy,
+        };
 
-      // calculate position of the bottom right corner
-      const bottomRightPos = {
-        x: newPos.x + scale * imageWidth,
-        y: newPos.y + scale * imageHeight,
-      };
+        // calculate position of the bottom right corner
+        const bottomRightPos = {
+          x: newPos.x + scale * imageWidth,
+          y: newPos.y + scale * imageHeight,
+        };
 
-      // ensure the user cannot zoom out indefinitely
-      if (
-        newPos.x > 0 ||
-        newPos.y > 0 ||
-        bottomRightPos.x < imageWidth ||
-        bottomRightPos.y < imageHeight
-      ) {
-        stageNode.position({ x: 0, y: 0 });
-        stageNode.scaleX(1);
-        stageNode.scaleY(1);
+        // ensure the user cannot zoom out indefinitely
+        if (
+          newPos.x > 0 ||
+          newPos.y > 0 ||
+          bottomRightPos.x < imageWidth ||
+          bottomRightPos.y < imageHeight
+        ) {
+          stageNode.position({ x: 0, y: 0 });
+          stageNode.scaleX(1);
+          stageNode.scaleY(1);
+          stageNode.batchDraw();
+          return;
+        }
+
+        stageNode.scaleX(scale);
+        stageNode.scaleY(scale);
+
+        stageNode.position(newPos);
         stageNode.batchDraw();
-        return;
-      }
 
-      stageNode.scaleX(scale);
-      stageNode.scaleY(scale);
+        lastDist = dist;
+        lastCenter = newCenter;
+      } else if (touch1) {
+        const p1 = {
+          x: touch1.clientX,
+          y: touch1.clientY,
+        };
 
-      stageNode.position(newPos);
-      stageNode.batchDraw();
+        if (!lastCenter) {
+          lastCenter = { ...p1 };
+          return;
+        }
+        const dx = p1.x - lastCenter.x;
+        const dy = p1.y - lastCenter.y;
+        const newPos = {
+          x: stageNode.x() + dx,
+          y: stageNode.y() + dy,
+        };
 
-      lastDist = dist;
-      lastCenter = newCenter;
-    } else if (touch1) {
-      const p1 = {
-        x: touch1.clientX,
-        y: touch1.clientY,
-      };
+        // calculate position of the bottom right corner
+        const bottomRightPos = {
+          x: newPos.x + imageWidth * stageNode.scaleX(),
+          y: newPos.y + imageHeight * stageNode.scaleY(),
+        };
 
-      if (!lastCenter) {
+        // ensure the user cannot drag out of the bound
+        if (newPos.x > 0 || bottomRightPos.x < imageWidth) {
+          newPos.x = stageNode.x();
+        }
+        if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
+          newPos.y = stageNode.y();
+        }
+
+        stageNode.position(newPos);
+        stageNode.batchDraw();
+
         lastCenter = { ...p1 };
-        return;
       }
-      const dx = p1.x - lastCenter.x;
-      const dy = p1.y - lastCenter.y;
-      const newPos = {
-        x: stageNode.x() + dx,
-        y: stageNode.y() + dy,
-      };
-
-      // calculate position of the bottom right corner
-      const bottomRightPos = {
-        x: newPos.x + imageWidth * stageNode.scaleX(),
-        y: newPos.y + imageHeight * stageNode.scaleY(),
-      };
-
-      // ensure the user cannot drag out of the bound
-      if (newPos.x > 0 || bottomRightPos.x < imageWidth) {
-        newPos.x = stageNode.x();
-      }
-      if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
-        newPos.y = stageNode.y();
-      }
-
-      stageNode.position(newPos);
-      stageNode.batchDraw();
-
-      lastCenter = { ...p1 };
-    }
-  });
+    }, 15),
+  );
 
   stageNode.on('touchend', () => {
     lastDist = 0;
