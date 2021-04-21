@@ -82,22 +82,24 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
         };
 
         // ensure the user cannot zoom out indefinitely
-        if (
-          newPos.x > 0 ||
-          newPos.y > 0 ||
-          bottomRightPos.x < imageWidth ||
-          bottomRightPos.y < imageHeight
-        ) {
-          stageNode.position({ x: 0, y: 0 });
-          stageNode.scaleX(1);
-          stageNode.scaleY(1);
-          stageNode.batchDraw();
-          return;
+        if (newPos.x > 0) {
+          newPos.x = 0;
+        }
+        if (newPos.y > 0) {
+          newPos.y = 0;
+        }
+        // if bottom right corner is out of bound, move the top left corner accordingly
+        if (bottomRightPos.x < imageWidth) {
+          if (newPos.x === 0) return;
+          newPos.x += imageWidth - bottomRightPos.x;
+        }
+        if (bottomRightPos.y < imageHeight) {
+          if (newPos.y === 0) return;
+          newPos.y += imageHeight - bottomRightPos.y;
         }
 
         stageNode.scaleX(scale);
         stageNode.scaleY(scale);
-
         stageNode.position(newPos);
         stageNode.batchDraw();
 
