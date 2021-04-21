@@ -17,8 +17,10 @@ export const waitForKonvaStageLoad = async (refs, intervalDuration) => {
 /**
  * https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
  * @param {node} stageNode
+ * @param {Number} imageWidth
+ * @param {Number} imageHeight
  */
-export const addPinchZoomToStage = (stageNode) => {
+export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
   let lastCenter = null;
   let lastDist = 0;
 
@@ -60,9 +62,6 @@ export const addPinchZoomToStage = (stageNode) => {
 
       const scale = stageNode.scaleX() * (dist / lastDist);
 
-      stageNode.scaleX(scale);
-      stageNode.scaleY(scale);
-
       // calculate new position of the stageNode
       const dx = newCenter.x - lastCenter.x;
       const dy = newCenter.y - lastCenter.y;
@@ -71,6 +70,29 @@ export const addPinchZoomToStage = (stageNode) => {
         x: newCenter.x - pointTo.x * scale + dx,
         y: newCenter.y - pointTo.y * scale + dy,
       };
+
+      // calculate position of the bottom right corner
+      const bottomRightPos = {
+        x: newPos.x + scale * imageWidth,
+        y: newPos.y + scale * imageHeight,
+      };
+
+      // ensure the user cannot zoom out indefinitely
+      if (
+        newPos.x > 0 ||
+        newPos.y > 0 ||
+        bottomRightPos.x < imageWidth ||
+        bottomRightPos.y < imageHeight
+      ) {
+        stageNode.position({ x: 0, y: 0 });
+        stageNode.scaleX(1);
+        stageNode.scaleY(1);
+        stageNode.batchDraw();
+        return;
+      }
+
+      stageNode.scaleX(scale);
+      stageNode.scaleY(scale);
 
       stageNode.position(newPos);
       stageNode.batchDraw();
