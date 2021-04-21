@@ -139,7 +139,7 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
 
         lastCenter = { ...p1 };
       }
-    }, 15),
+    }, 5),
   );
 
   stageNode.on('touchend', () => {
