@@ -66,7 +66,7 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
       const dx = newCenter.x - lastCenter.x;
       const dy = newCenter.y - lastCenter.y;
 
-      var newPos = {
+      const newPos = {
         x: newCenter.x - pointTo.x * scale + dx,
         y: newCenter.y - pointTo.y * scale + dy,
       };
@@ -99,6 +99,43 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
 
       lastDist = dist;
       lastCenter = newCenter;
+    } else if (touch1) {
+      const p1 = {
+        x: touch1.clientX,
+        y: touch1.clientY,
+      };
+
+      if (!lastCenter) {
+        lastCenter = { ...p1 };
+        return;
+      }
+      const dx = p1.x - lastCenter.x;
+      const dy = p1.y - lastCenter.y;
+      const newPos = {
+        x: stageNode.x() + dx,
+        y: stageNode.y() + dy,
+      };
+
+      // calculate position of the bottom right corner
+      const bottomRightPos = {
+        x: newPos.x + imageWidth * stageNode.scaleX(),
+        y: newPos.y + imageHeight * stageNode.scaleY(),
+      };
+
+      // ensure the user cannot drag out of the bound
+      if (
+        newPos.x > 0 ||
+        newPos.y > 0 ||
+        bottomRightPos.x < imageWidth ||
+        bottomRightPos.y < imageHeight
+      ) {
+        return;
+      }
+
+      stageNode.position(newPos);
+      stageNode.batchDraw();
+
+      lastCenter = { ...p1 };
     }
   });
 
