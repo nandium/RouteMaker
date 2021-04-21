@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="my-2">
-    <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configKonva">
+    <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configStage">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
         <BoundingBox
@@ -42,7 +42,7 @@ export default {
     ...mapGetters('home', {
       getWindowWidth: 'getWindowWidth',
     }),
-    configKonva() {
+    configStage() {
       return {
         width: this.windowWidth,
         height: this.windowWidth * 1.5,
