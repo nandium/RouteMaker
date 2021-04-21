@@ -1,6 +1,6 @@
 <template>
   <b-container fluid class="my-2">
-    <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configKonva">
+    <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configStage">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
         <BoundingBox
@@ -42,7 +42,7 @@ export default {
     ...mapGetters('home', {
       getWindowWidth: 'getWindowWidth',
     }),
-    configKonva() {
+    configStage() {
       return {
         width: this.windowWidth,
         height: this.windowWidth * 1.5,
@@ -90,13 +90,14 @@ export default {
       const image = new window.Image();
       const imageURL = state.home.imageURL;
       const { height, width } = await getHeightAndWidthFromDataUrl(imageURL);
+      const imageHeight = (height / width) * this.windowWidth;
       image.src = imageURL;
       this.configImage = {
         image,
         width: this.windowWidth,
-        height: (height / width) * this.windowWidth,
+        height: imageHeight,
       };
-      await this.setStageZoom();
+      await this.setStageZoom(this.windowWidth, imageHeight);
     },
     /**
      * Creates an link html and downloads it
@@ -106,13 +107,13 @@ export default {
       downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
     },
-    async setStageZoom() {
+    async setStageZoom(imageWidth, imageHeight) {
       /**
        * Rerendering causes race condition where this.$refs are not immediately ready
        */
       await waitForKonvaStageLoad(this.$refs, 100);
       const stage = this.$refs.stage.getNode();
-      addPinchZoomToStage(stage);
+      addPinchZoomToStage(stage, imageWidth, imageHeight);
     },
   },
 };

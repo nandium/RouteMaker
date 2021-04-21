@@ -13,6 +13,7 @@
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.6.5",
     "konva": "^7.2.5",
+    "lodash": "^4.17.21",
     "vue": "^2.6.11",
     "vue-konva": "^2.1.7",
     "vue-loading-overlay": "^3.4.2",
