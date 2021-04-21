@@ -123,13 +123,11 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
       };
 
       // ensure the user cannot drag out of the bound
-      if (
-        newPos.x > 0 ||
-        newPos.y > 0 ||
-        bottomRightPos.x < imageWidth ||
-        bottomRightPos.y < imageHeight
-      ) {
-        return;
+      if (newPos.x > 0 || bottomRightPos.x < imageWidth) {
+        newPos.x = stageNode.x();
+      }
+      if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
+        newPos.y = stageNode.y();
       }
 
       stageNode.position(newPos);
