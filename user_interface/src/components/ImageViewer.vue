@@ -70,7 +70,7 @@ export default {
         this.isImageUploaded = state.home.isImageUploaded;
       }
       if (mutation.type === 'home/setBoxes') {
-        this.boxes = state.home.boxes.filter((box) => box.class === 'hold');
+        this.boxes = state.home.boxes.filter((box) => box.class !== 'volume');
       }
       if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
