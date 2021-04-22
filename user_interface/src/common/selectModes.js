@@ -6,7 +6,8 @@ class SelectModes {
   // Private Fields
   static #_HANDHOLD = 0;
   static #_FOOTHOLD = 1;
-  static #_EXPORT = 2;
+  static #_DRAWBOX = 2;
+  static #_EXPORT = 3;
 
   // Accessors for "get" functions only (no "set" functions)
   static get HANDHOLD() {
@@ -14,6 +15,9 @@ class SelectModes {
   }
   static get FOOTHOLD() {
     return this.#_FOOTHOLD;
+  }
+  static get DRAWBOX() {
+    return this.#_DRAWBOX;
   }
   static get EXPORT() {
     return this.#_EXPORT;

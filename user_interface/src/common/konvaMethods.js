@@ -16,15 +16,20 @@ export const waitForKonvaStageLoad = async (refs, intervalDuration) => {
   });
 };
 
+export const removeKonvaListeners = (stageNode) => {
+  stageNode.off('touchmove touchend');
+};
+
 /**
  * https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
  * @param {node} stageNode
  * @param {Number} imageWidth
  * @param {Number} imageHeight
  */
-export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
+export const addKonvaListenerPinchZoom = (stageNode) => {
   let lastCenter = null;
   let lastDist = 0;
+  const { width: imageWidth, height: imageHeight } = stageNode.size();
 
   stageNode.on(
     'touchmove',

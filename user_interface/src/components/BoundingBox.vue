@@ -27,12 +27,14 @@ export default {
       fill: 'yellow',
       stroke: 'black',
       selected: false,
-      selectMode: SelectModes.HANDHOLD,
+      selectMode: null,
       showNumberMode: true,
       selectNumber: 0,
     };
   },
   mounted() {
+    this.selectMode = this.getSelectMode;
+
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type === 'home/setSelectMode') {
         this.selectMode = state.home.selectMode;
@@ -76,6 +78,7 @@ export default {
   computed: {
     ...mapGetters('home', {
       getDownloadMode: 'getDownloadMode',
+      getSelectMode: 'getSelectMode',
     }),
     configRect() {
       return {
@@ -130,9 +133,11 @@ export default {
       }
     },
     onMouseOver() {
+      if (this.selectMode === SelectModes.DRAWBOX) return;
       this.strokeWidth = 4;
     },
     onMouseOut() {
+      if (this.selectMode === SelectModes.DRAWBOX) return;
       this.strokeWidth = 2;
     },
     /**
@@ -141,6 +146,8 @@ export default {
      * If the box is not selected, select only if foothold
      */
     onClick() {
+      if (this.selectMode === SelectModes.DRAWBOX) return;
+
       if (this.selected) {
         this.boxOpacity = 0.2;
         this.fill = 'yellow';

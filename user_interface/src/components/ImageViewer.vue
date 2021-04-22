@@ -20,8 +20,13 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex';
 import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
-import { waitForKonvaStageLoad, addPinchZoomToStage } from '@/common/konvaMethods';
+import {
+  waitForKonvaStageLoad,
+  addKonvaListenerPinchZoom,
+  removeKonvaListeners,
+} from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
+import SelectModes from '@/common/selectModes';
 
 export default {
   name: 'ImageViewer',
@@ -36,21 +41,22 @@ export default {
         image: null,
       },
       isImageUploaded: false,
+      selectMode: null,
+      configStage: {
+        width: null,
+        height: null,
+      },
     };
   },
   computed: {
     ...mapGetters('home', {
       getWindowWidth: 'getWindowWidth',
+      getSelectMode: 'getSelectMode',
     }),
-    configStage() {
-      return {
-        width: this.windowWidth,
-        height: this.windowWidth * 1.5,
-      };
-    },
   },
   created() {
     this.windowWidth = this.getWindowWidth;
+    this.selectMode = this.getSelectMode;
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
@@ -65,6 +71,12 @@ export default {
       }
       if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
+      }
+      if (mutation.type === 'home/setSelectMode') {
+        this.selectMode = state.home.selectMode;
+        if (this.selectMode === SelectModes.DRAWBOX) {
+          await this.updateStageListeners();
+        }
       }
       /**
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
@@ -83,8 +95,9 @@ export default {
       setDownloadMode: 'setDownloadMode',
     }),
     /**
-     * When Image URL is set, the Konva image component is re-rendered
+     * When Image URL is set, the Konva Stage component is re-rendered
      * Image is set to a fixed width relative to user's device, the height is rescaled
+     * Event listeners are registered to the Konva Stage
      */
     async rerenderKonva(state) {
       const image = new window.Image();
@@ -92,12 +105,16 @@ export default {
       const { height, width } = await getHeightAndWidthFromDataUrl(imageURL);
       const imageHeight = (height / width) * this.windowWidth;
       image.src = imageURL;
+      this.configStage = {
+        width: this.windowWidth,
+        height: imageHeight,
+      };
       this.configImage = {
         image,
         width: this.windowWidth,
         height: imageHeight,
       };
-      await this.setStageZoom(this.windowWidth, imageHeight);
+      await this.updateStageListeners();
     },
     /**
      * Creates an link html and downloads it
@@ -107,13 +124,14 @@ export default {
       downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
     },
-    async setStageZoom(imageWidth, imageHeight) {
+    async updateStageListeners() {
       /**
        * Rerendering causes race condition where this.$refs are not immediately ready
        */
       await waitForKonvaStageLoad(this.$refs, 100);
-      const stage = this.$refs.stage.getNode();
-      addPinchZoomToStage(stage, imageWidth, imageHeight);
+      const stageNode = this.$refs.stage.getNode();
+      removeKonvaListeners(stageNode);
+      addKonvaListenerPinchZoom(stageNode);
     },
   },
 };

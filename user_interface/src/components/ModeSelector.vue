@@ -67,6 +67,11 @@ export default {
           state: false,
           mode: SelectModes.EXPORT,
         },
+        {
+          caption: 'DrawBox',
+          state: false,
+          mode: SelectModes.DRAWBOX,
+        },
       ],
     };
   },
