@@ -103,15 +103,15 @@ export default {
         const stageNode = this.$refs.stage.getNode();
         const newBoxes = getKonvaDrawLayerBoundingBoxes(stageNode);
         removeKonvaDrawLayer(stageNode);
-
         addKonvaListenerPinchZoom(stageNode);
-        console.log(newBoxes);
+        this.setBoxes([...this.boxes, ...newBoxes]);
       }
     },
   },
   methods: {
     ...mapMutations('home', {
       setDownloadMode: 'setDownloadMode',
+      setBoxes: 'setBoxes',
     }),
     /**
      * When Image URL is set, the Konva Stage component is re-rendered

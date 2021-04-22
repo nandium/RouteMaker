@@ -84,8 +84,12 @@ const actions = {
   /**
    * BoundingBoxes also subscribe to this action to reset individually
    */
-  resetBoundingBoxChanges({ commit }) {
+  resetBoundingBoxChanges({ commit, state }) {
     commit('setSelectMode', SelectModes.HANDHOLD);
+    commit(
+      'setBoxes',
+      state.boxes.filter((box) => box.class !== 'drawn'),
+    );
   },
   updateBoundingBoxNumbers() {},
 };

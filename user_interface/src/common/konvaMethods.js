@@ -212,54 +212,62 @@ export const addKonvaDrawLayer = (stageNode) => {
 
   // Start the rubber drawing on mouse down.
   backgroundRect.on(
-    'mousedown',
-    throttle((e) => {
-      mode = 'drawing';
-      startDrag({ x: e.evt.layerX, y: e.evt.layerY });
-    }, 5),
+    'mousedown touchstart',
+    throttle(() => onFingerStart(), 5),
   );
 
   // Update the rubber Rect on mouse move - note use of 'mode' to avoid drawing after mouse released
   backgroundRect.on(
-    'mousemove',
-    throttle((e) => {
-      if (mode === 'drawing') {
-        updateDrag({ x: e.evt.layerX, y: e.evt.layerY });
-      }
-    }, 5),
+    'mousemove touchmove',
+    throttle(() => onFingerMove(), 5),
   );
 
   // Create the new Rect using the location and dimensions of the rubber Rect
   backgroundRect.on(
-    'mouseup',
-    throttle(() => {
-      mode = '';
-      drawRect.visible(false);
-      var newRect = new Konva.Rect({
-        x: drawRect.x(),
-        y: drawRect.y(),
-        width: drawRect.width(),
-        height: drawRect.height(),
-        strokeWidth: 2,
-        opacity: 0.2,
-        fill: 'yellow',
-        stroke: 'black',
-        listening: false,
-      });
-      drawLayer.add(newRect);
-
-      stageNode.batchDraw();
-    }, 5),
+    'mouseup touchend',
+    throttle(() => onFingerUp(), 5),
   );
 
-  const startDrag = (posIn) => {
-    posStart = { x: posIn.x, y: posIn.y };
-    posNow = { x: posIn.x, y: posIn.y };
+  const onFingerStart = () => {
+    mode = 'drawing';
+    const pos = stageNode.getPointerPosition();
+    startDrag(pos);
+  };
+
+  const onFingerMove = () => {
+    if (mode === 'drawing') {
+      const pos = stageNode.getPointerPosition();
+      updateDrag(pos);
+    }
+  };
+
+  const onFingerUp = () => {
+    mode = '';
+    drawRect.visible(false);
+    var newRect = new Konva.Rect({
+      x: drawRect.x(),
+      y: drawRect.y(),
+      width: drawRect.width(),
+      height: drawRect.height(),
+      strokeWidth: 2,
+      opacity: 0.2,
+      fill: 'yellow',
+      stroke: 'black',
+      listening: false,
+    });
+    drawLayer.add(newRect);
+
+    stageNode.batchDraw();
+  };
+
+  const startDrag = ({ x, y }) => {
+    posStart = { x, y };
+    posNow = { x, y };
   };
 
   // Update rubber rect position
-  const updateDrag = (posIn) => {
-    posNow = { x: posIn.x, y: posIn.y };
+  const updateDrag = ({ x, y }) => {
+    posNow = { x, y };
     var posRect = reverse(posStart, posNow);
     drawRect.x(posRect.x1);
     drawRect.y(posRect.y1);
@@ -294,7 +302,7 @@ export const addKonvaDrawLayer = (stageNode) => {
 /**
  * Get the properties of hand drawn bounding boxes
  * @param {node} stageNode
- * @returns List of new bounding box dimensions [{x, y, w, h}, ...]
+ * @returns List of new bounding box dimensions [{x, y, w, h, class}, ...]
  */
 export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
   const drawLayer = stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
@@ -303,7 +311,7 @@ export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
   );
   return shapes.map((shape) => {
     const { x, y, width: w, height: h } = shape.attrs;
-    return { x, y, w, h };
+    return { x, y, w, h, class: 'drawn' };
   });
 };
 
