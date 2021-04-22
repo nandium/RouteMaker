@@ -1,8 +1,8 @@
 <template>
   <b-container fluid class="my-2">
     <b-row class="justify-content-center" v-if="isImageUploaded">
-      <b-col md="4" sm="10">
-        <b-button-group size="md" class="m-2" v-if="showAllButtons">
+      <b-col xl="4" md="6" sm="10">
+        <b-button-group size="md" class="m-1" v-if="showAllButtons">
           <b-button
             v-for="(btn, idx) in buttons"
             :key="idx"
@@ -12,11 +12,12 @@
             {{ btn.caption }}
           </b-button>
         </b-button-group>
-
-        <b-button @click="onReset" class="m-1" variant="outline-info">Reset</b-button>
-        <b-button @click="toggleShowNumbers" class="m-1" variant="outline-info"
-          >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
-        >
+        <b-button-group size="md" class="m-1">
+          <b-button @click="onReset" variant="outline-info">Reset</b-button>
+          <b-button @click="toggleShowNumbers" variant="outline-info"
+            >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
+          >
+        </b-button-group>
       </b-col>
     </b-row>
   </b-container>
