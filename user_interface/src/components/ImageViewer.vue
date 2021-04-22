@@ -29,7 +29,8 @@ import {
   removeKonvaDrawLayer,
 } from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
-import SelectModes from '@/common/selectModes';
+import SelectModes from '@/common/enumSelectModes';
+import BoxClass from '@/common/enumBoxClass';
 
 export default {
   name: 'ImageViewer',
@@ -70,7 +71,7 @@ export default {
         this.isImageUploaded = state.home.isImageUploaded;
       }
       if (mutation.type === 'home/setBoxes') {
-        this.boxes = state.home.boxes.filter((box) => box.class !== 'volume');
+        this.boxes = state.home.boxes.filter((box) => box.class !== BoxClass.VOLUME);
       }
       if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;

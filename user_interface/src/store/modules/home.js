@@ -1,4 +1,5 @@
-import SelectModes from '@/common/selectModes';
+import SelectModes from '@/common/enumSelectModes';
+import BoxClass from '@/common/enumBoxClass';
 
 const state = () => ({
   // items: [],
@@ -88,7 +89,7 @@ const actions = {
     commit('setSelectMode', SelectModes.HANDHOLD);
     commit(
       'setBoxes',
-      state.boxes.filter((box) => box.class !== 'drawn'),
+      state.boxes.filter((box) => box.class !== BoxClass.DRAWN),
     );
   },
   updateBoundingBoxNumbers() {},

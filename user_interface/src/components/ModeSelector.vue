@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import SelectModes from '@/common/selectModes';
+import SelectModes from '@/common/enumSelectModes';
 import { mapMutations, mapGetters, mapActions } from 'vuex';
 
 export default {

@@ -1,5 +1,6 @@
 import { throttle } from 'lodash';
 import Konva from 'konva';
+import BoxClass from '@/common/enumBoxClass';
 
 /**
  * Given refs object of Vue Konva, awaits for v-stageNode to load
@@ -311,7 +312,7 @@ export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
   );
   return shapes.map((shape) => {
     const { x, y, width: w, height: h } = shape.attrs;
-    return { x, y, w, h, class: 'drawn' };
+    return { x, y, w, h, class: BoxClass.DRAWN };
   });
 };
 

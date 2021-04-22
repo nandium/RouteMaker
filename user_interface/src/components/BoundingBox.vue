@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import SelectModes from '@/common/selectModes';
+import SelectModes from '@/common/enumSelectModes';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { OPTIMIZATION_PARAMS } from '@/common/konvaMethods';
 
