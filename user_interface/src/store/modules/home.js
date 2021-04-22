@@ -88,6 +88,7 @@ const actions = {
     commit('setSelectMode', SelectModes.HANDHOLD);
   },
   updateBoundingBoxNumbers() {},
+  undoDrawBox() {},
 };
 
 export default {

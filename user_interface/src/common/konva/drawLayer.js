@@ -153,7 +153,7 @@ export const addKonvaDrawLayer = (stageNode) => {
  * @returns List of new bounding box dimensions [{x, y, w, h, class}, ...]
  */
 export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
-  const drawLayer = stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
+  const drawLayer = getDrawLayer(stageNode);
   const shapes = drawLayer.getChildren(
     (shape) => !['drawRect', 'backgroundRect'].includes(shape.attrs.name),
   );
@@ -164,6 +164,19 @@ export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
 };
 
 export const removeKonvaDrawLayer = (stageNode) => {
-  const drawLayer = stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
+  const drawLayer = getDrawLayer(stageNode);
   drawLayer.destroy();
+};
+
+export const removeKonvaLastDrawnRect = (stageNode) => {
+  const drawLayer = getDrawLayer(stageNode);
+  const shapes = drawLayer.getChildren(
+    (shape) => !['drawRect', 'backgroundRect'].includes(shape.attrs.name),
+  );
+  if (shapes.length > 0) shapes.toArray().pop().destroy();
+  stageNode.batchDraw();
+};
+
+const getDrawLayer = (stageNode) => {
+  return stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
 };
