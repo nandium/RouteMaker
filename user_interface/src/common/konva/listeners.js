@@ -1,30 +1,18 @@
 import { throttle } from 'lodash';
 
-/**
- * Given refs object of Vue Konva, awaits for v-stageNode to load
- * @param {refs} vueKonvaRefs
- * @param {number} intervalDuration
- */
-export const waitForKonvaStageLoad = async (refs, intervalDuration) => {
-  return await new Promise((resolve) => {
-    const interval = setInterval(() => {
-      if (refs.stage !== undefined) {
-        resolve('ready');
-        clearInterval(interval);
-      }
-    }, intervalDuration);
-  });
+export const offKonvaStageListeners = (stageNode) => {
+  stageNode.off('touchmove touchend');
 };
 
 /**
+ * Add listener to the node which awaits for dual touch events to scale the node around
  * https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
  * @param {node} stageNode
- * @param {Number} imageWidth
- * @param {Number} imageHeight
  */
-export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
+export const addKonvaListenerPinchZoom = (stageNode) => {
   let lastCenter = null;
   let lastDist = 0;
+  const { width: imageWidth, height: imageHeight } = stageNode.size();
 
   stageNode.on(
     'touchmove',
@@ -88,6 +76,9 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
         if (newPos.y > 0) {
           newPos.y = 0;
         }
+
+        if (scale < 1) return;
+
         // if bottom right corner is out of bound, move the top left corner accordingly
         if (bottomRightPos.x < imageWidth) {
           if (newPos.x === 0) return;
@@ -105,41 +96,6 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
 
         lastDist = dist;
         lastCenter = newCenter;
-      } else if (touch1) {
-        const p1 = {
-          x: touch1.clientX,
-          y: touch1.clientY,
-        };
-
-        if (!lastCenter) {
-          lastCenter = { ...p1 };
-          return;
-        }
-        const dx = p1.x - lastCenter.x;
-        const dy = p1.y - lastCenter.y;
-        const newPos = {
-          x: stageNode.x() + dx,
-          y: stageNode.y() + dy,
-        };
-
-        // calculate position of the bottom right corner
-        const bottomRightPos = {
-          x: newPos.x + imageWidth * stageNode.scaleX(),
-          y: newPos.y + imageHeight * stageNode.scaleY(),
-        };
-
-        // ensure the user cannot drag out of the bound
-        if (newPos.x > 0 || bottomRightPos.x < imageWidth) {
-          newPos.x = stageNode.x();
-        }
-        if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
-          newPos.y = stageNode.y();
-        }
-
-        stageNode.position(newPos);
-        stageNode.batchDraw();
-
-        lastCenter = { ...p1 };
       }
     }, 5),
   );
@@ -148,22 +104,73 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
     lastDist = 0;
     lastCenter = null;
   });
-};
 
-const getDistance = (p1, p2) => {
-  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-};
+  const getDistance = (p1, p2) => {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+  };
 
-const getCenter = (p1, p2) => {
-  return {
-    x: (p1.x + p2.x) / 2,
-    y: (p1.y + p2.y) / 2,
+  const getCenter = (p1, p2) => {
+    return {
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2,
+    };
   };
 };
 
-export const OPTIMIZATION_PARAMS = {
-  perfectDrawEnabled: false,
-  transformsEnabled: 'position',
-  shadowForStrokeEnabled: false,
-  hitStrokeWidth: 0,
+/**
+ * Add listener to the node which awaits for single touch events to move the node around
+ * @param {node} stageNode
+ */
+export const addKonvaListenerTouchMove = (stageNode) => {
+  let lastCenter = null;
+  const { width: imageWidth, height: imageHeight } = stageNode.size();
+
+  stageNode.on(
+    'touchmove',
+    throttle((e) => {
+      e.evt.preventDefault();
+      if (e.evt.touches.length !== 1) return;
+
+      const touch1 = e.evt.touches[0];
+
+      const p1 = {
+        x: touch1.clientX,
+        y: touch1.clientY,
+      };
+
+      if (!lastCenter) {
+        lastCenter = { ...p1 };
+        return;
+      }
+      const dx = p1.x - lastCenter.x;
+      const dy = p1.y - lastCenter.y;
+      const newPos = {
+        x: stageNode.x() + dx,
+        y: stageNode.y() + dy,
+      };
+
+      // calculate position of the bottom right corner
+      const bottomRightPos = {
+        x: newPos.x + imageWidth * stageNode.scaleX(),
+        y: newPos.y + imageHeight * stageNode.scaleY(),
+      };
+
+      // ensure the user cannot drag out of the bound
+      if (newPos.x > 0 || bottomRightPos.x < imageWidth) {
+        newPos.x = stageNode.x();
+      }
+      if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
+        newPos.y = stageNode.y();
+      }
+
+      stageNode.position(newPos);
+      stageNode.batchDraw();
+
+      lastCenter = { ...p1 };
+    }, 5),
+  );
+
+  stageNode.on('touchend', () => {
+    lastCenter = null;
+  });
 };
