@@ -232,14 +232,14 @@ export const addKonvaDrawLayer = (stageNode) => {
 
   const onFingerStart = () => {
     mode = 'drawing';
-    const pos = stageNode.getPointerPosition();
-    startDrag(pos);
+    const { x, y } = stageNode.getPointerPosition();
+    startDrag({ x: x / stageNode.scaleX(), y: y / stageNode.scaleY() });
   };
 
   const onFingerMove = () => {
     if (mode === 'drawing') {
-      const pos = stageNode.getPointerPosition();
-      updateDrag(pos);
+      const { x, y } = stageNode.getPointerPosition();
+      updateDrag({ x: x / stageNode.scaleX(), y: y / stageNode.scaleY() });
     }
   };
 
