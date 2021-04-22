@@ -3,6 +3,10 @@ import Konva from 'konva';
 import BoxClass from '@/common/enumBoxClass';
 import { DefaultBoundingBox } from '@/common/boundingBoxAttributes';
 
+const BACKGROUND_RECT_NAME = 'backgroundRect';
+const DRAW_RECT_NAME = 'drawRect';
+const DRAW_LAYER_NAME = 'drawLayer';
+
 /**
  * Add a temporary DrawLayer that has listener to draw new Rects
  * The new Rects reside inside the layer until the layer is destroyed
@@ -12,12 +16,12 @@ import { DefaultBoundingBox } from '@/common/boundingBoxAttributes';
 export const addKonvaDrawLayer = (stageNode) => {
   const { width: imageWidth, height: imageHeight } = stageNode.size();
 
-  const drawLayer = new Konva.Layer({ name: 'drawLayer', draggable: false });
+  const drawLayer = new Konva.Layer({ name: DRAW_LAYER_NAME, draggable: false });
   stageNode.add(drawLayer);
 
   // Draw a background Rect to catch events.
   const backgroundRect = new Konva.Rect({
-    name: 'backgroundRect',
+    name: BACKGROUND_RECT_NAME,
     x: 0,
     y: 0,
     width: imageWidth,
@@ -28,7 +32,7 @@ export const addKonvaDrawLayer = (stageNode) => {
 
   // Draw a rectangle to be used as the rubber area
   const drawRect = new Konva.Rect({
-    name: 'drawRect',
+    name: DRAW_RECT_NAME,
     x: 0,
     y: 0,
     width: 0,
@@ -153,9 +157,9 @@ export const addKonvaDrawLayer = (stageNode) => {
  * @returns List of new bounding box dimensions [{x, y, w, h, class}, ...]
  */
 export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
-  const drawLayer = stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
+  const drawLayer = getDrawLayer(stageNode);
   const shapes = drawLayer.getChildren(
-    (shape) => !['drawRect', 'backgroundRect'].includes(shape.attrs.name),
+    (shape) => ![DRAW_RECT_NAME, BACKGROUND_RECT_NAME].includes(shape.attrs.name),
   );
   return shapes.map((shape) => {
     const { x, y, width: w, height: h } = shape.attrs;
@@ -164,6 +168,19 @@ export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
 };
 
 export const removeKonvaDrawLayer = (stageNode) => {
-  const drawLayer = stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
+  const drawLayer = getDrawLayer(stageNode);
   drawLayer.destroy();
+};
+
+export const removeKonvaLastDrawnRect = (stageNode) => {
+  const drawLayer = getDrawLayer(stageNode);
+  const shapes = drawLayer.getChildren(
+    (shape) => ![DRAW_RECT_NAME, BACKGROUND_RECT_NAME].includes(shape.attrs.name),
+  );
+  if (shapes.length > 0) shapes.toArray().pop().destroy();
+  stageNode.batchDraw();
+};
+
+const getDrawLayer = (stageNode) => {
+  return stageNode.getChildren((layer) => layer.attrs.name === DRAW_LAYER_NAME)[0];
 };

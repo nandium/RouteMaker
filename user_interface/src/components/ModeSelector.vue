@@ -12,10 +12,19 @@
             {{ btn.caption }}
           </b-button>
         </b-button-group>
-        <b-button-group v-if="!isSelectModeDrawBox" size="md" class="m-1">
-          <b-button @click="onReset" variant="outline-info">Reset</b-button>
-          <b-button @click="toggleShowNumbers" variant="outline-info"
+      </b-col>
+    </b-row>
+    <b-row class="justify-content-center" v-if="isImageUploaded">
+      <b-col xl="4" md="6" sm="10">
+        <b-button-group size="md" class="m-1">
+          <b-button v-if="!isSelectModeDrawBox" @click="onReset" variant="outline-info"
+            >Reset</b-button
+          >
+          <b-button v-if="!isSelectModeDrawBox" @click="toggleShowNumbers" variant="outline-info"
             >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
+          >
+          <b-button v-if="isSelectModeDrawBox" @click="undoDrawBox" variant="outline-info"
+            >Undo Draw</b-button
           >
         </b-button-group>
       </b-col>
@@ -92,6 +101,7 @@ export default {
     }),
     ...mapActions('home', {
       resetBoundingBoxChanges: 'resetBoundingBoxChanges',
+      undoDrawBox: 'undoDrawBox',
     }),
     onButtonClick(selectedButton) {
       if (selectedButton.state) return;

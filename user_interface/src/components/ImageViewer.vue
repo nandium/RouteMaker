@@ -29,6 +29,7 @@ import {
   addKonvaDrawLayer,
   getKonvaDrawLayerBoundingBoxes,
   removeKonvaDrawLayer,
+  removeKonvaLastDrawnRect,
   OPTIMIZATION_PARAMS,
 } from '@/common/konva';
 import BoundingBox from '@/components/BoundingBox.vue';
@@ -104,10 +105,21 @@ export default {
         }
       }
     });
+
+    /**
+     * When undo action is received, the last rectangle added is destroyed
+     */
+    this.$store.subscribeAction((action) => {
+      if (action.type === 'home/undoDrawBox') {
+        if (this.selectMode === SelectModes.DRAWBOX && this.$refs.stage) {
+          removeKonvaLastDrawnRect(this.$refs.stage.getNode());
+        }
+      }
+    });
   },
   watch: {
     /**
-     * If switching to DRAW mode, remove pinch zoom listeners and add DrawLayer
+     * If switching to DRAW mode, remove all listeners, add back touch move listener and add DrawLayer
      * If switching away from DRAW mode, remove DrawLayer, add back pinch zoom, and store the new boxes
      */
     selectMode(newSelectMode, oldSelectMode) {
