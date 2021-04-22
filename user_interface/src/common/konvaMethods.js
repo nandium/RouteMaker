@@ -169,17 +169,17 @@ const getCenter = (p1, p2) => {
 };
 
 /**
+ * Add a temporary Draw Layer that will draw new Rects and store them until the listener is taken away
  * https://stackoverflow.com/questions/49758261/draw-rectangle-with-mouse-and-fill-with-color-on-mouseup
  * @param {node} stageNode
  */
 export const addKonvaListenerDraw = (stageNode) => {
   const { width: imageWidth, height: imageHeight } = stageNode.size();
 
-  // Set up the canvas and shapes
   const drawLayer = new Konva.Layer({ draggable: false });
   stageNode.add(drawLayer);
 
-  // draw a background rect to catch events.
+  // Draw a background Rect to catch events.
   const backgroundRect = new Konva.Rect({
     x: 0,
     y: 0,
@@ -189,7 +189,7 @@ export const addKonvaListenerDraw = (stageNode) => {
   });
   drawLayer.add(backgroundRect);
 
-  // draw a rectangle to be used as the rubber area
+  // Draw a rectangle to be used as the rubber area
   const drawRect = new Konva.Rect({ x: 0, y: 0, width: 0, height: 0, stroke: 'red', dash: [2, 2] });
   drawRect.listening(false);
   drawLayer.add(drawRect);
@@ -200,7 +200,7 @@ export const addKonvaListenerDraw = (stageNode) => {
   let posNow;
   let mode = '';
 
-  // start the rubber drawing on mouse down.
+  // Start the rubber drawing on mouse down.
   backgroundRect.on(
     'mousedown',
     throttle((e) => {
@@ -209,7 +209,7 @@ export const addKonvaListenerDraw = (stageNode) => {
     }, 5),
   );
 
-  // update the rubber rect on mouse move - note use of 'mode' var to avoid drawing after mouse released.
+  // Update the rubber Rect on mouse move - note use of 'mode' to avoid drawing after mouse released
   backgroundRect.on(
     'mousemove',
     throttle((e) => {
@@ -219,7 +219,7 @@ export const addKonvaListenerDraw = (stageNode) => {
     }, 5),
   );
 
-  // here we create the new rect using the location and dimensions of the drawing rect.
+  // Create the new Rect using the location and dimensions of the rubber Rect
   backgroundRect.on(
     'mouseup',
     throttle(() => {
@@ -247,8 +247,8 @@ export const addKonvaListenerDraw = (stageNode) => {
     posNow = { x: posIn.x, y: posIn.y };
   };
 
+  // Update rubber rect position
   const updateDrag = (posIn) => {
-    // update rubber rect position
     posNow = { x: posIn.x, y: posIn.y };
     var posRect = reverse(posStart, posNow);
     drawRect.x(posRect.x1);
@@ -257,7 +257,7 @@ export const addKonvaListenerDraw = (stageNode) => {
     drawRect.height(posRect.y2 - posRect.y1);
     drawRect.visible(true);
 
-    stageNode.batchDraw(); // redraw any changes.
+    stageNode.batchDraw();
   };
 
   // Reverse co-ords if user drags left / up
