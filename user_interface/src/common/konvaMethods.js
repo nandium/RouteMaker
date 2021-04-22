@@ -88,6 +88,9 @@ export const addPinchZoomToStage = (stageNode, imageWidth, imageHeight) => {
         if (newPos.y > 0) {
           newPos.y = 0;
         }
+
+        if (scale < 1) return;
+
         // if bottom right corner is out of bound, move the top left corner accordingly
         if (bottomRightPos.x < imageWidth) {
           if (newPos.x === 0) return;
