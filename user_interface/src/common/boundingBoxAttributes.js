@@ -1,20 +1,20 @@
 const DefaultBoundingBox = {
   strokeWidth: 2,
   opacity: 0.2,
-  fill: 'yellow',
+  fill: 'grey',
   stroke: 'black',
 };
 
 const ActiveBoundingBoxHandHold = {
-  strokeWidth: 2,
-  opacity: 0.6,
+  strokeWidth: 3,
+  opacity: 0.4,
   fill: 'yellow',
   stroke: 'black',
 };
 
 const ActiveBoundingBoxFootHold = {
-  strokeWidth: 2,
-  opacity: 0.6,
+  strokeWidth: 3,
+  opacity: 0.4,
   fill: 'blue',
   stroke: 'black',
 };

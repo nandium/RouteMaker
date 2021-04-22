@@ -143,7 +143,7 @@ export default {
     },
     onMouseOut() {
       if (this.selectMode === SelectModes.DRAWBOX) return;
-      this.strokeWidth = DefaultBoundingBox.strokeWidth;
+      if (!this.selected) this.strokeWidth = DefaultBoundingBox.strokeWidth;
     },
     /**
      * Do not allow box changes if current mode is DRAWBOX
