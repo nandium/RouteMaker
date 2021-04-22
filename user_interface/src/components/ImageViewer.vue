@@ -3,6 +3,7 @@
     <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configStage">
       <v-layer ref="layer">
         <v-image :config="configImage"></v-image>
+        <v-text :config="configWatermark"></v-text>
         <BoundingBox
           :key="idx"
           v-for="(box, idx) in boxes"
@@ -28,6 +29,7 @@ import {
   addKonvaDrawLayer,
   getKonvaDrawLayerBoundingBoxes,
   removeKonvaDrawLayer,
+  OPTIMIZATION_PARAMS,
 } from '@/common/konva';
 import BoundingBox from '@/components/BoundingBox.vue';
 import SelectModes from '@/common/enumSelectModes';
@@ -50,6 +52,15 @@ export default {
       configStage: {
         width: null,
         height: null,
+      },
+      configWatermark: {
+        x: 5,
+        y: 5,
+        fill: 'black',
+        text: 'tinyurl.com/makeclimbroutes',
+        opacity: 0,
+        fontSize: 15,
+        ...OPTIMIZATION_PARAMS,
       },
     };
   },
@@ -82,12 +93,14 @@ export default {
       }
       /**
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
-       * Downloads the image
+       * Downloads the image after adding watermark
        */
       if (mutation.type === 'home/setDownloadMode') {
         if (state.home.downloadMode === true) {
+          this.configWatermark = { ...this.configWatermark, opacity: 1 };
           await new Promise((resolve) => setTimeout(resolve, 500));
           this.downloadKonva();
+          this.configWatermark = { ...this.configWatermark, opacity: 0 };
         }
       }
     });
@@ -142,7 +155,7 @@ export default {
     /**
      * Creates an link html and downloads it
      */
-    async downloadKonva() {
+    downloadKonva() {
       const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg' });
       downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
