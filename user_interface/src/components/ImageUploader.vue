@@ -27,7 +27,7 @@
 
 <script>
 import { mapMutations, mapGetters, mapActions } from 'vuex';
-import getBoundingBox from '@/common/getBoundingBox';
+import getBoundingBox from '@/common/api/getBoundingBox';
 import Loader from '@/components/Loader.vue';
 
 export default {
