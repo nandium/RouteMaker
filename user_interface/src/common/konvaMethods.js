@@ -174,10 +174,10 @@ export const addKonvaListenerPinchZoom = (stageNode) => {
  * https://stackoverflow.com/questions/49758261/draw-rectangle-with-mouse-and-fill-with-color-on-mouseup
  * @param {node} stageNode
  */
-export const addKonvaListenerDraw = (stageNode) => {
+export const addKonvaDrawLayer = (stageNode) => {
   const { width: imageWidth, height: imageHeight } = stageNode.size();
 
-  const drawLayer = new Konva.Layer({ draggable: false });
+  const drawLayer = new Konva.Layer({ name: 'drawLayer', draggable: false });
   stageNode.add(drawLayer);
 
   // Draw a background Rect to catch events.
@@ -292,20 +292,24 @@ export const addKonvaListenerDraw = (stageNode) => {
 };
 
 /**
- * Remove the temporary DrawLayer and get the properties of bounding boxes
+ * Get the properties of hand drawn bounding boxes
  * @param {node} stageNode
  * @returns List of new bounding box dimensions [{x, y, w, h}, ...]
  */
-export const getKonvaDrawnBoundingBoxes = (stageNode) => {
-  const drawLayer = stageNode.getLayers().pop();
+export const getKonvaDrawLayerBoundingBoxes = (stageNode) => {
+  const drawLayer = stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
   const shapes = drawLayer.getChildren(
     (shape) => !['drawRect', 'backgroundRect'].includes(shape.attrs.name),
   );
-  drawLayer.destroy();
   return shapes.map((shape) => {
     const { x, y, width: w, height: h } = shape.attrs;
     return { x, y, w, h };
   });
+};
+
+export const removeKonvaDrawLayer = (stageNode) => {
+  const drawLayer = stageNode.getChildren((layer) => layer.attrs.name === 'drawLayer')[0];
+  drawLayer.destroy();
 };
 
 export const OPTIMIZATION_PARAMS = {

@@ -24,8 +24,9 @@ import {
   waitForKonvaStageLoad,
   addKonvaListenerPinchZoom,
   offKonvaListenerPinchZoom,
-  addKonvaListenerDraw,
-  getKonvaDrawnBoundingBoxes,
+  addKonvaDrawLayer,
+  getKonvaDrawLayerBoundingBoxes,
+  removeKonvaDrawLayer,
 } from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
 import SelectModes from '@/common/selectModes';
@@ -90,14 +91,19 @@ export default {
     });
   },
   watch: {
+    /**
+     * Add or remove the DrawLayer from stage depending on the change in state
+     */
     selectMode(newSelectMode, oldSelectMode) {
       if (newSelectMode === SelectModes.DRAWBOX) {
         const stageNode = this.$refs.stage.getNode();
         offKonvaListenerPinchZoom(stageNode);
-        addKonvaListenerDraw(stageNode);
+        addKonvaDrawLayer(stageNode);
       } else if (oldSelectMode === SelectModes.DRAWBOX) {
         const stageNode = this.$refs.stage.getNode();
-        const newBoxes = getKonvaDrawnBoundingBoxes(stageNode);
+        const newBoxes = getKonvaDrawLayerBoundingBoxes(stageNode);
+        removeKonvaDrawLayer(stageNode);
+
         addKonvaListenerPinchZoom(stageNode);
         console.log(newBoxes);
       }
