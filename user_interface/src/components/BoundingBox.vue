@@ -15,17 +15,22 @@
 import SelectModes from '@/common/enumSelectModes';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { OPTIMIZATION_PARAMS } from '@/common/konvaMethods';
+import {
+  DefaultBoundingBox,
+  ActiveBoundingBoxFootHold,
+  ActiveBoundingBoxHandHold,
+} from '@/common/boundingBoxAttributes';
 
 export default {
   name: 'BoundingBox',
   data() {
     return {
-      strokeWidth: 2,
-      boxOpacity: 0.2,
+      strokeWidth: DefaultBoundingBox.strokeWidth,
+      boxOpacity: DefaultBoundingBox.opacity,
       textOpacity: 0,
       text: '',
-      fill: 'yellow',
-      stroke: 'black',
+      fill: DefaultBoundingBox.fill,
+      stroke: DefaultBoundingBox.stroke,
       selected: false,
       selectMode: null,
       showNumberMode: true,
@@ -85,7 +90,7 @@ export default {
         width: this.w,
         height: this.h,
         fill: this.fill,
-        stroke: 'black',
+        stroke: this.stroke,
         strokeWidth: this.strokeWidth,
         opacity: this.boxOpacity,
         ...OPTIMIZATION_PARAMS,
@@ -122,11 +127,11 @@ export default {
       updateBoundingBoxNumbers: 'updateBoundingBoxNumbers',
     }),
     reset() {
-      this.strokeWidth = 2;
-      this.boxOpacity = 0.2;
+      this.strokeWidth = DefaultBoundingBox.strokeWidth;
+      this.boxOpacity = DefaultBoundingBox.opacity;
       this.textOpacity = 0;
-      this.fill = 'yellow';
-      this.stroke = 'black';
+      this.fill = DefaultBoundingBox.fill;
+      this.stroke = DefaultBoundingBox.stroke;
       if (this.selected) {
         this.removeBoxIdFromSelected(this.boxId);
         this.selected = false;
@@ -138,7 +143,7 @@ export default {
     },
     onMouseOut() {
       if (this.selectMode === SelectModes.DRAWBOX) return;
-      this.strokeWidth = 2;
+      this.strokeWidth = DefaultBoundingBox.strokeWidth;
     },
     /**
      * Do not allow box changes if current mode is DRAWBOX
@@ -150,21 +155,28 @@ export default {
       if (this.selectMode === SelectModes.DRAWBOX) return;
 
       if (this.selected) {
-        this.boxOpacity = 0.2;
-        this.fill = 'yellow';
+        this.boxOpacity = DefaultBoundingBox.opacity;
+        this.fill = DefaultBoundingBox.fill;
         this.textOpacity = 0;
         this.selected = false;
         this.removeBoxIdFromSelected(this.boxId);
         this.updateBoundingBoxNumbers();
       } else {
-        this.boxOpacity = 0.6;
         this.selected = true;
         if (this.selectMode === SelectModes.HANDHOLD) {
+          this.boxOpacity = ActiveBoundingBoxHandHold.opacity;
+          this.fill = ActiveBoundingBoxHandHold.fill;
+          this.strokeWidth = ActiveBoundingBoxHandHold.strokeWidth;
+          this.stroke = ActiveBoundingBoxHandHold.stroke;
+
           this.textOpacity = this.showNumberMode ? 1 : 0;
           this.addBoxIdToSelected(this.boxId);
           this.updateBoundingBoxNumbers();
         } else if (this.selectMode === SelectModes.FOOTHOLD) {
-          this.fill = 'blue';
+          this.boxOpacity = ActiveBoundingBoxFootHold.opacity;
+          this.fill = ActiveBoundingBoxFootHold.fill;
+          this.strokeWidth = ActiveBoundingBoxFootHold.strokeWidth;
+          this.stroke = ActiveBoundingBoxFootHold.stroke;
         }
       }
     },

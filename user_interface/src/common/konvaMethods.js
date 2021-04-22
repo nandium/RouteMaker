@@ -1,6 +1,7 @@
 import { throttle } from 'lodash';
 import Konva from 'konva';
 import BoxClass from '@/common/enumBoxClass';
+import { DefaultBoundingBox } from '@/common/boundingBoxAttributes';
 
 /**
  * Given refs object of Vue Konva, awaits for v-stageNode to load
@@ -250,10 +251,10 @@ export const addKonvaDrawLayer = (stageNode) => {
       y: drawRect.y(),
       width: drawRect.width(),
       height: drawRect.height(),
-      strokeWidth: 2,
-      opacity: 0.2,
-      fill: 'yellow',
-      stroke: 'black',
+      strokeWidth: DefaultBoundingBox.strokeWidth,
+      opacity: DefaultBoundingBox.opacity,
+      fill: DefaultBoundingBox.fill,
+      stroke: DefaultBoundingBox.stroke,
       listening: false,
     });
     drawLayer.add(newRect);
