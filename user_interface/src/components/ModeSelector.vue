@@ -2,7 +2,7 @@
   <b-container fluid class="my-2">
     <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col xl="4" md="6" sm="10">
-        <b-button-group size="sm" class="m-1" v-if="showAllButtons">
+        <b-button-group size="md" class="m-1" v-if="showAllButtons">
           <b-button
             v-for="(btn, idx) in buttons"
             :key="idx"
@@ -16,7 +16,7 @@
     </b-row>
     <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col xl="4" md="6" sm="10">
-        <b-button-group size="sm" class="m-1">
+        <b-button-group size="md" class="m-1">
           <b-button v-if="!isSelectModeDrawBox" @click="onReset" variant="outline-info"
             >Reset</b-button
           >

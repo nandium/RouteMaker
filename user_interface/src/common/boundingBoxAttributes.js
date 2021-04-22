@@ -1,7 +1,7 @@
 const DefaultBoundingBox = {
   strokeWidth: 2,
-  opacity: 0.2,
-  fill: 'grey',
+  opacity: 0.4,
+  fill: 'white',
   stroke: 'black',
 };
 
