@@ -141,6 +141,7 @@ export default {
       this.strokeWidth = 2;
     },
     /**
+     * Do not allow box changes if current mode is DRAWBOX
      * If the box is selected, unselect it
      * If the box is not selected, select and number if handhold
      * If the box is not selected, select only if foothold

@@ -24,6 +24,7 @@ import {
   waitForKonvaStageLoad,
   addKonvaListenerPinchZoom,
   removeKonvaListeners,
+  addKonvaListenerDraw,
 } from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
 import SelectModes from '@/common/selectModes';
@@ -74,9 +75,6 @@ export default {
       }
       if (mutation.type === 'home/setSelectMode') {
         this.selectMode = state.home.selectMode;
-        if (this.selectMode === SelectModes.DRAWBOX) {
-          await this.updateStageListeners();
-        }
       }
       /**
        * Awaits for 0.5 sec so that all bounding boxes update properly (Not the best way)
@@ -89,6 +87,15 @@ export default {
         }
       }
     });
+  },
+  watch: {
+    selectMode(newSelectMode) {
+      if (newSelectMode === SelectModes.DRAWBOX) {
+        const stageNode = this.$refs.stage.getNode();
+        removeKonvaListeners(stageNode);
+        addKonvaListenerDraw(stageNode);
+      }
+    },
   },
   methods: {
     ...mapMutations('home', {
