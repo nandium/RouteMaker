@@ -23,11 +23,12 @@ import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
 import {
   waitForKonvaStageLoad,
   addKonvaListenerPinchZoom,
-  offKonvaListenerPinchZoom,
+  addKonvaListenerTouchMove,
+  offKonvaStageListeners,
   addKonvaDrawLayer,
   getKonvaDrawLayerBoundingBoxes,
   removeKonvaDrawLayer,
-} from '@/common/konvaMethods';
+} from '@/common/konva';
 import BoundingBox from '@/components/BoundingBox.vue';
 import SelectModes from '@/common/enumSelectModes';
 import BoxClass from '@/common/enumBoxClass';
@@ -99,13 +100,14 @@ export default {
     selectMode(newSelectMode, oldSelectMode) {
       if (newSelectMode === SelectModes.DRAWBOX) {
         const stageNode = this.$refs.stage.getNode();
-        offKonvaListenerPinchZoom(stageNode);
+        offKonvaStageListeners(stageNode);
+        addKonvaListenerPinchZoom(stageNode);
         addKonvaDrawLayer(stageNode);
       } else if (oldSelectMode === SelectModes.DRAWBOX) {
         const stageNode = this.$refs.stage.getNode();
         const newBoxes = getKonvaDrawLayerBoundingBoxes(stageNode);
         removeKonvaDrawLayer(stageNode);
-        addKonvaListenerPinchZoom(stageNode);
+        addKonvaListenerTouchMove(stageNode);
         this.setBoxes([...this.boxes, ...newBoxes]);
       }
     },
@@ -151,8 +153,9 @@ export default {
        */
       await waitForKonvaStageLoad(this.$refs, 100);
       const stageNode = this.$refs.stage.getNode();
-      offKonvaListenerPinchZoom(stageNode);
+      offKonvaStageListeners(stageNode);
       addKonvaListenerPinchZoom(stageNode);
+      addKonvaListenerTouchMove(stageNode);
     },
   },
 };
