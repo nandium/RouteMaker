@@ -93,7 +93,8 @@ export default {
   },
   watch: {
     /**
-     * Add or remove the DrawLayer from stage depending on the change in state
+     * If switching to DRAW mode, remove pinch zoom listeners and add DrawLayer
+     * If switching away from DRAW mode, remove DrawLayer, add back pinch zoom, and store the new boxes
      */
     selectMode(newSelectMode, oldSelectMode) {
       if (newSelectMode === SelectModes.DRAWBOX) {

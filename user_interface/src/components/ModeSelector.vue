@@ -12,7 +12,7 @@
             {{ btn.caption }}
           </b-button>
         </b-button-group>
-        <b-button-group size="md" class="m-1">
+        <b-button-group v-if="!isSelectModeDrawBox" size="md" class="m-1">
           <b-button @click="onReset" variant="outline-info">Reset</b-button>
           <b-button @click="toggleShowNumbers" variant="outline-info"
             >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
@@ -63,14 +63,14 @@ export default {
           mode: SelectModes.FOOTHOLD,
         },
         {
-          caption: 'Export',
-          state: false,
-          mode: SelectModes.EXPORT,
-        },
-        {
           caption: 'DrawBox',
           state: false,
           mode: SelectModes.DRAWBOX,
+        },
+        {
+          caption: 'Export',
+          state: false,
+          mode: SelectModes.EXPORT,
         },
       ],
     };
@@ -81,6 +81,9 @@ export default {
       getIsImageUploaded: 'getIsImageUploaded',
       getSelectMode: 'getSelectMode',
     }),
+    isSelectModeDrawBox() {
+      return this.getSelectMode === SelectModes.DRAWBOX;
+    },
   },
   methods: {
     ...mapMutations('home', {
@@ -110,17 +113,14 @@ export default {
     },
     /**
      * Unselect the rest of the buttons
-     * Sort them by alphebetical to maintain the order
      */
     updateDisplayButtons(newMode) {
-      this.buttons = this.buttons
-        .map((button) => {
-          if (button.mode === newMode) {
-            return { ...button, state: true };
-          }
-          return { ...button, state: false };
-        })
-        .sort((a, b) => (a.caption < b.caption ? 1 : -1));
+      this.buttons = this.buttons.map((button) => {
+        if (button.mode === newMode) {
+          return { ...button, state: true };
+        }
+        return { ...button, state: false };
+      });
     },
   },
 };
