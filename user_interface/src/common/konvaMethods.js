@@ -17,7 +17,7 @@ export const waitForKonvaStageLoad = async (refs, intervalDuration) => {
   });
 };
 
-export const removeKonvaListeners = (stageNode) => {
+export const offKonvaListenerPinchZoom = (stageNode) => {
   stageNode.off('touchmove touchend');
 };
 
@@ -36,6 +36,7 @@ export const addKonvaListenerPinchZoom = (stageNode) => {
       e.evt.preventDefault();
       const touch1 = e.evt.touches[0];
       const touch2 = e.evt.touches[1];
+      console.log('touching');
 
       if (touch1 && touch2) {
         if (stageNode.isDragging()) {
@@ -155,21 +156,21 @@ export const addKonvaListenerPinchZoom = (stageNode) => {
     lastDist = 0;
     lastCenter = null;
   });
-};
 
-const getDistance = (p1, p2) => {
-  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-};
+  const getDistance = (p1, p2) => {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+  };
 
-const getCenter = (p1, p2) => {
-  return {
-    x: (p1.x + p2.x) / 2,
-    y: (p1.y + p2.y) / 2,
+  const getCenter = (p1, p2) => {
+    return {
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2,
+    };
   };
 };
 
 /**
- * Add a temporary Draw Layer that will draw new Rects and store them until the listener is taken away
+ * Add a temporary DrawLayer that has listener to draw new Rects and store them until the layer is removed
  * https://stackoverflow.com/questions/49758261/draw-rectangle-with-mouse-and-fill-with-color-on-mouseup
  * @param {node} stageNode
  */
@@ -181,6 +182,7 @@ export const addKonvaListenerDraw = (stageNode) => {
 
   // Draw a background Rect to catch events.
   const backgroundRect = new Konva.Rect({
+    name: 'backgroundRect',
     x: 0,
     y: 0,
     width: imageWidth,
@@ -190,7 +192,15 @@ export const addKonvaListenerDraw = (stageNode) => {
   drawLayer.add(backgroundRect);
 
   // Draw a rectangle to be used as the rubber area
-  const drawRect = new Konva.Rect({ x: 0, y: 0, width: 0, height: 0, stroke: 'red', dash: [2, 2] });
+  const drawRect = new Konva.Rect({
+    name: 'drawRect',
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    stroke: 'red',
+    dash: [2, 2],
+  });
   drawRect.listening(false);
   drawLayer.add(drawRect);
 
@@ -279,6 +289,23 @@ export const addKonvaListenerDraw = (stageNode) => {
     }
     return { x1: r1x, y1: r1y, x2: r2x, y2: r2y };
   };
+};
+
+/**
+ * Remove the temporary DrawLayer and get the properties of bounding boxes
+ * @param {node} stageNode
+ * @returns List of new bounding box dimensions [{x, y, w, h}, ...]
+ */
+export const getKonvaDrawnBoundingBoxes = (stageNode) => {
+  const drawLayer = stageNode.getLayers().pop();
+  const shapes = drawLayer.getChildren(
+    (shape) => !['drawRect', 'backgroundRect'].includes(shape.attrs.name),
+  );
+  drawLayer.destroy();
+  return shapes.map((shape) => {
+    const { x, y, width: w, height: h } = shape.attrs;
+    return { x, y, w, h };
+  });
 };
 
 export const OPTIMIZATION_PARAMS = {

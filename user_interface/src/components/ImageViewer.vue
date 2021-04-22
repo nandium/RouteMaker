@@ -23,8 +23,9 @@ import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
 import {
   waitForKonvaStageLoad,
   addKonvaListenerPinchZoom,
-  removeKonvaListeners,
+  offKonvaListenerPinchZoom,
   addKonvaListenerDraw,
+  getKonvaDrawnBoundingBoxes,
 } from '@/common/konvaMethods';
 import BoundingBox from '@/components/BoundingBox.vue';
 import SelectModes from '@/common/selectModes';
@@ -89,11 +90,16 @@ export default {
     });
   },
   watch: {
-    selectMode(newSelectMode) {
+    selectMode(newSelectMode, oldSelectMode) {
       if (newSelectMode === SelectModes.DRAWBOX) {
         const stageNode = this.$refs.stage.getNode();
-        removeKonvaListeners(stageNode);
+        offKonvaListenerPinchZoom(stageNode);
         addKonvaListenerDraw(stageNode);
+      } else if (oldSelectMode === SelectModes.DRAWBOX) {
+        const stageNode = this.$refs.stage.getNode();
+        const newBoxes = getKonvaDrawnBoundingBoxes(stageNode);
+        addKonvaListenerPinchZoom(stageNode);
+        console.log(newBoxes);
       }
     },
   },
@@ -137,7 +143,7 @@ export default {
        */
       await waitForKonvaStageLoad(this.$refs, 100);
       const stageNode = this.$refs.stage.getNode();
-      removeKonvaListeners(stageNode);
+      offKonvaListenerPinchZoom(stageNode);
       addKonvaListenerPinchZoom(stageNode);
     },
   },
