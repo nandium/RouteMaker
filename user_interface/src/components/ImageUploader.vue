@@ -29,6 +29,7 @@
 import { mapMutations, mapGetters, mapActions } from 'vuex';
 import getBoundingBox from '@/common/api/getBoundingBox';
 import Loader from '@/components/Loader.vue';
+import imageCompression from 'browser-image-compression';
 
 export default {
   name: 'ImageUploader',
@@ -38,6 +39,7 @@ export default {
   data() {
     return {
       imageFile: null,
+      compressedImageFile: null,
       isLoading: false,
       errorString: '',
       windowWidth: 0,
@@ -84,6 +86,12 @@ export default {
 
       try {
         this.isLoading = true;
+        const compressImageOptions = {
+          maxSizeMB: 8,
+          maxWidthOrHeight: 1024,
+          useWebWorker: true
+        }
+        this.compressedImageFile = await imageCompression(this.imageFile, compressImageOptions);
         const imageURL = URL.createObjectURL(this.imageFile);
         this.setImageURL(imageURL);
         await this.uploadFile();
@@ -100,7 +108,7 @@ export default {
      */
     async uploadFile() {
       const formData = new FormData();
-      formData.append('image', this.imageFile);
+      formData.append('image', this.compressedImageFile);
       formData.append('width', this.windowWidth);
 
       const boxes = await getBoundingBox(formData);
