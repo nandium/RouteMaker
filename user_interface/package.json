@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
+    "browser-image-compression": "^1.0.14",
     "core-js": "^3.6.5",
     "konva": "^7.2.5",
     "lodash": "^4.17.21",

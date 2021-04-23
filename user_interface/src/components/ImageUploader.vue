@@ -12,7 +12,7 @@
           class="formFile"
           placeholder="Wall image.."
           :disabled="isLoading"
-          accept="image/jpeg"
+          accept="image/*"
         ></b-form-file>
       </b-col>
     </b-row>
@@ -29,6 +29,7 @@
 import { mapMutations, mapGetters, mapActions } from 'vuex';
 import getBoundingBox from '@/common/api/getBoundingBox';
 import Loader from '@/components/Loader.vue';
+import imageCompression from 'browser-image-compression';
 
 export default {
   name: 'ImageUploader',
@@ -38,6 +39,7 @@ export default {
   data() {
     return {
       imageFile: null,
+      compressedImageFile: null,
       isLoading: false,
       errorString: '',
       windowWidth: 0,
@@ -84,6 +86,13 @@ export default {
 
       try {
         this.isLoading = true;
+        const compressImageOptions = {
+          maxSizeMB: 8,
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+          fileType: 'image/jpeg'
+        }
+        this.compressedImageFile = await imageCompression(this.imageFile, compressImageOptions);
         const imageURL = URL.createObjectURL(this.imageFile);
         this.setImageURL(imageURL);
         await this.uploadFile();
@@ -100,7 +109,7 @@ export default {
      */
     async uploadFile() {
       const formData = new FormData();
-      formData.append('image', this.imageFile);
+      formData.append('image', this.compressedImageFile);
       formData.append('width', this.windowWidth);
 
       const boxes = await getBoundingBox(formData);
@@ -115,12 +124,8 @@ export default {
         this.errorString = 'Please attach a file';
         return false;
       }
-      if (this.imageFile.size > 8 * 1024 * 1024) {
-        this.errorString = 'Max image size is 8 MB';
-        return false;
-      }
-      if (!['image/jpeg'].includes(this.imageFile.type)) {
-        this.errorString = 'Only JPG is allowed';
+      if (!this.imageFile.type.includes('image')) {
+        this.errorString = 'Only image files are allowed';
         return false;
       }
       return true;
