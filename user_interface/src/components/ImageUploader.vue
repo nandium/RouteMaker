@@ -12,7 +12,7 @@
           class="formFile"
           placeholder="Wall image.."
           :disabled="isLoading"
-          accept="image/jpeg"
+          accept="image/*"
         ></b-form-file>
       </b-col>
     </b-row>
@@ -89,7 +89,8 @@ export default {
         const compressImageOptions = {
           maxSizeMB: 8,
           maxWidthOrHeight: 1024,
-          useWebWorker: true
+          useWebWorker: true,
+          fileType: 'image/jpeg'
         }
         this.compressedImageFile = await imageCompression(this.imageFile, compressImageOptions);
         const imageURL = URL.createObjectURL(this.imageFile);
@@ -123,8 +124,8 @@ export default {
         this.errorString = 'Please attach a file';
         return false;
       }
-      if (!['image/jpeg'].includes(this.imageFile.type)) {
-        this.errorString = 'Only JPG is allowed';
+      if (!this.imageFile.type.includes('image')) {
+        this.errorString = 'Only image files are allowed';
         return false;
       }
       return true;
