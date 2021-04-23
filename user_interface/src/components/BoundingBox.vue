@@ -19,6 +19,7 @@ import {
   DefaultBoundingBox,
   ActiveBoundingBoxFootHold,
   ActiveBoundingBoxHandHold,
+  ActiveBoundingBoxStartHold,
 } from '@/common/boundingBoxAttributes';
 
 export default {
@@ -177,6 +178,11 @@ export default {
           this.fill = ActiveBoundingBoxFootHold.fill;
           this.strokeWidth = ActiveBoundingBoxFootHold.strokeWidth;
           this.stroke = ActiveBoundingBoxFootHold.stroke;
+        } else if (this.selectMode === SelectModes.STARTHOLDS) {
+          this.boxOpacity = ActiveBoundingBoxStartHold.opacity;
+          this.fill = ActiveBoundingBoxStartHold.fill;
+          this.strokeWidth = ActiveBoundingBoxStartHold.strokeWidth;
+          this.stroke = ActiveBoundingBoxStartHold.stroke;
         }
       }
     },

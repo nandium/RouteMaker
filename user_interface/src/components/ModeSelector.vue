@@ -72,6 +72,11 @@ export default {
           mode: SelectModes.FOOTHOLD,
         },
         {
+          caption: 'StartHold',
+          state: false,
+          mode: SelectModes.STARTHOLD,
+        },
+        {
           caption: 'DrawBox',
           state: false,
           mode: SelectModes.DRAWBOX,

@@ -19,4 +19,16 @@ const ActiveBoundingBoxFootHold = {
   stroke: 'black',
 };
 
-export { DefaultBoundingBox, ActiveBoundingBoxHandHold, ActiveBoundingBoxFootHold };
+const ActiveBoundingBoxStartHold = {
+  strokeWidth: 3,
+  opacity: 0.4,
+  fill: 'green',
+  stroke: 'black',
+};
+
+export {
+  DefaultBoundingBox,
+  ActiveBoundingBoxHandHold,
+  ActiveBoundingBoxFootHold,
+  ActiveBoundingBoxStartHold,
+};
