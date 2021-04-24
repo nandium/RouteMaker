@@ -140,7 +140,7 @@ export default {
         x: 0,
         y: this.h + 2,
         text: this.text,
-        fontSize: 24,
+        fontSize: 20,
         fontFamily: 'Calibri',
         fontStyle: 'bold',
         opacity: this.textOpacity,
