@@ -20,8 +20,8 @@
           <b-button v-if="!isSelectModeDrawBox" @click="onReset" variant="outline-info"
             >Reset</b-button
           >
-          <b-button v-if="!isSelectModeDrawBox" @click="toggleShowNumbers" variant="outline-info"
-            >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
+          <b-button v-if="!isSelectModeDrawBox" @click="toggleShowOrder" variant="outline-info"
+            >{{ this.getShowOrderMode ? 'Hide' : 'Unhide' }} Order</b-button
           >
           <b-button v-if="isSelectModeDrawBox" @click="undoDrawBox" variant="outline-info"
             >Undo Draw</b-button
@@ -40,7 +40,7 @@ export default {
   name: 'ModeSelector',
   mounted() {
     this.isImageUploaded = this.getIsImageUploaded;
-    this.showNumberMode = this.getShowNumberMode;
+    this.showOrderMode = this.getShowOrderMode;
 
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type === 'home/setIsImageUploaded') {
@@ -86,7 +86,7 @@ export default {
   },
   computed: {
     ...mapGetters('home', {
-      getShowNumberMode: 'getShowNumberMode',
+      getShowOrderMode: 'getShowOrderMode',
       getIsImageUploaded: 'getIsImageUploaded',
       getSelectMode: 'getSelectMode',
     }),
@@ -97,7 +97,7 @@ export default {
   methods: {
     ...mapMutations('home', {
       setSelectMode: 'setSelectMode',
-      setShowNumberMode: 'setShowNumberMode',
+      setShowOrderMode: 'setShowOrderMode',
     }),
     ...mapActions('home', {
       resetBoundingBoxChanges: 'resetBoundingBoxChanges',
@@ -117,9 +117,9 @@ export default {
       this.resetBoundingBoxChanges();
       this.showAllButtons = true;
     },
-    toggleShowNumbers() {
-      this.showNumberMode = !this.getShowNumberMode;
-      this.setShowNumberMode(this.showNumberMode);
+    toggleShowOrder() {
+      this.showOrderMode = !this.getShowOrderMode;
+      this.setShowOrderMode(this.showOrderMode);
     },
     /**
      * Unselect the rest of the buttons

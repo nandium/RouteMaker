@@ -36,12 +36,13 @@ export default {
       stroke: DefaultBoundingBox.stroke,
       selected: false,
       selectMode: null,
-      showNumberMode: true,
+      showOrderMode: true,
       selectNumber: 0,
     };
   },
   mounted() {
     this.selectMode = this.getSelectMode;
+    this.showOrderMode = this.getShowOrderMode;
 
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type === 'home/setSelectMode') {
@@ -52,17 +53,17 @@ export default {
         }
       }
       /**
-       * ShowNumberMode unhides the numbering of handholds
+       * ShowOrderMode unhides the numbering of handholds
        */
-      if (mutation.type === 'home/setShowNumberMode') {
-        if (state.home.showNumberMode) {
+      if (mutation.type === 'home/setShowOrderMode') {
+        if (state.home.showOrderMode) {
           if (this.selected) {
             this.textOpacity = 1;
           }
         } else {
           this.textOpacity = 0;
         }
-        this.showNumberMode = state.home.showNumberMode;
+        this.showOrderMode = state.home.showOrderMode;
       }
     });
     this.$store.subscribeAction((action, state) => {
@@ -93,6 +94,7 @@ export default {
     ...mapGetters('home', {
       getDownloadMode: 'getDownloadMode',
       getSelectMode: 'getSelectMode',
+      getShowOrderMode: 'getShowOrderMode',
     }),
     configRect() {
       return {
@@ -194,7 +196,7 @@ export default {
           this.strokeWidth = ActiveBoundingBoxHandHold.strokeWidth;
           this.stroke = ActiveBoundingBoxHandHold.stroke;
 
-          this.textOpacity = this.showNumberMode ? 1 : 0;
+          this.textOpacity = this.showOrderMode ? 1 : 0;
           this.addBoxIdToSelected(this.boxId);
           this.updateBoundingBoxNumbers();
         } else if (this.selectMode === SelectModes.FOOTHOLD) {
