@@ -1,13 +1,15 @@
 <template>
   <v-group :config="configGroup">
-    <v-text :config="configText"></v-text>
+    <v-text :config="configText" />
     <v-rect
       :config="configRect"
       @mouseover="onMouseOver"
       @mouseout="onMouseOut"
       @click="onClick"
       @tap="onTap"
-    ></v-rect>
+    />
+    <v-line :config="configLine1" />
+    <v-line :config="configLine2" />
   </v-group>
 </template>
 
@@ -28,6 +30,7 @@ export default {
       strokeWidth: DefaultBoundingBox.strokeWidth,
       boxOpacity: DefaultBoundingBox.opacity,
       textOpacity: 0,
+      lineOpacity: 0,
       text: '',
       fill: DefaultBoundingBox.fill,
       stroke: DefaultBoundingBox.stroke,
@@ -67,9 +70,15 @@ export default {
         this.reset();
       }
       if (action.type === 'home/updateBoundingBoxNumbers') {
-        if (this.selected) {
-          this.text = state.home.boxIdToSelectNumberMapping.get(this.boxId);
+        const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
+        const maxSelectNumber = Math.max(...state.home.boxIdToSelectNumberMapping.values());
+        // If the number turns out to be start or end, draw the crosses too
+        if (selectNumber === 1 || selectNumber === maxSelectNumber) {
+          this.lineOpacity = this.boxOpacity;
+        } else {
+          this.lineOpacity = 0;
         }
+        this.text = selectNumber;
       }
     });
   },
@@ -113,6 +122,22 @@ export default {
         fontFamily: 'Calibri',
         fontStyle: 'bold',
         opacity: this.textOpacity,
+        ...OPTIMIZATION_PARAMS,
+      };
+    },
+    configLine1() {
+      return {
+        points: [0, 0, this.w, this.h],
+        stroke: this.stroke,
+        opacity: this.lineOpacity,
+        ...OPTIMIZATION_PARAMS,
+      };
+    },
+    configLine2() {
+      return {
+        points: [this.w, 0, 0, this.h],
+        stroke: this.stroke,
+        opacity: this.lineOpacity,
         ...OPTIMIZATION_PARAMS,
       };
     },
