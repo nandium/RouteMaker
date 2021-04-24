@@ -107,11 +107,11 @@ export const addKonvaDrawLayer = (stageNode) => {
       listening: false,
     });
 
-    // Do not add if the DrawRect is too small (Less than 1 pixel)
-    if (drawRect.width() > 1 && drawRect.height() > 1) {
+    // Do not add if the DrawRect is too small (Less than 3 pixel)
+    if (drawRect.width() > 3 && drawRect.height() > 3) {
       drawLayer.add(newRect);
-      drawRect.setAttrs({ width: 0, height: 0 });
     }
+    drawRect.setAttrs({ width: 0, height: 0 });
 
     stageNode.batchDraw();
   };

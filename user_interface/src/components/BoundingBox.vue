@@ -54,6 +54,9 @@ export default {
           if (this.getDownloadMode === false) this.setDownloadMode(true);
         }
       }
+      /**
+       * When handStart mode is switched, updates the second handhold accordingly
+       */
       if (mutation.type === 'home/setHandStartMode') {
         this.handStartMode = state.home.handStartMode;
         const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
