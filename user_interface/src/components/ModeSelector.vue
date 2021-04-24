@@ -21,7 +21,10 @@
             >Reset</b-button
           >
           <b-button v-if="!isSelectModeDrawBox" @click="toggleShowOrder" variant="outline-info"
-            >{{ this.getShowOrderMode ? 'Hide' : 'Unhide' }} Order</b-button
+            >{{ this.showOrderMode ? 'Hide' : 'Unhide' }} Order</b-button
+          >
+          <b-button v-if="!isSelectModeDrawBox" @click="toggleHandStart" variant="outline-info"
+            >{{ this.handStartMode }}-HandStart</b-button
           >
           <b-button v-if="isSelectModeDrawBox" @click="undoDrawBox" variant="outline-info"
             >Undo Draw</b-button
@@ -55,11 +58,15 @@ export default {
     });
 
     this.updateDisplayButtons(this.getSelectMode);
+    this.handStartMode = this.getHandStartMode;
+    this.showOrderMode = this.getShowOrderMode;
   },
   data() {
     return {
       showAllButtons: true,
       isImageUploaded: false,
+      handStartMode: 0,
+      showOrderMode: true,
       buttons: [
         {
           caption: 'HandHold',
@@ -89,6 +96,7 @@ export default {
       getShowOrderMode: 'getShowOrderMode',
       getIsImageUploaded: 'getIsImageUploaded',
       getSelectMode: 'getSelectMode',
+      getHandStartMode: 'getHandStartMode',
     }),
     isSelectModeDrawBox() {
       return this.getSelectMode === SelectModes.DRAWBOX;
@@ -98,6 +106,7 @@ export default {
     ...mapMutations('home', {
       setSelectMode: 'setSelectMode',
       setShowOrderMode: 'setShowOrderMode',
+      setHandStartMode: 'setHandStartMode',
     }),
     ...mapActions('home', {
       resetBoundingBoxChanges: 'resetBoundingBoxChanges',
@@ -118,8 +127,12 @@ export default {
       this.showAllButtons = true;
     },
     toggleShowOrder() {
-      this.showOrderMode = !this.getShowOrderMode;
+      this.showOrderMode = !this.showOrderMode;
       this.setShowOrderMode(this.showOrderMode);
+    },
+    toggleHandStart() {
+      this.handStartMode = this.handStartMode === 1 ? 2 : 1;
+      this.setHandStartMode(this.handStartMode);
     },
     /**
      * Unselect the rest of the buttons

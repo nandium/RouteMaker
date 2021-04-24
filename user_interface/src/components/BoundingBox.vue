@@ -38,11 +38,13 @@ export default {
       selectMode: null,
       showOrderMode: true,
       selectNumber: 0,
+      handStartMode: 0,
     };
   },
   mounted() {
     this.selectMode = this.getSelectMode;
     this.showOrderMode = this.getShowOrderMode;
+    this.handStartMode = this.getHandStartMode;
 
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type === 'home/setSelectMode') {
@@ -50,6 +52,18 @@ export default {
         if (this.selectMode === SelectModes.EXPORT) {
           this.setDone();
           if (this.getDownloadMode === false) this.setDownloadMode(true);
+        }
+      }
+      if (mutation.type === 'home/setHandStartMode') {
+        this.handStartMode = state.home.handStartMode;
+        const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
+
+        if (selectNumber === 2) {
+          if (this.handStartMode === 2) {
+            this.lineOpacity = this.boxOpacity;
+          } else {
+            this.lineOpacity = 0;
+          }
         }
       }
       /**
@@ -76,6 +90,8 @@ export default {
         // If the number turns out to be start or end, draw the crosses too
         if (selectNumber === 1 || selectNumber === maxSelectNumber) {
           this.lineOpacity = this.boxOpacity;
+        } else if (this.handStartMode === 2 && selectNumber === 2) {
+          this.lineOpacity = this.boxOpacity;
         } else {
           this.lineOpacity = 0;
         }
@@ -95,6 +111,7 @@ export default {
       getDownloadMode: 'getDownloadMode',
       getSelectMode: 'getSelectMode',
       getShowOrderMode: 'getShowOrderMode',
+      getHandStartMode: 'getHandStartMode',
     }),
     configRect() {
       return {

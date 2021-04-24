@@ -11,6 +11,7 @@ const state = () => ({
   selectNumberToBoxIdArray: [],
   downloadMode: false,
   showOrderMode: true,
+  handStartMode: 1,
 });
 
 const getters = {
@@ -37,6 +38,9 @@ const getters = {
   },
   getShowOrderMode: (state) => {
     return state.showOrderMode;
+  },
+  getHandStartMode: (state) => {
+    return state.handStartMode;
   },
 };
 
@@ -77,6 +81,9 @@ const mutations = {
   },
   setShowOrderMode: (state, showOrderMode) => {
     state.showOrderMode = showOrderMode;
+  },
+  setHandStartMode: (state, handStartMode) => {
+    state.handStartMode = handStartMode;
   },
 };
 
