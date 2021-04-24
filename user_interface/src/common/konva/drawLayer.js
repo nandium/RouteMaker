@@ -106,8 +106,12 @@ export const addKonvaDrawLayer = (stageNode) => {
       stroke: DefaultBoundingBox.stroke,
       listening: false,
     });
-    drawLayer.add(newRect);
-    drawRect.setAttrs({ width: 0, height: 0 });
+
+    // Do not add if the DrawRect is too small (Less than 1 pixel)
+    if (drawRect.width() > 1 && drawRect.height() > 1) {
+      drawLayer.add(newRect);
+      drawRect.setAttrs({ width: 0, height: 0 });
+    }
 
     stageNode.batchDraw();
   };
