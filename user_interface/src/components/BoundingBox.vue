@@ -54,9 +54,6 @@ export default {
           if (this.getDownloadMode === false) this.setDownloadMode(true);
         }
       }
-      /**
-       * When handStart mode is switched, updates the second handhold accordingly
-       */
       if (mutation.type === 'home/setHandStartMode') {
         this.handStartMode = state.home.handStartMode;
         const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
@@ -222,6 +219,9 @@ export default {
         this.textOpacity = 0;
       }
     },
+    /**
+     * Depending on the HandStart Mode and the order of box selection, updates the symbols on bounding boxes
+     */
     updateHandStartSymbol(selectNumber, boxIdToSelectNumberMapping) {
       if (this.handStartMode > 0) {
         const maxSelectNumber = Math.max(...boxIdToSelectNumberMapping.values());
