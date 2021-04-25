@@ -179,6 +179,7 @@ export default {
       this.textOpacity = 0;
       this.fill = DefaultBoundingBox.fill;
       this.stroke = DefaultBoundingBox.stroke;
+      this.lineOpacity = 0;
       if (this.selected) {
         this.removeBoxIdFromSelected(this.boxId);
         this.selected = false;
