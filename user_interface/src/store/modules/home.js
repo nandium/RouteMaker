@@ -11,7 +11,7 @@ const state = () => ({
   selectNumberToBoxIdArray: [],
   downloadMode: false,
   showOrderMode: true,
-  handStartMode: 1,
+  handStartMode: 0,
 });
 
 const getters = {

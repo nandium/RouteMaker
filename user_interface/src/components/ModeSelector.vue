@@ -38,6 +38,7 @@
 <script>
 import SelectModes from '@/common/enumSelectModes';
 import { mapMutations, mapGetters, mapActions } from 'vuex';
+import { throttle } from 'lodash';
 
 export default {
   name: 'ModeSelector',
@@ -130,10 +131,21 @@ export default {
       this.showOrderMode = !this.showOrderMode;
       this.setShowOrderMode(this.showOrderMode);
     },
-    toggleHandStart() {
-      this.handStartMode = this.handStartMode === 1 ? 2 : 1;
+    toggleHandStart: throttle(function () {
+      const currHandStartMode = this.handStartMode;
+      switch (currHandStartMode) {
+        case 0:
+          this.handStartMode = 1;
+          break;
+        case 1:
+          this.handStartMode = 2;
+          break;
+        case 2:
+          this.handStartMode = 0;
+          break;
+      }
       this.setHandStartMode(this.handStartMode);
-    },
+    }, 200),
     /**
      * Unselect the rest of the buttons
      */

@@ -60,14 +60,7 @@ export default {
       if (mutation.type === 'home/setHandStartMode') {
         this.handStartMode = state.home.handStartMode;
         const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
-
-        if (selectNumber === 2) {
-          if (this.handStartMode === 2) {
-            this.lineOpacity = this.boxOpacity;
-          } else {
-            this.lineOpacity = 0;
-          }
-        }
+        this.updateHandStartSymbol(selectNumber, state.home.boxIdToSelectNumberMapping);
       }
       /**
        * ShowOrderMode unhides the numbering of handholds
@@ -89,16 +82,8 @@ export default {
       }
       if (action.type === 'home/updateBoundingBoxNumbers') {
         const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
-        const maxSelectNumber = Math.max(...state.home.boxIdToSelectNumberMapping.values());
-        // If the number turns out to be start or end, draw the crosses too
-        if (selectNumber === 1 || selectNumber === maxSelectNumber) {
-          this.lineOpacity = this.boxOpacity;
-        } else if (this.handStartMode === 2 && selectNumber === 2) {
-          this.lineOpacity = this.boxOpacity;
-        } else {
-          this.lineOpacity = 0;
-        }
         this.text = selectNumber;
+        this.updateHandStartSymbol(selectNumber, state.home.boxIdToSelectNumberMapping);
       }
     });
   },
@@ -235,6 +220,21 @@ export default {
       if (!this.selected) {
         this.boxOpacity = 0;
         this.textOpacity = 0;
+      }
+    },
+    updateHandStartSymbol(selectNumber, boxIdToSelectNumberMapping) {
+      if (this.handStartMode > 0) {
+        const maxSelectNumber = Math.max(...boxIdToSelectNumberMapping.values());
+        // If the number turns out to be start or end, draw the crosses too
+        if (selectNumber === 1 || selectNumber === maxSelectNumber) {
+          this.lineOpacity = this.boxOpacity;
+        } else if (this.handStartMode === 2 && selectNumber === 2) {
+          this.lineOpacity = this.boxOpacity;
+        } else {
+          this.lineOpacity = 0;
+        }
+      } else {
+        this.lineOpacity = 0;
       }
     },
   },
