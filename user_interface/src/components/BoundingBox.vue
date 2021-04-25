@@ -132,10 +132,10 @@ export default {
       };
     },
     configTape1() {
-      const x2 = Math.min(-this.w / 5, -10);
-      const y2 = Math.min(-this.h / 5, -10);
+      const corner = Math.min(-this.w / 5, -10);
+
       return {
-        points: [0, 0, x2, y2],
+        points: [0, 0, corner, corner],
         stroke: 'red',
         strokeWidth: this.strokeWidth * 1.5,
         opacity: this.tape1Opacity,
@@ -143,11 +143,10 @@ export default {
       };
     },
     configTape2() {
-      const x2 = Math.min(-this.w / 5, -10);
-      const y2 = Math.min(-this.h / 5, -10);
+      const corner = Math.min(-this.w / 5, -10);
 
       return {
-        points: [7, 0, x2 + 7, y2],
+        points: [10, 0, corner + 10, corner],
         stroke: 'red',
         strokeWidth: this.strokeWidth * 1.5,
         opacity: this.tape2Opacity,

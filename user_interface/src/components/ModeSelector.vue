@@ -24,7 +24,7 @@
             >{{ this.showOrderMode ? 'Hide' : 'Unhide' }} Order</b-button
           >
           <b-button v-if="!isSelectModeDrawBox" @click="toggleHandStart" variant="outline-info"
-            >{{ this.handStartMode }}-HandStart</b-button
+            >{{ this.handStartMode }}-StartHold</b-button
           >
           <b-button v-if="isSelectModeDrawBox" @click="undoDrawBox" variant="outline-info"
             >Undo Draw</b-button
