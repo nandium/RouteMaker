@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import SelectModes from '@/common/enumSelectModes';
+import SelectModes from '@/common/enumSelectMode';
 import HandStartMode from '@/common/enumHandStartMode';
 import { mapMutations, mapGetters, mapActions } from 'vuex';
 import { throttle } from 'lodash';

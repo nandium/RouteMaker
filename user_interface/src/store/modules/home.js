@@ -1,4 +1,4 @@
-import SelectModes from '@/common/enumSelectModes';
+import SelectModes from '@/common/enumSelectMode';
 import HandStartMode from '@/common/enumHandStartMode';
 
 const state = () => ({

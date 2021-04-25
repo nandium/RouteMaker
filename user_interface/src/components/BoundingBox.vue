@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import SelectModes from '@/common/enumSelectModes';
+import SelectModes from '@/common/enumSelectMode';
 import HandStartMode from '@/common/enumHandStartMode';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { OPTIMIZATION_PARAMS } from '@/common/konva';
