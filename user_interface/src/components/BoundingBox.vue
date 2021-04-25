@@ -8,8 +8,8 @@
       @click="onClick"
       @tap="onTap"
     />
-    <v-line :config="configLine1" />
-    <v-line :config="configLine2" />
+    <v-line :config="configTape1" />
+    <v-line :config="configTape2" />
   </v-group>
 </template>
 
@@ -31,7 +31,8 @@ export default {
       strokeWidth: DefaultBoundingBox.strokeWidth,
       boxOpacity: DefaultBoundingBox.opacity,
       textOpacity: 0,
-      lineOpacity: 0,
+      tape1Opacity: 0,
+      tape2Opacity: 0,
       text: '',
       fill: DefaultBoundingBox.fill,
       stroke: DefaultBoundingBox.stroke,
@@ -130,19 +131,26 @@ export default {
         ...OPTIMIZATION_PARAMS,
       };
     },
-    configLine1() {
+    configTape1() {
+      const x2 = Math.min(-this.w / 5, -10);
+      const y2 = Math.min(-this.h / 5, -10);
       return {
-        points: [0, 0, this.w, this.h],
-        stroke: this.stroke,
-        opacity: this.lineOpacity,
+        points: [0, 0, x2, y2],
+        stroke: 'red',
+        strokeWidth: this.strokeWidth * 1.5,
+        opacity: this.tape1Opacity,
         ...OPTIMIZATION_PARAMS,
       };
     },
-    configLine2() {
+    configTape2() {
+      const x2 = Math.min(-this.w / 5, -10);
+      const y2 = Math.min(-this.h / 5, -10);
+
       return {
-        points: [this.w, 0, 0, this.h],
-        stroke: this.stroke,
-        opacity: this.lineOpacity,
+        points: [7, 0, x2 + 7, y2],
+        stroke: 'red',
+        strokeWidth: this.strokeWidth * 1.5,
+        opacity: this.tape2Opacity,
         ...OPTIMIZATION_PARAMS,
       };
     },
@@ -162,7 +170,8 @@ export default {
       this.textOpacity = 0;
       this.fill = DefaultBoundingBox.fill;
       this.stroke = DefaultBoundingBox.stroke;
-      this.lineOpacity = 0;
+      this.tape1Opacity = 0;
+      this.tape2Opacity = 0;
       if (this.selected) {
         this.removeBoxIdFromSelected(this.boxId);
         this.selected = false;
@@ -221,24 +230,33 @@ export default {
       }
     },
     /**
-     * Depending on the HandStart Mode and the order of box selection, updates the symbols on bounding boxes
+     * Depending on the HandStart Mode and the order of box selection, updates the tapes on bounding boxes
      */
     updateHandStartSymbol(selectNumber, boxIdToSelectNumberMapping) {
-      if (
-        this.handStartMode === HandStartMode.ONEHAND ||
-        this.handStartMode === HandStartMode.TWOHAND
-      ) {
+      if (this.handStartMode === HandStartMode.ONEHAND) {
         const maxSelectNumber = Math.max(...boxIdToSelectNumberMapping.values());
-        // If the number turns out to be start or end, draw the crosses too
         if (selectNumber === 1 || selectNumber === maxSelectNumber) {
-          this.lineOpacity = this.boxOpacity;
-        } else if (this.handStartMode === HandStartMode.TWOHAND && selectNumber === 2) {
-          this.lineOpacity = this.boxOpacity;
+          this.tape1Opacity = 1;
+          this.tape2Opacity = 1;
         } else {
-          this.lineOpacity = 0;
+          this.tape1Opacity = 0;
+          this.tape2Opacity = 0;
+        }
+      } else if (this.handStartMode === HandStartMode.TWOHAND) {
+        const maxSelectNumber = Math.max(...boxIdToSelectNumberMapping.values());
+        if (selectNumber === maxSelectNumber) {
+          this.tape1Opacity = 1;
+          this.tape2Opacity = 1;
+        } else if (selectNumber === 1 || selectNumber === 2) {
+          this.tape1Opacity = 1;
+          this.tape2Opacity = 0;
+        } else {
+          this.tape1Opacity = 0;
+          this.tape2Opacity = 0;
         }
       } else {
-        this.lineOpacity = 0;
+        this.tape1Opacity = 0;
+        this.tape2Opacity = 0;
       }
     },
   },
