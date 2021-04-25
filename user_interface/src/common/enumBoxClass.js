@@ -4,19 +4,19 @@
  */
 class BoxClass {
   // Private Fields
-  static #_HOLD = 0;
-  static #_VOLUME = 1;
-  static #_DRAWN = 2;
+  static #HOLD = 0;
+  static #VOLUME = 1;
+  static #DRAWN = 2;
 
   // Accessors for "get" functions only (no "set" functions)
   static get HOLD() {
-    return this.#_HOLD;
+    return this.#HOLD;
   }
   static get VOLUME() {
-    return this.#_VOLUME;
+    return this.#VOLUME;
   }
   static get DRAWN() {
-    return this.#_DRAWN;
+    return this.#DRAWN;
   }
 }
 

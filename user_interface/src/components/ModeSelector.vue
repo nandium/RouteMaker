@@ -20,8 +20,11 @@
           <b-button v-if="!isSelectModeDrawBox" @click="onReset" variant="outline-info"
             >Reset</b-button
           >
-          <b-button v-if="!isSelectModeDrawBox" @click="toggleShowNumbers" variant="outline-info"
-            >{{ this.getShowNumberMode ? 'Hide' : 'Unhide' }} Numbers</b-button
+          <b-button v-if="!isSelectModeDrawBox" @click="toggleShowOrder" variant="outline-info"
+            >{{ this.showOrderMode ? 'Hide' : 'Unhide' }} Order</b-button
+          >
+          <b-button v-if="!isSelectModeDrawBox" @click="toggleHandStart" variant="outline-info"
+            >{{ this.handStartMode }}-HandStart</b-button
           >
           <b-button v-if="isSelectModeDrawBox" @click="undoDrawBox" variant="outline-info"
             >Undo Draw</b-button
@@ -33,14 +36,16 @@
 </template>
 
 <script>
-import SelectModes from '@/common/enumSelectModes';
+import SelectModes from '@/common/enumSelectMode';
+import HandStartMode from '@/common/enumHandStartMode';
 import { mapMutations, mapGetters, mapActions } from 'vuex';
+import { throttle } from 'lodash';
 
 export default {
   name: 'ModeSelector',
   mounted() {
     this.isImageUploaded = this.getIsImageUploaded;
-    this.showNumberMode = this.getShowNumberMode;
+    this.showOrderMode = this.getShowOrderMode;
 
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type === 'home/setIsImageUploaded') {
@@ -55,11 +60,15 @@ export default {
     });
 
     this.updateDisplayButtons(this.getSelectMode);
+    this.handStartMode = this.getHandStartMode;
+    this.showOrderMode = this.getShowOrderMode;
   },
   data() {
     return {
       showAllButtons: true,
       isImageUploaded: false,
+      handStartMode: HandStartMode.NOSHOW,
+      showOrderMode: true,
       buttons: [
         {
           caption: 'HandHold',
@@ -86,9 +95,10 @@ export default {
   },
   computed: {
     ...mapGetters('home', {
-      getShowNumberMode: 'getShowNumberMode',
+      getShowOrderMode: 'getShowOrderMode',
       getIsImageUploaded: 'getIsImageUploaded',
       getSelectMode: 'getSelectMode',
+      getHandStartMode: 'getHandStartMode',
     }),
     isSelectModeDrawBox() {
       return this.getSelectMode === SelectModes.DRAWBOX;
@@ -97,7 +107,8 @@ export default {
   methods: {
     ...mapMutations('home', {
       setSelectMode: 'setSelectMode',
-      setShowNumberMode: 'setShowNumberMode',
+      setShowOrderMode: 'setShowOrderMode',
+      setHandStartMode: 'setHandStartMode',
     }),
     ...mapActions('home', {
       resetBoundingBoxChanges: 'resetBoundingBoxChanges',
@@ -117,10 +128,25 @@ export default {
       this.resetBoundingBoxChanges();
       this.showAllButtons = true;
     },
-    toggleShowNumbers() {
-      this.showNumberMode = !this.getShowNumberMode;
-      this.setShowNumberMode(this.showNumberMode);
-    },
+    toggleShowOrder: throttle(function () {
+      this.showOrderMode = !this.showOrderMode;
+      this.setShowOrderMode(this.showOrderMode);
+    }, 200),
+    toggleHandStart: throttle(function () {
+      const currHandStartMode = this.handStartMode;
+      switch (currHandStartMode) {
+        case HandStartMode.NOSHOW:
+          this.handStartMode = HandStartMode.ONEHAND;
+          break;
+        case HandStartMode.ONEHAND:
+          this.handStartMode = HandStartMode.TWOHAND;
+          break;
+        case HandStartMode.TWOHAND:
+          this.handStartMode = HandStartMode.NOSHOW;
+          break;
+      }
+      this.setHandStartMode(this.handStartMode);
+    }, 200),
     /**
      * Unselect the rest of the buttons
      */

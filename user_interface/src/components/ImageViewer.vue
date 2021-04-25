@@ -33,7 +33,7 @@ import {
   OPTIMIZATION_PARAMS,
 } from '@/common/konva';
 import BoundingBox from '@/components/BoundingBox.vue';
-import SelectModes from '@/common/enumSelectModes';
+import SelectModes from '@/common/enumSelectMode';
 import BoxClass from '@/common/enumBoxClass';
 
 export default {

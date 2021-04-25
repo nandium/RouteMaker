@@ -1,4 +1,5 @@
-import SelectModes from '@/common/enumSelectModes';
+import SelectModes from '@/common/enumSelectMode';
+import HandStartMode from '@/common/enumHandStartMode';
 
 const state = () => ({
   // items: [],
@@ -10,7 +11,8 @@ const state = () => ({
   boxIdToSelectNumberMapping: new Map(),
   selectNumberToBoxIdArray: [],
   downloadMode: false,
-  showNumberMode: true,
+  showOrderMode: true,
+  handStartMode: HandStartMode.NOSHOW,
 });
 
 const getters = {
@@ -35,8 +37,11 @@ const getters = {
   getDownloadMode: (state) => {
     return state.downloadMode;
   },
-  getShowNumberMode: (state) => {
-    return state.showNumberMode;
+  getShowOrderMode: (state) => {
+    return state.showOrderMode;
+  },
+  getHandStartMode: (state) => {
+    return state.handStartMode;
   },
 };
 
@@ -75,8 +80,11 @@ const mutations = {
   setDownloadMode: (state, downloadMode) => {
     state.downloadMode = downloadMode;
   },
-  setShowNumberMode: (state, showNumberMode) => {
-    state.showNumberMode = showNumberMode;
+  setShowOrderMode: (state, showOrderMode) => {
+    state.showOrderMode = showOrderMode;
+  },
+  setHandStartMode: (state, handStartMode) => {
+    state.handStartMode = handStartMode;
   },
 };
 

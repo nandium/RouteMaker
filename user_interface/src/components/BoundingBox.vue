@@ -1,18 +1,21 @@
 <template>
   <v-group :config="configGroup">
-    <v-text :config="configText"></v-text>
+    <v-text :config="configText" />
     <v-rect
       :config="configRect"
       @mouseover="onMouseOver"
       @mouseout="onMouseOut"
       @click="onClick"
       @tap="onTap"
-    ></v-rect>
+    />
+    <v-line :config="configTape1" />
+    <v-line :config="configTape2" />
   </v-group>
 </template>
 
 <script>
-import SelectModes from '@/common/enumSelectModes';
+import SelectModes from '@/common/enumSelectMode';
+import HandStartMode from '@/common/enumHandStartMode';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { OPTIMIZATION_PARAMS } from '@/common/konva';
 import {
@@ -28,17 +31,22 @@ export default {
       strokeWidth: DefaultBoundingBox.strokeWidth,
       boxOpacity: DefaultBoundingBox.opacity,
       textOpacity: 0,
+      tape1Opacity: 0,
+      tape2Opacity: 0,
       text: '',
       fill: DefaultBoundingBox.fill,
       stroke: DefaultBoundingBox.stroke,
       selected: false,
       selectMode: null,
-      showNumberMode: true,
+      showOrderMode: true,
       selectNumber: 0,
+      handStartMode: HandStartMode.NOSHOW,
     };
   },
   mounted() {
     this.selectMode = this.getSelectMode;
+    this.showOrderMode = this.getShowOrderMode;
+    this.handStartMode = this.getHandStartMode;
 
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type === 'home/setSelectMode') {
@@ -48,18 +56,23 @@ export default {
           if (this.getDownloadMode === false) this.setDownloadMode(true);
         }
       }
+      if (mutation.type === 'home/setHandStartMode') {
+        this.handStartMode = state.home.handStartMode;
+        const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
+        this.updateHandStartSymbol(selectNumber, state.home.boxIdToSelectNumberMapping);
+      }
       /**
-       * ShowNumberMode unhides the numbering of handholds
+       * ShowOrderMode unhides the numbering of handholds
        */
-      if (mutation.type === 'home/setShowNumberMode') {
-        if (state.home.showNumberMode) {
+      if (mutation.type === 'home/setShowOrderMode') {
+        if (state.home.showOrderMode) {
           if (this.selected) {
             this.textOpacity = 1;
           }
         } else {
           this.textOpacity = 0;
         }
-        this.showNumberMode = state.home.showNumberMode;
+        this.showOrderMode = state.home.showOrderMode;
       }
     });
     this.$store.subscribeAction((action, state) => {
@@ -67,9 +80,9 @@ export default {
         this.reset();
       }
       if (action.type === 'home/updateBoundingBoxNumbers') {
-        if (this.selected) {
-          this.text = state.home.boxIdToSelectNumberMapping.get(this.boxId);
-        }
+        const selectNumber = state.home.boxIdToSelectNumberMapping.get(this.boxId);
+        this.text = selectNumber;
+        this.updateHandStartSymbol(selectNumber, state.home.boxIdToSelectNumberMapping);
       }
     });
   },
@@ -84,6 +97,8 @@ export default {
     ...mapGetters('home', {
       getDownloadMode: 'getDownloadMode',
       getSelectMode: 'getSelectMode',
+      getShowOrderMode: 'getShowOrderMode',
+      getHandStartMode: 'getHandStartMode',
     }),
     configRect() {
       return {
@@ -109,10 +124,33 @@ export default {
         x: 0,
         y: this.h + 2,
         text: this.text,
-        fontSize: 24,
+        fontSize: 20,
         fontFamily: 'Calibri',
         fontStyle: 'bold',
         opacity: this.textOpacity,
+        ...OPTIMIZATION_PARAMS,
+      };
+    },
+    configTape1() {
+      const x2 = Math.min(-this.w / 5, -10);
+      const y2 = Math.min(-this.h / 5, -10);
+      return {
+        points: [0, 0, x2, y2],
+        stroke: 'red',
+        strokeWidth: this.strokeWidth * 1.5,
+        opacity: this.tape1Opacity,
+        ...OPTIMIZATION_PARAMS,
+      };
+    },
+    configTape2() {
+      const x2 = Math.min(-this.w / 5, -10);
+      const y2 = Math.min(-this.h / 5, -10);
+
+      return {
+        points: [7, 0, x2 + 7, y2],
+        stroke: 'red',
+        strokeWidth: this.strokeWidth * 1.5,
+        opacity: this.tape2Opacity,
         ...OPTIMIZATION_PARAMS,
       };
     },
@@ -132,6 +170,8 @@ export default {
       this.textOpacity = 0;
       this.fill = DefaultBoundingBox.fill;
       this.stroke = DefaultBoundingBox.stroke;
+      this.tape1Opacity = 0;
+      this.tape2Opacity = 0;
       if (this.selected) {
         this.removeBoxIdFromSelected(this.boxId);
         this.selected = false;
@@ -169,7 +209,7 @@ export default {
           this.strokeWidth = ActiveBoundingBoxHandHold.strokeWidth;
           this.stroke = ActiveBoundingBoxHandHold.stroke;
 
-          this.textOpacity = this.showNumberMode ? 1 : 0;
+          this.textOpacity = this.showOrderMode ? 1 : 0;
           this.addBoxIdToSelected(this.boxId);
           this.updateBoundingBoxNumbers();
         } else if (this.selectMode === SelectModes.FOOTHOLD) {
@@ -187,6 +227,36 @@ export default {
       if (!this.selected) {
         this.boxOpacity = 0;
         this.textOpacity = 0;
+      }
+    },
+    /**
+     * Depending on the HandStart Mode and the order of box selection, updates the tapes on bounding boxes
+     */
+    updateHandStartSymbol(selectNumber, boxIdToSelectNumberMapping) {
+      if (this.handStartMode === HandStartMode.ONEHAND) {
+        const maxSelectNumber = Math.max(...boxIdToSelectNumberMapping.values());
+        if (selectNumber === 1 || selectNumber === maxSelectNumber) {
+          this.tape1Opacity = 1;
+          this.tape2Opacity = 1;
+        } else {
+          this.tape1Opacity = 0;
+          this.tape2Opacity = 0;
+        }
+      } else if (this.handStartMode === HandStartMode.TWOHAND) {
+        const maxSelectNumber = Math.max(...boxIdToSelectNumberMapping.values());
+        if (selectNumber === maxSelectNumber) {
+          this.tape1Opacity = 1;
+          this.tape2Opacity = 1;
+        } else if (selectNumber === 1 || selectNumber === 2) {
+          this.tape1Opacity = 1;
+          this.tape2Opacity = 0;
+        } else {
+          this.tape1Opacity = 0;
+          this.tape2Opacity = 0;
+        }
+      } else {
+        this.tape1Opacity = 0;
+        this.tape2Opacity = 0;
       }
     },
   },
