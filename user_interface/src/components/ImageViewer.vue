@@ -168,7 +168,7 @@ export default {
      * Creates an link html and downloads it
      */
     downloadKonva() {
-      const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg' });
+      const uri = this.$refs.stage.getNode().toDataURL({ mimeType: 'image/jpeg', pixelRatio: 4 });
       downloadURI(uri, 'Route.jpg');
       this.setDownloadMode(false);
     },
