@@ -4,19 +4,19 @@
  */
 class HandStartMode {
   // Private Fields
-  static #_NOSHOW = 0;
-  static #_ONEHAND = 1;
-  static #_TWOHAND = 2;
+  static #NOSHOW = 0;
+  static #ONEHAND = 1;
+  static #TWOHAND = 2;
 
   // Accessors for "get" functions only (no "set" functions)
   static get NOSHOW() {
-    return this.#_NOSHOW;
+    return this.#NOSHOW;
   }
   static get ONEHAND() {
-    return this.#_ONEHAND;
+    return this.#ONEHAND;
   }
   static get TWOHAND() {
-    return this.#_TWOHAND;
+    return this.#TWOHAND;
   }
 }
 
