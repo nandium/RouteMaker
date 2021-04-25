@@ -95,20 +95,20 @@ export const addKonvaDrawLayer = (stageNode) => {
 
     mode = '';
     drawRect.visible(false);
-    var newRect = new Konva.Rect({
-      x: drawRect.x(),
-      y: drawRect.y(),
-      width: drawRect.width(),
-      height: drawRect.height(),
-      strokeWidth: DefaultBoundingBox.strokeWidth,
-      opacity: DefaultBoundingBox.opacity,
-      fill: DefaultBoundingBox.fill,
-      stroke: DefaultBoundingBox.stroke,
-      listening: false,
-    });
 
-    // Do not add if the DrawRect is too small (Less than 3 pixel)
+    // Do not add if the DrawRect is too small (Less than 3 pixels)
     if (drawRect.width() > 3 && drawRect.height() > 3) {
+      const newRect = new Konva.Rect({
+        x: drawRect.x(),
+        y: drawRect.y(),
+        width: drawRect.width(),
+        height: drawRect.height(),
+        strokeWidth: DefaultBoundingBox.strokeWidth,
+        opacity: DefaultBoundingBox.opacity,
+        fill: DefaultBoundingBox.fill,
+        stroke: DefaultBoundingBox.stroke,
+        listening: false,
+      });
       drawLayer.add(newRect);
     }
     drawRect.setAttrs({ width: 0, height: 0 });
