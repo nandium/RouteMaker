@@ -127,10 +127,10 @@ export default {
       this.resetBoundingBoxChanges();
       this.showAllButtons = true;
     },
-    toggleShowOrder() {
+    toggleShowOrder: throttle(function () {
       this.showOrderMode = !this.showOrderMode;
       this.setShowOrderMode(this.showOrderMode);
-    },
+    }, 200),
     toggleHandStart: throttle(function () {
       const currHandStartMode = this.handStartMode;
       switch (currHandStartMode) {
