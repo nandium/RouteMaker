@@ -25,8 +25,11 @@ The Object Detection model is trained on yolov4-tiny. Hence it is sufficiently s
 #### 4. Select your footholds
 ![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_4.jpg)
 
-#### 5. Export as an image to share with friends
+#### 5. Select number of start holds
 ![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_5.jpg)
+
+#### 6. Export as an image to share with friends
+![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_6.jpg)
 
 
 ## Setup

@@ -30,8 +30,11 @@
     <p class="lead my-4">4. Select your footholds</p>
     <img class="border border-secondary" src="@/assets/Screenshot_4.jpg" />
     <br /><br />
-    <p class="lead my-4">5. Export as an image to share with friends</p>
+    <p class="lead my-4">5. Select number of start holds</p>
     <img class="border border-secondary" src="@/assets/Screenshot_5.jpg" />
+    <br /><br />
+    <p class="lead my-4">6. Export as an image to share with friends</p>
+    <img class="border border-secondary" src="@/assets/Screenshot_6.jpg" />
     <br /><br />
 
     <hr class="my-4" />
