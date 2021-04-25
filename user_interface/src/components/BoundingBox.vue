@@ -15,6 +15,7 @@
 
 <script>
 import SelectModes from '@/common/enumSelectModes';
+import HandStartMode from '@/common/enumHandStartMode';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { OPTIMIZATION_PARAMS } from '@/common/konva';
 import {
@@ -38,7 +39,7 @@ export default {
       selectMode: null,
       showOrderMode: true,
       selectNumber: 0,
-      handStartMode: 0,
+      handStartMode: HandStartMode.NOSHOW,
     };
   },
   mounted() {
@@ -223,12 +224,15 @@ export default {
      * Depending on the HandStart Mode and the order of box selection, updates the symbols on bounding boxes
      */
     updateHandStartSymbol(selectNumber, boxIdToSelectNumberMapping) {
-      if (this.handStartMode > 0) {
+      if (
+        this.handStartMode === HandStartMode.ONEHAND ||
+        this.handStartMode === HandStartMode.TWOHAND
+      ) {
         const maxSelectNumber = Math.max(...boxIdToSelectNumberMapping.values());
         // If the number turns out to be start or end, draw the crosses too
         if (selectNumber === 1 || selectNumber === maxSelectNumber) {
           this.lineOpacity = this.boxOpacity;
-        } else if (this.handStartMode === 2 && selectNumber === 2) {
+        } else if (this.handStartMode === HandStartMode.TWOHAND && selectNumber === 2) {
           this.lineOpacity = this.boxOpacity;
         } else {
           this.lineOpacity = 0;

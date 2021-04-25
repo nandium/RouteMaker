@@ -1,4 +1,5 @@
 import SelectModes from '@/common/enumSelectModes';
+import HandStartMode from '@/common/enumHandStartMode';
 
 const state = () => ({
   // items: [],
@@ -11,7 +12,7 @@ const state = () => ({
   selectNumberToBoxIdArray: [],
   downloadMode: false,
   showOrderMode: true,
-  handStartMode: 0,
+  handStartMode: HandStartMode.NOSHOW,
 });
 
 const getters = {
