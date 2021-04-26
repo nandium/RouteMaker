@@ -49,6 +49,10 @@ export default {
     this.windowWidth = this.getWindowWidth;
   },
   async mounted() {
+    let previousImage = this.$store.state.imageURL;
+    if(previousImage) {
+      this.imageFile = previousImage;
+    }
     this.$store.subscribe(async (mutation, state) => {
       if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
