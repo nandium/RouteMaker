@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 
 import io
+import os
 
 from functools import wraps
 
@@ -16,7 +17,7 @@ def exception_handler(handler):
             return {
                 "statusCode": "400",
                 "body": "Error: " + str(err),
-                "headers": {'Access-Control-Allow-Origin': "*"}
+                "headers": get_response_headers()
             }
 
     return handler_with_exception
@@ -62,3 +63,13 @@ def parse_multipart_data(body_dec, content_type):
         items.append({"content": part.content, "type": type, "params": params})
 
     return items
+
+
+def get_response_headers():
+    if (os.environ.get("PYTHON_ENV") == 'prod'):
+        return {
+            'Access-Control-Allow-Origin': os.environ.get("ALLOWED_ORIGIN"),
+            'Strict-Transport-Security': "max-age=31536000;"
+        }
+    else:
+        return {'Access-Control-Allow-Origin': "*"}

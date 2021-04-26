@@ -10,28 +10,44 @@ provider:
   memorySize: 2048
   apiGateway:
     binaryMediaTypes:
-      - "multipart/form-data"
+      - 'multipart/form-data'
   logRetentionInDays: 30
   environment:
     PYTHON_ENV: ${self:custom.stage}
+    ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
 
 functions:
   PredictImage:
     handler: handler.predict
-    timeout: 15
+    timeout: 10
     events:
       - http:
           path: /predict
           method: post
-          cors: true
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+            headers: '*'
+            methods:
+              - POST
+              - OPTIONS
 
 custom:
   stage: ${opt:stage, self:provider.stage}
   pythonRequirements:
     dockerizePip: true
   apiGatewayThrottling:
-    maxRequestsPerSecond: 10
-    maxConcurrentRequests: 5
+    maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
+    maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
+
+  _maxRequestsPerSecond:
+    dev: 1
+    prod: 5
+  _maxConcurrentRequests:
+    dev: 1
+    prod: 5
+  _origin:
+    dev: '*'
+    prod: 'https://yarkhinephyo.github.io'
 
 plugins:
   - serverless-python-requirements

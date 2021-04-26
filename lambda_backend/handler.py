@@ -7,7 +7,7 @@ import glob
 import json
 import base64
 
-from utils import exception_handler, retrieve_numpy_image, parse_multipart_data
+from utils import exception_handler, retrieve_numpy_image, parse_multipart_data, get_response_headers
 
 ALLOWED_TYPES = ["image/jpeg"]
 
@@ -126,5 +126,5 @@ def predict(event, context):
             'width': scaled_width,
             'height': scaled_height
         }),
-        "headers": {'Access-Control-Allow-Origin': "*"}
+        "headers": get_response_headers()
     }
