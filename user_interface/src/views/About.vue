@@ -19,22 +19,22 @@
 
     <hr class="my-4" id="section2" />
     <p class="lead my-4">1. Upload the photo of a climbing wall</p>
-    <img class="border border-secondary" src="@/assets/Screenshot_1.jpg" />
+    <img class="border border-secondary screenshot" src="@/assets/Screenshot_1.jpg" />
     <br /><br />
     <p class="lead my-4">2. The holds will be marked automatically</p>
-    <img class="border border-secondary" src="@/assets/Screenshot_2.jpg" />
+    <img class="border border-secondary screenshot" src="@/assets/Screenshot_2.jpg" />
     <br /><br />
     <p class="lead my-4">3. Select your handholds</p>
-    <img class="border border-secondary" src="@/assets/Screenshot_3.jpg" />
+    <img class="border border-secondary screenshot" src="@/assets/Screenshot_3.jpg" />
     <br /><br />
     <p class="lead my-4">4. Select your footholds</p>
-    <img class="border border-secondary" src="@/assets/Screenshot_4.jpg" />
+    <img class="border border-secondary screenshot" src="@/assets/Screenshot_4.jpg" />
     <br /><br />
     <p class="lead my-4">5. Select number of start holds</p>
-    <img class="border border-secondary" src="@/assets/Screenshot_5.jpg" />
+    <img class="border border-secondary screenshot" src="@/assets/Screenshot_5.jpg" />
     <br /><br />
     <p class="lead my-4">6. Export as an image to share with friends</p>
-    <img class="border border-secondary" src="@/assets/Screenshot_6.jpg" />
+    <img class="border border-secondary screenshot" src="@/assets/Screenshot_6.jpg" />
     <br /><br />
 
     <hr class="my-4" />
@@ -67,8 +67,9 @@ export default {
 </script>
 
 <style scoped>
-img {
+.screenshot {
   border-radius: 1rem;
+  width: 300px;
 }
 .jumbotron {
   margin-bottom: 0;
