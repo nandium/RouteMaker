@@ -8,7 +8,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,vue,html,css,py,yml}": [
+    "*.{js,jsx,vue,html,css,yml}": [
       "prettier --write",
       "git add"
     ]
