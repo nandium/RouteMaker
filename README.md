@@ -14,27 +14,28 @@ The Object Detection model is trained on yolov4-tiny. Hence it is sufficiently s
 
 ## Usage
 #### 1. Upload the photo of a climbing wall
-![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_1.jpg)
+<img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_1.jpg" width="200" />
 
 #### 2. The holds will be marked automatically
-![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_2.jpg)
+<img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_2.jpg" width="200" />
 
 #### 3. Select your handholds
-![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_3.jpg)
+<img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_3.jpg" width="200" />
 
 #### 4. Select your footholds
-![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_4.jpg)
+<img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_4.jpg" width="200" />
 
 #### 5. Select number of start holds
-![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_5.jpg)
+<img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_5.jpg" width="200" />
 
 #### 6. Export as an image to share with friends
-![Alt desc](https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_6.jpg)
+<img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_6.jpg" width="200" />
 
 
 ## Setup
 
 ```bash
+# Ensure npm is installed
 # Ensure AWS credentials are set up for Serverless backend
 # Ensure Serverless framework is installed (2.11.1)
 # Ensure Docker engine is running for preparing pip packages
@@ -42,7 +43,6 @@ cd ./lambda_backend
 npm i
 sls deploy
 
-# Ensure npm is installed
 cd ./user_interface
 echo "VUE_APP_GET_BOUNDING_BOX_URL={serverless_url_here}" > .env
 npm i
