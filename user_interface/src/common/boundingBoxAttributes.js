@@ -19,4 +19,17 @@ const ActiveBoundingBoxFootHold = {
   stroke: 'black',
 };
 
-export { DefaultBoundingBox, ActiveBoundingBoxHandHold, ActiveBoundingBoxFootHold };
+const BoundingBoxNumbering = {
+  fontSize: 20,
+  fontFamily: 'Calibri',
+  fontStyle: 'bold',
+  stroke: 'white',
+  fill: 'black',
+};
+
+export {
+  DefaultBoundingBox,
+  ActiveBoundingBoxHandHold,
+  ActiveBoundingBoxFootHold,
+  BoundingBoxNumbering,
+};
