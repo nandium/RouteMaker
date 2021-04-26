@@ -22,6 +22,7 @@ import {
   DefaultBoundingBox,
   ActiveBoundingBoxFootHold,
   ActiveBoundingBoxHandHold,
+  BoundingBoxNumbering,
 } from '@/common/boundingBoxAttributes';
 
 export default {
@@ -124,9 +125,12 @@ export default {
         x: 0,
         y: this.h + 2,
         text: this.text,
-        fontSize: 20,
-        fontFamily: 'Calibri',
-        fontStyle: 'bold',
+        fontSize: BoundingBoxNumbering.fontSize,
+        fontFamily: BoundingBoxNumbering.fontFamily,
+        fontStyle: BoundingBoxNumbering.fontStyle,
+        stroke: BoundingBoxNumbering.stroke,
+        fill: BoundingBoxNumbering.fill,
+        fillAfterStrokeEnabled: true,
         opacity: this.textOpacity,
         ...OPTIMIZATION_PARAMS,
       };
