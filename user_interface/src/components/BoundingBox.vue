@@ -197,7 +197,9 @@ export default {
     onClick() {
       if (this.selectMode === SelectModes.DRAWBOX) return;
 
-      if (this.selected) {
+      let sameMode = (this.selectMode === SelectModes.HANDHOLD && this.fill === ActiveBoundingBoxHandHold.fill) ||
+                    (this.selectMode === SelectModes.FOOTHOLD && this.fill === ActiveBoundingBoxFootHold.fill);
+      if (this.selected && sameMode) {
         this.boxOpacity = DefaultBoundingBox.opacity;
         this.fill = DefaultBoundingBox.fill;
         this.textOpacity = 0;
@@ -216,6 +218,11 @@ export default {
           this.addBoxIdToSelected(this.boxId);
           this.updateBoundingBoxNumbers();
         } else if (this.selectMode === SelectModes.FOOTHOLD) {
+          if (this.fill === ActiveBoundingBoxHandHold.fill) {
+            this.textOpacity = 0;
+            this.removeBoxIdFromSelected(this.boxId);
+            this.updateBoundingBoxNumbers();
+          }
           this.boxOpacity = ActiveBoundingBoxFootHold.opacity;
           this.fill = ActiveBoundingBoxFootHold.fill;
           this.strokeWidth = ActiveBoundingBoxFootHold.strokeWidth;
