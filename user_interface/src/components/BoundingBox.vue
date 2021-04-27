@@ -38,6 +38,7 @@ export default {
       showOrderMode: true,
       selectNumber: 0,
       handStartMode: HandStartMode.NOSHOW,
+      isHover: false,
     };
   },
   mounted() {
@@ -61,7 +62,9 @@ export default {
           if (this.boxMode === BoxMode.NOTSELECTED) {
             this.boxMode = BoxMode.INVISIBLE;
           }
-          if (this.getDownloadMode === false) this.setDownloadMode(true);
+          if (this.getDownloadMode === false) {
+            this.setDownloadMode(true);
+          }
         }
       }
       if (mutation.type === 'home/setHandStartMode') {
@@ -125,7 +128,7 @@ export default {
         fill: boundingBoxAttributes.fill,
         stroke: boundingBoxAttributes.stroke,
         opacity: boundingBoxAttributes.opacity,
-        strokeWidth: boundingBoxAttributes.strokeWidth,
+        strokeWidth: this.isHover ? 4 : boundingBoxAttributes.strokeWidth,
         ...OPTIMIZATION_PARAMS,
       };
     },
@@ -159,7 +162,7 @@ export default {
       return {
         points: [0, 0, corner, corner],
         stroke: 'red',
-        strokeWidth: this.strokeWidth * 1.5,
+        strokeWidth: DefaultBoundingBox.strokeWidth * 1.5,
         opacity: this.tape1Opacity,
         ...OPTIMIZATION_PARAMS,
       };
@@ -170,7 +173,7 @@ export default {
       return {
         points: [10, 0, corner + 10, corner],
         stroke: 'red',
-        strokeWidth: this.strokeWidth * 1.5,
+        strokeWidth: DefaultBoundingBox.strokeWidth * 1.5,
         opacity: this.tape2Opacity,
         ...OPTIMIZATION_PARAMS,
       };
@@ -195,11 +198,11 @@ export default {
     },
     onMouseOver() {
       if (this.selectMode === SelectMode.DRAWBOX) return;
-      this.strokeWidth = 4;
+      this.isHover = true;
     },
     onMouseOut() {
       if (this.selectMode === SelectMode.DRAWBOX) return;
-      if (!this.selected) this.strokeWidth = DefaultBoundingBox.strokeWidth;
+      this.isHover = false;
     },
     /**
      * Do not allow box changes if current mode is DRAWBOX
