@@ -88,6 +88,7 @@ export default {
       }
       if (mutation.type === 'home/setWindowWidth') {
         this.windowWidth = state.home.windowWidth;
+        await this.rerenderKonva(state);
       }
       if (mutation.type === 'home/setSelectMode') {
         this.selectMode = state.home.selectMode;
@@ -152,6 +153,20 @@ export default {
       const imageURL = state.home.imageURL;
       const { height, width } = await getHeightAndWidthFromDataUrl(imageURL);
       const imageHeight = (height / width) * this.windowWidth;
+      if (this.configImage.image !== null) {
+        const sizeChangeRatio = imageHeight / this.configImage.height;
+        let newBoxes = [];
+        for (const { x, y, w, h, class: boxClass } of this.boxes) {
+          newBoxes.push({
+            x: x * sizeChangeRatio,
+            y: y * sizeChangeRatio,
+            w: w * sizeChangeRatio,
+            h: h * sizeChangeRatio,
+            class: boxClass,
+          });
+        }
+        this.setBoxes(newBoxes);
+      }
       image.src = imageURL;
       this.configStage = {
         width: this.windowWidth,
