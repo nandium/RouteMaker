@@ -2,12 +2,12 @@
  * ENUM
  * https://stackoverflow.com/questions/44447847/enums-in-javascript-with-es6
  */
-class BoxModes {
+class BoxMode {
   // Private Fields
   static #NOTSELECTED = 0;
   static #HANDHOLD = 1;
   static #FOOTHOLD = 2;
-  static #INVISIBLE = 4;
+  static #INVISIBLE = 3;
 
   // Accessors for "get" functions only (no "set" functions)
   static get NOTSELECTED() {
@@ -24,4 +24,4 @@ class BoxModes {
   }
 }
 
-export default BoxModes;
+export default BoxMode;
