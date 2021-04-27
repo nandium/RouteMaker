@@ -14,7 +14,8 @@
 </template>
 
 <script>
-import SelectModes from '@/common/enumSelectMode';
+import SelectMode from '@/common/enumSelectMode';
+import BoxMode from '@/common/enumBoxMode';
 import HandStartMode from '@/common/enumHandStartMode';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { OPTIMIZATION_PARAMS } from '@/common/konva';
@@ -29,19 +30,15 @@ export default {
   name: 'BoundingBox',
   data() {
     return {
-      strokeWidth: DefaultBoundingBox.strokeWidth,
-      boxOpacity: DefaultBoundingBox.opacity,
-      textOpacity: 0,
       tape1Opacity: 0,
       tape2Opacity: 0,
       text: '',
-      fill: DefaultBoundingBox.fill,
-      stroke: DefaultBoundingBox.stroke,
-      selected: false,
+      boxMode: BoxMode.NOTSELECTED,
       selectMode: null,
       showOrderMode: true,
       selectNumber: 0,
       handStartMode: HandStartMode.NOSHOW,
+      isHover: false,
     };
   },
   mounted() {
@@ -50,11 +47,24 @@ export default {
     this.handStartMode = this.getHandStartMode;
 
     this.$store.subscribe(async (mutation, state) => {
+      /**
+       * If user changes to export mode, make unselected boxes invisible
+       * If user changes from export mode, undo the changes
+       */
       if (mutation.type === 'home/setSelectMode') {
+        const oldSelectMode = this.selectMode;
         this.selectMode = state.home.selectMode;
-        if (this.selectMode === SelectModes.EXPORT) {
-          this.setDone();
-          if (this.getDownloadMode === false) this.setDownloadMode(true);
+        if (oldSelectMode === SelectMode.EXPORT && this.selectMode !== SelectMode.EXPORT) {
+          if (this.boxMode === BoxMode.INVISIBLE) {
+            this.boxMode = BoxMode.NOTSELECTED;
+          }
+        } else if (this.selectMode === SelectMode.EXPORT) {
+          if (this.boxMode === BoxMode.NOTSELECTED) {
+            this.boxMode = BoxMode.INVISIBLE;
+          }
+          if (this.getDownloadMode === false) {
+            this.setDownloadMode(true);
+          }
         }
       }
       if (mutation.type === 'home/setHandStartMode') {
@@ -66,13 +76,6 @@ export default {
        * ShowOrderMode unhides the numbering of handholds
        */
       if (mutation.type === 'home/setShowOrderMode') {
-        if (state.home.showOrderMode) {
-          if (this.selected) {
-            this.textOpacity = 1;
-          }
-        } else {
-          this.textOpacity = 0;
-        }
         this.showOrderMode = state.home.showOrderMode;
       }
     });
@@ -102,13 +105,30 @@ export default {
       getHandStartMode: 'getHandStartMode',
     }),
     configRect() {
+      let boundingBoxAttributes = null;
+      switch (this.boxMode) {
+        case BoxMode.NOTSELECTED:
+          boundingBoxAttributes = DefaultBoundingBox;
+          break;
+        case BoxMode.HANDHOLD:
+          boundingBoxAttributes = ActiveBoundingBoxHandHold;
+          break;
+        case BoxMode.FOOTHOLD:
+          boundingBoxAttributes = ActiveBoundingBoxFootHold;
+          break;
+        default:
+          return {
+            opacity: 0,
+            ...OPTIMIZATION_PARAMS,
+          };
+      }
       return {
         width: this.w,
         height: this.h,
-        fill: this.fill,
-        stroke: this.stroke,
-        strokeWidth: this.strokeWidth,
-        opacity: this.boxOpacity,
+        fill: boundingBoxAttributes.fill,
+        stroke: boundingBoxAttributes.stroke,
+        opacity: boundingBoxAttributes.opacity,
+        strokeWidth: this.isHover ? 4 : boundingBoxAttributes.strokeWidth,
         ...OPTIMIZATION_PARAMS,
       };
     },
@@ -121,6 +141,7 @@ export default {
       };
     },
     configText() {
+      let textOpacity = this.boxMode === BoxMode.HANDHOLD && this.showOrderMode ? 1 : 0;
       return {
         x: 0,
         y: this.h + 2,
@@ -131,7 +152,7 @@ export default {
         stroke: BoundingBoxNumbering.stroke,
         fill: BoundingBoxNumbering.fill,
         fillAfterStrokeEnabled: true,
-        opacity: this.textOpacity,
+        opacity: textOpacity,
         ...OPTIMIZATION_PARAMS,
       };
     },
@@ -141,7 +162,7 @@ export default {
       return {
         points: [0, 0, corner, corner],
         stroke: 'red',
-        strokeWidth: this.strokeWidth * 1.5,
+        strokeWidth: DefaultBoundingBox.strokeWidth * 1.5,
         opacity: this.tape1Opacity,
         ...OPTIMIZATION_PARAMS,
       };
@@ -152,7 +173,7 @@ export default {
       return {
         points: [10, 0, corner + 10, corner],
         stroke: 'red',
-        strokeWidth: this.strokeWidth * 1.5,
+        strokeWidth: DefaultBoundingBox.strokeWidth * 1.5,
         opacity: this.tape2Opacity,
         ...OPTIMIZATION_PARAMS,
       };
@@ -168,25 +189,20 @@ export default {
       updateBoundingBoxNumbers: 'updateBoundingBoxNumbers',
     }),
     reset() {
-      this.strokeWidth = DefaultBoundingBox.strokeWidth;
-      this.boxOpacity = DefaultBoundingBox.opacity;
-      this.textOpacity = 0;
-      this.fill = DefaultBoundingBox.fill;
-      this.stroke = DefaultBoundingBox.stroke;
       this.tape1Opacity = 0;
       this.tape2Opacity = 0;
-      if (this.selected) {
+      if (this.boxMode !== BoxMode.NOTSELECTED) {
         this.removeBoxIdFromSelected(this.boxId);
-        this.selected = false;
+        this.boxMode = BoxMode.NOTSELECTED;
       }
     },
     onMouseOver() {
-      if (this.selectMode === SelectModes.DRAWBOX) return;
-      this.strokeWidth = 4;
+      if (this.selectMode === SelectMode.DRAWBOX) return;
+      this.isHover = true;
     },
     onMouseOut() {
-      if (this.selectMode === SelectModes.DRAWBOX) return;
-      if (!this.selected) this.strokeWidth = DefaultBoundingBox.strokeWidth;
+      if (this.selectMode === SelectMode.DRAWBOX) return;
+      this.isHover = false;
     },
     /**
      * Do not allow box changes if current mode is DRAWBOX
@@ -195,42 +211,32 @@ export default {
      * If the box is not selected, select only if foothold
      */
     onClick() {
-      if (this.selectMode === SelectModes.DRAWBOX) return;
+      if (this.selectMode === SelectMode.DRAWBOX) return;
 
-      if (this.selected) {
-        this.boxOpacity = DefaultBoundingBox.opacity;
-        this.fill = DefaultBoundingBox.fill;
-        this.textOpacity = 0;
-        this.selected = false;
+      let sameMode =
+        (this.selectMode === SelectMode.HANDHOLD && this.boxMode === BoxMode.HANDHOLD) ||
+        (this.selectMode === SelectMode.FOOTHOLD && this.boxMode === BoxMode.FOOTHOLD);
+
+      if (this.boxMode !== BoxMode.NOTSELECTED && sameMode) {
+        this.boxMode = BoxMode.NOTSELECTED;
         this.removeBoxIdFromSelected(this.boxId);
         this.updateBoundingBoxNumbers();
       } else {
-        this.selected = true;
-        if (this.selectMode === SelectModes.HANDHOLD) {
-          this.boxOpacity = ActiveBoundingBoxHandHold.opacity;
-          this.fill = ActiveBoundingBoxHandHold.fill;
-          this.strokeWidth = ActiveBoundingBoxHandHold.strokeWidth;
-          this.stroke = ActiveBoundingBoxHandHold.stroke;
-
-          this.textOpacity = this.showOrderMode ? 1 : 0;
+        if (this.selectMode === SelectMode.HANDHOLD) {
+          this.boxMode = BoxMode.HANDHOLD;
           this.addBoxIdToSelected(this.boxId);
           this.updateBoundingBoxNumbers();
-        } else if (this.selectMode === SelectModes.FOOTHOLD) {
-          this.boxOpacity = ActiveBoundingBoxFootHold.opacity;
-          this.fill = ActiveBoundingBoxFootHold.fill;
-          this.strokeWidth = ActiveBoundingBoxFootHold.strokeWidth;
-          this.stroke = ActiveBoundingBoxFootHold.stroke;
+        } else if (this.selectMode === SelectMode.FOOTHOLD) {
+          if (this.boxMode === BoxMode.HANDHOLD) {
+            this.removeBoxIdFromSelected(this.boxId);
+            this.updateBoundingBoxNumbers();
+          }
+          this.boxMode = BoxMode.FOOTHOLD;
         }
       }
     },
     onTap() {
       this.onClick();
-    },
-    setDone() {
-      if (!this.selected) {
-        this.boxOpacity = 0;
-        this.textOpacity = 0;
-      }
     },
     /**
      * Depending on the HandStart Mode and the order of box selection, updates the tapes on bounding boxes
