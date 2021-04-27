@@ -10,11 +10,11 @@
 
 <script>
 // @ is an alias to /src
+import { calculateDefaultKonvaWindowWidth } from '@/common/konva';
 import ImageViewer from '@/components/ImageViewer.vue';
 import ImageUploader from '@/components/ImageUploader.vue';
 import ModeSelector from '@/components/ModeSelector.vue';
 import { mapMutations } from 'vuex';
-import { debounce } from 'lodash';
 
 export default {
   name: 'Home',
@@ -29,22 +29,13 @@ export default {
    */
   created() {
     window.onload = () => {
-      this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
+      this.setWindowWidth(calculateDefaultKonvaWindowWidth(document.body.clientWidth));
     };
-    window.addEventListener(
-      'resize',
-      debounce(() => {
-        this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
-      }),
-    );
   },
   methods: {
     ...mapMutations('home', {
       setWindowWidth: 'setWindowWidth',
-    }),
-    calculateCanvaWindowWidth(innerWidth) {
-      return Math.min(800, Math.floor((innerWidth / 10) * 9));
-    },
+    })
   },
 };
 </script>

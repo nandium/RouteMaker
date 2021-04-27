@@ -97,6 +97,7 @@ const actions = {
   },
   updateBoundingBoxNumbers() {},
   undoDrawBox() {},
+  redrawCanvas() {},
 };
 
 export default {
