@@ -14,6 +14,7 @@ import ImageViewer from '@/components/ImageViewer.vue';
 import ImageUploader from '@/components/ImageUploader.vue';
 import ModeSelector from '@/components/ModeSelector.vue';
 import { mapMutations } from 'vuex';
+import { debounce } from 'lodash';
 
 export default {
   name: 'Home',
@@ -30,9 +31,12 @@ export default {
     window.onload = () => {
       this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
     };
-    window.addEventListener('resize', () => {
-      this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
-    });
+    window.addEventListener(
+      'resize',
+      debounce(() => {
+        this.setWindowWidth(this.calculateCanvaWindowWidth(window.innerWidth));
+      }),
+    );
   },
   methods: {
     ...mapMutations('home', {
