@@ -20,3 +20,7 @@ export const waitForKonvaStageLoad = async (refs, intervalDuration) => {
     }, intervalDuration);
   });
 };
+
+export const calculateDefaultKonvaWindowWidth = (width) => {
+  return Math.min(800, Math.floor((width / 10) * 9));
+};

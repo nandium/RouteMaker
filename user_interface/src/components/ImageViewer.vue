@@ -2,8 +2,12 @@
   <b-container fluid class="my-2">
     <v-stage ref="stage" class="canva" v-if="isImageUploaded" :config="configStage">
       <v-layer ref="layer">
-        <v-image :config="configImage"></v-image>
-        <v-text :config="configWatermark"></v-text>
+        <v-image :config="configImage" />
+        <v-text :config="configWatermark" />
+        <v-group @click="onFullscreenClick">
+          <v-arrow :config="configFullscreenArrowTopRight" />
+          <v-arrow :config="configFullscreenArrowBottomLeft" />
+        </v-group>
         <BoundingBox
           :key="idx"
           v-for="(box, idx) in boxes"
@@ -19,12 +23,12 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex';
 import { getHeightAndWidthFromDataUrl, downloadURI } from '@/common/utils';
 import {
   waitForKonvaStageLoad,
   addKonvaListenerPinchZoom,
   addKonvaListenerTouchMove,
+  calculateDefaultKonvaWindowWidth,
   offKonvaStageListeners,
   addKonvaDrawLayer,
   getKonvaDrawLayerBoundingBoxes,
@@ -35,6 +39,8 @@ import {
 import BoundingBox from '@/components/BoundingBox.vue';
 import SelectModes from '@/common/enumSelectMode';
 import BoxClass from '@/common/enumBoxClass';
+import { mapMutations, mapGetters, mapActions } from 'vuex';
+import { debounce } from 'lodash';
 
 export default {
   name: 'ImageViewer',
@@ -43,6 +49,8 @@ export default {
   },
   data() {
     return {
+      isFullscreen: false,
+      debouncedHandleResize: null,
       windowWidth: 0,
       boxes: [],
       configImage: {
@@ -63,17 +71,31 @@ export default {
         fontSize: 15,
         ...OPTIMIZATION_PARAMS,
       },
+      configFullscreenArrowTopRight: {},
+      configFullscreenArrowBottomLeft: {}
     };
   },
   computed: {
     ...mapGetters('home', {
-      getWindowWidth: 'getWindowWidth',
       getSelectMode: 'getSelectMode',
     }),
   },
   created() {
-    this.windowWidth = this.getWindowWidth;
+    this.windowWidth = calculateDefaultKonvaWindowWidth(document.body.clientWidth);
+    this.debouncedHandleResize = debounce(() => {
+      if (this.isFullscreen) {
+        this.windowWidth = document.body.clientWidth;
+      } else {
+        this.windowWidth = calculateDefaultKonvaWindowWidth(document.body.clientWidth);
+      }
+      this.setWindowWidth(this.windowWidth);
+      this.redrawCanvas();
+    });
     this.selectMode = this.getSelectMode;
+    window.addEventListener('resize', this.debouncedHandleResize);
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.debouncedHandleResize);
   },
   mounted() {
     this.$store.subscribe(async (mutation, state) => {
@@ -85,10 +107,6 @@ export default {
       }
       if (mutation.type === 'home/setBoxes') {
         this.boxes = state.home.boxes.filter((box) => box.class !== BoxClass.VOLUME);
-      }
-      if (mutation.type === 'home/setWindowWidth') {
-        this.windowWidth = state.home.windowWidth;
-        await this.rerenderKonva(state);
       }
       if (mutation.type === 'home/setSelectMode') {
         this.selectMode = state.home.selectMode;
@@ -110,11 +128,14 @@ export default {
     /**
      * When undo action is received, the last rectangle added is destroyed
      */
-    this.$store.subscribeAction((action) => {
+    this.$store.subscribeAction((action, state) => {
       if (action.type === 'home/undoDrawBox') {
         if (this.selectMode === SelectModes.DRAWBOX && this.$refs.stage) {
           removeKonvaLastDrawnRect(this.$refs.stage.getNode());
         }
+      }
+      if (action.type === 'home/redrawCanvas') {
+        this.rerenderKonva(state);
       }
     });
   },
@@ -142,6 +163,10 @@ export default {
     ...mapMutations('home', {
       setDownloadMode: 'setDownloadMode',
       setBoxes: 'setBoxes',
+      setWindowWidth: 'setWindowWidth'
+    }),
+    ...mapActions('home', {
+      redrawCanvas: 'redrawCanvas',
     }),
     /**
      * When Image URL is set, the Konva Stage component is re-rendered
@@ -177,6 +202,30 @@ export default {
         width: this.windowWidth,
         height: imageHeight,
       };
+      this.configFullscreenArrowTopRight = {
+        x: this.windowWidth - 40,
+        y: 40,
+        points: [3, 3, 15, 15],
+        pointerWidth: 10,
+        fill: 'white',
+        stroke: 'white',
+        shadowColor: 'black',
+        shadowBlue: 3,
+        strokeWidth: 6,
+        opacity: 0.7
+      },
+      this.configFullscreenArrowBottomLeft = {
+        x: this.windowWidth - 40,
+        y: 40,
+        points: [-3, -3, -15, -15],
+        pointerWidth: 10,
+        fill: 'white',
+        stroke: 'white',
+        shadowColor: 'black',
+        shadowBlue: 3,
+        strokeWidth: 6,
+        opacity: 0.7
+      }
       await this.updateStageListeners();
     },
     /**
@@ -197,7 +246,15 @@ export default {
       addKonvaListenerPinchZoom(stageNode);
       addKonvaListenerTouchMove(stageNode);
     },
-  },
+    onFullscreenClick() {
+      if (this.isFullscreen) {
+        this.isFullscreen = false;
+      } else {
+        this.isFullscreen = true;
+      }
+      this.debouncedHandleResize();
+    }
+  }
 };
 </script>
 
@@ -205,5 +262,8 @@ export default {
 .canva {
   display: flex;
   justify-content: center;
+}
+.my-2 {
+  padding: 0;
 }
 </style>
