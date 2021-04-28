@@ -79,7 +79,7 @@ export default {
       this.windowWidth = calculateDefaultKonvaWindowWidth(document.body.clientWidth);
       this.setWindowWidth(this.windowWidth);
       this.redrawCanvas();
-    });
+    }, 100);
     this.selectMode = this.getSelectMode;
     window.addEventListener('resize', this.debouncedHandleResize);
   },
