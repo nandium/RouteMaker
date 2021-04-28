@@ -4,10 +4,6 @@
       <v-layer ref="layer">
         <v-image :config="configImage" />
         <v-text :config="configWatermark" />
-        <v-group @click="onFullscreenClick">
-          <v-arrow :config="configFullscreenArrowTopRight" />
-          <v-arrow :config="configFullscreenArrowBottomLeft" />
-        </v-group>
         <BoundingBox
           :key="idx"
           v-for="(box, idx) in boxes"
@@ -49,7 +45,6 @@ export default {
   },
   data() {
     return {
-      isFullscreen: false,
       debouncedHandleResize: null,
       windowWidth: 0,
       boxes: [],
@@ -70,9 +65,7 @@ export default {
         opacity: 0,
         fontSize: 15,
         ...OPTIMIZATION_PARAMS,
-      },
-      configFullscreenArrowTopRight: {},
-      configFullscreenArrowBottomLeft: {}
+      }
     };
   },
   computed: {
@@ -83,11 +76,7 @@ export default {
   created() {
     this.windowWidth = calculateDefaultKonvaWindowWidth(document.body.clientWidth);
     this.debouncedHandleResize = debounce(() => {
-      if (this.isFullscreen) {
-        this.windowWidth = document.body.clientWidth;
-      } else {
-        this.windowWidth = calculateDefaultKonvaWindowWidth(document.body.clientWidth);
-      }
+      this.windowWidth = calculateDefaultKonvaWindowWidth(document.body.clientWidth);
       this.setWindowWidth(this.windowWidth);
       this.redrawCanvas();
     });
@@ -202,30 +191,6 @@ export default {
         width: this.windowWidth,
         height: imageHeight,
       };
-      this.configFullscreenArrowTopRight = {
-        x: this.windowWidth - 40,
-        y: 40,
-        points: [3, 3, 15, 15],
-        pointerWidth: 10,
-        fill: 'white',
-        stroke: 'white',
-        shadowColor: 'black',
-        shadowBlue: 3,
-        strokeWidth: 6,
-        opacity: 0.7
-      },
-      this.configFullscreenArrowBottomLeft = {
-        x: this.windowWidth - 40,
-        y: 40,
-        points: [-3, -3, -15, -15],
-        pointerWidth: 10,
-        fill: 'white',
-        stroke: 'white',
-        shadowColor: 'black',
-        shadowBlue: 3,
-        strokeWidth: 6,
-        opacity: 0.7
-      }
       await this.updateStageListeners();
     },
     /**
@@ -245,14 +210,6 @@ export default {
       offKonvaStageListeners(stageNode);
       addKonvaListenerPinchZoom(stageNode);
       addKonvaListenerTouchMove(stageNode);
-    },
-    onFullscreenClick() {
-      if (this.isFullscreen) {
-        this.isFullscreen = false;
-      } else {
-        this.isFullscreen = true;
-      }
-      this.debouncedHandleResize();
     }
   }
 };
