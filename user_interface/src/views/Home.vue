@@ -35,7 +35,7 @@ export default {
   methods: {
     ...mapMutations('home', {
       setWindowWidth: 'setWindowWidth',
-    })
+    }),
   },
 };
 </script>

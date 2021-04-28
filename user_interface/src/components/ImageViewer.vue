@@ -65,7 +65,7 @@ export default {
         opacity: 0,
         fontSize: 15,
         ...OPTIMIZATION_PARAMS,
-      }
+      },
     };
   },
   computed: {
@@ -152,7 +152,7 @@ export default {
     ...mapMutations('home', {
       setDownloadMode: 'setDownloadMode',
       setBoxes: 'setBoxes',
-      setWindowWidth: 'setWindowWidth'
+      setWindowWidth: 'setWindowWidth',
     }),
     ...mapActions('home', {
       redrawCanvas: 'redrawCanvas',
@@ -210,8 +210,8 @@ export default {
       offKonvaStageListeners(stageNode);
       addKonvaListenerPinchZoom(stageNode);
       addKonvaListenerTouchMove(stageNode);
-    }
-  }
+    },
+  },
 };
 </script>
 
