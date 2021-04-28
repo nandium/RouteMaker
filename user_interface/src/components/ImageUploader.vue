@@ -90,8 +90,8 @@ export default {
           maxSizeMB: 8,
           maxWidthOrHeight: 1024,
           useWebWorker: true,
-          fileType: 'image/jpeg'
-        }
+          fileType: 'image/jpeg',
+        };
         this.compressedImageFile = await imageCompression(this.imageFile, compressImageOptions);
         const imageURL = URL.createObjectURL(this.imageFile);
         this.setImageURL(imageURL);
