@@ -35,14 +35,14 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
-  # confirmSignup:
-  #   handler: src/confirmSignup.handler
-  #   events:
-  #     - http:
-  #         path: user/confirm
-  #         method: post
-  #         cors:
-  #           origin: ${self:custom._origin.${self:custom.stage}}
+  confirmSignup:
+    handler: src/confirmSignup.handler
+    events:
+      - http:
+          path: user/confirm
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
 
   # login:
   #   handler: src/login.handler

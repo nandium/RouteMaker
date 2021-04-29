@@ -12,3 +12,17 @@ export const signupSchema = {
     },
   },
 };
+
+export const confirmSignupSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        code: { type: 'string' },
+      },
+      required: ['email', 'code'],
+    },
+  },
+};
