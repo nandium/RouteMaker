@@ -11,7 +11,7 @@
     "moduleResolution": "node",
     "lib": ["esnext"],
     "rootDir": "./",
-    "module": "commonjs",
+    "module": "commonjs"
   },
   "exclude": ["node_modules"]
 }
