@@ -1,0 +1,66 @@
+app: yolo-bouldering
+
+service: yolo-bouldering-user-cognito
+
+provider:
+  name: aws
+  stage: dev
+  region: ap-southeast-1
+  # iamRoleStatements:
+    # - Effect: "Allow"
+    #   Principal:
+    #     Service: cognito-idp.amazonaws.com
+    #   Action:
+    #    - ses:SendEmail
+    #    - ses:SendRawEmail
+    #   Resource: <arn:email>
+
+resources:
+  Resources:
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:service}-${self:provider.stage}-user-pool
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+        EmailConfiguration:
+          EmailSendingAccount: COGNITO_DEFAULT
+          # Ensure SourceArn is in us-east-1
+          # Ensure SES has AWS production access
+          # EmailSendingAccount: DEVELOPER
+          # SourceArn: <arn:email>
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:service}-${self:provider.stage}-client
+        GenerateSecret: False
+        RefreshTokenValidity: 120
+        UserPoolId:
+          Ref: CognitoUserPool
+    SSMParameterCognitoUserPoolArn:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/cognito/arn
+        Type: String
+        Value: 
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+        Tags:
+          Environment: ${self:custom.stage}
+    SSMParameterCognitoUserPoolClientId:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/cognito/clientId
+        Type: String
+        Value: !Ref CognitoUserPoolClient
+        Tags:
+          Environment: ${self:custom.stage}
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
