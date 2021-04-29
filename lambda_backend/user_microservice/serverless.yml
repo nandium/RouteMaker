@@ -53,18 +53,18 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
-  # logout:
-  #   handler: src/logout.handler
-  #   events:
-  #     - http:
-  #         path: user/logout
-  #         method: post
-  #         cors:
-  #           origin: ${self:custom._origin.${self:custom.stage}}
-  #         authorizer:
-  #           arn: ${self:custom.cognitoArn}
-  #           scopes:
-  #             - aws.cognito.signin.user.admin
+  logout:
+    handler: src/logout.handler
+    events:
+      - http:
+          path: user/logout
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
 
 custom:
   stage: ${opt:stage, self:provider.stage}

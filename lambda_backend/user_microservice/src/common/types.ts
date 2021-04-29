@@ -19,3 +19,9 @@ export interface LoginEvent {
     password: string;
   };
 }
+
+export interface LogoutEvent {
+  headers: {
+    Authorization: string;
+  };
+}
