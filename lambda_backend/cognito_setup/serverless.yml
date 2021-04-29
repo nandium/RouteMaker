@@ -39,7 +39,16 @@ resources:
       Properties:
         ClientName: ${self:service}-${self:provider.stage}-client
         GenerateSecret: False
-        RefreshTokenValidity: 120
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        AccessTokenValidity: 3
+        IdTokenValidity: 3
+        RefreshTokenValidity: 365
+        TokenValidityUnits:
+          AccessToken: hours
+          IdToken: hours
+          RefreshToken: days
         UserPoolId:
           Ref: CognitoUserPool
     SSMParameterCognitoUserPoolArn:
