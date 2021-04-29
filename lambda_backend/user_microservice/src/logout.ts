@@ -2,13 +2,8 @@ import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
   GlobalSignOutRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import httpSecurityHeaders from '@middy/http-security-headers';
-import httpErrorHandler from '@middy/http-error-handler';
-import cors from '@middy/http-cors';
-import middy from '@middy/core';
+import { LogoutEvent, getMiddlewareAddedHandler } from './common';
 import createError from 'http-errors';
-
-import { getAllowedOrigin, LogoutEvent } from './common';
 
 const cognitoIdentity = new CognitoIdentity();
 
@@ -35,7 +30,4 @@ const logout: Handler = async (event: LogoutEvent) => {
   };
 };
 
-export const handler = middy(logout)
-  .use(httpErrorHandler())
-  .use(httpSecurityHeaders())
-  .use(cors({ origin: getAllowedOrigin() }));
+export const handler = getMiddlewareAddedHandler(logout);

@@ -2,15 +2,8 @@ import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
   InitiateAuthRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import httpSecurityHeaders from '@middy/http-security-headers';
-import jsonBodyParser from '@middy/http-json-body-parser';
-import httpErrorHandler from '@middy/http-error-handler';
-import validator from '@middy/validator';
-import cors from '@middy/http-cors';
-import middy from '@middy/core';
+import { LoginEvent, loginSchema, getMiddlewareAddedHandler } from './common';
 import createError from 'http-errors';
-
-import { getAllowedOrigin, LoginEvent, loginSchema } from './common';
 
 const cognitoIdentity = new CognitoIdentity();
 
@@ -41,9 +34,4 @@ const login: Handler = async (event: LoginEvent) => {
   };
 };
 
-export const handler = middy(login)
-  .use(jsonBodyParser())
-  .use(validator({ inputSchema: loginSchema }))
-  .use(httpErrorHandler())
-  .use(httpSecurityHeaders())
-  .use(cors({ origin: getAllowedOrigin() }));
+export const handler = getMiddlewareAddedHandler(login, loginSchema);
