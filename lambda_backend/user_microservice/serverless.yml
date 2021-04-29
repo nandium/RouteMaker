@@ -44,14 +44,14 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
-  # login:
-  #   handler: src/login.handler
-  #   events:
-  #     - http:
-  #         path: user/login
-  #         method: post
-  #         cors:
-  #           origin: ${self:custom._origin.${self:custom.stage}}
+  login:
+    handler: src/login.handler
+    events:
+      - http:
+          path: user/login
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
 
   # logout:
   #   handler: src/logout.handler

@@ -12,3 +12,10 @@ export interface ConfirmSignupEvent {
     code: string;
   };
 }
+
+export interface LoginEvent {
+  body: {
+    email: string;
+    password: string;
+  };
+}
