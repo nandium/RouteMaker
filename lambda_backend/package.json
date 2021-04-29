@@ -8,7 +8,7 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "serverless-api-gateway-throttling": "^1.1.0",
     "serverless-python-requirements": "^5.1.1"
   }

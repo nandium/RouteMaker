@@ -11,9 +11,13 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,vue,html,css,yml}": [
+    "*.{js,jsx,vue,html,css}": [
       "prettier --write",
       "eslint --fix",
+      "git add"
+    ],
+    "*.{yml}": [
+      "prettier --write",
       "git add"
     ]
   },
