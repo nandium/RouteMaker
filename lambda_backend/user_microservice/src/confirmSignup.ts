@@ -26,9 +26,7 @@ const confirmSignup: Handler = async (event: ConfirmSignupEvent) => {
   }
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      message: 'Confirmation successful',
-    }),
+    body: JSON.stringify({ Message: 'Confirmation success' }),
   };
 };
 

@@ -21,16 +21,15 @@ const signup: Handler = async (event: SignupEvent) => {
     ],
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
-  let response = {};
   try {
-    response = await cognitoIdentity.signUp(signUpRequest).promise();
+    const { CodeDeliveryDetails } = await cognitoIdentity.signUp(signUpRequest).promise();
+    return {
+      statusCode: 201,
+      body: JSON.stringify({ Message: 'Sign up success', ...CodeDeliveryDetails }),
+    };
   } catch (error) {
     throw createError(400, 'Error occurred while signing up in Cognito: ' + error.stack);
   }
-  return {
-    statusCode: 201,
-    body: JSON.stringify(response),
-  };
 };
 
 export const handler = getMiddlewareAddedHandler(signup, signupSchema);

@@ -24,9 +24,7 @@ const logout: Handler = async (event: LogoutEvent) => {
   }
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      message: 'Sign out success',
-    }),
+    body: JSON.stringify({ Message: 'Sign out success' }),
   };
 };
 

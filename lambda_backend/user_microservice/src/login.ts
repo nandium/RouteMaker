@@ -22,16 +22,17 @@ const login: Handler = async (event: LoginEvent) => {
     },
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
-  let response = {};
   try {
-    response = await cognitoIdentity.initiateAuth(initiateAuthRequest).promise();
+    const { AuthenticationResult } = await cognitoIdentity
+      .initiateAuth(initiateAuthRequest)
+      .promise();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ Message: 'Log in success', ...AuthenticationResult }),
+    };
   } catch (error) {
     throw createError(400, 'Error occurred during login in Cognito: ' + error.stack);
   }
-  return {
-    statusCode: 200,
-    body: JSON.stringify(response),
-  };
 };
 
 export const handler = getMiddlewareAddedHandler(login, loginSchema);
