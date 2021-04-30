@@ -1,0 +1,71 @@
+app: yolo-bouldering
+
+service: yolo-bouldering-route-database
+
+provider:
+  name: aws
+  stage: dev
+  region: ap-southeast-1
+
+resources:
+  Resources:
+    RouteDataTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: userEmail
+            AttributeType: 'S'
+          - AttributeName: createdAt
+            AttributeType: 'S'
+          - AttributeName: gymLocation
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: userEmail
+            KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: '${self:service}-${self:custom.stage}'
+        GlobalSecondaryIndexes:
+          - IndexName: gymLocationIndex
+            KeySchema:
+              - AttributeName: gymLocation
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              NonKeyAttributes:
+                - userEmail
+                - publicGrade
+                - vote
+                - commentCount
+                - routeURL
+              ProjectionType: INCLUDE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 2
+              WriteCapacityUnits: 2
+    SSMParameterRouteDataTableArn:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/dynamodb/route/arn
+        Type: String
+        Value: 
+          Fn::GetAtt:
+            - RouteDataTable
+            - Arn
+        Tags:
+          Environment: ${self:custom.stage}
+    SSMParameterRouteDataTableName:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/dynamodb/route/name
+        Type: String
+        Value: ${self:resources.Resources.RouteDataTable.Properties.TableName}
+        Tags:
+          Environment: ${self:custom.stage}
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
