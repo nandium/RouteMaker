@@ -14,6 +14,8 @@
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
     "@types/lodash": "^4.14.168",
+    "axios": "^0.21.1",
+    "browser-image-compression": "^1.0.14",
     "core-js": "^3.6.5",
     "konva": "^7.2.5",
     "lodash": "^4.17.21",

@@ -34,7 +34,7 @@ import {
   IonToolbar,
 } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted } from 'vue';
-import Canvas from '../components/Canvas.vue';
+import Canvas from '../components/wall-image-viewer/Canvas.vue';
 import Header from '../components/Header.vue';
 import { usePhotoGallery } from '../composables/usePhotoGallery';
 import { debounce } from 'lodash';
