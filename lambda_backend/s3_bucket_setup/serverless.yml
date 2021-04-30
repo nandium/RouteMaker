@@ -1,0 +1,46 @@
+app: yolo-bouldering
+
+service: yolo-bouldering-bucket
+
+provider:
+  name: aws
+  stage: dev
+  region: ap-southeast-1
+  variableSyntax: '\${{([\s\S]+?)}}'
+  # https://forum.serverless.com/t/getting-handle-accountid-in-serverless-config/946/8
+
+resources:
+  Resources:
+    S3Assets:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName:
+          Fn::Sub: '${{self:service}}-${{self:custom.stage}}-${AWS::AccountId}'
+    SSMParameterS3AssetsArn:
+        Type: AWS::SSM::Parameter
+        Properties:
+          Name: /${{self:custom.stage}}/s3/routebucket/arn
+          Type: String
+          Value: 
+            Fn::GetAtt:
+              - S3Assets
+              - Arn
+          Tags:
+            Environment: ${{self:custom.stage}}
+    AttachmentsBucketAllowPublicReadPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref S3Assets
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement: 
+            - Effect: Allow
+              Action: 
+                - "s3:GetObject"
+              Resource: 
+                - !Join ['/', [Fn::GetAtt: ['S3Assets', 'Arn'], 'public', '*']]
+              Principal: "*"
+
+
+custom:
+  stage: ${{opt:stage, self:provider.stage}}
