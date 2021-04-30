@@ -10,7 +10,7 @@ provider:
 resources:
   Resources:
     RouteDataTable:
-      Type: "AWS::DynamoDB::Table"
+      Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
@@ -52,7 +52,7 @@ resources:
       Properties:
         Name: /${self:custom.stage}/dynamodb/route/arn
         Type: String
-        Value: 
+        Value:
           Fn::GetAtt:
             - RouteDataTable
             - Arn

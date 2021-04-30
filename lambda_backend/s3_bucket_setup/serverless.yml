@@ -17,38 +17,37 @@ resources:
         BucketName:
           Fn::Sub: '${{self:service}}-${{self:custom.stage}}-${AWS::AccountId}'
     SSMParameterS3AssetsArn:
-        Type: AWS::SSM::Parameter
-        Properties:
-          Name: /${{self:custom.stage}}/s3/assets/arn
-          Type: String
-          Value: 
-            Fn::GetAtt:
-              - S3Assets
-              - Arn
-          Tags:
-            Environment: ${{self:custom.stage}}
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${{self:custom.stage}}/s3/assets/arn
+        Type: String
+        Value:
+          Fn::GetAtt:
+            - S3Assets
+            - Arn
+        Tags:
+          Environment: ${{self:custom.stage}}
     SSMParameterS3AssetsName:
-        Type: AWS::SSM::Parameter
-        Properties:
-          Name: /${{self:custom.stage}}/s3/assets/name
-          Type: String
-          Value: ${{self:resources.Resources.S3Assets.Properties.BucketName}}
-          Tags:
-            Environment: ${{self:custom.stage}}
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${{self:custom.stage}}/s3/assets/name
+        Type: String
+        Value: ${{self:resources.Resources.S3Assets.Properties.BucketName}}
+        Tags:
+          Environment: ${{self:custom.stage}}
     AttachmentsBucketAllowPublicReadPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
         Bucket: !Ref S3Assets
         PolicyDocument:
-          Version: "2012-10-17"
-          Statement: 
+          Version: '2012-10-17'
+          Statement:
             - Effect: Allow
-              Action: 
-                - "s3:GetObject"
-              Resource: 
+              Action:
+                - 's3:GetObject'
+              Resource:
                 - !Join ['/', [Fn::GetAtt: ['S3Assets', 'Arn'], 'public', '*']]
-              Principal: "*"
-
+              Principal: '*'
 
 custom:
   stage: ${{opt:stage, self:provider.stage}}
