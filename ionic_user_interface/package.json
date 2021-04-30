@@ -13,7 +13,10 @@
     "@capacitor/core": "2.4.7",
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
+    "@types/lodash": "^4.14.168",
     "core-js": "^3.6.5",
+    "konva": "^7.2.5",
+    "lodash": "^4.17.21",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0"
   },

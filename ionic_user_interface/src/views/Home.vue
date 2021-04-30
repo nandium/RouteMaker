@@ -16,9 +16,7 @@
           <ion-icon class="camera-icon" :icon="camera"></ion-icon>
           Upload wall image...
         </ion-button>
-        <div v-if="photoUploaded">
-          <Canvas :imgSrc="base64Data" :width="canvasWidth" />
-        </div>
+        <Canvas v-if="photoUploaded" :imgSrc="base64Data" :width="canvasWidth" />
       </div>
     </ion-content>
   </ion-page>
@@ -35,10 +33,11 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue';
-import { defineComponent, watch, ref } from 'vue';
+import { defineComponent, watch, ref, onUnmounted } from 'vue';
 import Canvas from '../components/Canvas.vue';
 import Header from '../components/Header.vue';
 import { usePhotoGallery } from '../composables/usePhotoGallery';
+import { debounce } from 'lodash';
 
 export default defineComponent({
   name: 'Home',
@@ -59,14 +58,23 @@ export default defineComponent({
     const photoUploaded = ref(false);
     const { photo, takePhoto } = usePhotoGallery();
 
+    const updateCanvasWidth = debounce(() => {
+      canvasWidth.value = document.body.clientWidth;
+    }, 100);
+
     watch(photo, (oldPhoto, newPhoto) => {
       if (newPhoto !== oldPhoto && oldPhoto !== null) {
         photoUploaded.value = true;
         if (oldPhoto.data) {
           base64Data.value = oldPhoto.data;
         }
-        canvasWidth.value = document.body.clientWidth;
+        updateCanvasWidth();
       }
+    });
+
+    window.addEventListener('resize', updateCanvasWidth);
+    onUnmounted(() => {
+      window.removeEventListener('resize', updateCanvasWidth);
     });
 
     return {
