@@ -1,5 +1,10 @@
 import { Handler } from 'aws-lambda';
-import DynamoDB, { AttributeValue, ScanInput, QueryInput } from 'aws-sdk/clients/dynamodb';
+import DynamoDB, {
+  AttributeValue,
+  ScanInput,
+  QueryInput,
+  ItemList,
+} from 'aws-sdk/clients/dynamodb';
 import { getMiddlewareAddedHandler, GetAllGymsEvent } from './common';
 import createError from 'http-errors';
 
@@ -37,7 +42,21 @@ const getAllGyms: Handler = async (event: GetAllGymsEvent) => {
       ConsistentRead: false,
     };
     try {
-      const { Items } = await dynamoDb.scan(scanInput).promise();
+      let response = await dynamoDb.scan(scanInput).promise();
+      let LastEvaluatedKey = response.LastEvaluatedKey;
+      let responseItems = response.Items as ItemList;
+      let Items = [...responseItems];
+      while (LastEvaluatedKey) {
+        response = await dynamoDb
+          .scan({
+            ...scanInput,
+            ExclusiveStartKey: LastEvaluatedKey,
+          })
+          .promise();
+        responseItems = response.Items as ItemList;
+        Items = [...Items, ...responseItems];
+        LastEvaluatedKey = response.LastEvaluatedKey;
+      }
       return {
         statusCode: 200,
         body: JSON.stringify({ Message: 'Scan all gyms success', Items }),
