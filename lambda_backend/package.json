@@ -2,14 +2,13 @@
   "name": "lambda_backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
+    "serverless": "^2.38.0",
     "serverless-api-gateway-throttling": "^1.1.0",
-    "serverless-python-requirements": "^5.1.1"
+    "serverless-plugin-typescript": "^1.1.9",
+    "serverless-python-requirements": "^5.1.1",
+    "typescript": "^4.2.4"
   }
 }

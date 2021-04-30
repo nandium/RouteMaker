@@ -1,0 +1,20 @@
+{
+  "name": "user_microservice",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.76",
+    "@types/aws-sdk": "^2.7.0"
+  },
+  "dependencies": {
+    "@middy/core": "^2.1.1",
+    "@middy/http-cors": "^2.1.1",
+    "@middy/http-error-handler": "^2.1.1",
+    "@middy/http-json-body-parser": "^2.1.1",
+    "@middy/http-security-headers": "^2.1.1",
+    "@middy/validator": "^2.1.1",
+    "http-errors": "^1.8.0"
+  }
+}
