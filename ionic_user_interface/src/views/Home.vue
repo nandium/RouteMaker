@@ -17,7 +17,7 @@
           Upload wall image...
         </ion-button>
         <div v-if="photoUploaded">
-          <ion-img class="image-view" :src="photo.webviewPath"></ion-img>
+          <Canvas :imgSrc="base64Data" :width="canvasWidth" />
         </div>
       </div>
     </ion-content>
@@ -31,12 +31,12 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonImg,
   IonPage,
   IonTitle,
   IonToolbar,
 } from '@ionic/vue';
 import { defineComponent, watch, ref } from 'vue';
+import Canvas from '../components/Canvas.vue';
 import Header from '../components/Header.vue';
 import { usePhotoGallery } from '../composables/usePhotoGallery';
 
@@ -47,21 +47,31 @@ export default defineComponent({
     IonContent,
     IonHeader,
     IonIcon,
-    IonImg,
     IonPage,
     IonTitle,
     IonToolbar,
+    Canvas,
     Header,
   },
   setup() {
+    const canvasWidth = ref(0);
+    const base64Data = ref('');
     const photoUploaded = ref(false);
     const { photo, takePhoto } = usePhotoGallery();
+
     watch(photo, (oldPhoto, newPhoto) => {
       if (newPhoto !== oldPhoto && oldPhoto !== null) {
         photoUploaded.value = true;
+        if (oldPhoto.data) {
+          base64Data.value = oldPhoto.data;
+        }
+        canvasWidth.value = document.body.clientWidth;
       }
     });
+
     return {
+      canvasWidth,
+      base64Data,
       photoUploaded,
       photo,
       takePhoto,

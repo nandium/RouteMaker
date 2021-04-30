@@ -2,7 +2,7 @@
   <ion-header :translucent="true">
     <ion-toolbar>
       <ion-title>
-        <ion-img class="logo" src="assets/icon/favicon.ico" router-link="/home" />
+        <ion-img class="logo" src="assets/icons/favicon.ico" router-link="/home" />
       </ion-title>
       <ion-buttons slot="end">
         <ion-button router-link="/home">Home</ion-button>
