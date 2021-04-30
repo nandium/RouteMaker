@@ -19,12 +19,20 @@ resources:
     SSMParameterS3AssetsArn:
         Type: AWS::SSM::Parameter
         Properties:
-          Name: /${{self:custom.stage}}/s3/routebucket/arn
+          Name: /${{self:custom.stage}}/s3/assets/arn
           Type: String
           Value: 
             Fn::GetAtt:
               - S3Assets
               - Arn
+          Tags:
+            Environment: ${{self:custom.stage}}
+    SSMParameterS3AssetsName:
+        Type: AWS::SSM::Parameter
+        Properties:
+          Name: /${{self:custom.stage}}/s3/assets/name
+          Type: String
+          Value: ${{self:resources.Resources.S3Assets.Properties.BucketName}}
           Tags:
             Environment: ${{self:custom.stage}}
     AttachmentsBucketAllowPublicReadPolicy:
