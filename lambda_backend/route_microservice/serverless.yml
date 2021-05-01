@@ -1,6 +1,6 @@
 app: yolo-bouldering
 
-service: yolo-bouldering-user
+service: yolo-bouldering-route
 
 provider:
   name: aws
@@ -10,7 +10,7 @@ provider:
   memorySize: 1024
   apiGateway:
     binaryMediaTypes:
-      - "multipart/form-data"
+      - 'multipart/form-data'
   environment:
     NODE_ENV: ${self:custom.stage}
     ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
@@ -50,19 +50,21 @@ functions:
       - http:
           path: route/gym/all
           method: get
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
 
-  # logout:
-  #   handler: src/logout.handler
-  #   events:
-  #     - http:
-  #         path: user/logout
-  #         method: post
-  #         cors:
-  #           origin: ${self:custom._origin.${self:custom.stage}}
-  #         authorizer:
-  #           arn: ${self:custom.cognitoArn}
-  #           scopes:
-  #             - aws.cognito.signin.user.admin
+  createRoute:
+    handler: src/createRoute.handler
+    events:
+      - http:
+          path: route/new
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
 
 custom:
   stage: ${opt:stage, self:provider.stage}
