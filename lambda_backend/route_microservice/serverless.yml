@@ -65,7 +65,7 @@ functions:
             arn: ${self:custom.cognitoArn}
             scopes:
               - aws.cognito.signin.user.admin
-  
+
   getRoutesByGym:
     handler: src/getRoutesByGym.handler
     events:
