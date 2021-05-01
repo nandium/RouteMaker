@@ -42,6 +42,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   let graded = -1;
   const {
     expiredTime,
+    routeName,
     gymLocation,
     routeURL,
     ownerGrade,
@@ -79,6 +80,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
         userEmail: routeOwnerEmail,
         createdAt,
         expiredTime,
+        routeName,
         gymLocation,
         routeURL,
         ownerGrade,

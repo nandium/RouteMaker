@@ -37,6 +37,7 @@ resources:
                 KeyType: RANGE
             Projection:
               NonKeyAttributes:
+                - routeName
                 - userEmail
                 - publicGrade
                 - vote

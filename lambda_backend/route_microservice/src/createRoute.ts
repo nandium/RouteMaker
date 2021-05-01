@@ -15,7 +15,7 @@ import createError from 'http-errors';
 const dynamoDb = new DynamoDB.DocumentClient();
 const s3 = new S3();
 
-const deleteRoute: Handler = async (event: CreateRouteEvent) => {
+const createRoute: Handler = async (event: CreateRouteEvent) => {
   if (
     !process.env['GYM_TABLE_NAME'] ||
     !process.env['ROUTE_TABLE_NAME'] ||
@@ -25,7 +25,7 @@ const deleteRoute: Handler = async (event: CreateRouteEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { country, expiredTime, gymLocation, ownerGrade, routePhoto },
+    body: { country, routeName, expiredTime, gymLocation, ownerGrade, routePhoto },
   } = event;
 
   const queryInput: QueryInput = {
@@ -77,6 +77,7 @@ const deleteRoute: Handler = async (event: CreateRouteEvent) => {
       userEmail: userEmail as AttributeValue,
       createdAt: createdAt as AttributeValue,
       expiredTime: expiredTime as AttributeValue,
+      routeName: routeName as AttributeValue,
       gymLocation: gymLocation as AttributeValue,
       routeURL: routeURL as AttributeValue,
       ownerGrade: ownerGrade as AttributeValue,
@@ -100,4 +101,4 @@ const deleteRoute: Handler = async (event: CreateRouteEvent) => {
   };
 };
 
-export const handler = getMiddlewareAddedHandler(deleteRoute, createRouteSchema);
+export const handler = getMiddlewareAddedHandler(createRoute, createRouteSchema);

@@ -13,6 +13,7 @@ export interface GetAllGymsEvent {
 export interface CreateRouteEvent extends AuthHeader {
   body: {
     country: string;
+    routeName: string;
     expiredTime: string;
     gymLocation: string;
     ownerGrade: number;
