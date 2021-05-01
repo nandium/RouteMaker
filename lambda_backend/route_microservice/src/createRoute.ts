@@ -15,7 +15,7 @@ import createError from 'http-errors';
 const dynamoDb = new DynamoDB.DocumentClient();
 const s3 = new S3();
 
-const createRoute: Handler = async (event: CreateRouteEvent) => {
+const deleteRoute: Handler = async (event: CreateRouteEvent) => {
   if (
     !process.env['GYM_TABLE_NAME'] ||
     !process.env['ROUTE_TABLE_NAME'] ||
@@ -100,4 +100,4 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   };
 };
 
-export const handler = getMiddlewareAddedHandler(createRoute, createRouteSchema);
+export const handler = getMiddlewareAddedHandler(deleteRoute, createRouteSchema);

@@ -23,3 +23,9 @@ export interface CreateRouteEvent extends AuthHeader {
     };
   };
 }
+
+export interface DeleteRouteEvent extends AuthHeader {
+  body: {
+    createdAt: string;
+  };
+}

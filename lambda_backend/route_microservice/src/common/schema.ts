@@ -45,3 +45,19 @@ export const createRouteSchema = {
     },
   },
 };
+
+export const deleteRouteSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        createdAt: {
+          type: 'string',
+          pattern: ISODateStringPattern,
+        },
+      },
+      required: ['createdAt'],
+    },
+  },
+};
