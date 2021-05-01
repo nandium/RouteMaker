@@ -17,6 +17,7 @@
     "@middy/http-multipart-body-parser": "^2.1.1",
     "@middy/http-security-headers": "^2.1.1",
     "@middy/validator": "^2.1.1",
+    "crypto": "^1.0.1",
     "http-errors": "^1.8.0"
   }
 }
