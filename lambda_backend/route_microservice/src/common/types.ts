@@ -29,3 +29,9 @@ export interface DeleteRouteEvent extends AuthHeader {
     createdAt: string;
   };
 }
+
+export interface GetRoutesByGymEvent {
+  queryStringParameters: {
+    gymLocation: string;
+  };
+}

@@ -65,6 +65,15 @@ functions:
             arn: ${self:custom.cognitoArn}
             scopes:
               - aws.cognito.signin.user.admin
+  
+  getRoutesByGym:
+    handler: src/getRoutesByGym.handler
+    events:
+      - http:
+          path: route/all
+          method: get
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
 
   deleteRoute:
     handler: src/deleteRoute.handler
