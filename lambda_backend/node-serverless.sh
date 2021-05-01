@@ -2,7 +2,7 @@
 
 # Author : Yar Khine Phyo
 
-# Usage : sudo node-serverless [deploy|remove] [dev|prod]
+# Usage : sudo node-serverless.sh [deploy|remove] [dev|prod]
 
 npm i
 if [ $1 == "deploy" ]
