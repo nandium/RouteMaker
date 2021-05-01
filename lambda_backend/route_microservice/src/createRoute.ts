@@ -81,7 +81,7 @@ const deleteRoute: Handler = async (event: CreateRouteEvent) => {
       routeURL: routeURL as AttributeValue,
       ownerGrade: ownerGrade as AttributeValue,
       publicGrade: ownerGrade as AttributeValue,
-      publicGradeSubmissions: [{ userEmail: ownerGrade }] as AttributeValue,
+      publicGradeSubmissions: [{ email: userEmail, grade: ownerGrade }] as AttributeValue,
       vote: 0 as AttributeValue,
       upVotes: [] as AttributeValue,
       reports: [] as AttributeValue,
