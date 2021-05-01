@@ -12,7 +12,7 @@ const dynamoDb = new DynamoDB.DocumentClient();
 
 const getAllGyms: Handler = async (event: GetAllGymsEvent) => {
   if (!process.env['GYM_TABLE_NAME']) {
-    throw createError(400, 'Gym table name is not set');
+    throw createError(500, 'Gym table name is not set');
   }
   const {
     queryStringParameters: { country },
@@ -34,7 +34,7 @@ const getAllGyms: Handler = async (event: GetAllGymsEvent) => {
         body: JSON.stringify({ Message: 'Query all gyms success', Items }),
       };
     } catch (error) {
-      throw createError(400, 'Error querying table :' + error.stack);
+      throw createError(500, 'Error querying table :' + error.stack);
     }
   } else {
     const scanInput: ScanInput = {
@@ -62,7 +62,7 @@ const getAllGyms: Handler = async (event: GetAllGymsEvent) => {
         body: JSON.stringify({ Message: 'Scan all gyms success', Items }),
       };
     } catch (error) {
-      throw createError(400, 'Error scanning table :' + error.stack);
+      throw createError(500, 'Error scanning table :' + error.stack);
     }
   }
 };
