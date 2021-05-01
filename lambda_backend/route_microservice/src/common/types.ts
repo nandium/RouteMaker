@@ -35,3 +35,13 @@ export interface GetRoutesByGymEvent {
     gymLocation: string;
   };
 }
+
+export interface GetRouteDetailsEvent {
+  headers: {
+    Authorization?: string;
+  };
+  body: {
+    userEmail: string;
+    createdAt: string;
+  };
+}

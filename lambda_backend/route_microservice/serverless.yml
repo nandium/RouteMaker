@@ -75,6 +75,15 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
+  getRouteDetails:
+    handler: src/getRouteDetails.handler
+    events:
+      - http:
+          path: route/details
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
   deleteRoute:
     handler: src/deleteRoute.handler
     events:
