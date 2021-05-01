@@ -3,6 +3,7 @@
 # Author : Yar Khine Phyo
 
 # Usage : sudo node-serverless.sh [deploy|remove] [dev|prod]
+# Ensure S3 bucket is empty before removal
 
 npm i
 if [ $1 == "deploy" ]
