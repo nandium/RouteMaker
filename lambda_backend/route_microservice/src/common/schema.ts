@@ -82,3 +82,5 @@ export const getRouteDetailsSchema = {
     },
   },
 };
+
+export const upVoteRouteSchema = getRouteDetailsSchema;

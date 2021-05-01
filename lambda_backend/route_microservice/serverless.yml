@@ -84,6 +84,19 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
+  upVoteRoute:
+    handler: src/upVoteRoute.handler
+    events:
+      - http:
+          path: route/details/vote
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
   deleteRoute:
     handler: src/deleteRoute.handler
     events:

@@ -45,3 +45,10 @@ export interface GetRouteDetailsEvent {
     createdAt: string;
   };
 }
+
+export interface UpVoteRouteEvent extends AuthHeader {
+  body: {
+    userEmail: string;
+    createdAt: string;
+  };
+}
