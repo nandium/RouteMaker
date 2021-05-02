@@ -41,6 +41,7 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
   if (username === routeOwnerUsername) {
     ownerGrade = grade;
   }
+  const newPublicGrade = Math.floor(publicGradeTotal / publicGradeSubmissions.length);
   const updateItemInput: UpdateItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     Key: {
@@ -54,9 +55,7 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
     `,
     ExpressionAttributeValues: {
       ':publicGradeSubmissions': publicGradeSubmissions as AttributeValue,
-      ':publicGrade': Math.floor(
-        publicGradeTotal / publicGradeSubmissions.length,
-      ) as AttributeValue,
+      ':publicGrade': newPublicGrade as AttributeValue,
       ':ownerGrade': ownerGrade as AttributeValue,
     },
   };
@@ -68,7 +67,13 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ Message: 'Grade route success' }),
+    body: JSON.stringify({
+      Message: 'Grade route success',
+      Item: {
+        publicGrade: newPublicGrade,
+        ownerGrade,
+      },
+    }),
   };
 };
 
