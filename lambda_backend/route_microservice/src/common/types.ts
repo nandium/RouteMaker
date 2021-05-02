@@ -64,6 +64,14 @@ export interface GradeRouteEvent extends AuthHeader {
   };
 }
 
+export interface AddCommentEvent extends AuthHeader {
+  body: {
+    username: string;
+    createdAt: string;
+    comment: string;
+  };
+}
+
 export interface JwtPayload {
   sub: string;
   event_id: string;
@@ -83,6 +91,12 @@ interface GradeSubmission {
   grade: number;
 }
 
+export interface Comment {
+  username: string;
+  timestamp: number;
+  comment: string;
+}
+
 export interface RouteItem {
   username: string;
   createdAt: string;
@@ -97,5 +111,5 @@ export interface RouteItem {
   upVotes: Array<string>;
   reports: Array<string>;
   commentCount: number;
-  comments: Array<Record<string, unknown>>;
+  comments: Array<Comment>;
 }

@@ -105,3 +105,17 @@ export const gradeRouteSchema = {
     },
   },
 };
+
+export const addCommentSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        ...getRouteDetailsSchema.properties.body.properties,
+        comment: { type: 'string', maxLength: 150 },
+      },
+      required: [...getRouteDetailsSchema.properties.body.required, 'comment'],
+    },
+  },
+};
