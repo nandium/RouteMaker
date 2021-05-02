@@ -72,6 +72,14 @@ export interface AddCommentEvent extends AuthHeader {
   };
 }
 
+export interface DeleteCommentEvent extends AuthHeader {
+  body: {
+    username: string;
+    createdAt: string;
+    timestamp: number;
+  };
+}
+
 export interface JwtPayload {
   sub: string;
   event_id: string;

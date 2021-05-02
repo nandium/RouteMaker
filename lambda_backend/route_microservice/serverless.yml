@@ -149,6 +149,19 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  deleteComment:
+    handler: src/deleteComment.handler
+    events:
+      - http:
+          path: route/details/comment
+          method: delete
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
 custom:
   stage: ${opt:stage, self:provider.stage}
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}

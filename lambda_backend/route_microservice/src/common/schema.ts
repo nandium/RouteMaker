@@ -119,3 +119,17 @@ export const addCommentSchema = {
     },
   },
 };
+
+export const deleteCommentSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        ...getRouteDetailsSchema.properties.body.properties,
+        timestamp: { type: 'number' },
+      },
+      required: [...getRouteDetailsSchema.properties.body.required, 'timestamp'],
+    },
+  },
+};
