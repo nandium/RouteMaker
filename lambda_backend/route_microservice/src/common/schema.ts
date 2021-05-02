@@ -91,3 +91,17 @@ export const getRouteDetailsSchema = {
 export const upVoteRouteSchema = getRouteDetailsSchema;
 
 export const reportRouteSchema = getRouteDetailsSchema;
+
+export const gradeRouteSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        ...getRouteDetailsSchema.properties.body.properties,
+        grade: { type: 'number' },
+      },
+      required: [...getRouteDetailsSchema.properties.body.required, 'grade'],
+    },
+  },
+};

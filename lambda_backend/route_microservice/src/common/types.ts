@@ -56,6 +56,14 @@ export interface UpVoteRouteEvent extends AuthHeader {
 
 export type ReportRouteEvent = UpVoteRouteEvent;
 
+export interface GradeRouteEvent extends AuthHeader {
+  body: {
+    username: string;
+    createdAt: string;
+    grade: number;
+  };
+}
+
 export interface JwtPayload {
   sub: string;
   event_id: string;

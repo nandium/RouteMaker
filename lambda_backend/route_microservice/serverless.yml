@@ -110,6 +110,19 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  gradeRoute:
+    handler: src/gradeRoute.handler
+    events:
+      - http:
+          path: route/details/grade
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
   deleteRoute:
     handler: src/deleteRoute.handler
     events:
