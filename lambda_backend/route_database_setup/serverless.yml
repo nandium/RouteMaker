@@ -113,17 +113,17 @@ custom:
   _routeDataTable:
     ReadCapacityUnits:
       dev: 2
-      prod: 5
+      prod: 6
     WriteCapacityUnits:
       dev: 2
-      prod: 5
+      prod: 6
   _routeDataTableGSI:
     ReadCapacityUnits:
       dev: 2
-      prod: 3
+      prod: 4
     WriteCapacityUnits:
       dev: 2
-      prod: 3
+      prod: 4
   _gymDataTable:
     ReadCapacityUnits:
       dev: 1
