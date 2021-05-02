@@ -1,6 +1,6 @@
 import { Handler } from 'aws-lambda';
-import DynamoDB, { AttributeValue, GetItemInput } from 'aws-sdk/clients/dynamodb';
 import {
+  getItemFromRouteTable,
   getMiddlewareAddedHandler,
   GetRouteDetailsEvent,
   getRouteDetailsSchema,
@@ -8,8 +8,6 @@ import {
 } from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
-
-const dynamoDb = new DynamoDB.DocumentClient();
 
 const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
@@ -19,23 +17,8 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     headers: { Authorization },
     body: { username: routeOwnerUsername, createdAt },
   } = event;
-  const getItemInput: GetItemInput = {
-    TableName: process.env['ROUTE_TABLE_NAME'],
-    ConsistentRead: false,
-    Key: {
-      username: routeOwnerUsername as AttributeValue,
-      createdAt: createdAt as AttributeValue,
-    },
-  };
-  let Item;
-  try {
-    ({ Item } = await dynamoDb.get(getItemInput).promise());
-  } catch (error) {
-    throw createError(500, 'Error getting item :' + error.stack);
-  }
-  if (!Item) {
-    throw createError(400, 'Route does not exist');
-  }
+
+  const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
   let hasVoted = false;
   let hasReported = false;

@@ -97,6 +97,19 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  reportRoute:
+    handler: src/reportRoute.handler
+    events:
+      - http:
+          path: route/details/report
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
   deleteRoute:
     handler: src/deleteRoute.handler
     events:

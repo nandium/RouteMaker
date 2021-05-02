@@ -89,3 +89,5 @@ export const getRouteDetailsSchema = {
 };
 
 export const upVoteRouteSchema = getRouteDetailsSchema;
+
+export const reportRouteSchema = getRouteDetailsSchema;

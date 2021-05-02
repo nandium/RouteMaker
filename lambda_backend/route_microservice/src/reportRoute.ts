@@ -2,8 +2,8 @@ import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, UpdateItemInput } from 'aws-sdk/clients/dynamodb';
 import {
   getMiddlewareAddedHandler,
-  UpVoteRouteEvent,
-  upVoteRouteSchema,
+  ReportRouteEvent,
+  reportRouteSchema,
   JwtPayload,
   getItemFromRouteTable,
 } from './common';
@@ -12,7 +12,7 @@ import createError from 'http-errors';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
+const reportRoute: Handler = async (event: ReportRouteEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');
   }
@@ -24,19 +24,18 @@ const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
   const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
-  const { upVotes } = Item;
-  if (!upVotes.includes(username)) {
-    upVotes.push(username);
+  const { reports } = Item;
+  if (!reports.includes(username)) {
+    reports.push(username);
     const updateItemInput: UpdateItemInput = {
       TableName: process.env['ROUTE_TABLE_NAME'],
       Key: {
         username: routeOwnerUsername as AttributeValue,
         createdAt: createdAt as AttributeValue,
       },
-      UpdateExpression: 'SET upVotes = :upVotes, vote = :vote',
+      UpdateExpression: 'SET reports = :reports',
       ExpressionAttributeValues: {
-        ':upVotes': upVotes as AttributeValue,
-        ':vote': upVotes.length as AttributeValue,
+        ':reports': reports as AttributeValue,
       },
     };
     try {
@@ -47,8 +46,8 @@ const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
   }
   return {
     statusCode: 200,
-    body: JSON.stringify({ Message: 'Upvote route success' }),
+    body: JSON.stringify({ Message: 'Report route success' }),
   };
 };
 
-export const handler = getMiddlewareAddedHandler(upVoteRoute, upVoteRouteSchema);
+export const handler = getMiddlewareAddedHandler(reportRoute, reportRouteSchema);

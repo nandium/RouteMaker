@@ -1,3 +1,5 @@
+import { StringAttributeValue } from 'aws-sdk/clients/dynamodb';
+
 interface AuthHeader {
   headers: {
     Authorization: string;
@@ -54,6 +56,8 @@ export interface UpVoteRouteEvent extends AuthHeader {
   };
 }
 
+export type ReportRouteEvent = UpVoteRouteEvent;
+
 export interface JwtPayload {
   sub: string;
   event_id: string;
@@ -66,4 +70,26 @@ export interface JwtPayload {
   jti: string;
   client_id: string;
   username: string;
+}
+
+interface GradeSubmission {
+  username: string;
+  grade: number;
+}
+
+export interface RouteItem {
+  username: string;
+  createdAt: string;
+  expiredTime: string;
+  routeName: string;
+  gymLocation: string;
+  routeURL: string;
+  ownerGrade: number;
+  publicGrade: number;
+  publicGradeSubmissions: Array<GradeSubmission>;
+  vote: number;
+  upVotes: Array<string>;
+  reports: Array<string>;
+  commentCount: number;
+  comments: Array<Record<string, unknown>>;
 }
