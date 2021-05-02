@@ -42,14 +42,28 @@ export interface GetRouteDetailsEvent {
     Authorization?: string;
   };
   body: {
-    userEmail: string;
+    username: string;
     createdAt: string;
   };
 }
 
 export interface UpVoteRouteEvent extends AuthHeader {
   body: {
-    userEmail: string;
+    username: string;
     createdAt: string;
   };
+}
+
+export interface JwtPayload {
+  sub: string;
+  event_id: string;
+  token_use: string;
+  scope: 'aws.cognito.signin.user.admin';
+  auth_time: number;
+  iss: string;
+  exp: number;
+  iat: number;
+  jti: string;
+  client_id: string;
+  username: string;
 }

@@ -1,11 +1,12 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, GetItemInput, UpdateItemInput } from 'aws-sdk/clients/dynamodb';
 import {
-  getEmailFromCognito,
   getMiddlewareAddedHandler,
   UpVoteRouteEvent,
   upVoteRouteSchema,
+  JwtPayload,
 } from './common';
+import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -16,13 +17,13 @@ const upVoteDetails: Handler = async (event: UpVoteRouteEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { userEmail: routeOwnerEmail, createdAt },
+    body: { username: routeOwnerUsername, createdAt },
   } = event;
   const getItemInput: GetItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     ConsistentRead: false,
     Key: {
-      userEmail: routeOwnerEmail as AttributeValue,
+      username: routeOwnerUsername as AttributeValue,
       createdAt: createdAt as AttributeValue,
     },
   };
@@ -36,14 +37,14 @@ const upVoteDetails: Handler = async (event: UpVoteRouteEvent) => {
     throw createError(400, 'Route does not exist');
   }
 
-  const userEmail = await getEmailFromCognito(Authorization.split(' ')[1]);
+  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
   const { upVotes } = Item;
-  if (!upVotes.includes(userEmail)) {
-    upVotes.push(userEmail);
+  if (!upVotes.includes(username)) {
+    upVotes.push(username);
     const updateItemInput: UpdateItemInput = {
       TableName: process.env['ROUTE_TABLE_NAME'],
       Key: {
-        userEmail: routeOwnerEmail as AttributeValue,
+        username: routeOwnerUsername as AttributeValue,
         createdAt: createdAt as AttributeValue,
       },
       UpdateExpression: 'SET upVotes = :upVotes, vote = :vote',

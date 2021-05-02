@@ -1,11 +1,12 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, GetItemInput } from 'aws-sdk/clients/dynamodb';
 import {
-  getEmailFromCognito,
   getMiddlewareAddedHandler,
   GetRouteDetailsEvent,
   getRouteDetailsSchema,
+  JwtPayload,
 } from './common';
+import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -16,13 +17,13 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { userEmail: routeOwnerEmail, createdAt },
+    body: { username: routeOwnerUsername, createdAt },
   } = event;
   const getItemInput: GetItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     ConsistentRead: false,
     Key: {
-      userEmail: routeOwnerEmail as AttributeValue,
+      username: routeOwnerUsername as AttributeValue,
       createdAt: createdAt as AttributeValue,
     },
   };
@@ -54,20 +55,20 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     comments,
   } = Item;
   if (Authorization) {
-    const userEmail = await getEmailFromCognito(Authorization.split(' ')[1]);
-    publicGradeSubmissions.forEach(({ email, grade }) => {
-      if (email === userEmail) {
+    const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+    publicGradeSubmissions.forEach(({ username: name, grade }) => {
+      if (name === username) {
         hasGraded = true;
         graded = grade;
       }
     });
-    upVotes.forEach((email) => {
-      if (email === userEmail) {
+    upVotes.forEach((name) => {
+      if (name === username) {
         hasVoted = true;
       }
     });
-    reports.forEach((email) => {
-      if (email === userEmail) {
+    reports.forEach((name) => {
+      if (name === username) {
         hasReported = true;
       }
     });
@@ -77,7 +78,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     body: JSON.stringify({
       Message: 'Get route details success',
       Item: {
-        userEmail: routeOwnerEmail,
+        username: routeOwnerUsername,
         createdAt,
         expiredTime,
         routeName,

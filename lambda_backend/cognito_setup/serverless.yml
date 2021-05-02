@@ -42,7 +42,7 @@ resources:
         ExplicitAuthFlows:
           - ALLOW_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
-        AccessTokenValidity: 3
+        AccessTokenValidity: 6
         IdTokenValidity: 3
         RefreshTokenValidity: 365
         TokenValidityUnits:

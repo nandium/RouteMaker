@@ -1,8 +1,8 @@
 const ISODateStringPattern =
   '^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
-const AlphanumericSpace = '^[a-zA-Z0-9 ]*$';
+const AlphanumericSpaceHyphen = '^[a-zA-Z0-9 \\-]*$';
 const NumericDecimalCommaSpace = '^[0-9., ]*$';
-const Email = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$";
+// const Email = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$";
 
 export const createRouteSchema = {
   type: 'object',
@@ -13,12 +13,12 @@ export const createRouteSchema = {
         country: {
           type: 'string',
           maxLength: 50,
-          pattern: AlphanumericSpace,
+          pattern: AlphanumericSpaceHyphen,
         },
         routeName: {
           type: 'string',
           maxLength: 50,
-          pattern: AlphanumericSpace,
+          pattern: AlphanumericSpaceHyphen,
         },
         expiredTime: {
           type: 'string',
@@ -74,16 +74,16 @@ export const getRouteDetailsSchema = {
     body: {
       type: 'object',
       properties: {
-        userEmail: {
+        username: {
           type: 'string',
-          pattern: Email,
+          pattern: AlphanumericSpaceHyphen,
         },
         createdAt: {
           type: 'string',
           pattern: ISODateStringPattern,
         },
       },
-      required: ['userEmail', 'createdAt'],
+      required: ['username', 'createdAt'],
     },
   },
 };

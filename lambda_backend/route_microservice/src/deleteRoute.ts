@@ -6,9 +6,10 @@ import {
   getMiddlewareAddedHandler,
   DeleteRouteEvent,
   deleteRouteSchema,
-  getEmailFromCognito,
+  JwtPayload,
 } from './common';
 import { createHash } from 'crypto';
+import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -27,13 +28,13 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
     body: { createdAt },
   } = event;
 
-  const userEmail = await getEmailFromCognito(Authorization.split(' ')[1]);
+  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
   const queryInput: QueryInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     ConsistentRead: false,
-    KeyConditionExpression: 'userEmail = :userEmail AND createdAt = :createdAt',
+    KeyConditionExpression: 'username = :username AND createdAt = :createdAt',
     ExpressionAttributeValues: {
-      ':userEmail': userEmail as AttributeValue,
+      ':username': username as AttributeValue,
       ':createdAt': createdAt as AttributeValue,
     },
   };
@@ -47,11 +48,11 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
     createError(400, 'Route does not exist.');
   }
 
-  const userEmailHash = createHash('sha256').update(userEmail).digest('base64');
+  const usernameHash = createHash('sha256').update(username).digest('base64');
   const decodedRouteURL = decodeURIComponent(Items[0].routeURL as string);
   const deleteObjectRequest: DeleteObjectRequest = {
     Bucket: process.env['S3_BUCKET_NAME'],
-    Key: `public/${userEmailHash}${decodedRouteURL.split(userEmailHash)[1]}`,
+    Key: `public/${usernameHash}${decodedRouteURL.split(usernameHash)[1]}`,
   };
   try {
     await s3.deleteObject(deleteObjectRequest).promise();
@@ -62,7 +63,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   const deleteItemInput: DeleteItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     Key: {
-      userEmail: userEmail as AttributeValue,
+      username: username as AttributeValue,
       createdAt: createdAt as AttributeValue,
     },
   };

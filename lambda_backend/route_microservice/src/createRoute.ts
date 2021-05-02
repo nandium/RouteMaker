@@ -6,10 +6,11 @@ import {
   getMiddlewareAddedHandler,
   CreateRouteEvent,
   createRouteSchema,
-  getEmailFromCognito,
+  JwtPayload,
 } from './common';
 import { MAX_PHOTO_SIZE } from './config';
 import { createHash } from 'crypto';
+import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -47,7 +48,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     createError(400, 'Gym is not registered.');
   }
 
-  const userEmail = await getEmailFromCognito(Authorization.split(' ')[1]);
+  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
   const { content, mimetype } = routePhoto;
   if (mimetype !== 'image/jpeg') {
     throw createError(400, 'Only JPEG is accepted');
@@ -57,10 +58,10 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   }
 
   const createdAt = new Date().toISOString();
-  const userEmailHash = createHash('sha256').update(userEmail).digest('base64');
+  const usernameHash = createHash('sha256').update(username).digest('base64');
   const putObjectRequest: PutObjectRequest = {
     Bucket: process.env['S3_BUCKET_NAME'],
-    Key: `public/${userEmailHash}/${createdAt}`,
+    Key: `public/${usernameHash}/${createdAt}`,
     ContentType: mimetype,
     Body: content,
   };
@@ -74,7 +75,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   const putItemInput: PutItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'] || '',
     Item: {
-      userEmail: userEmail as AttributeValue,
+      username: username as AttributeValue,
       createdAt: createdAt as AttributeValue,
       expiredTime: expiredTime as AttributeValue,
       routeName: routeName as AttributeValue,
@@ -82,7 +83,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
       routeURL: routeURL as AttributeValue,
       ownerGrade: ownerGrade as AttributeValue,
       publicGrade: ownerGrade as AttributeValue,
-      publicGradeSubmissions: [{ email: userEmail, grade: ownerGrade }] as AttributeValue,
+      publicGradeSubmissions: [{ username, grade: ownerGrade }] as AttributeValue,
       vote: 0 as AttributeValue,
       upVotes: [] as AttributeValue,
       reports: [] as AttributeValue,
