@@ -1,5 +1,3 @@
-import { StringAttributeValue } from 'aws-sdk/clients/dynamodb';
-
 interface AuthHeader {
   headers: {
     Authorization: string;

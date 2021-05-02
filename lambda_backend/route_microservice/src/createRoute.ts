@@ -1,5 +1,10 @@
 import { Handler } from 'aws-lambda';
-import DynamoDB, { AttributeValue, QueryInput, PutItemInput } from 'aws-sdk/clients/dynamodb';
+import DynamoDB, {
+  AttributeValue,
+  QueryInput,
+  PutItemInput,
+  AttributeMap,
+} from 'aws-sdk/clients/dynamodb';
 import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
 
 import {
@@ -7,6 +12,7 @@ import {
   CreateRouteEvent,
   createRouteSchema,
   JwtPayload,
+  RouteItem,
 } from './common';
 import { MAX_PHOTO_SIZE } from './config';
 import { createHash } from 'crypto';
@@ -72,24 +78,25 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     throw createError(500, 'S3 upload failed.' + error.stack);
   }
 
+  const routeItem: RouteItem = {
+    username,
+    createdAt,
+    expiredTime,
+    routeName,
+    gymLocation,
+    routeURL,
+    ownerGrade,
+    publicGrade: ownerGrade,
+    publicGradeSubmissions: [{ username, grade: ownerGrade }],
+    vote: 0,
+    upVotes: [],
+    reports: [],
+    commentCount: 0,
+    comments: [],
+  };
   const putItemInput: PutItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'] || '',
-    Item: {
-      username: username as AttributeValue,
-      createdAt: createdAt as AttributeValue,
-      expiredTime: expiredTime as AttributeValue,
-      routeName: routeName as AttributeValue,
-      gymLocation: gymLocation as AttributeValue,
-      routeURL: routeURL as AttributeValue,
-      ownerGrade: ownerGrade as AttributeValue,
-      publicGrade: ownerGrade as AttributeValue,
-      publicGradeSubmissions: [{ username, grade: ownerGrade }] as AttributeValue,
-      vote: 0 as AttributeValue,
-      upVotes: [] as AttributeValue,
-      reports: [] as AttributeValue,
-      commentCount: 0 as AttributeValue,
-      comments: [] as AttributeValue,
-    },
+    Item: (routeItem as unknown) as AttributeMap,
   };
   try {
     await dynamoDb.put(putItemInput).promise();
