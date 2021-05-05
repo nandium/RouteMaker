@@ -1,0 +1,186 @@
+app: yolo-bouldering
+
+service: yolo-bouldering-route
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: ap-southeast-1
+  memorySize: 1024
+  apiGateway:
+    binaryMediaTypes:
+      - 'multipart/form-data'
+  environment:
+    NODE_ENV: ${self:custom.stage}
+    ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
+    S3_BUCKET_NAME: ${self:custom.s3BucketName}
+    ROUTE_TABLE_NAME: ${self:custom.routeTableName}
+    GYM_TABLE_NAME: ${self:custom.gymTableName}
+  logRetentionInDays: 30
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:DeleteObject
+      Resource:
+        - '${self:custom.s3BucketArn}/*'
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource:
+        - '${self:custom.routeTableArn}'
+        - '${self:custom.routeTableArn}/index/*'
+        - '${self:custom.gymTableArn}'
+        - '${self:custom.gymTableArn}/index/*'
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-api-gateway-throttling
+
+functions:
+  getAllGyms:
+    handler: src/getAllGyms.handler
+    events:
+      - http:
+          path: route/gym/all
+          method: get
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
+  createRoute:
+    handler: src/createRoute.handler
+    events:
+      - http:
+          path: route/new
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  getRoutesByGym:
+    handler: src/getRoutesByGym.handler
+    events:
+      - http:
+          path: route/all
+          method: get
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
+  getRouteDetails:
+    handler: src/getRouteDetails.handler
+    events:
+      - http:
+          path: route/details
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
+  upVoteRoute:
+    handler: src/upVoteRoute.handler
+    events:
+      - http:
+          path: route/details/vote
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  reportRoute:
+    handler: src/reportRoute.handler
+    events:
+      - http:
+          path: route/details/report
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  gradeRoute:
+    handler: src/gradeRoute.handler
+    events:
+      - http:
+          path: route/details/grade
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  deleteRoute:
+    handler: src/deleteRoute.handler
+    events:
+      - http:
+          path: route
+          method: delete
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  addComment:
+    handler: src/addComment.handler
+    events:
+      - http:
+          path: route/details/comment
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  deleteComment:
+    handler: src/deleteComment.handler
+    events:
+      - http:
+          path: route/details/comment
+          method: delete
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
+  s3BucketArn: ${ssm:/${self:custom.stage}/s3/assets/arn}
+  s3BucketName: ${ssm:/${self:custom.stage}/s3/assets/name}
+  routeTableArn: ${ssm:/${self:custom.stage}/dynamodb/route/arn}
+  routeTableName: ${ssm:/${self:custom.stage}/dynamodb/route/name}
+  gymTableArn: ${ssm:/${self:custom.stage}/dynamodb/gym/arn}
+  gymTableName: ${ssm:/${self:custom.stage}/dynamodb/gym/name}
+  apiGatewayThrottling:
+    maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
+    maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
+
+  _maxRequestsPerSecond:
+    dev: 1
+    prod: 5
+  _maxConcurrentRequests:
+    dev: 1
+    prod: 5
+  _origin:
+    dev: '*'
+    prod: 'https://yarkhinephyo.github.io'

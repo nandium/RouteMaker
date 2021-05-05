@@ -43,10 +43,10 @@ The Object Detection model is trained on yolov4-tiny. Hence it is sufficiently s
 ```bash
 # Ensure npm is installed
 # Ensure AWS credentials are set up for Serverless backend
-# Ensure Serverless framework is installed (2.11.1)
 # Ensure Docker engine is running for preparing pip packages
 cd ./lambda_backend
 npm i
+cd ./predict_microservice
 sls deploy
 
 cd ./user_interface
