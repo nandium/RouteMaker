@@ -27,9 +27,17 @@ const BoundingBoxNumbering = {
   fill: 'black',
 };
 
+const OPTIMIZATION_PARAMS = {
+  perfectDrawEnabled: false,
+  transformsEnabled: 'position',
+  shadowForStrokeEnabled: false,
+  hitStrokeWidth: 0,
+};
+
 export {
   DefaultBoundingBox,
   ActiveBoundingBoxHandHold,
   ActiveBoundingBoxFootHold,
   BoundingBoxNumbering,
+  OPTIMIZATION_PARAMS,
 };

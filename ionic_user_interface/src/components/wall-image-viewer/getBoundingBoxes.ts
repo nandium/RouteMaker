@@ -1,5 +1,6 @@
 import axios from 'axios';
-import BoxClass from './enumBoxClass';
+import { BoxClass } from './enums';
+import { Box } from './types';
 
 const mapClass = (boxClass: string) => {
   switch (boxClass) {
@@ -17,7 +18,7 @@ const mapClass = (boxClass: string) => {
  * @param {FormData} formData
  * @returns {Array} array of boxes [{x, y, w, h, class}]
  */
-const getBoundingBoxes = async (formData: FormData) => {
+const getBoundingBoxes = async (formData: FormData): Promise<Box[]> => {
   try {
     const {
       data: { boxes },
@@ -39,14 +40,7 @@ const getBoundingBoxes = async (formData: FormData) => {
   } catch (error) {
     console.log(error.response.data);
   }
+  return [];
 };
-
-export interface Box {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  class: string;
-}
 
 export default getBoundingBoxes;

@@ -58,8 +58,17 @@ export default defineComponent({
     const photoUploaded = ref(false);
     const { photo, takePhoto } = usePhotoGallery();
 
+    /**
+     * Get width of the device as platform-independent as possible
+     * https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
+     */
     const updateCanvasWidth = debounce(() => {
-      canvasWidth.value = document.body.clientWidth;
+      canvasWidth.value =
+        window.innerWidth && document.documentElement.clientWidth
+          ? Math.min(window.innerWidth, document.documentElement.clientWidth)
+          : window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.getElementsByTagName('body')[0].clientWidth;
     }, 100);
 
     watch(photo, (oldPhoto, newPhoto) => {
@@ -71,7 +80,7 @@ export default defineComponent({
         updateCanvasWidth();
       }
     });
-
+    window.onload = updateCanvasWidth;
     window.addEventListener('resize', updateCanvasWidth);
     onUnmounted(() => {
       window.removeEventListener('resize', updateCanvasWidth);
