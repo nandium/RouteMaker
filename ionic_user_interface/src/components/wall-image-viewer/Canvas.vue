@@ -25,18 +25,13 @@
 
 <script lang="ts">
 import Konva from 'konva';
-import getBoundingBoxes from './getBoundingBoxes';
-import {
-  ActiveBoundingBoxFootHold,
-  ActiveBoundingBoxHandHold,
-  BoundingBoxNumbering,
-  DefaultBoundingBox,
-  OPTIMIZATION_PARAMS,
-} from './boundingBoxAttributes';
 import { IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
-import { BoxState, SelectMode } from './enums';
-import { ModeChangedEvent, BoundingBox } from './types';
+
+import getBoundingBoxes from './getBoundingBoxes';
+import { SelectMode } from './enums';
+import { useBoundingBox } from '../../composables/useBoundingBox';
+import { BoundingBox, ModeChangedEvent } from './types';
 
 Konva.pixelRatio = 1;
 
@@ -71,6 +66,7 @@ export default defineComponent({
      */
     const loadStage = async () => {
       const image = new Image();
+      // eslint-disable-next-line
       image.onload = async () => {
         // Clear all boxes first
         boxLayer.clear();
@@ -90,45 +86,14 @@ export default defineComponent({
         const rawBoundingBoxes = await getBoundingBoxes(formData);
         boundingBoxes = rawBoundingBoxes.map((box, idx) => {
           const { x, y, w, h } = box;
-          const boundingBox = {
-            boxId: idx,
-            boxState: BoxState.UNSELECTED,
-            numberText: 0,
-            boxAttrs: DefaultBoundingBox,
-            konvaRect: new Konva.Rect({
-              x: x,
-              y: y,
-              width: w,
-              height: h,
-              fill: DefaultBoundingBox.fill,
-              stroke: DefaultBoundingBox.stroke,
-              strokeWidth: DefaultBoundingBox.strokeWidth,
-              opacity: DefaultBoundingBox.opacity,
-              ...OPTIMIZATION_PARAMS,
-            }),
-          };
-          boundingBox.konvaRect.on('mouseover', () => {
-            if (
-              selectedMode.value !== SelectMode.DRAWBOX &&
-              boundingBox.boxState === BoxState.UNSELECTED
-            ) {
-              boundingBox.konvaRect.strokeWidth(4);
-            }
-            boxLayer.batchDraw();
-            stage.container().style.cursor = 'pointer';
+          const { registerBoundingBox, resizeBoundingBox } = useBoundingBox(boxLayer, selectedMode);
+          registerBoundingBox({
+            x,
+            y,
+            width: w,
+            height: h,
           });
-          boundingBox.konvaRect.on('mouseout', () => {
-            if (
-              selectedMode.value !== SelectMode.DRAWBOX &&
-              boundingBox.boxState === BoxState.UNSELECTED
-            ) {
-              boundingBox.konvaRect.strokeWidth(boundingBox.boxAttrs.strokeWidth);
-            }
-            boxLayer.batchDraw();
-            stage.container().style.cursor = 'default';
-          });
-          boxLayer.add(boundingBox.konvaRect);
-          return boundingBox;
+          return { boxId: idx, resizeBoundingBox };
         });
         boxLayer.batchDraw();
       };
@@ -144,10 +109,8 @@ export default defineComponent({
       stage.width(props.width);
       stage.height(newHeight);
       for (const bbox of boundingBoxes) {
-        bbox.konvaRect.x(bbox.konvaRect.x() * factor);
-        bbox.konvaRect.y(bbox.konvaRect.y() * factor);
-        bbox.konvaRect.width(bbox.konvaRect.width() * factor);
-        bbox.konvaRect.height(bbox.konvaRect.height() * factor);
+        const { resizeBoundingBox } = bbox;
+        resizeBoundingBox(factor);
       }
       boxLayer.batchDraw();
     };
