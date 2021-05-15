@@ -1,3 +1,4 @@
+import Konva from 'konva';
 import { SelectMode, BoxState } from './enums';
 
 interface OptimizationParams {
@@ -5,24 +6,6 @@ interface OptimizationParams {
   transformsEnabled: string;
   shadowForStrokeEnabled: boolean;
   hitStrokeWidth: number;
-}
-
-interface BoxDims {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-interface ConfigStage {
-  width: number;
-  height: number;
-}
-
-interface ConfigImage {
-  image: HTMLImageElement;
-  width: number;
-  height: number;
 }
 
 interface ConfigGroup {
@@ -75,22 +58,19 @@ interface Box {
   class: string;
 }
 
-interface BoundingBoxConfig {
+interface BoundingBoxAttributes {
+  strokeWidth: number;
+  opacity: number;
+  fill: string;
+  stroke: string;
+}
+
+interface BoundingBox {
   boxId: number;
   boxState: BoxState;
   numberText: number;
-  boxDims: BoxDims;
+  boxAttrs: BoundingBoxAttributes;
+  konvaRect: Konva.Rect;
 }
 
-export {
-  BoxDims,
-  ConfigStage,
-  ConfigImage,
-  ConfigGroup,
-  ConfigText,
-  ConfigTape,
-  ConfigRect,
-  ModeChangedEvent,
-  Box,
-  BoundingBoxConfig,
-};
+export { ConfigGroup, ConfigText, ConfigTape, ConfigRect, ModeChangedEvent, Box, BoundingBox };

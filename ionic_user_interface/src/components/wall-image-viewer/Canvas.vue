@@ -19,34 +19,24 @@
         <ion-label>Export</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <v-stage ref="stage" v-if="imgSrc" :config="configStage">
-      <v-layer ref="layer">
-        <v-image :config="configImage" />
-        <!-- TODO: Add watermark -->
-        <!-- <v-text :config="configWatermark" /> -->
-        <BoundingBox
-          v-for="(bConfig, idx) in boundingBoxeConfigs"
-          :key="idx"
-          :boxId="bConfig.boxId"
-          :boxDims="bConfig.boxDims"
-          :boxState="bConfig.boxState"
-          :numberText="bConfig.numberText"
-          :selectMode="selectedMode"
-        />
-      </v-layer>
-    </v-stage>
+    <div id="konva-container"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Konva from 'konva';
 import getBoundingBoxes from './getBoundingBoxes';
-import BoundingBox from './BoundingBox.vue';
+import {
+  ActiveBoundingBoxFootHold,
+  ActiveBoundingBoxHandHold,
+  BoundingBoxNumbering,
+  DefaultBoundingBox,
+  OPTIMIZATION_PARAMS,
+} from './boundingBoxAttributes';
 import { IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import { BoxState, SelectMode } from './enums';
-import { getHeightAndWidthFromDataUrl } from '../../common/utils';
-import { ConfigStage, ConfigImage, ModeChangedEvent, BoundingBoxConfig } from './types';
+import { ModeChangedEvent, BoundingBox } from './types';
 
 Konva.pixelRatio = 1;
 
@@ -56,7 +46,6 @@ export default defineComponent({
     IonLabel,
     IonSegment,
     IonSegmentButton,
-    BoundingBox,
   },
   props: {
     imgSrc: {
@@ -69,70 +58,128 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const configStage = ref<ConfigStage>();
-    const configImage = ref<ConfigImage>();
-    const boundingBoxeConfigs = ref<BoundingBoxConfig[]>([]);
+    let stage: Konva.Stage;
+    const imageLayer = new Konva.Layer();
+    const boxLayer = new Konva.Layer();
+    const konvaImage = new Konva.Image();
+    let boundingBoxes: BoundingBox[] = [];
+
     const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
 
     /**
-     * Updates the Konva stage dimension and Image
-     * Add the bounding boxes retrieved from backend
+     * Loads the Image and the bounding boxes retrieved from backend.
      */
-    const updateImage = async () => {
-      const windowImage = new window.Image();
-      windowImage.src = props.imgSrc;
-      const { height: dataUrlHeight, width: dataUrlWidth } = await getHeightAndWidthFromDataUrl(
-        props.imgSrc,
-      );
-      const imageHeight = (dataUrlHeight / dataUrlWidth) * props.width;
-      const formData = new FormData();
-      formData.append('image', await (await fetch(props.imgSrc)).blob());
-      formData.append('width', props.width.toString());
-      const boundingBoxes = await getBoundingBoxes(formData);
-      boundingBoxeConfigs.value = boundingBoxes.map((box, idx) => {
-        const { x, y, w, h } = box;
-        return {
-          boxId: idx,
-          boxState: BoxState.UNSELECTED,
-          numberText: 0,
-          boxDims: {
-            x,
-            y,
-            w,
-            h,
-          },
-        };
-      });
-      configStage.value = {
-        width: props.width,
-        height: imageHeight,
+    const loadStage = async () => {
+      const image = new Image();
+      image.onload = async () => {
+        // Clear all boxes first
+        boxLayer.clear();
+        boxLayer.destroyChildren();
+        // Add image to stage
+        stage.width(props.width);
+        stage.height((props.width / image.width) * image.height);
+        konvaImage.x(0);
+        konvaImage.image(image);
+        konvaImage.width(props.width);
+        konvaImage.height((props.width / image.width) * image.height);
+        imageLayer.batchDraw();
+        // Get new boxes
+        const formData = new FormData();
+        formData.append('image', await (await fetch(props.imgSrc)).blob());
+        formData.append('width', props.width.toString());
+        const rawBoundingBoxes = await getBoundingBoxes(formData);
+        boundingBoxes = rawBoundingBoxes.map((box, idx) => {
+          const { x, y, w, h } = box;
+          const boundingBox = {
+            boxId: idx,
+            boxState: BoxState.UNSELECTED,
+            numberText: 0,
+            boxAttrs: DefaultBoundingBox,
+            konvaRect: new Konva.Rect({
+              x: x,
+              y: y,
+              width: w,
+              height: h,
+              fill: DefaultBoundingBox.fill,
+              stroke: DefaultBoundingBox.stroke,
+              strokeWidth: DefaultBoundingBox.strokeWidth,
+              opacity: DefaultBoundingBox.opacity,
+              ...OPTIMIZATION_PARAMS,
+            }),
+          };
+          boundingBox.konvaRect.on('mouseover', () => {
+            if (
+              selectedMode.value !== SelectMode.DRAWBOX &&
+              boundingBox.boxState === BoxState.UNSELECTED
+            ) {
+              boundingBox.konvaRect.strokeWidth(4);
+            }
+            boxLayer.batchDraw();
+            if (stage) {
+              stage.container().style.cursor = 'pointer';
+            }
+          });
+          boundingBox.konvaRect.on('mouseout', () => {
+            if (
+              selectedMode.value !== SelectMode.DRAWBOX &&
+              boundingBox.boxState === BoxState.UNSELECTED
+            ) {
+              boundingBox.konvaRect.strokeWidth(boundingBox.boxAttrs.strokeWidth);
+            }
+            boxLayer.batchDraw();
+            if (stage) {
+              stage.container().style.cursor = 'default';
+            }
+          });
+          boxLayer.add(boundingBox.konvaRect);
+          return boundingBox;
+        });
+        boxLayer.batchDraw();
       };
-      configImage.value = {
-        image: windowImage,
-        width: props.width,
-        height: imageHeight,
-      };
+      image.src = props.imgSrc;
     };
 
-    const resizeBoundingBoxes = () => {
-      console.log('hi');
+    const resizeStage = () => {
+      if (konvaImage) {
+        const factor = props.width / konvaImage.width();
+        const newHeight = factor * konvaImage.height();
+        konvaImage.width(props.width);
+        konvaImage.height(newHeight);
+        imageLayer.batchDraw();
+        stage.width(props.width);
+        stage.height(newHeight);
+        for (const bbox of boundingBoxes) {
+          bbox.konvaRect.x(bbox.konvaRect.x() * factor);
+          bbox.konvaRect.y(bbox.konvaRect.y() * factor);
+          bbox.konvaRect.width(bbox.konvaRect.width() * factor);
+          bbox.konvaRect.height(bbox.konvaRect.height() * factor);
+        }
+        boxLayer.batchDraw();
+      }
     };
 
-    // TODO: Mode changing is slow because the mode is passed as prop to all bounding boxes
     const modeChanged = (event: ModeChangedEvent) => {
       selectedMode.value = event.detail.value;
     };
 
-    onMounted(updateImage);
-    watch(() => props.imgSrc, updateImage);
-    watch(() => props.width, updateImage);
+    onMounted(() => {
+      stage = new Konva.Stage({
+        container: 'konva-container',
+      });
+      imageLayer.listening(false);
+      imageLayer.add(konvaImage);
+      stage.add(imageLayer);
+      stage.add(boxLayer);
+
+      loadStage();
+    });
+
+    watch(() => props.imgSrc, loadStage);
+    watch(() => props.width, resizeStage);
 
     return {
       SelectMode,
       modeChanged,
-      configStage,
-      configImage,
-      boundingBoxeConfigs,
       selectedMode,
     };
   },

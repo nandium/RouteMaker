@@ -20,8 +20,7 @@
     "konva": "^7.2.5",
     "lodash": "^4.17.21",
     "vue": "^3.0.0-0",
-    "vue-router": "^4.0.0-0",
-    "vue3-konva": "^1.0.1"
+    "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.7",
