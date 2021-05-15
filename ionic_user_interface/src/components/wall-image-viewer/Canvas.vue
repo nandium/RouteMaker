@@ -115,9 +115,7 @@ export default defineComponent({
               boundingBox.konvaRect.strokeWidth(4);
             }
             boxLayer.batchDraw();
-            if (stage) {
-              stage.container().style.cursor = 'pointer';
-            }
+            stage.container().style.cursor = 'pointer';
           });
           boundingBox.konvaRect.on('mouseout', () => {
             if (
@@ -127,9 +125,7 @@ export default defineComponent({
               boundingBox.konvaRect.strokeWidth(boundingBox.boxAttrs.strokeWidth);
             }
             boxLayer.batchDraw();
-            if (stage) {
-              stage.container().style.cursor = 'default';
-            }
+            stage.container().style.cursor = 'default';
           });
           boxLayer.add(boundingBox.konvaRect);
           return boundingBox;
@@ -140,22 +136,20 @@ export default defineComponent({
     };
 
     const resizeStage = () => {
-      if (konvaImage) {
-        const factor = props.width / konvaImage.width();
-        const newHeight = factor * konvaImage.height();
-        konvaImage.width(props.width);
-        konvaImage.height(newHeight);
-        imageLayer.batchDraw();
-        stage.width(props.width);
-        stage.height(newHeight);
-        for (const bbox of boundingBoxes) {
-          bbox.konvaRect.x(bbox.konvaRect.x() * factor);
-          bbox.konvaRect.y(bbox.konvaRect.y() * factor);
-          bbox.konvaRect.width(bbox.konvaRect.width() * factor);
-          bbox.konvaRect.height(bbox.konvaRect.height() * factor);
-        }
-        boxLayer.batchDraw();
+      const factor = props.width / konvaImage.width();
+      const newHeight = factor * konvaImage.height();
+      konvaImage.width(props.width);
+      konvaImage.height(newHeight);
+      imageLayer.batchDraw();
+      stage.width(props.width);
+      stage.height(newHeight);
+      for (const bbox of boundingBoxes) {
+        bbox.konvaRect.x(bbox.konvaRect.x() * factor);
+        bbox.konvaRect.y(bbox.konvaRect.y() * factor);
+        bbox.konvaRect.width(bbox.konvaRect.width() * factor);
+        bbox.konvaRect.height(bbox.konvaRect.height() * factor);
       }
+      boxLayer.batchDraw();
     };
 
     const modeChanged = (event: ModeChangedEvent) => {
