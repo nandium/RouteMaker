@@ -30,8 +30,8 @@ import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from './getBoundingBoxes';
 import { SelectMode } from './enums';
-import { useBoundingBox } from '../../composables/useBoundingBox';
-import { BoundingBox, ModeChangedEvent } from './types';
+import { useBoxLayer } from '../../composables/wall-image-viewer';
+import { ModeChangedEvent } from './types';
 
 Konva.pixelRatio = 1;
 
@@ -53,13 +53,14 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
+
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
-    const boxLayer = new Konva.Layer();
     const konvaImage = new Konva.Image();
-    let boundingBoxes: BoundingBox[] = [];
-
-    const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
+    const { boxLayer, resizeBoxLayer, addBoxLayerBoundingBoxes, clearBoxLayer } = useBoxLayer(
+      selectedMode,
+    );
 
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
@@ -69,8 +70,7 @@ export default defineComponent({
       // eslint-disable-next-line
       image.onload = async () => {
         // Clear all boxes first
-        boxLayer.clear();
-        boxLayer.destroyChildren();
+        clearBoxLayer();
         // Add image to stage
         stage.width(props.width);
         stage.height((props.width / image.width) * image.height);
@@ -84,18 +84,7 @@ export default defineComponent({
         formData.append('image', await (await fetch(props.imgSrc)).blob());
         formData.append('width', props.width.toString());
         const rawBoundingBoxes = await getBoundingBoxes(formData);
-        boundingBoxes = rawBoundingBoxes.map((box, idx) => {
-          const { x, y, w, h } = box;
-          const { registerBoundingBox, resizeBoundingBox } = useBoundingBox(boxLayer, selectedMode);
-          registerBoundingBox({
-            x,
-            y,
-            width: w,
-            height: h,
-          });
-          return { boxId: idx, resizeBoundingBox };
-        });
-        boxLayer.batchDraw();
+        addBoxLayerBoundingBoxes(rawBoundingBoxes);
       };
       image.src = props.imgSrc;
     };
@@ -108,11 +97,7 @@ export default defineComponent({
       imageLayer.batchDraw();
       stage.width(props.width);
       stage.height(newHeight);
-      for (const bbox of boundingBoxes) {
-        const { resizeBoundingBox } = bbox;
-        resizeBoundingBox(factor);
-      }
-      boxLayer.batchDraw();
+      resizeBoxLayer(factor);
     };
 
     const modeChanged = (event: ModeChangedEvent) => {

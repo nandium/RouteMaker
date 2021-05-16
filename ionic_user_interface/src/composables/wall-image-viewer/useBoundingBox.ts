@@ -14,6 +14,7 @@ import { BoxDimensions } from '@/components/wall-image-viewer/types';
 export function useBoundingBox(
   boxLayer: Konva.Layer,
   selectedMode: Ref<SelectMode>,
+  // handholdPositionArr: Ref<Array<number>>
 ): UseBoundingBox {
   const boxState = ref<BoxState>(BoxState.DUAL_START_HANDHOLD);
   const numberText = ref<number>(4);
@@ -132,12 +133,9 @@ export function useBoundingBox(
       }
       boxLayer.batchDraw();
     });
-    konvaRect.on('click', () => {
-      onClickRect();
-    });
-    konvaRect.on('tap', () => {
-      onClickRect();
-    });
+    konvaRect.on('click', onClickRect);
+    konvaRect.on('tap', onClickRect);
+
     konvaGroup.add(konvaRect);
     konvaGroup.add(konvaText);
     konvaGroup.add(konvaTape1);
