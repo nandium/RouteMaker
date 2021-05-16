@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { Ref } from 'vue';
+import { Ref, ref } from 'vue';
 
 import { SelectMode } from '@/components/wall-image-viewer/enums';
 import { BoundingBox, Box } from '@/components/wall-image-viewer/types';
@@ -8,7 +8,7 @@ import { useBoundingBox } from '@/components/wall-image-viewer/useBoundingBox';
 export function useBoxLayer(selectedMode: Ref<SelectMode>): UseBoxLayer {
   const boxLayer = new Konva.Layer();
   let boundingBoxes: BoundingBox[] = [];
-  // const handholdPositionArr = ref<Array<number>>([]);
+  const handholdPositionArr = ref<Array<number>>([]);
 
   const clearBoxLayer = () => {
     boxLayer.clear();
@@ -19,8 +19,12 @@ export function useBoxLayer(selectedMode: Ref<SelectMode>): UseBoxLayer {
   const addBoxLayerBoundingBoxes = (boxes: Box[]) => {
     boundingBoxes = boxes.map((box, idx) => {
       const { x, y, w, h } = box;
-      const { registerBoundingBox, resizeBoundingBox } = useBoundingBox(boxLayer, selectedMode);
-      registerBoundingBox({
+      const { registerBoundingBox, resizeBoundingBox } = useBoundingBox(
+        boxLayer,
+        selectedMode,
+        handholdPositionArr,
+      );
+      registerBoundingBox(idx, {
         x,
         y,
         width: w,

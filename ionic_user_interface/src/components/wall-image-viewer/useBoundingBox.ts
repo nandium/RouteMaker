@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { Ref, ref } from 'vue';
+import { Ref, ref, watch } from 'vue';
 
 import { BoxState, SelectMode } from '@/components/wall-image-viewer/enums';
 import {
@@ -14,15 +14,16 @@ import { BoxDimensions } from '@/components/wall-image-viewer/types';
 export function useBoundingBox(
   boxLayer: Konva.Layer,
   selectedMode: Ref<SelectMode>,
-  // handholdPositionArr: Ref<Array<number>>
+  handholdPositionArr: Ref<Array<number>>,
 ): UseBoundingBox {
-  const boxState = ref<BoxState>(BoxState.DUAL_START_HANDHOLD);
-  const numberText = ref<number>(4);
+  const boxState = ref<BoxState>(BoxState.UNSELECTED);
+  const numberText = ref<number>(0);
   const konvaRect: Konva.Rect = new Konva.Rect();
   const konvaGroup: Konva.Group = new Konva.Group();
   const konvaText: Konva.Text = new Konva.Text();
   const konvaTape1: Konva.Line = new Konva.Line();
   const konvaTape2: Konva.Line = new Konva.Line();
+  let boxId = -1;
 
   const updateRectBoxState = () => {
     let boundingBoxAttributes = null;
@@ -114,7 +115,8 @@ export function useBoundingBox(
     updateText();
   };
 
-  const registerBoundingBox = (boxDimensions: BoxDimensions) => {
+  const registerBoundingBox = (id: number, boxDimensions: BoxDimensions) => {
+    boxId = id;
     const { x, y, width, height } = boxDimensions;
     konvaGroup.setAttrs({ x, y, width, height });
     konvaRect.width(width);
@@ -149,6 +151,45 @@ export function useBoundingBox(
     updateTapes();
   };
 
+  const handleSelectHandhold = () => {
+    boxState.value = BoxState.NORMAL_HANDHOLD;
+    handholdPositionArr.value = [...handholdPositionArr.value, boxId];
+  };
+
+  const handleUnselectHandhold = () => {
+    boxState.value = BoxState.UNSELECTED;
+    numberText.value = 0;
+    handholdPositionArr.value = handholdPositionArr.value.filter((id) => id !== boxId);
+  };
+
+  /**
+   * This callback is executed in all box instances
+   * Updates the types of handholds based on index in positionArray
+   * Batchdraw is called each time but should not be a problem since this only affects HANDHOLD instances
+   */
+  watch(handholdPositionArr, () => {
+    switch (+boxState.value) {
+      case BoxState.NORMAL_HANDHOLD:
+      case BoxState.SINGLE_START_HANDHOLD:
+      case BoxState.DUAL_START_HANDHOLD:
+      case BoxState.END_HANDHOLD: {
+        const position = handholdPositionArr.value.indexOf(boxId);
+        numberText.value = position + 1;
+        // TODO: Handle two handholds and no handhold
+        if (position === 0) {
+          boxState.value = BoxState.DUAL_START_HANDHOLD;
+        } else if (position === handholdPositionArr.value.length - 1) {
+          boxState.value = BoxState.END_HANDHOLD;
+        } else {
+          boxState.value = BoxState.NORMAL_HANDHOLD;
+        }
+        updateBoundingBox();
+        boxLayer.batchDraw();
+        break;
+      }
+    }
+  });
+
   const onClickRect = () => {
     switch (+selectedMode.value) {
       case SelectMode.FOOTHOLD:
@@ -160,6 +201,8 @@ export function useBoundingBox(
           case BoxState.SINGLE_START_HANDHOLD:
           case BoxState.DUAL_START_HANDHOLD:
           case BoxState.END_HANDHOLD:
+            handleUnselectHandhold();
+            break;
           case BoxState.FOOTHOLD:
             boxState.value = BoxState.UNSELECTED;
             break;
@@ -168,12 +211,14 @@ export function useBoundingBox(
       case SelectMode.HANDHOLD:
         switch (+boxState.value) {
           case BoxState.UNSELECTED:
-            boxState.value = BoxState.NORMAL_HANDHOLD;
+            handleSelectHandhold();
             break;
           case BoxState.NORMAL_HANDHOLD:
           case BoxState.SINGLE_START_HANDHOLD:
           case BoxState.DUAL_START_HANDHOLD:
           case BoxState.END_HANDHOLD:
+            handleUnselectHandhold();
+            break;
           case BoxState.FOOTHOLD:
             boxState.value = BoxState.UNSELECTED;
             break;
@@ -191,6 +236,6 @@ export function useBoundingBox(
 }
 
 interface UseBoundingBox {
-  registerBoundingBox: (b: BoxDimensions) => void;
+  registerBoundingBox: (id: number, b: BoxDimensions) => void;
   resizeBoundingBox: (f: number) => void;
 }
