@@ -1,4 +1,4 @@
-import { SelectMode } from './enums';
+import { SelectMode } from '@/components/wall-image-viewer/enums';
 
 interface BoxDimensions {
   x: number;

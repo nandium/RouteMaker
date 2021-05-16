@@ -79,7 +79,6 @@ export function useBoundingBox(
           opacity: 1,
           ...OPTIMIZATION_PARAMS,
         });
-      // eslint-disable-next-line no-fallthrough
       case BoxState.SINGLE_START_HANDHOLD:
         konvaTape1.setAttrs({
           points: [0, 0, corner, corner],

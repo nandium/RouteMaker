@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BoxClass } from './enums';
-import { Box } from './types';
+import { BoxClass } from '@/components/wall-image-viewer/enums';
+import { Box } from '@/components/wall-image-viewer/types';
 
 const mapClass = (boxClass: string) => {
   switch (boxClass) {

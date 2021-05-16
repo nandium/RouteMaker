@@ -28,10 +28,10 @@ import Konva from 'konva';
 import { IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 
-import getBoundingBoxes from './getBoundingBoxes';
-import { SelectMode } from './enums';
-import { useBoxLayer } from '../../composables/wall-image-viewer';
-import { ModeChangedEvent } from './types';
+import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
+import { SelectMode } from '@/components/wall-image-viewer/enums';
+import { useBoxLayer } from '@/components/wall-image-viewer/useBoxLayer';
+import { ModeChangedEvent } from '@/components/wall-image-viewer/types';
 
 Konva.pixelRatio = 1;
 

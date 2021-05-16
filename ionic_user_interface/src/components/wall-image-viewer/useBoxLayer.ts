@@ -3,7 +3,7 @@ import { Ref } from 'vue';
 
 import { SelectMode } from '@/components/wall-image-viewer/enums';
 import { BoundingBox, Box } from '@/components/wall-image-viewer/types';
-import { useBoundingBox } from './useBoundingBox';
+import { useBoundingBox } from '@/components/wall-image-viewer/useBoundingBox';
 
 export function useBoxLayer(selectedMode: Ref<SelectMode>): UseBoxLayer {
   const boxLayer = new Konva.Layer();
