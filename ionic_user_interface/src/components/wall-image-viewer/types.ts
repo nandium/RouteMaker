@@ -1,19 +1,5 @@
 import { SelectMode } from './enums';
 
-// interface OptimizationParams {
-//   perfectDrawEnabled: boolean;
-//   transformsEnabled: string;
-//   shadowForStrokeEnabled: boolean;
-//   hitStrokeWidth: number;
-// }
-
-interface ConfigGroup {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
 interface BoxDimensions {
   x: number;
   y: number;
@@ -40,4 +26,4 @@ interface BoundingBox {
   resizeBoundingBox: (factor: number) => void;
 }
 
-export { ConfigGroup, ModeChangedEvent, Box, BoundingBox, BoxDimensions };
+export { ModeChangedEvent, Box, BoundingBox, BoxDimensions };

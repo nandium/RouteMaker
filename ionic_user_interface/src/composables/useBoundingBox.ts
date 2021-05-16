@@ -25,7 +25,7 @@ export function useBoundingBox(
 
   const updateRectBoxState = () => {
     let boundingBoxAttributes = null;
-    switch (boxState.value) {
+    switch (+boxState.value) {
       case BoxState.HIDDEN:
         boundingBoxAttributes = { opacity: 0, strokeWidth: 0 };
         break;
@@ -68,7 +68,7 @@ export function useBoundingBox(
 
   const updateTapes = () => {
     const corner = Math.min(konvaRect.width() / 5, -10);
-    switch (boxState.value) {
+    switch (+boxState.value) {
       case BoxState.DUAL_START_HANDHOLD:
       case BoxState.END_HANDHOLD:
         konvaTape2.setAttrs({
@@ -121,25 +121,70 @@ export function useBoundingBox(
     konvaRect.height(height);
 
     konvaRect.on('mouseover', () => {
-      if (selectedMode.value !== SelectMode.DRAWBOX) {
+      if (+selectedMode.value !== SelectMode.DRAWBOX) {
         konvaRect.strokeWidth(5);
       }
       boxLayer.batchDraw();
     });
     konvaRect.on('mouseout', () => {
-      if (selectedMode.value !== SelectMode.DRAWBOX) {
+      if (+selectedMode.value !== SelectMode.DRAWBOX) {
         updateRectBoxState();
       }
       boxLayer.batchDraw();
+    });
+    konvaRect.on('click', () => {
+      onClickRect();
+    });
+    konvaRect.on('tap', () => {
+      onClickRect();
     });
     konvaGroup.add(konvaRect);
     konvaGroup.add(konvaText);
     konvaGroup.add(konvaTape1);
     konvaGroup.add(konvaTape2);
     boxLayer.add(konvaGroup);
+    updateBoundingBox();
+  };
+
+  const updateBoundingBox = () => {
     updateRectBoxState();
     updateText();
     updateTapes();
+  };
+
+  const onClickRect = () => {
+    switch (+selectedMode.value) {
+      case SelectMode.FOOTHOLD:
+        switch (+boxState.value) {
+          case BoxState.UNSELECTED:
+            boxState.value = BoxState.FOOTHOLD;
+            break;
+          case BoxState.NORMAL_HANDHOLD:
+          case BoxState.SINGLE_START_HANDHOLD:
+          case BoxState.DUAL_START_HANDHOLD:
+          case BoxState.END_HANDHOLD:
+          case BoxState.FOOTHOLD:
+            boxState.value = BoxState.UNSELECTED;
+            break;
+        }
+        break;
+      case SelectMode.HANDHOLD:
+        switch (+boxState.value) {
+          case BoxState.UNSELECTED:
+            boxState.value = BoxState.NORMAL_HANDHOLD;
+            break;
+          case BoxState.NORMAL_HANDHOLD:
+          case BoxState.SINGLE_START_HANDHOLD:
+          case BoxState.DUAL_START_HANDHOLD:
+          case BoxState.END_HANDHOLD:
+          case BoxState.FOOTHOLD:
+            boxState.value = BoxState.UNSELECTED;
+            break;
+        }
+        break;
+    }
+    updateBoundingBox();
+    boxLayer.batchDraw();
   };
 
   return {
