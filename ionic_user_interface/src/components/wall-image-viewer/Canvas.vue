@@ -1,10 +1,13 @@
 <template>
   <div>
+    <br/>
+    <br/>
     <ion-segment
       class="mode-switcher"
       @ionChange="modeChanged($event)"
       :value="SelectMode.HANDHOLD"
-      color="primary"
+      color="tertiary"
+      mode="ios"
     >
       <ion-segment-button :value="SelectMode.HANDHOLD">
         <ion-label>HandHold</ion-label>
@@ -15,17 +18,21 @@
       <ion-segment-button :value="SelectMode.DRAWBOX">
         <ion-label>DrawBox</ion-label>
       </ion-segment-button>
-      <ion-segment-button :value="SelectMode.EXPORT">
-        <ion-label>Export</ion-label>
-      </ion-segment-button>
     </ion-segment>
+    <br/>
+    <ion-button class="outline-button" fill="outline" color="tertiary">Hide Numbers</ion-button>
+    <ion-button class="outline-button" fill="outline" color="primary">No Tape</ion-button>
+    <ion-button class="solid-button" fill="solid" color="secondary">Export</ion-button>
+    <ion-button class="solid-button" fill="solid" color="danger">Reset</ion-button>
+    <br/>
+    <br/>
     <div id="konva-container"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Konva from 'konva';
-import { IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
+import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
@@ -38,6 +45,7 @@ Konva.pixelRatio = 1;
 export default defineComponent({
   name: 'Canvas',
   components: {
+    IonButton,
     IonLabel,
     IonSegment,
     IonSegmentButton,
@@ -67,7 +75,6 @@ export default defineComponent({
      */
     const loadStage = async () => {
       const image = new Image();
-      // eslint-disable-next-line
       image.onload = async () => {
         // Clear all boxes first
         clearBoxLayer();
@@ -75,6 +82,7 @@ export default defineComponent({
         stage.width(props.width);
         stage.height((props.width / image.width) * image.height);
         konvaImage.x(0);
+        konvaImage.y(0);
         konvaImage.image(image);
         konvaImage.width(props.width);
         konvaImage.height((props.width / image.width) * image.height);
@@ -129,9 +137,44 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.mode-switcher {
-  min-width: 2em;
+ion-segment {
   max-width: 500px;
   margin: 0 auto;
+  height: 44px;
+  border-radius: 3px;
+  border: 2px solid var(--ion-color-tertiary);
+  padding: 1px 3px;
+  filter: hue-rotate(90deg);
+}
+
+ion-segment-button {
+  color: var(--ion-color-dark);
+  border-radius: 0px;
+}
+
+ion-segment-button::part(indicator-background) {
+  background: var(--ion-color-tertiary);
+}
+
+.segment-button-checked {
+  background: var(--ion-color-tertiary);
+}
+
+ion-label {
+  font-size: 1.3em;
+}
+
+ion-button {
+  border-radius: 4px;
+  margin: 5px 9px;
+  filter: brightness(90%);
+}
+
+ion-button::part(native) {
+  font-weight: 600;
+}
+
+.outline-button::part(native):hover {
+  filter: brightness(160%);
 }
 </style>

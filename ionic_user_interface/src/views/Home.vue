@@ -12,9 +12,9 @@
         <strong>Route Maker</strong>
         <p>Quickly make custom climbing routes</p>
         <br /><br />
-        <ion-button @click="takePhoto()">
+        <ion-button @click="takePhoto()" color="tertiary">
           <ion-icon class="camera-icon" :icon="camera"></ion-icon>
-          Upload wall image...
+          Upload wall image
         </ion-button>
         <Canvas v-if="photoUploaded" :imgSrc="base64Data" :width="canvasWidth" />
       </div>
@@ -124,5 +124,9 @@ export default defineComponent({
 
 .camera-icon {
   margin-right: 10px;
+}
+
+ion-button {
+  filter: hue-rotate(90deg);
 }
 </style>
