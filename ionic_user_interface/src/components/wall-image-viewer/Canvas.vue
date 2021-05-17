@@ -20,8 +20,8 @@
       </ion-segment-button>
     </ion-segment>
     <br />
-    <ion-button class="outline-button" fill="outline" color="tertiary">Hide Numbers</ion-button>
-    <ion-button class="outline-button" fill="outline" color="primary">No Tape</ion-button>
+    <ion-button class="outline-button" @click="handleHideNumbersClick" :fill="hideNumbersFill" color="tertiary">{{hideNumbersText}}</ion-button>
+    <ion-button class="outline-button" @click="handleTapeClick" :fill="tapeFill" color="primary">{{tapeText}}</ion-button>
     <ion-button class="solid-button" fill="solid" color="secondary">Export</ion-button>
     <ion-button class="solid-button" fill="solid" color="danger">Reset</ion-button>
     <br />
@@ -62,6 +62,10 @@ export default defineComponent({
   },
   setup(props) {
     const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
+    const hideNumbersFill = ref<string>("outline");
+    const hideNumbersText = ref<string>("Hide Numbers");
+    const tapeFill = ref<string>("outline");
+    const tapeText = ref<string>("No Tape");
 
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
@@ -112,6 +116,28 @@ export default defineComponent({
       selectedMode.value = event.detail.value;
     };
 
+    const handleHideNumbersClick = () => {
+      if (hideNumbersFill.value === "outline") {
+        hideNumbersFill.value = "solid";
+        hideNumbersText.value = "Unhide Numbers";
+      } else {
+        hideNumbersFill.value = "outline";
+        hideNumbersText.value = "Hide Numbers";
+      }
+    };
+
+    const handleTapeClick = () => {
+      if (tapeText.value === "No Tape") {
+        tapeFill.value = "solid";
+        tapeText.value = "1-Hold Start";
+      } else if (tapeText.value === "1-Hold Start") {
+        tapeText.value = "2-Hold Start";
+      } else {
+        tapeFill.value = "outline";
+        tapeText.value = "No Tape";
+      }
+    };
+
     onMounted(() => {
       stage = new Konva.Stage({
         container: 'konva-container',
@@ -131,6 +157,12 @@ export default defineComponent({
       SelectMode,
       modeChanged,
       selectedMode,
+      hideNumbersFill,
+      hideNumbersText,
+      handleHideNumbersClick,
+      tapeFill,
+      tapeText,
+      handleTapeClick,
     };
   },
 });
@@ -174,7 +206,12 @@ ion-button::part(native) {
   font-weight: 600;
 }
 
+.outline-button::part(native) {
+  border: 2px solid;
+  filter: sepia(35%);
+}
+
 .outline-button::part(native):hover {
-  filter: brightness(160%);
+  filter: sepia(10%);
 }
 </style>
