@@ -9,8 +9,8 @@ import {
 } from '@capacitor/core';
 import { isPlatform } from '@ionic/vue';
 
-export function usePhotoGallery() : { 
-  photo: Ref<Photo | null>; 
+export function usePhotoGallery(): {
+  photo: Ref<Photo | null>;
   takePhoto: () => void;
 } {
   const { Camera, Filesystem } = Plugins;

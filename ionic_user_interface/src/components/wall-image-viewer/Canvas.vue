@@ -1,7 +1,7 @@
 <template>
   <div>
-    <br/>
-    <br/>
+    <br />
+    <br />
     <ion-segment
       class="mode-switcher"
       @ionChange="modeChanged($event)"
@@ -19,13 +19,13 @@
         <ion-label>DrawBox</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <br/>
+    <br />
     <ion-button class="outline-button" fill="outline" color="tertiary">Hide Numbers</ion-button>
     <ion-button class="outline-button" fill="outline" color="primary">No Tape</ion-button>
     <ion-button class="solid-button" fill="solid" color="secondary">Export</ion-button>
     <ion-button class="solid-button" fill="solid" color="danger">Reset</ion-button>
-    <br/>
-    <br/>
+    <br />
+    <br />
     <div id="konva-container"></div>
   </div>
 </template>
