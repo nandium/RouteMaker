@@ -24,6 +24,7 @@ interface Box {
 interface BoundingBox {
   boxId: number;
   resizeBoundingBox: (factor: number) => void;
+  resetBoundingBox: () => void;
 }
 
 export { ModeChangedEvent, Box, BoundingBox, BoxDimensions };

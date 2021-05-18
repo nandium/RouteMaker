@@ -175,6 +175,21 @@ export function useBoundingBox(
     handholdPositionArr.value = handholdPositionArr.value.filter((id) => id !== boxId);
   };
 
+  const resetBoundingBox = () => {
+    switch (+boxState.value) {
+      case BoxState.NORMAL_HANDHOLD:
+      case BoxState.SINGLE_START_HANDHOLD:
+      case BoxState.DUAL_START_HANDHOLD:
+      case BoxState.END_HANDHOLD: {
+        handleUnselectHandhold();
+        break;
+      }
+      default:
+        boxState.value = BoxState.UNSELECTED;
+    }
+    updateBoundingBoxView();
+  };
+
   /**
    * This callback is executed in all box instances
    * Updates the types of handholds based on index in positionArray
@@ -254,10 +269,12 @@ export function useBoundingBox(
   return {
     registerBoundingBox,
     resizeBoundingBox,
+    resetBoundingBox,
   };
 }
 
 interface UseBoundingBox {
   registerBoundingBox: (id: number, b: BoxDimensions) => void;
   resizeBoundingBox: (f: number) => void;
+  resetBoundingBox: () => void;
 }

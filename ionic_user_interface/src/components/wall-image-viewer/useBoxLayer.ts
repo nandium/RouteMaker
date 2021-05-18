@@ -19,7 +19,7 @@ export function useBoxLayer(selectedMode: Ref<SelectMode>, tapeMode: Ref<TapeMod
   const addBoxLayerBoundingBoxes = (boxes: Box[]) => {
     boundingBoxes = boxes.map((box, idx) => {
       const { x, y, w, h } = box;
-      const { registerBoundingBox, resizeBoundingBox } = useBoundingBox(
+      const { registerBoundingBox, resizeBoundingBox, resetBoundingBox } = useBoundingBox(
         boxLayer,
         selectedMode,
         tapeMode,
@@ -31,7 +31,7 @@ export function useBoxLayer(selectedMode: Ref<SelectMode>, tapeMode: Ref<TapeMod
         width: w,
         height: h,
       });
-      return { boxId: idx, resizeBoundingBox };
+      return { boxId: idx, resizeBoundingBox, resetBoundingBox };
     });
     boxLayer.batchDraw();
   };
@@ -44,11 +44,20 @@ export function useBoxLayer(selectedMode: Ref<SelectMode>, tapeMode: Ref<TapeMod
     boxLayer.batchDraw();
   };
 
+  const resetBoxLayerToUnSelected = () => {
+    for (const bbox of boundingBoxes) {
+      const { resetBoundingBox } = bbox;
+      resetBoundingBox();
+    }
+    boxLayer.batchDraw();
+  };
+
   return {
     boxLayer,
     resizeBoxLayer,
     addBoxLayerBoundingBoxes,
     clearBoxLayer,
+    resetBoxLayerToUnSelected,
   };
 }
 
@@ -57,4 +66,5 @@ interface UseBoxLayer {
   resizeBoxLayer: (f: number) => void;
   addBoxLayerBoundingBoxes: (b: Box[]) => void;
   clearBoxLayer: () => void;
+  resetBoxLayerToUnSelected: () => void;
 }

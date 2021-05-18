@@ -5,7 +5,7 @@
     <ion-segment
       class="mode-switcher"
       @ionChange="modeChanged($event)"
-      :value="SelectMode.HANDHOLD"
+      v-model="selectedMode"
       color="tertiary"
       mode="ios"
     >
@@ -31,7 +31,9 @@
       tapeText
     }}</ion-button>
     <ion-button class="solid-button" fill="solid" color="secondary">Export</ion-button>
-    <ion-button class="solid-button" fill="solid" color="danger">Reset</ion-button>
+    <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset"
+      >Reset</ion-button
+    >
     <br />
     <br />
     <div id="konva-container"></div>
@@ -79,10 +81,13 @@ export default defineComponent({
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
     const konvaImage = new Konva.Image();
-    const { boxLayer, resizeBoxLayer, addBoxLayerBoundingBoxes, clearBoxLayer } = useBoxLayer(
-      selectedMode,
-      tapeMode,
-    );
+    const {
+      boxLayer,
+      resizeBoxLayer,
+      addBoxLayerBoundingBoxes,
+      clearBoxLayer,
+      resetBoxLayerToUnSelected,
+    } = useBoxLayer(selectedMode, tapeMode);
 
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
@@ -137,6 +142,11 @@ export default defineComponent({
       }
     };
 
+    const handleReset = () => {
+      selectedMode.value = SelectMode.HANDHOLD;
+      resetBoxLayerToUnSelected();
+    };
+
     const handleTapeClick = () => {
       if (tapeText.value === 'No Tape') {
         tapeFill.value = 'solid';
@@ -177,6 +187,7 @@ export default defineComponent({
       tapeFill,
       tapeText,
       handleTapeClick,
+      handleReset,
     };
   },
 });
