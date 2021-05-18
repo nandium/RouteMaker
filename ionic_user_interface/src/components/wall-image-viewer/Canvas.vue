@@ -44,7 +44,7 @@ import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
-import { SelectMode } from '@/components/wall-image-viewer/enums';
+import { SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
 import { useBoxLayer } from '@/components/wall-image-viewer/useBoxLayer';
 import { ModeChangedEvent } from '@/components/wall-image-viewer/types';
 
@@ -70,6 +70,7 @@ export default defineComponent({
   },
   setup(props) {
     const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
+    const tapeMode = ref<TapeMode>(TapeMode.NONE);
     const hideNumbersFill = ref<string>('outline');
     const hideNumbersText = ref<string>('Hide Numbers');
     const tapeFill = ref<string>('outline');
@@ -78,8 +79,10 @@ export default defineComponent({
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
     const konvaImage = new Konva.Image();
-    const { boxLayer, resizeBoxLayer, addBoxLayerBoundingBoxes, clearBoxLayer } =
-      useBoxLayer(selectedMode);
+    const { boxLayer, resizeBoxLayer, addBoxLayerBoundingBoxes, clearBoxLayer } = useBoxLayer(
+      selectedMode,
+      tapeMode,
+    );
 
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
@@ -138,11 +141,14 @@ export default defineComponent({
       if (tapeText.value === 'No Tape') {
         tapeFill.value = 'solid';
         tapeText.value = '1-Hold Start';
+        tapeMode.value = TapeMode.SINGLE_START;
       } else if (tapeText.value === '1-Hold Start') {
         tapeText.value = '2-Hold Start';
+        tapeMode.value = TapeMode.DUAL_START;
       } else {
         tapeFill.value = 'outline';
         tapeText.value = 'No Tape';
+        tapeMode.value = TapeMode.NONE;
       }
     };
 

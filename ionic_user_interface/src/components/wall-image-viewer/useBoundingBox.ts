@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { Ref, ref, watch } from 'vue';
 
-import { BoxState, SelectMode } from '@/components/wall-image-viewer/enums';
+import { BoxState, SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
 import {
   ActiveBoundingBoxFootHold,
   ActiveBoundingBoxHandHold,
@@ -14,6 +14,7 @@ import { BoxDimensions } from '@/components/wall-image-viewer/types';
 export function useBoundingBox(
   boxLayer: Konva.Layer,
   selectedMode: Ref<SelectMode>,
+  tapeMode: Ref<TapeMode>,
   handholdPositionArr: Ref<Array<number>>,
 ): UseBoundingBox {
   const boxState = ref<BoxState>(BoxState.UNSELECTED);
@@ -25,7 +26,7 @@ export function useBoundingBox(
   const konvaTape2: Konva.Line = new Konva.Line();
   let boxId = -1;
 
-  const updateRectBoxState = () => {
+  const updateRectBoxView = () => {
     let boundingBoxAttributes = null;
     switch (+boxState.value) {
       case BoxState.HIDDEN:
@@ -52,7 +53,7 @@ export function useBoundingBox(
     });
   };
 
-  const updateText = () => {
+  const updateTextView = () => {
     if (numberText.value !== 0) {
       konvaText.setAttrs({
         x: 0,
@@ -68,10 +69,10 @@ export function useBoundingBox(
     }
   };
 
-  const updateTapes = () => {
+  const updateTapesView = () => {
     const corner = Math.min(konvaRect.width() / 5, -10);
     switch (+boxState.value) {
-      case BoxState.DUAL_START_HANDHOLD:
+      case BoxState.SINGLE_START_HANDHOLD:
       case BoxState.END_HANDHOLD:
         konvaTape2.setAttrs({
           points: [10, 0, corner + 10, corner],
@@ -80,7 +81,19 @@ export function useBoundingBox(
           opacity: 1,
           ...OPTIMIZATION_PARAMS,
         });
-      case BoxState.SINGLE_START_HANDHOLD:
+        konvaTape1.setAttrs({
+          points: [0, 0, corner, corner],
+          stroke: 'red',
+          strokeWidth: konvaRect.strokeWidth() * 1.5,
+          opacity: 1,
+          ...OPTIMIZATION_PARAMS,
+        });
+        break;
+      case BoxState.DUAL_START_HANDHOLD:
+        konvaTape2.setAttrs({
+          opacity: 0,
+          ...OPTIMIZATION_PARAMS,
+        });
         konvaTape1.setAttrs({
           points: [0, 0, corner, corner],
           stroke: 'red',
@@ -112,7 +125,7 @@ export function useBoundingBox(
     konvaGroup.height(konvaGroup.height() * factor);
     konvaRect.width(konvaRect.width() * factor);
     konvaRect.height(konvaRect.height() * factor);
-    updateText();
+    updateTextView();
   };
 
   const registerBoundingBox = (id: number, boxDimensions: BoxDimensions) => {
@@ -130,7 +143,7 @@ export function useBoundingBox(
     });
     konvaRect.on('mouseout', () => {
       if (+selectedMode.value !== SelectMode.DRAWBOX) {
-        updateRectBoxState();
+        updateRectBoxView();
       }
       boxLayer.batchDraw();
     });
@@ -142,13 +155,13 @@ export function useBoundingBox(
     konvaGroup.add(konvaTape1);
     konvaGroup.add(konvaTape2);
     boxLayer.add(konvaGroup);
-    updateBoundingBox();
+    updateBoundingBoxView();
   };
 
-  const updateBoundingBox = () => {
-    updateRectBoxState();
-    updateText();
-    updateTapes();
+  const updateBoundingBoxView = () => {
+    updateRectBoxView();
+    updateTextView();
+    updateTapesView();
   };
 
   const handleSelectHandhold = () => {
@@ -167,7 +180,7 @@ export function useBoundingBox(
    * Updates the types of handholds based on index in positionArray
    * Batchdraw is called each time but should not be a problem since this only affects HANDHOLD instances
    */
-  watch(handholdPositionArr, () => {
+  watch([handholdPositionArr, tapeMode], () => {
     switch (+boxState.value) {
       case BoxState.NORMAL_HANDHOLD:
       case BoxState.SINGLE_START_HANDHOLD:
@@ -175,15 +188,24 @@ export function useBoundingBox(
       case BoxState.END_HANDHOLD: {
         const position = handholdPositionArr.value.indexOf(boxId);
         numberText.value = position + 1;
-        // TODO: Handle two handholds and no handhold
-        if (position === 0) {
-          boxState.value = BoxState.DUAL_START_HANDHOLD;
+        if (+tapeMode.value === TapeMode.NONE) {
+          boxState.value = BoxState.NORMAL_HANDHOLD;
+        } else if (position === 0) {
+          if (+tapeMode.value === TapeMode.DUAL_START) {
+            boxState.value = BoxState.DUAL_START_HANDHOLD;
+          } else if (+tapeMode.value === TapeMode.SINGLE_START) {
+            boxState.value = BoxState.SINGLE_START_HANDHOLD;
+          }
         } else if (position === handholdPositionArr.value.length - 1) {
           boxState.value = BoxState.END_HANDHOLD;
+        } else if (position === 1) {
+          if (+tapeMode.value === TapeMode.DUAL_START) {
+            boxState.value = BoxState.DUAL_START_HANDHOLD;
+          }
         } else {
           boxState.value = BoxState.NORMAL_HANDHOLD;
         }
-        updateBoundingBox();
+        updateBoundingBoxView();
         boxLayer.batchDraw();
         break;
       }
@@ -225,7 +247,7 @@ export function useBoundingBox(
         }
         break;
     }
-    updateBoundingBox();
+    updateBoundingBoxView();
     boxLayer.batchDraw();
   };
 

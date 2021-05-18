@@ -14,6 +14,12 @@ enum BoxState {
   HIDDEN,
 }
 
+enum TapeMode {
+  SINGLE_START,
+  DUAL_START,
+  NONE,
+}
+
 enum SelectMode {
   HANDHOLD,
   FOOTHOLD,
@@ -21,4 +27,4 @@ enum SelectMode {
   EXPORT,
 }
 
-export { BoxClass, BoxState, SelectMode };
+export { BoxClass, BoxState, SelectMode, TapeMode };
