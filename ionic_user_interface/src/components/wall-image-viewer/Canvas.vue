@@ -20,8 +20,16 @@
       </ion-segment-button>
     </ion-segment>
     <br />
-    <ion-button class="outline-button" @click="handleHideNumbersClick" :fill="hideNumbersFill" color="tertiary">{{hideNumbersText}}</ion-button>
-    <ion-button class="outline-button" @click="handleTapeClick" :fill="tapeFill" color="primary">{{tapeText}}</ion-button>
+    <ion-button
+      class="outline-button"
+      @click="handleHideNumbersClick"
+      :fill="hideNumbersFill"
+      color="tertiary"
+      >{{ hideNumbersText }}</ion-button
+    >
+    <ion-button class="outline-button" @click="handleTapeClick" :fill="tapeFill" color="primary">{{
+      tapeText
+    }}</ion-button>
     <ion-button class="solid-button" fill="solid" color="secondary">Export</ion-button>
     <ion-button class="solid-button" fill="solid" color="danger">Reset</ion-button>
     <br />
@@ -62,23 +70,23 @@ export default defineComponent({
   },
   setup(props) {
     const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
-    const hideNumbersFill = ref<string>("outline");
-    const hideNumbersText = ref<string>("Hide Numbers");
-    const tapeFill = ref<string>("outline");
-    const tapeText = ref<string>("No Tape");
+    const hideNumbersFill = ref<string>('outline');
+    const hideNumbersText = ref<string>('Hide Numbers');
+    const tapeFill = ref<string>('outline');
+    const tapeText = ref<string>('No Tape');
 
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
     const konvaImage = new Konva.Image();
-    const { boxLayer, resizeBoxLayer, addBoxLayerBoundingBoxes, clearBoxLayer } = useBoxLayer(
-      selectedMode,
-    );
+    const { boxLayer, resizeBoxLayer, addBoxLayerBoundingBoxes, clearBoxLayer } =
+      useBoxLayer(selectedMode);
 
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
      */
     const loadStage = async () => {
       const image = new Image();
+      // eslint-disable-next-line
       image.onload = async () => {
         // Clear all boxes first
         clearBoxLayer();
@@ -117,24 +125,24 @@ export default defineComponent({
     };
 
     const handleHideNumbersClick = () => {
-      if (hideNumbersFill.value === "outline") {
-        hideNumbersFill.value = "solid";
-        hideNumbersText.value = "Unhide Numbers";
+      if (hideNumbersFill.value === 'outline') {
+        hideNumbersFill.value = 'solid';
+        hideNumbersText.value = 'Unhide Numbers';
       } else {
-        hideNumbersFill.value = "outline";
-        hideNumbersText.value = "Hide Numbers";
+        hideNumbersFill.value = 'outline';
+        hideNumbersText.value = 'Hide Numbers';
       }
     };
 
     const handleTapeClick = () => {
-      if (tapeText.value === "No Tape") {
-        tapeFill.value = "solid";
-        tapeText.value = "1-Hold Start";
-      } else if (tapeText.value === "1-Hold Start") {
-        tapeText.value = "2-Hold Start";
+      if (tapeText.value === 'No Tape') {
+        tapeFill.value = 'solid';
+        tapeText.value = '1-Hold Start';
+      } else if (tapeText.value === '1-Hold Start') {
+        tapeText.value = '2-Hold Start';
       } else {
-        tapeFill.value = "outline";
-        tapeText.value = "No Tape";
+        tapeFill.value = 'outline';
+        tapeText.value = 'No Tape';
       }
     };
 
