@@ -105,8 +105,8 @@ export default defineComponent({
     } = useBoxLayer(selectedMode, tapeMode, numberMode);
 
     const clipWidth = (width: number) => {
-      return Math.min(width, 1000);
-    }
+      return Math.min(width, 800);
+    };
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
      */
