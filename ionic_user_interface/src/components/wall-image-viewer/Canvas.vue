@@ -49,7 +49,7 @@
       color="secondary"
       >Export</ion-button
     >
-    <div id="konva-container"></div>
+    <div id="konva-container" class="konva-container"></div>
   </div>
 </template>
 
@@ -104,6 +104,9 @@ export default defineComponent({
       resetBoxLayerToUnSelected,
     } = useBoxLayer(selectedMode, tapeMode, numberMode);
 
+    const clipWidth = (width: number) => {
+      return Math.min(width, 1000);
+    }
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
      */
@@ -114,18 +117,19 @@ export default defineComponent({
         // Clear all boxes first
         clearBoxLayer();
         // Add image to stage
-        stage.width(props.width);
-        stage.height((props.width / image.width) * image.height);
+        const newWidth = clipWidth(props.width);
+        stage.width(newWidth);
+        stage.height((newWidth / image.width) * image.height);
         konvaImage.x(0);
         konvaImage.y(0);
         konvaImage.image(image);
-        konvaImage.width(props.width);
-        konvaImage.height((props.width / image.width) * image.height);
+        konvaImage.width(newWidth);
+        konvaImage.height((newWidth / image.width) * image.height);
         imageLayer.batchDraw();
         // Get new boxes
         const formData = new FormData();
         formData.append('image', await (await fetch(props.imgSrc)).blob());
-        formData.append('width', props.width.toString());
+        formData.append('width', newWidth.toString());
         const rawBoundingBoxes = await getBoundingBoxes(formData);
         addBoxLayerBoundingBoxes(rawBoundingBoxes);
       };
@@ -133,12 +137,13 @@ export default defineComponent({
     };
 
     const resizeStage = () => {
-      const factor = props.width / konvaImage.width();
+      const newWidth = clipWidth(props.width);
+      const factor = newWidth / konvaImage.width();
       const newHeight = factor * konvaImage.height();
-      konvaImage.width(props.width);
+      konvaImage.width(newWidth);
       konvaImage.height(newHeight);
       imageLayer.batchDraw();
-      stage.width(props.width);
+      stage.width(newWidth);
       stage.height(newHeight);
       resizeBoxLayer(factor);
     };
@@ -261,5 +266,10 @@ ion-button::part(native) {
 
 .outline-button::part(native):hover {
   filter: sepia(10%);
+}
+
+.konva-container {
+  width: max-content;
+  margin: 0 auto;
 }
 </style>
