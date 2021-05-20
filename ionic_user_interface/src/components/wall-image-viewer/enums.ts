@@ -20,6 +20,11 @@ enum TapeMode {
   NONE,
 }
 
+enum NumberMode {
+  ON,
+  OFF,
+}
+
 enum SelectMode {
   HANDHOLD,
   FOOTHOLD,
@@ -27,4 +32,4 @@ enum SelectMode {
   EXPORT,
 }
 
-export { BoxClass, BoxState, SelectMode, TapeMode };
+export { BoxClass, BoxState, SelectMode, TapeMode, NumberMode };

@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import { Ref, ref, watch } from 'vue';
 
-import { BoxState, SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
+import { BoxState, NumberMode, SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
 import {
   ActiveBoundingBoxFootHold,
   ActiveBoundingBoxHandHold,
@@ -15,6 +15,7 @@ export function useBoundingBox(
   boxLayer: Konva.Layer,
   selectedMode: Ref<SelectMode>,
   tapeMode: Ref<TapeMode>,
+  numberMode: Ref<NumberMode>,
   handholdPositionArr: Ref<Array<number>>,
 ): UseBoundingBox {
   const boxState = ref<BoxState>(BoxState.UNSELECTED);
@@ -54,7 +55,7 @@ export function useBoundingBox(
   };
 
   const updateTextView = () => {
-    if (numberText.value !== 0) {
+    if (numberText.value !== 0 && numberMode.value === NumberMode.ON) {
       konvaText.setAttrs({
         x: 0,
         y: konvaGroup.height() + 2,
@@ -221,6 +222,19 @@ export function useBoundingBox(
           boxState.value = BoxState.NORMAL_HANDHOLD;
         }
         updateBoundingBoxView();
+        boxLayer.batchDraw();
+        break;
+      }
+    }
+  });
+
+  watch(numberMode, () => {
+    switch (+boxState.value) {
+      case BoxState.NORMAL_HANDHOLD:
+      case BoxState.SINGLE_START_HANDHOLD:
+      case BoxState.DUAL_START_HANDHOLD:
+      case BoxState.END_HANDHOLD: {
+        updateTextView();
         boxLayer.batchDraw();
         break;
       }

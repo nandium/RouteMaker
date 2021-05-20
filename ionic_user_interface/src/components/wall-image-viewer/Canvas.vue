@@ -46,7 +46,7 @@ import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
-import { SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
+import { SelectMode, TapeMode, NumberMode } from '@/components/wall-image-viewer/enums';
 import { useBoxLayer } from '@/components/wall-image-viewer/useBoxLayer';
 import { ModeChangedEvent } from '@/components/wall-image-viewer/types';
 
@@ -73,6 +73,7 @@ export default defineComponent({
   setup(props) {
     const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
     const tapeMode = ref<TapeMode>(TapeMode.NONE);
+    const numberMode = ref<NumberMode>(NumberMode.ON);
     const hideNumbersFill = ref<string>('outline');
     const hideNumbersText = ref<string>('Hide Numbers');
     const tapeFill = ref<string>('outline');
@@ -87,7 +88,7 @@ export default defineComponent({
       addBoxLayerBoundingBoxes,
       clearBoxLayer,
       resetBoxLayerToUnSelected,
-    } = useBoxLayer(selectedMode, tapeMode);
+    } = useBoxLayer(selectedMode, tapeMode, numberMode);
 
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
@@ -133,12 +134,14 @@ export default defineComponent({
     };
 
     const handleHideNumbersClick = () => {
-      if (hideNumbersFill.value === 'outline') {
+      if (numberMode.value === NumberMode.ON) {
         hideNumbersFill.value = 'solid';
         hideNumbersText.value = 'Unhide Numbers';
+        numberMode.value = NumberMode.OFF;
       } else {
         hideNumbersFill.value = 'outline';
         hideNumbersText.value = 'Hide Numbers';
+        numberMode.value = NumberMode.ON;
       }
     };
 

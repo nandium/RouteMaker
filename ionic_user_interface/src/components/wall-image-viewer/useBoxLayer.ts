@@ -1,11 +1,15 @@
 import Konva from 'konva';
 import { Ref, ref } from 'vue';
 
-import { SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
+import { NumberMode, SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
 import { BoundingBox, Box } from '@/components/wall-image-viewer/types';
 import { useBoundingBox } from '@/components/wall-image-viewer/useBoundingBox';
 
-export function useBoxLayer(selectedMode: Ref<SelectMode>, tapeMode: Ref<TapeMode>): UseBoxLayer {
+export function useBoxLayer(
+  selectedMode: Ref<SelectMode>,
+  tapeMode: Ref<TapeMode>,
+  numberMode: Ref<NumberMode>,
+): UseBoxLayer {
   const boxLayer = new Konva.Layer();
   let boundingBoxes: BoundingBox[] = [];
   const handholdPositionArr = ref<Array<number>>([]);
@@ -23,6 +27,7 @@ export function useBoxLayer(selectedMode: Ref<SelectMode>, tapeMode: Ref<TapeMod
         boxLayer,
         selectedMode,
         tapeMode,
+        numberMode,
         handholdPositionArr,
       );
       registerBoundingBox(idx, {
