@@ -18,24 +18,37 @@
       <ion-segment-button :value="SelectMode.DRAWBOX">
         <ion-label>DrawBox</ion-label>
       </ion-segment-button>
+      <ion-segment-button :value="SelectMode.MARKDONE">
+        <ion-label>MarkDone</ion-label>
+      </ion-segment-button>
     </ion-segment>
-    <br />
+    <div v-if="+selectedMode !== SelectMode.MARKDONE">
+      <ion-button
+        class="outline-button"
+        @click="handleHideNumbersClick"
+        :fill="hideNumbersFill"
+        color="tertiary"
+        >{{ hideNumbersText }}</ion-button
+      >
+      <ion-button
+        class="outline-button"
+        @click="handleTapeClick"
+        :fill="tapeFill"
+        color="primary"
+        >{{ tapeText }}</ion-button
+      >
+      <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset"
+        >Reset</ion-button
+      >
+    </div>
     <ion-button
-      class="outline-button"
-      @click="handleHideNumbersClick"
-      :fill="hideNumbersFill"
-      color="tertiary"
-      >{{ hideNumbersText }}</ion-button
+      v-else
+      @click="handleExportClick"
+      class="solid-button"
+      fill="solid"
+      color="secondary"
+      >Export</ion-button
     >
-    <ion-button class="outline-button" @click="handleTapeClick" :fill="tapeFill" color="primary">{{
-      tapeText
-    }}</ion-button>
-    <ion-button class="solid-button" fill="solid" color="secondary">Export</ion-button>
-    <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset"
-      >Reset</ion-button
-    >
-    <br />
-    <br />
     <div id="konva-container"></div>
   </div>
 </template>
@@ -49,6 +62,7 @@ import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
 import { SelectMode, TapeMode, NumberMode } from '@/components/wall-image-viewer/enums';
 import { useBoxLayer } from '@/components/wall-image-viewer/useBoxLayer';
 import { ModeChangedEvent } from '@/components/wall-image-viewer/types';
+import { downloadURI } from '@/common/download';
 
 Konva.pixelRatio = 1;
 
@@ -150,6 +164,11 @@ export default defineComponent({
       resetBoxLayerToUnSelected();
     };
 
+    const handleExportClick = async () => {
+      const imageUri = stage.toDataURL({ mimeType: 'image/jpeg', pixelRatio: 4 });
+      await downloadURI(imageUri, 'Route.jpg');
+    };
+
     const handleTapeClick = () => {
       if (tapeText.value === 'No Tape') {
         tapeFill.value = 'solid';
@@ -190,6 +209,7 @@ export default defineComponent({
       tapeFill,
       tapeText,
       handleTapeClick,
+      handleExportClick,
       handleReset,
     };
   },
@@ -226,7 +246,7 @@ ion-label {
 
 ion-button {
   border-radius: 4px;
-  margin: 5px 9px;
+  margin: 10px 3px;
   filter: brightness(90%);
 }
 

@@ -29,7 +29,7 @@ enum SelectMode {
   HANDHOLD,
   FOOTHOLD,
   DRAWBOX,
-  EXPORT,
+  MARKDONE,
 }
 
 export { BoxClass, BoxState, SelectMode, TapeMode, NumberMode };

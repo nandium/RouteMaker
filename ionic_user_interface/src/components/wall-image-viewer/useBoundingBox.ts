@@ -137,13 +137,19 @@ export function useBoundingBox(
     konvaRect.height(height);
 
     konvaRect.on('mouseover', () => {
-      if (+selectedMode.value !== SelectMode.DRAWBOX) {
+      if (
+        +selectedMode.value !== SelectMode.DRAWBOX &&
+        +selectedMode.value !== SelectMode.MARKDONE
+      ) {
         konvaRect.strokeWidth(5);
       }
       boxLayer.batchDraw();
     });
     konvaRect.on('mouseout', () => {
-      if (+selectedMode.value !== SelectMode.DRAWBOX) {
+      if (
+        +selectedMode.value !== SelectMode.DRAWBOX &&
+        +selectedMode.value !== SelectMode.MARKDONE
+      ) {
         updateRectBoxView();
       }
       boxLayer.batchDraw();
@@ -228,6 +234,9 @@ export function useBoundingBox(
     }
   });
 
+  /**
+   * This callback is executed in all box instances, reduce as much as possible
+   */
   watch(numberMode, () => {
     switch (+boxState.value) {
       case BoxState.NORMAL_HANDHOLD:
@@ -241,7 +250,28 @@ export function useBoundingBox(
     }
   });
 
+  /**
+   * This callback is executed in all box instances, reduce as much as possible
+   */
+  watch(selectedMode, () => {
+    if (boxState.value === BoxState.UNSELECTED || boxState.value === BoxState.HIDDEN) {
+      if (+selectedMode.value === SelectMode.MARKDONE && boxState.value === BoxState.UNSELECTED) {
+        boxState.value = BoxState.HIDDEN;
+      } else if (
+        +selectedMode.value !== SelectMode.MARKDONE &&
+        boxState.value === BoxState.HIDDEN
+      ) {
+        boxState.value = BoxState.UNSELECTED;
+      }
+      updateBoundingBoxView();
+      boxLayer.batchDraw();
+    }
+  });
+
   const onClickRect = () => {
+    if (+selectedMode.value === SelectMode.DRAWBOX || +selectedMode.value === SelectMode.MARKDONE) {
+      return;
+    }
     switch (+selectedMode.value) {
       case SelectMode.FOOTHOLD:
         switch (+boxState.value) {
