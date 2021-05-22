@@ -83,8 +83,8 @@ export default defineComponent({
 #container {
   text-align: center;
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 2%;
+  right: 2%;
   z-index: -1;
   padding-top: 30px;
 }
