@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { BoxClass } from '@/components/wall-image-viewer/enums';
-import { Box } from '@/components/wall-image-viewer/types';
+import { BoxClass } from '@/components/wall-image-viewer/types';
 
 const mapClass = (boxClass: string) => {
   switch (boxClass) {
@@ -43,4 +42,13 @@ const getBoundingBoxes = async (formData: FormData): Promise<Box[]> => {
   return [];
 };
 
+interface Box {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  class: string;
+}
+
 export default getBoundingBoxes;
+export { Box };

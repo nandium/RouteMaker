@@ -1,15 +1,15 @@
 import Konva from 'konva';
 import { Ref, ref, watch } from 'vue';
 
-import { BoxState, NumberMode, SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
+import { BoxState, NumberMode, SelectMode, TapeMode } from '@/components/wall-image-viewer/types';
 import {
   ActiveBoundingBoxFootHold,
   ActiveBoundingBoxHandHold,
   BoundingBoxNumbering,
   DefaultBoundingBox,
   OPTIMIZATION_PARAMS,
-} from '@/components/wall-image-viewer/boundingBoxAttributes';
-import { BoxDimensions } from '@/components/wall-image-viewer/types';
+} from './boundingBoxAttributes';
+import { BoxDimensions, UseBoundingBox } from './types';
 
 export function useBoundingBox(
   boxLayer: Konva.Layer,
@@ -315,10 +315,4 @@ export function useBoundingBox(
     resizeBoundingBox,
     resetBoundingBox,
   };
-}
-
-interface UseBoundingBox {
-  registerBoundingBox: (id: number, b: BoxDimensions) => void;
-  resizeBoundingBox: (f: number) => void;
-  resetBoundingBox: () => void;
 }

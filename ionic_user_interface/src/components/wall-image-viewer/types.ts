@@ -1,10 +1,35 @@
-import { SelectMode } from '@/components/wall-image-viewer/enums';
+enum BoxClass {
+  HOLD,
+  VOLUME,
+  DRAWN,
+}
 
-interface BoxDimensions {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+enum BoxState {
+  NORMAL_HANDHOLD,
+  FOOTHOLD,
+  SINGLE_START_HANDHOLD,
+  DUAL_START_HANDHOLD,
+  END_HANDHOLD,
+  UNSELECTED,
+  HIDDEN,
+}
+
+enum TapeMode {
+  SINGLE_START,
+  DUAL_START,
+  NONE,
+}
+
+enum NumberMode {
+  ON,
+  OFF,
+}
+
+enum SelectMode {
+  HANDHOLD,
+  FOOTHOLD,
+  DRAWBOX,
+  MARKDONE,
 }
 
 interface ModeChangedEvent {
@@ -13,18 +38,4 @@ interface ModeChangedEvent {
   };
 }
 
-interface Box {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  class: string;
-}
-
-interface BoundingBox {
-  boxId: number;
-  resizeBoundingBox: (factor: number) => void;
-  resetBoundingBox: () => void;
-}
-
-export { ModeChangedEvent, Box, BoundingBox, BoxDimensions };
+export { BoxClass, BoxState, SelectMode, TapeMode, NumberMode, ModeChangedEvent };

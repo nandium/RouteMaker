@@ -59,9 +59,13 @@ import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
-import { SelectMode, TapeMode, NumberMode } from '@/components/wall-image-viewer/enums';
-import { useBoxLayer } from '@/components/wall-image-viewer/useBoxLayer';
-import { ModeChangedEvent } from '@/components/wall-image-viewer/types';
+import {
+  SelectMode,
+  TapeMode,
+  NumberMode,
+  ModeChangedEvent,
+} from '@/components/wall-image-viewer/types';
+import { useBoxLayer } from '@/components/wall-image-viewer/box-layer';
 import { downloadURI } from '@/common/download';
 
 Konva.pixelRatio = 1;

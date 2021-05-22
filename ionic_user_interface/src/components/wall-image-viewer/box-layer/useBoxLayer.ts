@@ -1,9 +1,10 @@
 import Konva from 'konva';
 import { Ref, ref } from 'vue';
 
-import { NumberMode, SelectMode, TapeMode } from '@/components/wall-image-viewer/enums';
-import { BoundingBox, Box } from '@/components/wall-image-viewer/types';
-import { useBoundingBox } from '@/components/wall-image-viewer/useBoundingBox';
+import { NumberMode, SelectMode, TapeMode } from '@/components/wall-image-viewer/types';
+import { Box } from '@/components/wall-image-viewer/getBoundingBoxes';
+import { useBoundingBox } from './useBoundingBox';
+import { UseBoxLayer, BoundingBox } from './types';
 
 export function useBoxLayer(
   selectedMode: Ref<SelectMode>,
@@ -64,12 +65,4 @@ export function useBoxLayer(
     clearBoxLayer,
     resetBoxLayerToUnSelected,
   };
-}
-
-interface UseBoxLayer {
-  boxLayer: Konva.Layer;
-  resizeBoxLayer: (f: number) => void;
-  addBoxLayerBoundingBoxes: (b: Box[]) => void;
-  clearBoxLayer: () => void;
-  resetBoxLayerToUnSelected: () => void;
 }
