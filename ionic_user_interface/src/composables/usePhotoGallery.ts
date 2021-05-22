@@ -38,7 +38,6 @@ export function usePhotoGallery(): {
     let base64Data = '';
     // "hybrid" will detect Cordova or Capacitor;
     if (isPlatform('hybrid')) {
-      // TODO: Add compression for native
       if (photo.path) {
         const file = await Filesystem.readFile({
           path: photo.path,
@@ -73,8 +72,7 @@ export function usePhotoGallery(): {
       // Details: https://ionicframework.com/docs/building/webview#file-protocol
       return {
         filepath: savedFile.uri,
-        data: base64Data,
-        webviewPath: Capacitor.convertFileSrc(savedFile.uri),
+        data: Capacitor.convertFileSrc(savedFile.uri),
       };
     } else {
       // Use webPath to display the new image instead of base64 since it's
@@ -82,7 +80,6 @@ export function usePhotoGallery(): {
       return {
         filepath: fileName,
         data: base64Data,
-        webviewPath: photo.webPath,
       };
     }
   };
@@ -108,5 +105,4 @@ export function usePhotoGallery(): {
 export interface Photo {
   filepath: string;
   data?: string;
-  webviewPath?: string;
 }

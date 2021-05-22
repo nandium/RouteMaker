@@ -12,7 +12,7 @@
           <ion-icon class="camera-icon" :icon="camera"></ion-icon>
           Upload wall image
         </ion-button>
-        <Canvas v-if="photoUploaded" :imgSrc="base64Data" :width="canvasWidth" />
+        <Canvas v-if="photoUploaded" :imgSrc="photoData" :width="canvasWidth" />
       </div>
     </ion-content>
   </ion-page>
@@ -40,7 +40,7 @@ export default defineComponent({
   },
   setup() {
     const canvasWidth = ref(0);
-    const base64Data = ref('');
+    const photoData = ref('');
     const photoUploaded = ref(false);
     const { photo, takePhoto } = usePhotoGallery();
 
@@ -63,7 +63,7 @@ export default defineComponent({
       if (newPhoto !== oldPhoto && oldPhoto !== null) {
         photoUploaded.value = true;
         if (oldPhoto.data) {
-          base64Data.value = oldPhoto.data;
+          photoData.value = oldPhoto.data;
         }
         updateCanvasWidth();
       }
@@ -76,7 +76,7 @@ export default defineComponent({
 
     return {
       canvasWidth,
-      base64Data,
+      photoData,
       photoUploaded,
       photo,
       takePhoto,
