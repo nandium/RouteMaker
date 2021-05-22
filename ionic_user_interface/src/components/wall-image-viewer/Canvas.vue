@@ -4,10 +4,10 @@
     <br />
     <ion-segment
       class="mode-switcher"
-      @ionChange="modeChanged($event)"
-      v-model="selectedMode"
+      @ionChange="selectModeChanged($event)"
       color="tertiary"
       mode="ios"
+      :value="SelectMode.HANDHOLD"
     >
       <ion-segment-button :value="SelectMode.HANDHOLD">
         <ion-label>HandHold</ion-label>
@@ -167,8 +167,25 @@ export default defineComponent({
       }
     };
 
-    const modeChanged = (event: ModeChangedEvent) => {
-      selectedMode.value = event.detail.value;
+    /**
+     * Changing to drawing mode -> Draw layer is added
+     * Changing away from drawing mode -> Boxes are exported from Draw layer into BoxLayer
+     */
+    const selectModeChanged = (event: ModeChangedEvent) => {
+      const oldSelectedMode = selectedMode.value;
+      const newSelectedMode = event.detail.value;
+      if (+newSelectedMode === SelectMode.DRAWBOX) {
+        offKonvaStageListeners(stage);
+        addKonvaListenerPinchZoom(stage);
+        DrawLayer.addKonvaDrawLayer(stage);
+      } else if (+oldSelectedMode === SelectMode.DRAWBOX) {
+        const newBoundingBoxes = DrawLayer.getKonvaDrawLayerBoundingBoxes(stage);
+        DrawLayer.removeKonvaDrawLayer(stage);
+        addKonvaListenerTouchMove(stage);
+        addBoxLayerBoundingBoxes(newBoundingBoxes);
+        imageLayer.batchDraw();
+      }
+      selectedMode.value = newSelectedMode;
     };
 
     const handleHideNumbersClick = () => {
@@ -235,27 +252,9 @@ export default defineComponent({
     );
     watch(() => props.width, resizeStage);
 
-    /**
-     * Changing to drawing mode -> Draw layer is added
-     * Changing away from drawing mode -> Boxes are exported from Draw layer into BoxLayer
-     */
-    watch(selectedMode, (newSelectedMode, oldSelectedMode) => {
-      if (+newSelectedMode === SelectMode.DRAWBOX) {
-        offKonvaStageListeners(stage);
-        addKonvaListenerPinchZoom(stage);
-        DrawLayer.addKonvaDrawLayer(stage);
-      } else if (+oldSelectedMode === SelectMode.DRAWBOX) {
-        const newBoundingBoxes = DrawLayer.getKonvaDrawLayerBoundingBoxes(stage);
-        DrawLayer.removeKonvaDrawLayer(stage);
-        addKonvaListenerTouchMove(stage);
-        addBoxLayerBoundingBoxes(newBoundingBoxes);
-        imageLayer.batchDraw();
-      }
-    });
-
     return {
       SelectMode,
-      modeChanged,
+      selectModeChanged,
       selectedMode,
       hideNumbersFill,
       hideNumbersText,
