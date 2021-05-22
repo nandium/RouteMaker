@@ -2,7 +2,7 @@
   <ion-header :translucent="true">
     <ion-toolbar>
       <ion-title>
-        <ion-img class="logo" src="assets/icons/favicon.ico" router-link="/home" />
+        <ion-img class="logo" :src="`${publicPath}assets/icons/favicon.ico`" router-link="/home" />
       </ion-title>
       <ion-buttons slot="end">
         <ion-button router-link="/home">Home</ion-button>
@@ -25,6 +25,12 @@ export default defineComponent({
     IonImg,
     IonTitle,
     IonToolbar,
+  },
+  setup() {
+    const publicPath = process.env.BASE_URL;
+    return {
+      publicPath,
+    };
   },
 });
 </script>

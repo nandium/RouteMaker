@@ -2,11 +2,7 @@
   <ion-page>
     <Header />
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
+      <ion-header collapse="condense"> </ion-header>
 
       <div id="container">
         <strong>Route Maker</strong>
@@ -24,15 +20,7 @@
 
 <script lang="ts">
 import { camera } from 'ionicons/icons';
-import {
-  IonButton,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/vue';
+import { IonButton, IonContent, IonHeader, IonIcon, IonPage } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted } from 'vue';
 import Canvas from '../components/wall-image-viewer/Canvas.vue';
 import Header from '../components/Header.vue';
@@ -47,8 +35,6 @@ export default defineComponent({
     IonHeader,
     IonIcon,
     IonPage,
-    IonTitle,
-    IonToolbar,
     Canvas,
     Header,
   },

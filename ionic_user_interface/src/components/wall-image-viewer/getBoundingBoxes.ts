@@ -21,7 +21,7 @@ const getBoundingBoxes = async (formData: FormData): Promise<Box[]> => {
   try {
     const {
       data: { boxes },
-    } = await axios.post(process.env.VUE_APP_GET_BOUNDING_BOX_URL, formData, {
+    } = await axios.post(process.env.VUE_APP_GET_BOUNDING_BOX_URL as string, formData, {
       headers: {
         'Content-Type': 'multipart/formdata',
       },

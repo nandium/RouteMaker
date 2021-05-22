@@ -6,6 +6,16 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     redirect: '/home',
+    beforeEnter: (_, __, next) => {
+      // Refer to /public/404.html
+      if (sessionStorage.getItem('redirect') !== null) {
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        next(redirect);
+      } else {
+        next();
+      }
+    },
   },
   {
     path: '/home',

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Route Maker</title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
 
     <base href="/" />
 
@@ -20,6 +20,20 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Ionic App" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=<%= htmlWebpackPlugin.options.TRACKING_ID %>"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', '<%= htmlWebpackPlugin.options.TRACKING_ID %>');
+    </script>
   </head>
 
   <body>
