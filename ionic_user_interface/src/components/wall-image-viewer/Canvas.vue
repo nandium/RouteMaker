@@ -64,7 +64,7 @@
 <script lang="ts">
 import Konva from 'konva';
 import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, inject, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
 import { useBoxLayer, DrawLayer } from '@/components/wall-image-viewer/box-layer';
@@ -109,6 +109,7 @@ export default defineComponent({
     const hideNumbersText = ref<string>('Hide Numbers');
     const tapeFill = ref<string>('outline');
     const tapeText = ref<string>('No Tape');
+    const loadingSpinner = inject('$loading') as Record<string, any>;
 
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
@@ -128,6 +129,7 @@ export default defineComponent({
       const image = new Image();
       // eslint-disable-next-line
       image.onload = async () => {
+        const loadingSpinnerInstance = loadingSpinner.show({ canCancel: false });
         // Clear all boxes first
         clearBoxLayer();
         // Add image to stage
@@ -149,6 +151,7 @@ export default defineComponent({
         // Listeners must be added after image is loaded
         addKonvaListenerPinchZoom(stage);
         addKonvaListenerTouchMove(stage);
+        loadingSpinnerInstance.hide();
       };
       image.src = props.imgSrc;
     };
