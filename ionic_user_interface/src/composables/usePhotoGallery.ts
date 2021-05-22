@@ -8,6 +8,7 @@ import {
   FilesystemDirectory,
 } from '@capacitor/core';
 import { isPlatform } from '@ionic/vue';
+import imageCompression from 'browser-image-compression';
 
 export function usePhotoGallery(): {
   photo: Ref<Photo | null>;
@@ -16,20 +17,28 @@ export function usePhotoGallery(): {
   const { Camera, Filesystem } = Plugins;
   const photo = ref<Photo | null>(null);
 
-  const convertBlobToBase64 = (blob: Blob) =>
-    new Promise((resolve, reject) => {
+  const convertBlobToFile = (theBlob: Blob, fileName: string): File => {
+    const b: any = theBlob;
+    b.lastModifiedDate = new Date();
+    b.name = fileName;
+
+    return <File>theBlob;
+  };
+
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onerror = reject;
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-      reader.readAsDataURL(blob);
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
     });
+  };
 
   const savePicture = async (photo: CameraPhoto, fileName: string): Promise<Photo> => {
     let base64Data = '';
     // "hybrid" will detect Cordova or Capacitor;
     if (isPlatform('hybrid')) {
+      // TODO: Add compression for native
       if (photo.path) {
         const file = await Filesystem.readFile({
           path: photo.path,
@@ -38,12 +47,21 @@ export function usePhotoGallery(): {
       }
     } else {
       if (photo.webPath) {
-        // Fetch the photo, read as a blob, then convert to base64 format
         const response = await fetch(photo.webPath);
-        const blob = await response.blob();
-        base64Data = (await convertBlobToBase64(blob)) as string;
+        const compressImageOptions = {
+          maxSizeMB: 6,
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+          fileType: 'image/jpeg',
+        };
+        const imageFile = await imageCompression(
+          convertBlobToFile(await response.blob(), 'photo.jpg'),
+          compressImageOptions,
+        );
+        base64Data = await convertFileToBase64(imageFile);
       }
     }
+
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64Data,
