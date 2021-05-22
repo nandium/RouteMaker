@@ -97,7 +97,6 @@ export default defineComponent({
 #container p {
   font-size: 1.3em;
   line-height: 1.5em;
-  color: #dddddd;
 }
 
 #container a {
