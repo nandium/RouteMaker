@@ -1,3 +1,4 @@
 import { useBoxLayer } from './useBoxLayer';
+import DrawLayer from './drawLayer';
 
-export { useBoxLayer };
+export { useBoxLayer, DrawLayer };

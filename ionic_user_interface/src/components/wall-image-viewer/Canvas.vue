@@ -22,7 +22,15 @@
         <ion-label>MarkDone</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <div v-if="+selectedMode !== SelectMode.MARKDONE">
+    <ion-button
+      v-if="+selectedMode === SelectMode.MARKDONE"
+      @click="handleExportClick"
+      class="solid-button"
+      fill="solid"
+      color="secondary"
+      >Export</ion-button
+    >
+    <div v-if="+selectedMode === SelectMode.HANDHOLD || +selectedMode === SelectMode.FOOTHOLD">
       <ion-button
         class="outline-button"
         @click="handleHideNumbersClick"
@@ -42,12 +50,12 @@
       >
     </div>
     <ion-button
-      v-else
-      @click="handleExportClick"
+      v-if="+selectedMode === SelectMode.DRAWBOX"
+      @click="handleUndoDraw"
       class="solid-button"
       fill="solid"
-      color="secondary"
-      >Export</ion-button
+      color="danger"
+      >Undo Draw</ion-button
     >
     <div id="konva-container" class="konva-container"></div>
   </div>
@@ -59,7 +67,7 @@ import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
-import { useBoxLayer } from '@/components/wall-image-viewer/box-layer';
+import { useBoxLayer, DrawLayer } from '@/components/wall-image-viewer/box-layer';
 import { downloadURI } from '@/common/download';
 import {
   SelectMode,
@@ -113,9 +121,6 @@ export default defineComponent({
       resetBoxLayerToUnSelected,
     } = useBoxLayer(selectedMode, tapeMode, numberMode);
 
-    const clipWidth = (width: number) => {
-      return Math.min(width, 800);
-    };
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
      */
@@ -126,18 +131,17 @@ export default defineComponent({
         // Clear all boxes first
         clearBoxLayer();
         // Add image to stage
-        const newWidth = clipWidth(props.width);
-        stage.width(newWidth);
-        stage.height((newWidth / image.width) * image.height);
+        stage.width(props.width);
+        stage.height((props.width / image.width) * image.height);
         konvaImage.setAttrs({
           image,
-          width: newWidth,
-          height: (newWidth / image.width) * image.height,
+          width: props.width,
+          height: (props.width / image.width) * image.height,
         });
         // Get new boxes
         const formData = new FormData();
         formData.append('image', await (await fetch(props.imgSrc)).blob());
-        formData.append('width', newWidth.toString());
+        formData.append('width', props.width.toString());
         const rawBoundingBoxes = await getBoundingBoxes(formData);
         addBoxLayerBoundingBoxes(rawBoundingBoxes);
         imageLayer.batchDraw();
@@ -150,15 +154,17 @@ export default defineComponent({
     };
 
     const resizeStage = () => {
-      const newWidth = clipWidth(props.width);
-      const factor = newWidth / konvaImage.width();
+      const factor = props.width / konvaImage.width();
       const newHeight = factor * konvaImage.height();
-      konvaImage.width(newWidth);
+      konvaImage.width(props.width);
       konvaImage.height(newHeight);
       imageLayer.batchDraw();
-      stage.width(newWidth);
+      stage.width(props.width);
       stage.height(newHeight);
       resizeBoxLayer(factor);
+      if (DrawLayer.isDrawLayerAdded(stage)) {
+        DrawLayer.resizeDrawLayer(stage, factor);
+      }
     };
 
     const modeChanged = (event: ModeChangedEvent) => {
@@ -202,6 +208,12 @@ export default defineComponent({
       }
     };
 
+    const handleUndoDraw = () => {
+      if (DrawLayer.isDrawLayerAdded(stage)) {
+        DrawLayer.removeKonvaLastDrawnRect(stage);
+      }
+    };
+
     onMounted(async () => {
       stage = new Konva.Stage({
         container: 'konva-container',
@@ -223,6 +235,24 @@ export default defineComponent({
     );
     watch(() => props.width, resizeStage);
 
+    /**
+     * Changing to drawing mode -> Draw layer is added
+     * Changing away from drawing mode -> Boxes are exported from Draw layer into BoxLayer
+     */
+    watch(selectedMode, (newSelectedMode, oldSelectedMode) => {
+      if (+newSelectedMode === SelectMode.DRAWBOX) {
+        offKonvaStageListeners(stage);
+        addKonvaListenerPinchZoom(stage);
+        DrawLayer.addKonvaDrawLayer(stage);
+      } else if (+oldSelectedMode === SelectMode.DRAWBOX) {
+        const newBoundingBoxes = DrawLayer.getKonvaDrawLayerBoundingBoxes(stage);
+        DrawLayer.removeKonvaDrawLayer(stage);
+        addKonvaListenerTouchMove(stage);
+        addBoxLayerBoundingBoxes(newBoundingBoxes);
+        imageLayer.batchDraw();
+      }
+    });
+
     return {
       SelectMode,
       modeChanged,
@@ -234,6 +264,7 @@ export default defineComponent({
       tapeText,
       handleTapeClick,
       handleExportClick,
+      handleUndoDraw,
       handleReset,
     };
   },

@@ -21,8 +21,13 @@ export function useBoxLayer(
     boxLayer.batchDraw();
   };
 
+  /**
+   * Boxes are added to the layer and given an ID each
+   * ID assignment assumes that after a box is added to layer, it will not be removed
+   */
   const addBoxLayerBoundingBoxes = (boxes: Box[]) => {
-    boundingBoxes = boxes.map((box, idx) => {
+    const currNumBoundingBoxes = boundingBoxes.length;
+    const newBoundingBoxes = boxes.map((box, idx) => {
       const { x, y, w, h } = box;
       const { registerBoundingBox, resizeBoundingBox, resetBoundingBox } = useBoundingBox(
         boxLayer,
@@ -31,14 +36,15 @@ export function useBoxLayer(
         numberMode,
         handholdPositionArr,
       );
-      registerBoundingBox(idx, {
+      registerBoundingBox(idx + currNumBoundingBoxes, {
         x,
         y,
         width: w,
         height: h,
       });
-      return { boxId: idx, resizeBoundingBox, resetBoundingBox };
+      return { boxId: idx + currNumBoundingBoxes, resizeBoundingBox, resetBoundingBox };
     });
+    boundingBoxes = [...boundingBoxes, ...newBoundingBoxes];
     boxLayer.batchDraw();
   };
 
