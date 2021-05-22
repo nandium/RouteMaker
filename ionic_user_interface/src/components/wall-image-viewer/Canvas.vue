@@ -59,14 +59,19 @@ import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, onMounted, ref, watch } from 'vue';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
+import { useBoxLayer } from '@/components/wall-image-viewer/box-layer';
+import { downloadURI } from '@/common/download';
 import {
   SelectMode,
   TapeMode,
   NumberMode,
   ModeChangedEvent,
 } from '@/components/wall-image-viewer/types';
-import { useBoxLayer } from '@/components/wall-image-viewer/box-layer';
-import { downloadURI } from '@/common/download';
+import {
+  addKonvaListenerPinchZoom,
+  addKonvaListenerTouchMove,
+  offKonvaStageListeners,
+} from '@/components/wall-image-viewer/stageListeners';
 
 Konva.pixelRatio = 1;
 
@@ -114,7 +119,7 @@ export default defineComponent({
     /**
      * Loads the Image and the bounding boxes retrieved from backend.
      */
-    const loadStage = async () => {
+    const loadImageOnStage = async () => {
       const image = new Image();
       // eslint-disable-next-line
       image.onload = async () => {
@@ -124,18 +129,22 @@ export default defineComponent({
         const newWidth = clipWidth(props.width);
         stage.width(newWidth);
         stage.height((newWidth / image.width) * image.height);
-        konvaImage.x(0);
-        konvaImage.y(0);
-        konvaImage.image(image);
-        konvaImage.width(newWidth);
-        konvaImage.height((newWidth / image.width) * image.height);
-        imageLayer.batchDraw();
+        konvaImage.setAttrs({
+          image,
+          width: newWidth,
+          height: (newWidth / image.width) * image.height,
+        });
         // Get new boxes
         const formData = new FormData();
         formData.append('image', await (await fetch(props.imgSrc)).blob());
         formData.append('width', newWidth.toString());
         const rawBoundingBoxes = await getBoundingBoxes(formData);
         addBoxLayerBoundingBoxes(rawBoundingBoxes);
+        imageLayer.batchDraw();
+
+        // Listeners must be added after image is loaded
+        addKonvaListenerPinchZoom(stage);
+        addKonvaListenerTouchMove(stage);
       };
       image.src = props.imgSrc;
     };
@@ -193,7 +202,7 @@ export default defineComponent({
       }
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       stage = new Konva.Stage({
         container: 'konva-container',
       });
@@ -202,10 +211,16 @@ export default defineComponent({
       stage.add(imageLayer);
       stage.add(boxLayer);
 
-      loadStage();
+      await loadImageOnStage();
     });
 
-    watch(() => props.imgSrc, loadStage);
+    watch(
+      () => props.imgSrc,
+      async () => {
+        offKonvaStageListeners(stage);
+        await loadImageOnStage();
+      },
+    );
     watch(() => props.width, resizeStage);
 
     return {
