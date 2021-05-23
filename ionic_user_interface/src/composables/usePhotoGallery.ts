@@ -1,21 +1,15 @@
 import { Ref, ref } from 'vue';
-import {
-  Plugins,
-  CameraResultType,
-  CameraSource,
-  CameraPhoto,
-  Capacitor,
-  FilesystemDirectory,
-} from '@capacitor/core';
+import { CameraResultType, CameraSource, Photo, Camera } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import { isPlatform } from '@ionic/vue';
 import imageCompression from 'browser-image-compression';
 
 export function usePhotoGallery(): {
-  photo: Ref<Photo | null>;
+  photo: Ref<UserPhoto | null>;
   takePhoto: () => void;
 } {
-  const { Camera, Filesystem } = Plugins;
-  const photo = ref<Photo | null>(null);
+  const photo = ref<UserPhoto | null>(null);
 
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -26,7 +20,7 @@ export function usePhotoGallery(): {
     });
   };
 
-  const savePicture = async (photo: CameraPhoto, fileName: string): Promise<Photo> => {
+  const savePicture = async (photo: Photo, fileName: string): Promise<UserPhoto> => {
     let base64Data = '';
     // "hybrid" will detect Cordova or Capacitor;
     if (isPlatform('hybrid')) {
@@ -53,15 +47,14 @@ export function usePhotoGallery(): {
       }
     }
 
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: base64Data,
-      directory: FilesystemDirectory.Data,
-    });
-
     if (isPlatform('hybrid')) {
       // Display the new image by rewriting the 'file://' path to HTTP
       // Details: https://ionicframework.com/docs/building/webview#file-protocol
+      const savedFile = await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: Directory.Cache,
+      });
       return {
         filepath: savedFile.uri,
         data: Capacitor.convertFileSrc(savedFile.uri),
@@ -94,7 +87,7 @@ export function usePhotoGallery(): {
   };
 }
 
-export interface Photo {
+export interface UserPhoto {
   filepath: string;
   data?: string;
 }
