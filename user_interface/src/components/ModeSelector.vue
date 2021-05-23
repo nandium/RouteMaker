@@ -17,18 +17,18 @@
     <b-row class="justify-content-center" v-if="isImageUploaded">
       <b-col xl="4" md="6" sm="10">
         <b-button-group size="md" class="m-1">
-          <b-button v-if="!isSelectModeDrawBox" @click="onReset" variant="outline-info"
-            >Reset</b-button
-          >
-          <b-button v-if="!isSelectModeDrawBox" @click="toggleShowOrder" variant="outline-info"
-            >{{ this.showOrderMode ? 'Hide' : 'Unhide' }} Order</b-button
-          >
-          <b-button v-if="!isSelectModeDrawBox" @click="toggleHandStart" variant="outline-info"
-            >{{ this.handStartMode }}-StartHold</b-button
-          >
-          <b-button v-if="isSelectModeDrawBox" @click="undoDrawBox" variant="outline-info"
-            >Undo Draw</b-button
-          >
+          <b-button v-if="!isSelectModeDrawBox" @click="onReset" variant="outline-info">
+            Reset
+          </b-button>
+          <b-button v-if="!isSelectModeDrawBox" @click="toggleShowOrder" variant="outline-info">
+            {{ this.showOrderMode ? 'Hide' : 'Unhide' }} Order
+          </b-button>
+          <b-button v-if="!isSelectModeDrawBox" @click="toggleHandStart" variant="outline-info">
+            {{ this.handStartMode }}-StartHold
+          </b-button>
+          <b-button v-if="isSelectModeDrawBox" @click="undoDrawBox" variant="outline-info">
+            Undo Draw
+          </b-button>
         </b-button-group>
       </b-col>
     </b-row>

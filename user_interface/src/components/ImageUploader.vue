@@ -3,9 +3,9 @@
     <b-row class="justify-content-center m-1">
       <b-col class="input-group" xl="4" md="6" sm="10">
         <span v-if="!imageFile" class="input-group-btn mx-1">
-          <b-button variant="link" to="/about#section2"
-            ><b-icon-question-circle class="align-middle" variant="info" scale="1.5"
-          /></b-button>
+          <b-button variant="link" to="/about#section2">
+            <b-icon-question-circle class="align-middle" variant="info" scale="1.5" />
+          </b-button>
         </span>
         <b-form-file
           v-model="imageFile"

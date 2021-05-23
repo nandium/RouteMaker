@@ -1,7 +1,10 @@
 <template>
   <div class="home">
-    <b-jumbotron header-level="4" header="Route Maker" lead="Quickly make custom climbing routes">
-    </b-jumbotron>
+    <b-jumbotron
+      header-level="4"
+      header="Route Maker"
+      lead="Quickly make custom climbing routes"
+    ></b-jumbotron>
     <ImageUploader />
     <ModeSelector />
     <ImageViewer />

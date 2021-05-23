@@ -46,7 +46,7 @@ export function usePhotoGallery(): {
           fileType: 'image/jpeg',
         };
         const imageFile = await imageCompression(
-          new File([await response.blob()], 'photo.jpg', { type: "image/jpeg", }),
+          new File([await response.blob()], 'photo.jpg', { type: 'image/jpeg' }),
           compressImageOptions,
         );
         base64Data = await convertFileToBase64(imageFile);
