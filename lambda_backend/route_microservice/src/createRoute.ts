@@ -96,7 +96,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   };
   const putItemInput: PutItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'] || '',
-    Item: (routeItem as unknown) as AttributeMap,
+    Item: routeItem as unknown as AttributeMap,
   };
   try {
     await dynamoDb.put(putItemInput).promise();

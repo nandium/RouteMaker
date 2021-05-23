@@ -38,20 +38,20 @@ The Object Detection model is trained on yolov4-tiny. Hence it is sufficiently s
 
 <img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_6.jpg" width="200" />
 
-## Setup
+## Local Setup
 
 ```bash
 # Ensure npm is installed
 # Ensure AWS credentials are set up for Serverless backend
 # Ensure Docker engine is running for preparing pip packages
 cd ./lambda_backend
-npm i
+npm ci
 cd ./predict_microservice
 sls deploy
 
-cd ./user_interface
+cd ./ionic_user_interface
 echo "VUE_APP_GET_BOUNDING_BOX_URL={serverless_url_here}" > .env
-npm i
+npm ci
 npm run serve
 ```
 
