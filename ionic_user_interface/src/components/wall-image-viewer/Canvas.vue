@@ -129,7 +129,6 @@ export default defineComponent({
       const image = new Image();
       // eslint-disable-next-line
       image.onload = async () => {
-        const loadingSpinnerInstance = loadingSpinner.show({ canCancel: false });
         // Clear all boxes first
         clearBoxLayer();
         // Add image to stage
@@ -144,14 +143,19 @@ export default defineComponent({
         const formData = new FormData();
         formData.append('image', await (await fetch(props.imgSrc)).blob());
         formData.append('width', props.width.toString());
-        const rawBoundingBoxes = await getBoundingBoxes(formData);
+        let rawBoundingBoxes: Array<any>;
+        const loadingSpinnerInstance = loadingSpinner.show({ canCancel: false });
+        try {
+          rawBoundingBoxes = await getBoundingBoxes(formData);
+        } finally {
+          loadingSpinnerInstance.hide();
+        }
         addBoxLayerBoundingBoxes(rawBoundingBoxes);
         imageLayer.batchDraw();
 
         // Listeners must be added after image is loaded
         addKonvaListenerPinchZoom(stage);
         addKonvaListenerTouchMove(stage);
-        loadingSpinnerInstance.hide();
       };
       image.src = props.imgSrc;
     };
