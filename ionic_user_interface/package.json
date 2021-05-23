@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "npx ionic serve",
+    "build": "npx ionic cap sync",
+    "android": "npx ionic cap open android",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.7",
+    "@ionic/cli": "^6.16.1",
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
