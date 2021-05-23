@@ -2,12 +2,13 @@
   <ion-page>
     <Header />
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense"> </ion-header>
+      <ion-header collapse="condense"></ion-header>
 
       <div id="container">
         <strong>Route Maker</strong>
         <p>Quickly make custom climbing routes</p>
-        <br /><br />
+        <br />
+        <br />
         <ion-button @click="takePhoto()" color="tertiary">
           <ion-icon class="camera-icon" :icon="camera"></ion-icon>
           Upload wall image

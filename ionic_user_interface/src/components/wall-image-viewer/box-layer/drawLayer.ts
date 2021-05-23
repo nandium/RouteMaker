@@ -174,12 +174,12 @@ const getKonvaDrawLayerBoundingBoxes = (stageNode: Konva.Stage): Box[] => {
   });
 };
 
-const removeKonvaDrawLayer = (stageNode: Konva.Stage) => {
+const removeKonvaDrawLayer = (stageNode: Konva.Stage): void => {
   const drawLayer = getDrawLayer(stageNode);
   drawLayer.destroy();
 };
 
-const removeKonvaLastDrawnRect = (stageNode: Konva.Stage) => {
+const removeKonvaLastDrawnRect = (stageNode: Konva.Stage): void => {
   const drawLayer = getDrawLayer(stageNode);
   const shapes = drawLayer.getChildren(
     (shape) => ![DRAW_RECT_NAME, BACKGROUND_RECT_NAME].includes(shape.attrs.name),

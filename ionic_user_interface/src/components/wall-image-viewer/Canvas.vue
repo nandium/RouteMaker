@@ -28,26 +28,24 @@
       class="solid-button"
       fill="solid"
       color="secondary"
-      >Export</ion-button
     >
+      Export
+    </ion-button>
     <div v-if="+selectedMode === SelectMode.HANDHOLD || +selectedMode === SelectMode.FOOTHOLD">
       <ion-button
         class="outline-button"
         @click="handleHideNumbersClick"
         :fill="hideNumbersFill"
         color="tertiary"
-        >{{ hideNumbersText }}</ion-button
       >
-      <ion-button
-        class="outline-button"
-        @click="handleTapeClick"
-        :fill="tapeFill"
-        color="primary"
-        >{{ tapeText }}</ion-button
-      >
-      <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset"
-        >Reset</ion-button
-      >
+        {{ hideNumbersText }}
+      </ion-button>
+      <ion-button class="outline-button" @click="handleTapeClick" :fill="tapeFill" color="primary">
+        {{ tapeText }}
+      </ion-button>
+      <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset">
+        Reset
+      </ion-button>
     </div>
     <ion-button
       v-if="+selectedMode === SelectMode.DRAWBOX"
@@ -55,8 +53,9 @@
       class="solid-button"
       fill="solid"
       color="danger"
-      >Undo Draw</ion-button
     >
+      Undo Draw
+    </ion-button>
     <div id="konva-container" class="konva-container"></div>
   </div>
 </template>
@@ -286,6 +285,7 @@ ion-segment {
   border: 2px solid var(--ion-color-tertiary);
   padding: 1px 3px;
   filter: hue-rotate(90deg);
+  background: transparent;
 }
 
 ion-segment-button {

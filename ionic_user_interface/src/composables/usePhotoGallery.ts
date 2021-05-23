@@ -17,14 +17,6 @@ export function usePhotoGallery(): {
   const { Camera, Filesystem } = Plugins;
   const photo = ref<Photo | null>(null);
 
-  const convertBlobToFile = (theBlob: Blob, fileName: string): File => {
-    const b: any = theBlob;
-    b.lastModifiedDate = new Date();
-    b.name = fileName;
-
-    return <File>theBlob;
-  };
-
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -54,7 +46,7 @@ export function usePhotoGallery(): {
           fileType: 'image/jpeg',
         };
         const imageFile = await imageCompression(
-          convertBlobToFile(await response.blob(), 'photo.jpg'),
+          new File([await response.blob()], 'photo.jpg', { type: 'image/jpeg' }),
           compressImageOptions,
         );
         base64Data = await convertFileToBase64(imageFile);
