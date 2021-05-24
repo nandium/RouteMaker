@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "npx ionic serve",
     "build": "npx ionic build",
-    "android": "npx ionic cap copy android && npx ionic cap open android",
+    "android": "npx ionic cap sync android && npx ionic cap open android",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
