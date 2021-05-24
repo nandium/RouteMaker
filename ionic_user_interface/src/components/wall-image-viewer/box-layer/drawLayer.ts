@@ -185,7 +185,7 @@ const removeKonvaLastDrawnRect = (stageNode: Konva.Stage): void => {
     (shape) => ![DRAW_RECT_NAME, BACKGROUND_RECT_NAME].includes(shape.attrs.name),
   );
   // @ts-expect-error Konva types not working properly
-  if (shapes.length > 0) shapes.toArray().pop().destroy();
+  if (shapes.length > 0) shapes.pop().destroy();
   stageNode.batchDraw();
 };
 
