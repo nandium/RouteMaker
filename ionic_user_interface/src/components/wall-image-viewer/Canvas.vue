@@ -112,7 +112,7 @@ export default defineComponent({
 
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
-    const konvaImage = new Konva.Image();
+    const konvaImage = new Konva.Image({ image: undefined });
     const {
       boxLayer,
       resizeBoxLayer,

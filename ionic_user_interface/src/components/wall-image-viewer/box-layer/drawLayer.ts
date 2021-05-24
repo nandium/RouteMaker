@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { throttle } from 'lodash';
-import { Vector2d } from 'konva/types/types';
+import { Vector2d } from 'konva/lib/types';
 
 import { BoxClass } from '@/components/wall-image-viewer/types';
 import { DefaultBoundingBox } from './boundingBoxAttributes';
@@ -194,7 +194,7 @@ const resizeDrawLayer = (stageNode: Konva.Stage, factor: number): void => {
   const shapes = drawLayer.getChildren(
     (shape) => ![DRAW_RECT_NAME, BACKGROUND_RECT_NAME].includes(shape.attrs.name),
   );
-  shapes.each((shape) => {
+  shapes.forEach((shape) => {
     shape.x(shape.x() * factor);
     shape.y(shape.y() * factor);
     shape.width(shape.width() * factor);
