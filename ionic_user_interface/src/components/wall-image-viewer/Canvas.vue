@@ -7,7 +7,7 @@
       @ionChange="selectModeChanged($event)"
       color="tertiary"
       mode="ios"
-      :value="SelectMode.HANDHOLD"
+      :value="selectedMode"
     >
       <ion-segment-button :value="SelectMode.HANDHOLD">
         <ion-label>HandHold</ion-label>

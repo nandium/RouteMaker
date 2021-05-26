@@ -184,6 +184,7 @@ export function useBoundingBox(
 
   const resetBoundingBox = () => {
     switch (+boxState.value) {
+      case BoxState.FOOTHOLD:
       case BoxState.NORMAL_HANDHOLD:
       case BoxState.SINGLE_START_HANDHOLD:
       case BoxState.DUAL_START_HANDHOLD:
@@ -191,8 +192,6 @@ export function useBoundingBox(
         handleUnselectHandhold();
         break;
       }
-      default:
-        boxState.value = BoxState.UNSELECTED;
     }
     updateBoundingBoxView();
   };
@@ -223,6 +222,8 @@ export function useBoundingBox(
         } else if (position === 1) {
           if (+tapeMode.value === TapeMode.DUAL_START) {
             boxState.value = BoxState.DUAL_START_HANDHOLD;
+          } else {
+            boxState.value = BoxState.NORMAL_HANDHOLD;
           }
         } else {
           boxState.value = BoxState.NORMAL_HANDHOLD;
@@ -283,6 +284,7 @@ export function useBoundingBox(
           case BoxState.DUAL_START_HANDHOLD:
           case BoxState.END_HANDHOLD:
             handleUnselectHandhold();
+            boxState.value = BoxState.FOOTHOLD;
             break;
           case BoxState.FOOTHOLD:
             boxState.value = BoxState.UNSELECTED;
@@ -291,6 +293,7 @@ export function useBoundingBox(
         break;
       case SelectMode.HANDHOLD:
         switch (+boxState.value) {
+          case BoxState.FOOTHOLD:
           case BoxState.UNSELECTED:
             handleSelectHandhold();
             break;
@@ -299,9 +302,6 @@ export function useBoundingBox(
           case BoxState.DUAL_START_HANDHOLD:
           case BoxState.END_HANDHOLD:
             handleUnselectHandhold();
-            break;
-          case BoxState.FOOTHOLD:
-            boxState.value = BoxState.UNSELECTED;
             break;
         }
         break;
