@@ -10,7 +10,7 @@ export const createRouteSchema = {
     body: {
       type: 'object',
       properties: {
-        country: {
+        countryCode: {
           type: 'string',
           maxLength: 50,
           pattern: AlphanumericSpaceHyphen,
@@ -47,7 +47,14 @@ export const createRouteSchema = {
           },
         },
       },
-      required: ['country', 'routeName', 'expiredTime', 'gymLocation', 'ownerGrade', 'routePhoto'],
+      required: [
+        'countryCode',
+        'routeName',
+        'expiredTime',
+        'gymLocation',
+        'ownerGrade',
+        'routePhoto',
+      ],
     },
   },
 };

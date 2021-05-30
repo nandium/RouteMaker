@@ -32,15 +32,15 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { country, routeName, expiredTime, gymLocation, ownerGrade, routePhoto },
+    body: { countryCode, routeName, expiredTime, gymLocation, ownerGrade, routePhoto },
   } = event;
 
   const queryInput: QueryInput = {
     TableName: process.env['GYM_TABLE_NAME'],
     ConsistentRead: false,
-    KeyConditionExpression: 'country = :country AND gymLocation = :gymLocation',
+    KeyConditionExpression: 'countryCode = :countryCode AND gymLocation = :gymLocation',
     ExpressionAttributeValues: {
-      ':country': country as AttributeValue,
+      ':countryCode': countryCode as AttributeValue,
       ':gymLocation': gymLocation as AttributeValue,
     },
   };
@@ -88,7 +88,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     ownerGrade,
     publicGrade: ownerGrade,
     publicGradeSubmissions: [{ username, grade: ownerGrade }],
-    vote: 0,
+    voteCount: 0,
     upVotes: [],
     reports: [],
     commentCount: 0,

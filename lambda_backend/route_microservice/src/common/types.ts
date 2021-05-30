@@ -6,13 +6,13 @@ interface AuthHeader {
 
 export interface GetAllGymsEvent {
   queryStringParameters: {
-    country: string;
+    countryCode: string;
   };
 }
 
 export interface CreateRouteEvent extends AuthHeader {
   body: {
-    country: string;
+    countryCode: string;
     routeName: string;
     expiredTime: string;
     gymLocation: string;
@@ -115,7 +115,7 @@ export interface RouteItem {
   ownerGrade: number;
   publicGrade: number;
   publicGradeSubmissions: Array<GradeSubmission>;
-  vote: number;
+  voteCount: number;
   upVotes: Array<string>;
   reports: Array<string>;
   commentCount: number;
