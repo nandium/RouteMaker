@@ -5,7 +5,7 @@
 # Usage : sudo node-serverless.sh [deploy|remove] [dev|prod] [node|all]
 # Ensure S3 bucket is empty before removal
 
-npm i
+npm ci
 rm -f .env
 if [ $1 == "deploy" ]
 then
