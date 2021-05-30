@@ -18,26 +18,28 @@ provider:
     ROUTE_TABLE_NAME: ${self:custom.routeTableName}
     GYM_TABLE_NAME: ${self:custom.gymTableName}
   logRetentionInDays: 30
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - s3:PutObject
-        - s3:DeleteObject
-      Resource:
-        - '${self:custom.s3BucketArn}/*'
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:DeleteItem
-        - dynamodb:UpdateItem
-        - dynamodb:Query
-        - dynamodb:Scan
-      Resource:
-        - '${self:custom.routeTableArn}'
-        - '${self:custom.routeTableArn}/index/*'
-        - '${self:custom.gymTableArn}'
-        - '${self:custom.gymTableArn}/index/*'
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:DeleteObject
+          Resource:
+            - '${self:custom.s3BucketArn}/*'
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - '${self:custom.routeTableArn}'
+            - '${self:custom.routeTableArn}/index/*'
+            - '${self:custom.gymTableArn}'
+            - '${self:custom.gymTableArn}/index/*'
 
 plugins:
   - serverless-plugin-typescript
