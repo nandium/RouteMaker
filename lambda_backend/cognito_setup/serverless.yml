@@ -13,7 +13,7 @@ provider:
   #   Action:
   #    - ses:SendEmail
   #    - ses:SendRawEmail
-  #   Resource: <arn:email>
+  #   Resource: <arn:verified email in us-east-1>
 
 resources:
   Resources:
