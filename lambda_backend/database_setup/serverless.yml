@@ -28,6 +28,9 @@ resources:
           ReadCapacityUnits: ${self:custom._routeDataTable.ReadCapacityUnits.${self:custom.stage}}
           WriteCapacityUnits: ${self:custom._routeDataTable.WriteCapacityUnits.${self:custom.stage}}
         TableName: '${self:service}-${self:custom.stage}-route'
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
         GlobalSecondaryIndexes:
           - IndexName: gymLocationIndex
             KeySchema:

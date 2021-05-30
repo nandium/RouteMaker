@@ -108,7 +108,7 @@ export interface Comment {
 export interface RouteItem {
   username: string;
   createdAt: string;
-  expiredTime: string;
+  ttl: number;
   routeName: string;
   gymLocation: string;
   routeURL: string;

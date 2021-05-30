@@ -25,7 +25,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   let hasGraded = false;
   let graded = -1;
   const {
-    expiredTime,
+    ttl,
     routeName,
     gymLocation,
     routeURL,
@@ -63,7 +63,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
       Item: {
         username: routeOwnerUsername,
         createdAt,
-        expiredTime,
+        expiredTime: new Date(ttl).toISOString(),
         routeName,
         gymLocation,
         routeURL,

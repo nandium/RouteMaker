@@ -81,7 +81,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   const routeItem: RouteItem = {
     username,
     createdAt,
-    expiredTime,
+    ttl: new Date(expiredTime).getTime(),
     routeName,
     gymLocation,
     routeURL,
