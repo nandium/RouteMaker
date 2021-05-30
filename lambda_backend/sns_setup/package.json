@@ -1,0 +1,14 @@
+{
+  "name": "sns_setup",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.76",
+    "@types/aws-sdk": "^2.7.0"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
