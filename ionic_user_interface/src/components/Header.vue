@@ -7,6 +7,7 @@
       <ion-buttons slot="end">
         <ion-button router-link="/home">Home</ion-button>
         <ion-button router-link="/about">About</ion-button>
+        <ion-button router-link="/login" color="secondary">Login</ion-button>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>

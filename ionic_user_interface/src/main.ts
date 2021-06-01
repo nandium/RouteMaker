@@ -25,8 +25,16 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import { ref } from 'vue';
 
 const app = createApp(App).use(IonicVue).use(router).use(VueLoading);
+
+app.provide('isLoggedIn', ref(false));
+
+const getUserData = () => {
+  return ref('hello');
+};
+app.provide('userData', getUserData());
 
 router.isReady().then(() => {
   app.mount('#app');
