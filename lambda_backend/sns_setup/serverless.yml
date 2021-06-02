@@ -18,8 +18,8 @@ plugins:
   - serverless-plugin-typescript
 
 functions:
-  dispatcher:
-    handler: src/dispatcher.handler
+  telegramDispatcher:
+    handler: src/telegramDispatcher.handler
     events:
       - sns:
           arn: 
