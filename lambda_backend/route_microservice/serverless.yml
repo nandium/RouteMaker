@@ -17,7 +17,9 @@ provider:
     S3_BUCKET_NAME: ${self:custom.s3BucketName}
     ROUTE_TABLE_NAME: ${self:custom.routeTableName}
     GYM_TABLE_NAME: ${self:custom.gymTableName}
+    TELEGRAM_SNS_ARN: ${self:custom.telegramSNSArn}
   logRetentionInDays: 30
+  lambdaHashingVersion: 20201221
   iam:
     role:
       statements:
@@ -40,6 +42,11 @@ provider:
             - '${self:custom.routeTableArn}/index/*'
             - '${self:custom.gymTableArn}'
             - '${self:custom.gymTableArn}/index/*'
+        - Effect: Allow
+          Action:
+            - sns:publish
+          Resource:
+            - '${self:custom.telegramSNSArn}'
 
 plugins:
   - serverless-plugin-typescript
@@ -163,6 +170,19 @@ functions:
             arn: ${self:custom.cognitoArn}
             scopes:
               - aws.cognito.signin.user.admin
+  
+  requestGym:
+    handler: src/requestGym.handler
+    events:
+      - http:
+          path: route/gym/request
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
 
 custom:
   stage: ${opt:stage, self:provider.stage}
@@ -173,6 +193,7 @@ custom:
   routeTableName: ${ssm:/${self:custom.stage}/dynamodb/route/name}
   gymTableArn: ${ssm:/${self:custom.stage}/dynamodb/gym/arn}
   gymTableName: ${ssm:/${self:custom.stage}/dynamodb/gym/name}
+  telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}

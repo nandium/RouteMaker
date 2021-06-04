@@ -121,3 +121,14 @@ export interface RouteItem {
   commentCount: number;
   comments: Array<Comment>;
 }
+
+export interface CognitoUserDetails {
+  fullName: string;
+  userEmail: string;
+}
+
+export interface RequestGymEvent extends AuthHeader {
+  body: {
+    gymLocation: string;
+  };
+}

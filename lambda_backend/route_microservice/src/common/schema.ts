@@ -140,3 +140,20 @@ export const deleteCommentSchema = {
     },
   },
 };
+
+export const requestGymSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        gymLocation: {
+          type: 'string',
+          maxLength: 40,
+          pattern: NumericDecimalCommaSpace,
+        },
+      },
+      required: ['gymLocation'],
+    },
+  },
+};
