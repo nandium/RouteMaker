@@ -170,7 +170,7 @@ functions:
             arn: ${self:custom.cognitoArn}
             scopes:
               - aws.cognito.signin.user.admin
-  
+
   requestGym:
     handler: src/requestGym.handler
     events:
