@@ -13,6 +13,7 @@ provider:
     ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
     COGNITO_CLIENT_ID: ${self:custom.cognitoClientId}
   logRetentionInDays: 30
+  lambdaHashingVersion: 20201221
   iam:
     role:
       statements:
@@ -21,7 +22,7 @@ provider:
             - cognito-idp:SignUp
             - cognito-idp:ConfirmSignUp
             - cognito-idp:InitiateAuth
-          Resource: '*'
+          Resource: ${self:custom.cognitoArn}
 
 plugins:
   - serverless-plugin-typescript
@@ -78,10 +79,10 @@ custom:
 
   _maxRequestsPerSecond:
     dev: 1
-    prod: 5
+    prod: 3
   _maxConcurrentRequests:
     dev: 1
-    prod: 5
+    prod: 3
   _origin:
     dev: '*'
-    prod: 'https://yarkhinephyo.github.io'
+    prod: '*'

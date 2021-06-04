@@ -206,4 +206,4 @@ custom:
     prod: 5
   _origin:
     dev: '*'
-    prod: 'https://yarkhinephyo.github.io'
+    prod: '*'

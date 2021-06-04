@@ -6,6 +6,7 @@ provider:
   name: aws
   stage: dev
   region: ap-southeast-1
+  lambdaHashingVersion: 20201221
   # iamRoleStatements:
   # - Effect: "Allow"
   #   Principal:

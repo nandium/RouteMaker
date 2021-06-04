@@ -15,6 +15,8 @@ then
   sls deploy --stage $2
   cd ../s3_bucket_setup
   sls deploy --stage $2
+  cd ../sns_setup
+  sls deploy --stage $2
   cd ../user_microservice
   sls deploy --stage $2
   sls info --verbose | grep ServiceEndpoint | sed s/ServiceEndpoint\:\ //g | { read -r var; cd ..; echo "USER_ENDPOINT_URL=$var" >> .env; }
@@ -33,6 +35,8 @@ then
   cd ./route_microservice
   sls remove --stage $2
   cd ../user_microservice
+  sls remove --stage $2
+  cd ../sns_setup
   sls remove --stage $2
   cd ../s3_bucket_setup
   sls remove --stage $2
