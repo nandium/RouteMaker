@@ -22,7 +22,7 @@ functions:
     handler: src/telegramDispatcher.handler
     events:
       - sns:
-          arn: 
+          arn:
             Ref: TelegramSNS
           topicName: '${self:service}-${self:custom.stage}-telegram'
 
