@@ -50,8 +50,11 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   } catch (error) {
     throw createError(500, 'Error querying table :' + error.stack);
   }
-  if (!Items) {
-    createError(400, 'Gym is not registered.');
+  if (Items.length === 0) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: 'Unregistered gym' }),
+    };
   }
 
   const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
