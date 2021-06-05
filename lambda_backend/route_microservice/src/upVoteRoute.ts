@@ -33,10 +33,10 @@ const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
         username: routeOwnerUsername as AttributeValue,
         createdAt: createdAt as AttributeValue,
       },
-      UpdateExpression: 'SET upVotes = :upVotes, vote = :vote',
+      UpdateExpression: 'SET upVotes = :upVotes, voteCount = :voteCount',
       ExpressionAttributeValues: {
         ':upVotes': upVotes as AttributeValue,
-        ':vote': upVotes.length as AttributeValue,
+        ':voteCount': upVotes.length as AttributeValue,
       },
     };
     try {

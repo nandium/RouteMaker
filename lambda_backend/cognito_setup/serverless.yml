@@ -6,6 +6,7 @@ provider:
   name: aws
   stage: dev
   region: ap-southeast-1
+  lambdaHashingVersion: 20201221
   # iamRoleStatements:
   # - Effect: "Allow"
   #   Principal:
@@ -13,7 +14,7 @@ provider:
   #   Action:
   #    - ses:SendEmail
   #    - ses:SendRawEmail
-  #   Resource: <arn:email>
+  #   Resource: <arn:verified email in us-east-1>
 
 resources:
   Resources:

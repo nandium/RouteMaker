@@ -22,7 +22,10 @@ const confirmSignup: Handler = async (event: ConfirmSignupEvent) => {
   try {
     await cognitoIdentity.confirmSignUp(confirmSignUpRequest).promise();
   } catch (error) {
-    throw createError(400, 'Error occurred while confirming sign up in Cognito: ' + error.stack);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: error.code }),
+    };
   }
   return {
     statusCode: 200,

@@ -6,13 +6,13 @@ interface AuthHeader {
 
 export interface GetAllGymsEvent {
   queryStringParameters: {
-    country: string;
+    countryCode: string;
   };
 }
 
 export interface CreateRouteEvent extends AuthHeader {
   body: {
-    country: string;
+    countryCode: string;
     routeName: string;
     expiredTime: string;
     gymLocation: string;
@@ -108,16 +108,27 @@ export interface Comment {
 export interface RouteItem {
   username: string;
   createdAt: string;
-  expiredTime: string;
+  ttl: number;
   routeName: string;
   gymLocation: string;
   routeURL: string;
   ownerGrade: number;
   publicGrade: number;
   publicGradeSubmissions: Array<GradeSubmission>;
-  vote: number;
+  voteCount: number;
   upVotes: Array<string>;
   reports: Array<string>;
   commentCount: number;
   comments: Array<Comment>;
+}
+
+export interface CognitoUserDetails {
+  fullName: string;
+  userEmail: string;
+}
+
+export interface RequestGymEvent extends AuthHeader {
+  body: {
+    gymLocation: string;
+  };
 }

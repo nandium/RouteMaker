@@ -28,7 +28,10 @@ const signup: Handler = async (event: SignupEvent) => {
       body: JSON.stringify({ Message: 'Sign up success', ...CodeDeliveryDetails }),
     };
   } catch (error) {
-    throw createError(400, 'Error occurred while signing up in Cognito: ' + error.stack);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: error.code }),
+    };
   }
 };
 

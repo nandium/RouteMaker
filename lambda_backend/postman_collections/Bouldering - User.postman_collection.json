@@ -1,0 +1,106 @@
+{
+  "info": {
+    "_postman_id": "86ec4b97-f4fd-4b3b-8b4d-7e3268aa7209",
+    "name": "Bouldering - User",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Sign up",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"password\": \"Qwer!234\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://7m0rbngjsb.execute-api.ap-southeast-1.amazonaws.com/dev/user/signup",
+          "protocol": "https",
+          "host": ["7m0rbngjsb", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "user", "signup"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Confirm Sign up",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"code\": \"836829\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://7m0rbngjsb.execute-api.ap-southeast-1.amazonaws.com/dev/user/confirm",
+          "protocol": "https",
+          "host": ["7m0rbngjsb", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "user", "confirm"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Log in",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"password\": \"Qwer!234\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://7m0rbngjsb.execute-api.ap-southeast-1.amazonaws.com/dev/user/login",
+          "protocol": "https",
+          "host": ["7m0rbngjsb", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "user", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Log out",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJraWQiOiJYY3h6akl2V0pySFZnTjhrWWdHQUY3WXZqR2FGZEhUeWpYOXV0R0lGTmRNPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI0ZTBmZDFhYy0xMjRmLTQ0NGMtODA4NS1iNzhjYTUzYWJjYWIiLCJldmVudF9pZCI6ImU5NGQ3NjYyLWVjOTQtNDFhYi05MjRlLTk0ZDI4ZGI0ZDk3OSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MTk3MDYxNDUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV9GTkJyZUZWcTciLCJleHAiOjE2MTk3MTY5NDUsImlhdCI6MTYxOTcwNjE0NSwianRpIjoiNGEzOGM2MjktMWIxZi00NjJiLWJmMzQtNzgxODQ0MTRjMDE2IiwiY2xpZW50X2lkIjoiM3BpYTVzMHNwaGxxcTJqaGFkaW1mNjhmbzIiLCJ1c2VybmFtZSI6IjRlMGZkMWFjLTEyNGYtNDQ0Yy04MDg1LWI3OGNhNTNhYmNhYiJ9.cg2j6jcpNMbCvAq9KHvBdziOEF7rV8Bl-Dm5kHkhTWrBG8NjzJWIcLUus4wQLD8jx_maXpnIb-U7V43jvW6vkzPu4Ur4zM2gm8z2tX5X3q619CGql1nKbucLjtyU_hN-bI0OI7C5fSxgkaf8LDHFPCMXMyWz22U_L7NvG-Xfg25vj74nYPs6lkdSNHDRwa1Eq3hFBSwDw2N-FmyYShzQnTFHwBYkDK-fXVKJPU-ChUrVymEpP23D6X6pMiQQJmGxV_NyFtI_FXVGNv40USpllFeIbU8lLolWUexU8dKQTRiL2om4Q4p3ehSY8zf19R4n05TFzrFVxYtcuvdxppWxRQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "https://7m0rbngjsb.execute-api.ap-southeast-1.amazonaws.com/dev/user/logout",
+          "protocol": "https",
+          "host": ["7m0rbngjsb", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "user", "logout"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -15,16 +15,16 @@ const getAllGyms: Handler = async (event: GetAllGymsEvent) => {
     throw createError(500, 'Gym table name is not set');
   }
   const {
-    queryStringParameters: { country },
+    queryStringParameters: { countryCode },
   } = event;
-  // QueryString of country exists, query by country. If not, return all gyms.
-  if (country) {
+  // QueryString of countryCode exists, query by countryCode. If not, return all gyms.
+  if (countryCode) {
     const queryInput: QueryInput = {
       TableName: process.env['GYM_TABLE_NAME'],
       ConsistentRead: false,
-      KeyConditionExpression: 'country = :country',
+      KeyConditionExpression: 'countryCode = :countryCode',
       ExpressionAttributeValues: {
-        ':country': country as AttributeValue,
+        ':countryCode': countryCode as AttributeValue,
       },
     };
     try {

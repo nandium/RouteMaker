@@ -25,14 +25,14 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   let hasGraded = false;
   let graded = -1;
   const {
-    expiredTime,
+    ttl,
     routeName,
     gymLocation,
     routeURL,
     ownerGrade,
     publicGrade,
     publicGradeSubmissions,
-    vote,
+    voteCount,
     upVotes,
     reports,
     comments,
@@ -63,13 +63,13 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
       Item: {
         username: routeOwnerUsername,
         createdAt,
-        expiredTime,
+        expiredTime: new Date(ttl).toISOString(),
         routeName,
         gymLocation,
         routeURL,
         ownerGrade,
         publicGrade,
-        vote,
+        voteCount,
         comments,
         hasVoted,
         hasReported,

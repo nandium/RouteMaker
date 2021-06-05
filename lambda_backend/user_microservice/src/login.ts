@@ -31,7 +31,10 @@ const login: Handler = async (event: LoginEvent) => {
       body: JSON.stringify({ Message: 'Log in success', ...AuthenticationResult }),
     };
   } catch (error) {
-    throw createError(400, 'Error occurred during login in Cognito: ' + error.stack);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: error.code }),
+    };
   }
 };
 
