@@ -1,6 +1,6 @@
 name: Build and Deploy
 
-on: workflow-dispatch
+on: workflow_dispatch
 
 jobs:
   build-and-deploy:
