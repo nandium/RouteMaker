@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { BoxClass } from '@/components/wall-image-viewer/types';
 
+const predictBaseUrl = process.env.VUE_APP_PREDICT_ENDPOINT_URL as string;
+const getBoundingBoxesUrl = predictBaseUrl + '/predict';
+
 const mapClass = (boxClass: string) => {
   switch (boxClass) {
     case 'hold':
@@ -21,7 +24,7 @@ const getBoundingBoxes = async (formData: FormData): Promise<Box[]> => {
   try {
     const {
       data: { boxes },
-    } = await axios.post(process.env.VUE_APP_GET_BOUNDING_BOX_URL as string, formData, {
+    } = await axios.post(getBoundingBoxesUrl, formData, {
       headers: {
         'Content-Type': 'multipart/formdata',
       },
