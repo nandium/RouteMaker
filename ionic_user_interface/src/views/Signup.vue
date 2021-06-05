@@ -8,67 +8,73 @@
             <div class="ion-text-center">
               <h1>Sign up</h1>
             </div>
-            <form @submit="onSubmit" class="ion-padding ion-text-center">
-              <ion-item class="rounded">
-                <ion-input
-                  @keyup.enter="clickSignupButton"
-                  v-model="emailText"
-                  name="email"
-                  type="email"
-                  placeholder="example@email.com"
-                  required
-                  clearInput
-                />
+            <div class="ion-padding ion-text-center">
+              <ion-item class="rounded error-message" color="danger" v-if="showErrorMsg">
+                <ion-label>
+                  {{ errorMsg }}
+                </ion-label>
+                <ion-button fill="clear" color="dark" shape="round" @click="clickCloseErrorMsg">
+                  <ion-icon :icon="closeCircleOutline"></ion-icon>
+                </ion-button>
               </ion-item>
-              <ion-item class="rounded">
-                <ion-input
-                  @keyup.enter="clickSignupButton"
-                  v-model="usernameText"
-                  name="username"
-                  type="username"
-                  placeholder="Username"
-                  minlength="3"
-                  required
-                  clearInput
-                />
-              </ion-item>
-              <ion-item class="rounded">
-                <ion-input
-                  @keyup.enter="clickSignupButton"
-                  v-model="passwordText"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  minlength="6"
-                  required
-                />
-              </ion-item>
-              <ion-item class="rounded">
-                <ion-input
-                  @keyup.enter="clickSignupButton"
-                  v-model="confirmPasswordText"
-                  name="confirmpassword"
-                  type="password"
-                  placeholder="Retype password"
-                  minlength="6"
-                  required
-                />
-              </ion-item>
-              <ion-button
-                id="signupButton"
-                class="signup-button"
-                size="medium"
-                type="submit"
-                expand="block"
-              >
-                Sign up
-              </ion-button>
-              <h5>
-                Already have an account?
-                <router-link to="/login">Login</router-link>
-                here!
-              </h5>
-            </form>
+              <form @submit="onSubmit">
+                <ion-item class="rounded">
+                  <ion-label position="stacked">Email</ion-label>
+                  <ion-input
+                    @keyup.enter="clickSignupButton"
+                    v-model="emailText"
+                    name="email"
+                    type="text"
+                    autofocus
+                    required
+                  />
+                </ion-item>
+                <ion-item class="rounded">
+                  <ion-label position="stacked">Username</ion-label>
+                  <ion-input
+                    @keyup.enter="clickSignupButton"
+                    v-model="usernameText"
+                    name="username"
+                    type="username"
+                    required
+                  />
+                </ion-item>
+                <ion-item class="rounded">
+                  <ion-label position="stacked">Password</ion-label>
+                  <ion-input
+                    @keyup.enter="clickSignupButton"
+                    v-model="passwordText"
+                    name="password"
+                    type="password"
+                    required
+                  />
+                </ion-item>
+                <ion-item class="rounded">
+                  <ion-label position="stacked">Retype password</ion-label>
+                  <ion-input
+                    @keyup.enter="clickSignupButton"
+                    v-model="confirmPasswordText"
+                    name="confirmpassword"
+                    type="password"
+                    required
+                  />
+                </ion-item>
+                <ion-button
+                  id="signupButton"
+                  class="signup-button"
+                  size="medium"
+                  type="submit"
+                  expand="block"
+                >
+                  Sign up
+                </ion-button>
+                <h5>
+                  Already have an account?
+                  <router-link to="/login">Login</router-link>
+                  here!
+                </h5>
+              </form>
+            </div>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -77,13 +83,16 @@
 </template>
 
 <script lang="ts">
+import { closeCircleOutline } from 'ionicons/icons';
 import {
   IonButton,
   IonCol,
   IonContent,
   IonGrid,
+  IonIcon,
   IonInput,
   IonItem,
+  IonLabel,
   IonPage,
   IonRow,
 } from '@ionic/vue';
@@ -98,8 +107,10 @@ export default defineComponent({
     IonCol,
     IonContent,
     IonGrid,
+    IonIcon,
     IonInput,
     IonItem,
+    IonLabel,
     IonPage,
     IonRow,
     Header,
@@ -113,6 +124,8 @@ export default defineComponent({
     const usernameText = ref('');
     const passwordText = ref('');
     const confirmPasswordText = ref('');
+    const showErrorMsg = ref(false);
+    const errorMsg = ref('');
 
     onBeforeUpdate(() => {
       // Redirect to home if already logged in
@@ -129,17 +142,42 @@ export default defineComponent({
       return password.length >= 6;
     };
 
+    const isValidUsername = (username: string): boolean => {
+      return username.length >= 5;
+    };
+
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
-      // Valid credentials
-      if (isValidEmail(emailText.value) && isValidPassword(passwordText.value)) {
-        if (isLoggedIn) {
-          isLoggedIn.value = true;
-        }
-        return true;
-      }
       // Invalid credentials
-      return false;
+      if (!isValidEmail(emailText.value)) {
+        errorMsg.value = 'Invalid email.';
+        showErrorMsg.value = true;
+        return false;
+      }
+      if (!isValidUsername(usernameText.value)) {
+        errorMsg.value = 'Username has to be at least 5 characters.';
+        showErrorMsg.value = true;
+        return false;
+      }
+      if (!isValidPassword(passwordText.value)) {
+        errorMsg.value = 'Password has to be at least 6 characters.';
+        showErrorMsg.value = true;
+        return false;
+      }
+      if (passwordText.value !== confirmPasswordText.value) {
+        errorMsg.value = 'Passwords do not match.';
+        showErrorMsg.value = true;
+        return false;
+      }
+      // Valid credentials
+      if (isLoggedIn) {
+        isLoggedIn.value = true;
+      }
+      return true;
+    };
+
+    const clickCloseErrorMsg = (): void => {
+      showErrorMsg.value = false;
     };
 
     const clickSignupButton = (): void => {
@@ -148,17 +186,36 @@ export default defineComponent({
 
     return {
       onSubmit,
+      closeCircleOutline,
+      clickCloseErrorMsg,
       clickSignupButton,
       emailText,
       usernameText,
       passwordText,
       confirmPasswordText,
+      showErrorMsg,
+      errorMsg,
     };
   },
 });
 </script>
 
 <style scoped>
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(1, 0.1) translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.error-message {
+  animation: popIn 0.2s both ease-in;
+}
+
 .rounded {
   margin-bottom: 1.2em;
   border-radius: 5px;
