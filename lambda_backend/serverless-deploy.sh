@@ -19,15 +19,15 @@ then
   sls deploy --stage $2
   cd ../user_microservice
   sls deploy --stage $2
-  sls info --verbose | grep ServiceEndpoint | sed s/ServiceEndpoint\:\ //g | { read -r var; cd ..; echo "USER_ENDPOINT_URL=$var" >> .env; }
+  sls info --verbose | grep ServiceEndpoint | sed s/ServiceEndpoint\:\ //g | { read -r var; cd ..; echo "VUE_APP_USER_ENDPOINT_URL=$var" >> .env; }
   cd ../route_microservice
   sls deploy --stage $2
-  sls info --verbose | grep ServiceEndpoint | sed s/ServiceEndpoint\:\ //g | { read -r var; cd ..; echo "ROUTE_ENDPOINT_URL=$var" >> .env; }
+  sls info --verbose | grep ServiceEndpoint | sed s/ServiceEndpoint\:\ //g | { read -r var; cd ..; echo "VUE_APP_ROUTE_ENDPOINT_URL=$var" >> .env; }
   if [ ${3:-node} == "all" ]
   then
     cd ../predict_microservice
     sls deploy --stage $2
-    sls info --verbose | grep ServiceEndpoint | sed s/ServiceEndpoint\:\ //g | { read -r var; cd ..; echo "PREDICT_ENDPOINT_URL=$var" >> .env; }
+    sls info --verbose | grep ServiceEndpoint | sed s/ServiceEndpoint\:\ //g | { read -r var; cd ..; echo "VUE_APP_PREDICT_ENDPOINT_URL=$var" >> .env; }
   fi
   cd ..
 elif [ $1 == "remove" ]
