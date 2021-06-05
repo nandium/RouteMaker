@@ -2,13 +2,8 @@
   "name": "yolo_bouldering",
   "version": "1.0.0",
   "scripts": {
-    "lint": "eslint **/*.js --ignore-pattern node_modules/"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
+    "lint": "eslint **/*.js --ignore-pattern node_modules/",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{js,jsx,vue,html,css,ts}": [
@@ -41,7 +36,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.9.0",
-    "husky": "^4.3.8",
+    "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.2.1",
     "typescript": "^4.2.4"
