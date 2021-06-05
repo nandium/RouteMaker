@@ -6,11 +6,13 @@ In rock climbing/ bouldering, seasoned climbers tend to make routes for one anot
 
 By utilizing Object Detection, this application takes in :camera: pictures of climbing walls and provides the handholds as interactable buttons to make the route creation process easier.
 
+## Ongoing Work
+
+A route sharing system where users can view, grade, vote, comment on each other routes.
+
 ## Live Application
 
-Application: https://yarkhinephyo.github.io/RouteMaker/
-
-The Object Detection model is trained on yolov4-tiny. Hence it is sufficiently small for Serverless deployment on AWS Lambda. The user interface is built with Vue and is deployed on Github pages.
+Application: https://routemaker.rocks
 
 ## Usage
 
