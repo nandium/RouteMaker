@@ -52,7 +52,7 @@ cd ./predict_microservice
 sls deploy
 
 cd ./ionic_user_interface
-echo "VUE_APP_GET_BOUNDING_BOX_URL={serverless_url_here}" > .env
+echo "VUE_APP_PREDICT_ENDPOINT_URL={serverless_url_here}" > .env
 npm ci
 npm run serve
 ```
