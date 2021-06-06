@@ -9,8 +9,8 @@
               <h1>Sign up</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ion-item class="rounded error-message" color="danger" v-if="showErrorMsg">
-                <ion-label>
+              <ion-item class="rounded error-message margin" color="danger" v-if="showErrorMsg">
+                <ion-label class="ion-text-wrap">
                   {{ errorMsg }}
                 </ion-label>
                 <ion-button fill="clear" color="dark" shape="round" @click="clickCloseErrorMsg">
@@ -131,6 +131,7 @@ export default defineComponent({
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const usernamePattern = /^[a-zA-Z0-9 ]*$/;
     const isLoggedIn: Ref<boolean> | undefined = inject('isLoggedIn');
     const emailText = ref('');
     const usernameText = ref('');
@@ -156,7 +157,7 @@ export default defineComponent({
     };
 
     const isValidUsername = (username: string): boolean => {
-      return username.length >= 5;
+      return username.length >= 5 && usernamePattern.test(username);
     };
 
     const onSubmit = (event: Event): boolean => {
@@ -168,7 +169,8 @@ export default defineComponent({
         return false;
       }
       if (!isValidUsername(usernameText.value)) {
-        errorMsg.value = 'Username has to be at least 5 characters.';
+        errorMsg.value =
+          'Username has to be at least 5 characters and contain only letters, numbers, and spaces.';
         showErrorMsg.value = true;
         return false;
       }

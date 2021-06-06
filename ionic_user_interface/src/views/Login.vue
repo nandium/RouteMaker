@@ -10,7 +10,7 @@
             </div>
             <div class="ion-padding ion-text-center">
               <ion-item class="rounded error-message" color="danger" v-if="showErrorMsg">
-                <ion-label>
+                <ion-label class="ion-text-wrap">
                   {{ errorMsg }}
                 </ion-label>
                 <ion-button fill="clear" color="dark" shape="round" @click="clickCloseErrorMsg">
