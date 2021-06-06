@@ -3,19 +3,11 @@
     <ion-list>
       <ion-item>
         <ion-label>Country</ion-label>
-        <ion-select
-          :value="selectedCountry"
-          @ionChange="onCountrySelect($event.detail.value)"
-          interface="action-sheet"
-        >
-          <ion-select-option
-            v-for="(item, index) in countryNameList"
-            :key="index"
-            :value="item.iso3"
-          >
-            {{ item.country }}
-          </ion-select-option>
-        </ion-select>
+        <auto-complete
+          :options="countryNameList"
+          optionsKey="country"
+          @completed="onCountrySelect"
+        />
       </ion-item>
       <ion-item v-if="userHasSelectedCountry">
         <ion-label>Gym</ion-label>
@@ -72,11 +64,22 @@
 
 <script lang="ts">
 import { ref, onMounted, defineComponent, computed } from 'vue';
-import { IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonRow, IonCol } from '@ionic/vue';
+import {
+  IonList,
+  IonItem,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  IonRow,
+  IonCol,
+  IonIcon,
+  IonButton,
+} from '@ionic/vue';
 import { closeCircleOutline } from 'ionicons/icons';
 import Lookup, { Country } from 'country-code-lookup';
 
 import getGyms, { GymLocation } from '@/common/api/route/getGyms';
+import AutoComplete from './AutoComplete.vue';
 
 export default defineComponent({
   name: 'GymSelector',
@@ -88,6 +91,9 @@ export default defineComponent({
     IonSelectOption,
     IonRow,
     IonCol,
+    IonIcon,
+    IonButton,
+    AutoComplete,
   },
   props: {
     width: {
@@ -112,9 +118,9 @@ export default defineComponent({
       countryNameList.value = [...Lookup.countries.sort()];
     });
 
-    const onCountrySelect = async (iso3Code: string) => {
-      selectedCountry.value = iso3Code;
-      const countryGymLocations = await getGyms(iso3Code);
+    const onCountrySelect = async (country: Country) => {
+      selectedCountry.value = country.iso3;
+      const countryGymLocations = await getGyms(country.iso3);
       gymLocationList.value = countryGymLocations;
     };
 
