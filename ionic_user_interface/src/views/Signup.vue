@@ -18,7 +18,7 @@
                 </ion-button>
               </ion-item>
               <form @submit="onSubmit">
-                <ion-item class="rounded">
+                <ion-item class="rounded margin">
                   <ion-label position="stacked">Email</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -29,7 +29,7 @@
                     required
                   />
                 </ion-item>
-                <ion-item class="rounded">
+                <ion-item class="rounded margin">
                   <ion-label position="stacked">Username</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -39,17 +39,27 @@
                     required
                   />
                 </ion-item>
-                <ion-item class="rounded">
-                  <ion-label position="stacked">Password</ion-label>
-                  <ion-input
-                    @keyup.enter="clickSignupButton"
-                    v-model="passwordText"
-                    name="password"
-                    type="password"
-                    required
-                  />
-                </ion-item>
-                <ion-item class="rounded">
+                <div class="margin-less">
+                  <ion-item class="rounded">
+                    <ion-label position="stacked">Password</ion-label>
+                    <ion-input
+                      @keyup.enter="clickSignupButton"
+                      v-model="passwordText"
+                      name="password"
+                      type="password"
+                      required
+                    />
+                  </ion-item>
+                  <ion-row>
+                    <ion-col class="ion-align-self-start">
+                      <password-meter @score="onPasswordScore" :password="passwordText" />
+                    </ion-col>
+                    <ion-col size="auto" class="password-strength">
+                      {{ passwordStrength }}
+                    </ion-col>
+                  </ion-row>
+                </div>
+                <ion-item class="rounded margin">
                   <ion-label position="stacked">Retype password</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -96,7 +106,8 @@ import {
   IonPage,
   IonRow,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref, onBeforeUpdate } from 'vue';
+import { defineComponent, inject, ref, Ref, onBeforeUpdate, watch } from 'vue';
+import PasswordMeter from 'vue-simple-password-meter';
 import Header from '../components/Header.vue';
 import router from '@/router';
 
@@ -114,6 +125,7 @@ export default defineComponent({
     IonPage,
     IonRow,
     Header,
+    PasswordMeter,
   },
   setup() {
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
@@ -123,6 +135,7 @@ export default defineComponent({
     const emailText = ref('');
     const usernameText = ref('');
     const passwordText = ref('');
+    const passwordStrength = ref('');
     const confirmPasswordText = ref('');
     const showErrorMsg = ref(false);
     const errorMsg = ref('');
@@ -139,7 +152,7 @@ export default defineComponent({
     };
 
     const isValidPassword = (password: string): boolean => {
-      return password.length >= 6;
+      return password.length >= 8;
     };
 
     const isValidUsername = (username: string): boolean => {
@@ -160,7 +173,7 @@ export default defineComponent({
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
-        errorMsg.value = 'Password has to be at least 6 characters.';
+        errorMsg.value = 'Password has to be at least 8 characters.';
         showErrorMsg.value = true;
         return false;
       }
@@ -175,6 +188,21 @@ export default defineComponent({
       }
       return true;
     };
+
+    const onPasswordScore = (payload: { score: number; strength: string }): void => {
+      if (passwordText.value.length === 0) {
+        passwordStrength.value = '';
+      } else {
+        passwordStrength.value =
+          payload.strength.charAt(0).toUpperCase() + payload.strength.slice(1);
+      }
+    };
+
+    watch(passwordText, () => {
+      if (passwordText.value.length == 0) {
+        passwordStrength.value = '';
+      }
+    });
 
     const clickCloseErrorMsg = (): void => {
       showErrorMsg.value = false;
@@ -195,6 +223,8 @@ export default defineComponent({
       confirmPasswordText,
       showErrorMsg,
       errorMsg,
+      onPasswordScore,
+      passwordStrength,
     };
   },
 });
@@ -216,9 +246,20 @@ export default defineComponent({
   animation: popIn 0.2s both ease-in;
 }
 
+.password-strength {
+  font-size: 0.9em;
+}
+
 .rounded {
-  margin-bottom: 1.2em;
   border-radius: 5px;
+}
+
+.margin {
+  margin-bottom: 1.4em;
+}
+
+.margin-less {
+  margin-bottom: 0.2em;
 }
 
 .signup-button {

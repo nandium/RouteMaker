@@ -120,7 +120,7 @@ export default defineComponent({
     };
 
     const isValidPassword = (password: string): boolean => {
-      return password.length >= 6;
+      return password.length >= 8;
     };
 
     const onSubmit = (event: Event): boolean => {
@@ -132,7 +132,7 @@ export default defineComponent({
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
-        errorMsg.value = 'Password has to be at least 6 characters.';
+        errorMsg.value = 'Password has to be at least 8 characters.';
         showErrorMsg.value = true;
         return false;
       }

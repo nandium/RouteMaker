@@ -30,7 +30,8 @@
     "lodash": "^4.17.21",
     "vue": "^3.0.0-0",
     "vue-loading-overlay": "^4.0.2",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vue-simple-password-meter": "^1.0.3"
   },
   "devDependencies": {
     "@capacitor/cli": "^3.0.0",
