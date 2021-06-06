@@ -71,6 +71,14 @@ resources:
         Value: !Ref CognitoUserPoolClient
         Tags:
           Environment: ${self:custom.stage}
+    SSMParameterCognitoUserPoolId:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/cognito/poolId
+        Type: String
+        Value: !Ref CognitoUserPool
+        Tags:
+          Environment: ${self:custom.stage}
 
 custom:
   stage: ${opt:stage, self:provider.stage}

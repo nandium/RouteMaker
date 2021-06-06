@@ -18,6 +18,7 @@ provider:
     ROUTE_TABLE_NAME: ${self:custom.routeTableName}
     GYM_TABLE_NAME: ${self:custom.gymTableName}
     TELEGRAM_SNS_ARN: ${self:custom.telegramSNSArn}
+    COGNITO_USERPOOL_ID: ${self:custom.cognitoUserpoolId}
   logRetentionInDays: 30
   lambdaHashingVersion: 20201221
   iam:
@@ -47,6 +48,10 @@ provider:
             - sns:publish
           Resource:
             - '${self:custom.telegramSNSArn}'
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminGetUser
+          Resource: ${self:custom.cognitoArn}
 
 plugins:
   - serverless-plugin-typescript
@@ -187,6 +192,7 @@ functions:
 custom:
   stage: ${opt:stage, self:provider.stage}
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
+  cognitoUserpoolId: ${ssm:/${self:custom.stage}/cognito/poolId}
   s3BucketArn: ${ssm:/${self:custom.stage}/s3/assets/arn}
   s3BucketName: ${ssm:/${self:custom.stage}/s3/assets/name}
   routeTableArn: ${ssm:/${self:custom.stage}/dynamodb/route/arn}
