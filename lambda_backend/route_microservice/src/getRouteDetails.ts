@@ -1,5 +1,6 @@
 import { Handler } from 'aws-lambda';
 import {
+  adminGetCognitoUserDetails,
   getItemFromRouteTable,
   getMiddlewareAddedHandler,
   GetRouteDetailsEvent,
@@ -10,8 +11,8 @@ import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
 const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
-  if (!process.env['ROUTE_TABLE_NAME']) {
-    throw createError(500, 'Route table name is not set');
+  if (!process.env['ROUTE_TABLE_NAME'] || !process.env['COGNITO_USERPOOL_ID']) {
+    throw createError(500, 'Route table name or Cognito userpool is not set');
   }
   const {
     headers: { Authorization },
@@ -19,6 +20,8 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   } = event;
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
+
+  const { fullName: routeOwnerDisplayName } = await adminGetCognitoUserDetails(routeOwnerUsername);
 
   let hasVoted = false;
   let hasReported = false;
@@ -63,6 +66,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
       Item: {
         username: routeOwnerUsername,
         createdAt,
+        displayName: routeOwnerDisplayName,
         expiredTime: new Date(ttl).toISOString(),
         routeName,
         gymLocation,
