@@ -5,7 +5,7 @@
       <ion-header collapse="condense"></ion-header>
       <div id="container">
         <strong>Route Maker</strong>
-        <p>Find your climbing gym</p>
+        <p>Find climbing routes by gym</p>
         <br />
         <gym-selector v-if="canvasWidth > 0" class="gymSelector" :width="canvasWidth" />
       </div>

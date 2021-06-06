@@ -38,10 +38,14 @@
         class="ion-align-items-center ion-justify-content-center"
       >
         <ion-col class="ion-align-self-center" size-xs="6">
-          <ion-button expand="full" fill="clear" color="dark">Search Routes</ion-button>
+          <ion-button expand="full" fill="clear" color="dark" @click="onClickSearchRoutes">
+            Search Routes
+          </ion-button>
         </ion-col>
         <ion-col class="ion-align-self-center" size-xs="6">
-          <ion-button expand="full" fill="clear" color="dark">Can't Find Gym?</ion-button>
+          <ion-button expand="full" fill="clear" color="dark" @click="onClickCantFindGym">
+            Can't Find Gym?
+          </ion-button>
         </ion-col>
       </ion-row>
       <ion-item class="rounded error-message" color="danger" v-if="showErrorMsg">
@@ -123,6 +127,21 @@ export default defineComponent({
       showErrorMsg.value = false;
     };
 
+    const onClickSearchRoutes = () => {
+      showErrorMsg.value = false;
+      if (!userHasSelectedGym.value) {
+        errorMsg.value = 'Please select a gym';
+        showErrorMsg.value = true;
+      } else {
+        // TODO: Display routes
+      }
+    };
+
+    const onClickCantFindGym = () => {
+      // TODO: Page to request gym
+      return;
+    };
+
     return {
       embedMapSrcStart,
       embedMapPointerLocation,
@@ -138,6 +157,8 @@ export default defineComponent({
       showErrorMsg,
       clickCloseErrorMsg,
       closeCircleOutline,
+      onClickSearchRoutes,
+      onClickCantFindGym,
     };
   },
 });
