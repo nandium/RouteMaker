@@ -20,8 +20,12 @@ export interface LoginEvent {
   };
 }
 
-export interface LogoutEvent {
+interface AuthHeader {
   headers: {
     Authorization: string;
   };
 }
+
+export type LogoutEvent = AuthHeader;
+
+export type DeleteEvent = AuthHeader;

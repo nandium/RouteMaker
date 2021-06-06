@@ -20,7 +20,10 @@ const logout: Handler = async (event: LogoutEvent) => {
   try {
     await cognitoIdentity.globalSignOut(globalSignOutRequest).promise();
   } catch (error) {
-    throw createError(400, 'Error occurred during sign out in Cognito: ' + error.stack);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: error.code }),
+    };
   }
   return {
     statusCode: 200,
