@@ -40,23 +40,7 @@ Application: https://routemaker.rocks
 
 <img src="https://raw.githubusercontent.com/yarkhinephyo/yolo_bouldering/main/docs/Screenshot_6.jpg" width="200" />
 
-## Local Setup
-
-```bash
-# Ensure npm is installed
-# Ensure AWS credentials are set up for Serverless backend
-# Ensure Docker engine is running for preparing pip packages
-cd ./lambda_backend
-npm ci
-cd ./predict_microservice
-sls deploy
-
-cd ./ionic_user_interface
-echo "VUE_APP_PREDICT_ENDPOINT_URL={serverless_url_here}" > .env
-npm ci
-npm run serve
-```
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Refer to `CONTRIBUTING.md` for PR and local setup instructions.
