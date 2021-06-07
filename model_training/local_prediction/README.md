@@ -6,7 +6,7 @@ Tested on
 
 - Windows 10 (not WSL, since `cv2.imshow` is being used to visualise predictions)
 - Python 3.7
-- LabelImg
+- [LabelImg](https://github.com/tzutalin/labelImg/releases)
 
 ## Getting Started
 

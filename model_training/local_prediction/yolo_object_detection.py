@@ -27,10 +27,6 @@ args = parser.parse_args()
 
 # Load Yolo
 net = cv2.dnn.readNet(
-    # join(os.pardir, os.pardir, "lambda_backend", "predict_microservice", "weights", "yolov4-tiny-obj_2000.weights"), 
-    # join(os.pardir, os.pardir, "lambda_backend", "predict_microservice", "weights", "yolov4-tiny-obj.cfg")    
-    # join(os.curdir, "yolov4-tiny-obj_4000.weights"), 
-    # join(os.curdir, "yolov4-tiny-obj.cfg")
     args.weights,
     args.config
 )
@@ -68,16 +64,13 @@ for img_path in images_path:
     boxes = []
 
     for out in outs:
-        # print(out)
         for detection in out:
-            # print(detection)
             
             scores = detection[5:]
             class_id = np.argmax(scores)
             confidence = scores[class_id]
             if confidence > 0.3:
                 # Object detected
-                # print(class_id)
                 center_x = int(detection[0] * width)
                 center_y = int(detection[1] * height)
                 w = int(detection[2] * width)
@@ -92,7 +85,6 @@ for img_path in images_path:
                 class_ids.append(class_id)
 
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-    # print(indexes)
     font = cv2.FONT_HERSHEY_PLAIN
     f = open(labelfile + ".txt", "w+")
     for i in indexes:
