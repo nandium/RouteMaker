@@ -9,14 +9,7 @@
               <h1>Login</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ion-item class="rounded error-message" color="danger" v-if="showErrorMsg">
-                <ion-label class="ion-text-wrap">
-                  {{ errorMsg }}
-                </ion-label>
-                <ion-button fill="clear" color="dark" shape="round" @click="clickCloseErrorMsg">
-                  <ion-icon :icon="closeCircleOutline"></ion-icon>
-                </ion-button>
-              </ion-item>
+              <ErrorMessage ref="errorMsg" />
               <form @submit="onSubmit">
                 <ion-item class="rounded">
                   <ion-label position="stacked">Email</ion-label>
@@ -72,7 +65,6 @@ import {
   IonCol,
   IonContent,
   IonGrid,
-  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -80,23 +72,25 @@ import {
   IonRow,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref, onBeforeUpdate } from 'vue';
-import Header from '../components/Header.vue';
+import axios from 'axios';
+import Header from '@/components/Header.vue';
+import ErrorMessage from '@/components/ErrorMessage.vue';
 import router from '@/router';
 
 export default defineComponent({
   name: 'About',
   components: {
+    ErrorMessage,
+    Header,
     IonButton,
     IonCol,
     IonContent,
     IonGrid,
-    IonIcon,
     IonInput,
     IonItem,
     IonLabel,
     IonPage,
     IonRow,
-    Header,
   },
   setup() {
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
@@ -105,8 +99,7 @@ export default defineComponent({
     const isLoggedIn: Ref<boolean> | undefined = inject('isLoggedIn');
     const emailText = ref('');
     const passwordText = ref('');
-    const showErrorMsg = ref(false);
-    const errorMsg = ref('');
+    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
 
     onBeforeUpdate(() => {
       // Redirect to home if already logged in
@@ -125,26 +118,34 @@ export default defineComponent({
 
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
-      // Check credentials
+      errorMsg.value?.closeErrorMsg();
+
+      // Invalid credentials
       if (!isValidEmail(emailText.value)) {
-        errorMsg.value = 'Invalid email.';
-        showErrorMsg.value = true;
+        errorMsg.value?.showErrorMsg('Invalid email');
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
-        errorMsg.value = 'Password has to be at least 8 characters.';
-        showErrorMsg.value = true;
+        errorMsg.value?.showErrorMsg('Password has to be at least 8 characters');
         return false;
       }
-      // Valid credentials
-      if (isLoggedIn) {
-        isLoggedIn.value = true;
-      }
-      return true;
-    };
 
-    const clickCloseErrorMsg = (): void => {
-      showErrorMsg.value = false;
+      // Valid credentials
+      axios
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
+          email: emailText.value,
+          password: passwordText.value,
+        })
+        .then((response) => {
+          console.log(response);
+          if (isLoggedIn) {
+            isLoggedIn.value = true;
+          }
+        })
+        .catch(() => {
+          errorMsg.value?.showErrorMsg('Wrong email or password');
+        });
+      return true;
     };
 
     const clickLoginButton = (): void => {
@@ -154,10 +155,8 @@ export default defineComponent({
     return {
       onSubmit,
       clickLoginButton,
-      clickCloseErrorMsg,
       emailText,
       passwordText,
-      showErrorMsg,
       errorMsg,
       closeCircleOutline,
     };
@@ -166,21 +165,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-@keyframes popIn {
-  0% {
-    opacity: 0;
-    transform: scale(1, 0.1) translateY(-8px);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.error-message {
-  animation: popIn 0.2s both ease-in;
-}
-
 .rounded {
   margin-bottom: 1.2em;
   border-radius: 5px;

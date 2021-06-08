@@ -9,14 +9,7 @@
               <h1>Sign up</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ion-item class="rounded error-message margin" color="danger" v-if="showErrorMsg">
-                <ion-label class="ion-text-wrap">
-                  {{ errorMsg }}
-                </ion-label>
-                <ion-button fill="clear" color="dark" shape="round" @click="clickCloseErrorMsg">
-                  <ion-icon :icon="closeCircleOutline"></ion-icon>
-                </ion-button>
-              </ion-item>
+              <ErrorMessage ref="errorMsg" />
               <form @submit="onSubmit">
                 <ion-item class="rounded margin">
                   <ion-label position="stacked">Email</ion-label>
@@ -99,7 +92,6 @@ import {
   IonCol,
   IonContent,
   IonGrid,
-  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -107,24 +99,26 @@ import {
   IonRow,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref, onBeforeUpdate, watch } from 'vue';
+import axios from 'axios';
 import PasswordMeter from 'vue-simple-password-meter';
-import Header from '../components/Header.vue';
+import Header from '@/components/Header.vue';
+import ErrorMessage from '@/components/ErrorMessage.vue';
 import router from '@/router';
 
 export default defineComponent({
   name: 'About',
   components: {
+    ErrorMessage,
+    Header,
     IonButton,
     IonCol,
     IonContent,
     IonGrid,
-    IonIcon,
     IonInput,
     IonItem,
     IonLabel,
     IonPage,
     IonRow,
-    Header,
     PasswordMeter,
   },
   setup() {
@@ -138,8 +132,7 @@ export default defineComponent({
     const passwordText = ref('');
     const passwordStrength = ref('');
     const confirmPasswordText = ref('');
-    const showErrorMsg = ref(false);
-    const errorMsg = ref('');
+    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
 
     onBeforeUpdate(() => {
       // Redirect to home if already logged in
@@ -162,32 +155,47 @@ export default defineComponent({
 
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
+
+      errorMsg.value?.closeErrorMsg();
+
       // Invalid credentials
       if (!isValidEmail(emailText.value)) {
-        errorMsg.value = 'Invalid email.';
-        showErrorMsg.value = true;
+        errorMsg.value?.showErrorMsg('Invalid email');
         return false;
       }
       if (!isValidUsername(usernameText.value)) {
-        errorMsg.value =
-          'Username has to be at least 5 characters and contain only letters, numbers, and spaces.';
-        showErrorMsg.value = true;
+        errorMsg.value?.showErrorMsg(
+          'Username has to be at least 5 characters and contain only letters, numbers, and spaces',
+        );
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
-        errorMsg.value = 'Password has to be at least 8 characters.';
-        showErrorMsg.value = true;
+        errorMsg.value?.showErrorMsg('Password has to be at least 8 characters');
         return false;
       }
       if (passwordText.value !== confirmPasswordText.value) {
-        errorMsg.value = 'Passwords do not match.';
-        showErrorMsg.value = true;
+        errorMsg.value?.showErrorMsg('Passwords do not match');
         return false;
       }
+
       // Valid credentials
-      if (isLoggedIn) {
-        isLoggedIn.value = true;
-      }
+      axios
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
+          name: usernameText.value,
+          email: emailText.value,
+          password: passwordText.value,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          if (!error.status) {
+            errorMsg.value?.showErrorMsg('Unknown error occured');
+          } else {
+            errorMsg.value?.showErrorMsg('Error: ' + error.response.data.Message);
+          }
+        });
+
       return true;
     };
 
@@ -206,10 +214,6 @@ export default defineComponent({
       }
     });
 
-    const clickCloseErrorMsg = (): void => {
-      showErrorMsg.value = false;
-    };
-
     const clickSignupButton = (): void => {
       document.getElementById('signupButton')?.click();
     };
@@ -217,14 +221,11 @@ export default defineComponent({
     return {
       onSubmit,
       closeCircleOutline,
-      clickCloseErrorMsg,
       clickSignupButton,
       emailText,
       usernameText,
       passwordText,
       confirmPasswordText,
-      showErrorMsg,
-      errorMsg,
       onPasswordScore,
       passwordStrength,
     };
