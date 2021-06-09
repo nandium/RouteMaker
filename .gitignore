@@ -131,3 +131,4 @@ dmypy.json
 node_modules
 .serverless
 .env.*
+**/test_images/*.txt
