@@ -47,7 +47,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BoundingBoxes"
+                  "$ref" : "#/components/schemas/BoundingBox"
                 }
               }
             }
@@ -66,8 +66,7 @@
                 "$ref" : "#/components/schemas/Registration"
               }
             }
-          },
-          "description" : "Confirmation name and code"
+          }
         },
         "responses" : {
           "200" : {
@@ -236,7 +235,7 @@
         } ],
         "requestBody" : {
           "content" : {
-            "multipart/form-data" : {
+            "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/RouteIdentifier"
               }
@@ -266,7 +265,7 @@
         } ],
         "requestBody" : {
           "content" : {
-            "multipart/form-data" : {
+            "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/RouteIdentifier"
               }
@@ -307,7 +306,7 @@
         } ],
         "requestBody" : {
           "content" : {
-            "multipart/form-data" : {
+            "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/RouteGradeIdentifier"
               }
@@ -320,17 +319,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "Message", "Item" ],
-                  "properties" : {
-                    "Message" : {
-                      "type" : "string",
-                      "example" : "Grade route success"
-                    },
-                    "Item" : {
-                      "$ref" : "#/components/schemas/GradeItem"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/RouteGraded"
                 }
               }
             }
@@ -344,8 +333,7 @@
     "/route/details/comment" : {
       "post" : {
         "tags" : [ "route" ],
-        "summary" : "Assign grade to route",
-        "description" : "Handles differently for owner and public in backend",
+        "summary" : "Add a new comment",
         "security" : [ {
           "bearerAuth" : [ ]
         } ],
@@ -364,17 +352,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "Message", "Item" ],
-                  "properties" : {
-                    "Message" : {
-                      "type" : "string",
-                      "example" : "Comment route success"
-                    },
-                    "Item" : {
-                      "$ref" : "#/components/schemas/Comment"
-                    }
-                  }
+                  "$ref" : "#/components/schemas/CommentAdded"
                 }
               }
             }
@@ -424,7 +402,7 @@
               "application/json" : {
                 "schema" : {
                   "type" : "object",
-                  "required" : [ "Message", "Item" ],
+                  "required" : [ "Message" ],
                   "properties" : {
                     "Message" : {
                       "type" : "string",
@@ -501,20 +479,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "Message", "Item" ],
-                  "properties" : {
-                    "Message" : {
-                      "type" : "string",
-                      "example" : "Query routes by gym success"
-                    },
-                    "Item" : {
-                      "type" : "array",
-                      "items" : {
-                        "$ref" : "#/components/schemas/GymRoute"
-                      }
-                    }
-                  }
+                  "$ref" : "#/components/schemas/GymRoutesQueried"
                 }
               }
             }
@@ -541,20 +506,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object",
-                  "required" : [ "Message", "Item" ],
-                  "properties" : {
-                    "Message" : {
-                      "type" : "string",
-                      "example" : "Query routes by gym success"
-                    },
-                    "Item" : {
-                      "type" : "array",
-                      "items" : {
-                        "$ref" : "#/components/schemas/Gym"
-                      }
-                    }
-                  }
+                  "$ref" : "#/components/schemas/GymsScanned"
                 }
               }
             }
@@ -620,7 +572,7 @@
           }
         }
       },
-      "Boxes" : {
+      "Box" : {
         "type" : "object",
         "required" : [ "x", "y", "w", "h", "confidence", "class" ],
         "properties" : {
@@ -655,14 +607,14 @@
           }
         }
       },
-      "BoundingBoxes" : {
+      "BoundingBox" : {
         "type" : "object",
         "required" : [ "boxes", "height", "width" ],
         "properties" : {
           "boxes" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/Boxes"
+              "$ref" : "#/components/schemas/Box"
             }
           },
           "width" : {
@@ -1019,6 +971,19 @@
           }
         }
       },
+      "RouteGraded" : {
+        "type" : "object",
+        "required" : [ "Message", "Item" ],
+        "properties" : {
+          "Message" : {
+            "type" : "string",
+            "example" : "Grade route success"
+          },
+          "Item" : {
+            "$ref" : "#/components/schemas/GradeItem"
+          }
+        }
+      },
       "RouteCommentIdentifier" : {
         "type" : "object",
         "required" : [ "username", "createdAt", "comment" ],
@@ -1033,6 +998,19 @@
           "comment" : {
             "type" : "string",
             "maxLength" : 150
+          }
+        }
+      },
+      "CommentAdded" : {
+        "type" : "object",
+        "required" : [ "Message", "Item" ],
+        "properties" : {
+          "Message" : {
+            "type" : "string",
+            "example" : "Comment route success"
+          },
+          "Item" : {
+            "$ref" : "#/components/schemas/Comment"
           }
         }
       },
@@ -1069,6 +1047,22 @@
           }
         }
       },
+      "GymRoutesQueried" : {
+        "type" : "object",
+        "required" : [ "Message", "Items" ],
+        "properties" : {
+          "Message" : {
+            "type" : "string",
+            "example" : "Query routes by gym success"
+          },
+          "Items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GymRoute"
+            }
+          }
+        }
+      },
       "Gym" : {
         "type" : "object",
         "required" : [ "countryCode", "gymLocation", "gymName" ],
@@ -1082,6 +1076,22 @@
           },
           "gymName" : {
             "type" : "string"
+          }
+        }
+      },
+      "GymsScanned" : {
+        "type" : "object",
+        "required" : [ "Message", "Items" ],
+        "properties" : {
+          "Message" : {
+            "type" : "string",
+            "example" : "Scan all gyms success"
+          },
+          "Items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Gym"
+            }
           }
         }
       }
