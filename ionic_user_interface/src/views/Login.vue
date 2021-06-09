@@ -99,6 +99,7 @@ export default defineComponent({
     const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
+    const setIdToken: (idToken: string) => void = inject('setIdToken', () => undefined);
     const emailText = ref('');
     const passwordText = ref('');
     const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
@@ -134,6 +135,7 @@ export default defineComponent({
         })
         .then((response) => {
           // const { AccessToken, ExpiresIn, IdToken, Message, RefreshToken } = response.data;
+          setIdToken(response.data.IdToken);
           setAccessToken(response.data.AccessToken);
           setLoggedIn(true);
           router.push('/home');

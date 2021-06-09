@@ -32,9 +32,8 @@ export default defineComponent({
     IonPopover,
   },
   setup() {
+    const forceLogout: () => void = inject('forceLogout', () => undefined);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
-    const setLoggedIn: (loggedIn: boolean) => void = inject('setLoggedIn', () => undefined);
-    const setAuthToken: (token: string) => void = inject('setAuthToken', () => undefined);
     const isLoggedIn = getLoggedIn();
 
     const popoverEvent = ref();
@@ -47,9 +46,7 @@ export default defineComponent({
 
     const clickLogoutButton = () => {
       setPopoverOpen(false);
-      setLoggedIn(false);
-      setAuthToken('');
-      router.push('/home');
+      forceLogout();
     };
 
     const clickProfileButton = () => {

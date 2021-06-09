@@ -11,13 +11,11 @@
             <div class="ion-padding ion-text-center">
               <ion-item class="rounded">
                 <ion-label position="stacked">Email</ion-label>
-                <ion-input
-                  v-model="emailText"
-                  inputmode="email"
-                  name="email"
-                  type="text"
-                  disabled
-                />
+                <ion-input v-model="emailText" type="text" disabled />
+              </ion-item>
+              <ion-item class="rounded">
+                <ion-label position="stacked">Username</ion-label>
+                <ion-input v-model="usernameText" type="text" disabled />
               </ion-item>
               <ion-button
                 class="delete-account-button"
@@ -48,8 +46,9 @@ import {
   IonPage,
   IonRow,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref } from 'vue';
+import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import Header from '@/components/header/Header.vue';
+import jwt_decode from 'jwt-decode';
 
 export default defineComponent({
   name: 'Profile',
@@ -66,8 +65,29 @@ export default defineComponent({
     IonRow,
   },
   setup() {
+    const forceLogout: () => void = inject('forceLogout', () => undefined);
     const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
+    const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
     const emailText = getUserEmail();
+    const idToken = getIdToken();
+    const decodeIdToken = (): string => {
+      try {
+        const idObject: {
+          name: string;
+          email: string;
+        } = jwt_decode(idToken.value);
+        return idObject.name;
+      } catch (error) {
+        console.error(error);
+        forceLogout();
+      }
+      return '';
+    };
+    const usernameText = ref(decodeIdToken());
+
+    watch(idToken, () => {
+      usernameText.value = decodeIdToken();
+    });
 
     const clickDeleteAccountButton = (): void => {
       console.log('delete');
@@ -75,6 +95,7 @@ export default defineComponent({
 
     return {
       emailText,
+      usernameText,
       clickDeleteAccountButton,
     };
   },

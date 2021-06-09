@@ -1,11 +1,26 @@
 import { ref, Ref } from 'vue';
+import router from '@/router';
 
 const isLoggedIn = ref(false);
 const userEmail = ref('');
-const isConfirmationNeeded = ref(false);
 const accessToken = ref('');
+const idToken = ref('');
+const isConfirmationNeeded = ref(false);
 
 const providers = {
+  forceLogout: (): void => {
+    isLoggedIn.value = false;
+    userEmail.value = '';
+    accessToken.value = '';
+    idToken.value = '';
+    isConfirmationNeeded.value = false;
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('isConfirmationNeeded');
+    router.push('/home');
+  },
   getLoggedIn: (): Ref<boolean> => {
     isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'yes';
     return isLoggedIn;
@@ -29,6 +44,14 @@ const providers = {
   setAccessToken: (token: string): void => {
     localStorage.setItem('accessToken', token);
     accessToken.value = token;
+  },
+  getIdToken: (): Ref<string> => {
+    idToken.value = localStorage.getItem('idToken') ?? '';
+    return idToken;
+  },
+  setIdToken: (token: string): void => {
+    localStorage.setItem('idToken', token);
+    idToken.value = token;
   },
   getConformationNeeded: (): Ref<boolean> => {
     isConfirmationNeeded.value = localStorage.getItem('isConfirmationNeeded') === 'yes';

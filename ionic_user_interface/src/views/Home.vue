@@ -25,7 +25,7 @@ import { IonButton, IonContent, IonHeader, IonIcon, IonPage } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted } from 'vue';
 import Canvas from '@/components/wall-image-viewer/Canvas.vue';
 import Header from '@/components/header/Header.vue';
-import { usePhotoGallery } from '../composables/usePhotoGallery';
+import { usePhotoGallery } from '@/composables/usePhotoGallery';
 import { debounce } from 'lodash';
 
 export default defineComponent({
