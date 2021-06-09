@@ -1,0 +1,875 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/yolo-bouldering/routemaker/1.1.2
+info:
+  description: This is the RouteMaker API
+  version: "1.1.2"
+  title: RouteMaker API
+  contact:
+    email: yarkhinephyo@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: predict
+    description: Serves Yolov4-tiny model to predict climbing holds
+  - name: user
+    description: Provides authentication and authorization via AWS Cognito
+  - name: route
+    description: Provides functions related to gyms and climbing routes
+paths:
+  /predict:
+    post:
+      tags:
+        - predict
+      summary: gets bounding boxes
+      description: |
+        Gets bounding boxes predicted by the YOLOv4 model
+      requestBody:
+        content:
+          multipart/form-data:
+            schema: 
+              $ref: '#/components/schemas/Image'
+      responses:
+        '200':
+          description: bounding boxes for image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoundingBoxes'
+  /user/signup:
+    post:
+      tags:
+        - user
+      summary: signs up and sends verification email
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+        description: Confirmation name and code
+      responses:
+        '200':
+          description: sign up success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registered'
+  /user/confirm:
+    post:
+      tags:
+        - user
+      summary: confirms sign up with verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Confirmation'
+        description: Confirmation name and code
+      responses:
+        '200':
+          description: confirmation success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: Confirmation success
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: logs in and returns access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        description: Confirmation name and code
+      responses:
+        '200':
+          description: sign in success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+  /user/logout:
+    post:
+      tags:
+        - user
+      summary: logs out and invalidates access token
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: sign out success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: Sign out success
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /user/delete:
+    delete:
+      tags:
+        - user
+      summary: deletes cognito user
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: delete success
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /route/new:
+    post:
+      tags:
+        - route
+      summary: Create new route by saving to S3 bucket
+      description: Only allow if the gym is valid
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema: 
+              $ref: '#/components/schemas/NewRoute'
+        
+      responses:
+        '200':
+          description: create route success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteCreated'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /route/details:
+    post:
+      tags:
+        - route
+      summary: Get photo, votes, grades, comments of one route
+      description: |- 
+        Returns slightly different data depending on if authorization header is provided.
+        Including the Bearer Token will check if the user has voted, graded, reported the route. The default values are false.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema: 
+              $ref: '#/components/schemas/RouteIdentifier'
+        
+      responses:
+        '200':
+          description: get route details success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteDetails'
+  /route/details/vote:
+    post:
+      tags:
+        - route
+      summary: Upvote route
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema: 
+              $ref: '#/components/schemas/RouteIdentifier'
+        
+      responses:
+        '200':
+          description: upvote route success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                properties:
+                  Message:
+                    type: string
+                    example: Upvote route success
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /route/details/grade:
+    post:
+      tags:
+        - route
+      summary: Assign grade to route
+      description: Handles differently for owner and public in backend
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema: 
+              $ref: '#/components/schemas/RouteGradeIdentifier'
+        
+      responses:
+        '200':
+          description: grade route success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                  - Item
+                properties:
+                  Message:
+                    type: string
+                    example: Grade route success
+                  Item:
+                    $ref: '#/components/schemas/GradeItem'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /route/details/comment:
+    post:
+      tags:
+        - route
+      summary: Assign grade to route
+      description: Handles differently for owner and public in backend
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/RouteCommentIdentifier'
+        
+      responses:
+        '200':
+          description: comment success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                  - Item
+                properties:
+                  Message:
+                    type: string
+                    example: Comment route success
+                  Item:
+                    $ref: '#/components/schemas/Comment'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags:
+        - route
+      summary: Delete the comment if you are poster or route owner
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: username
+          description: username of routeowner
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: createdAt
+          description: creation datetime of route
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: timestamp
+          description: timestamp of route in unix time
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: comment success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                  - Item
+                properties:
+                  Message:
+                    type: string
+                    example: Delete comment success
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /route/details/report:
+    post:
+      tags:
+        - route
+      summary: Report route
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/RouteIdentifier'
+        
+      responses:
+        '200':
+          description: report route success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                properties:
+                  Message:
+                    type: string
+                    example: Report route success
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /route/all:
+    get:
+      tags:
+        - route
+      summary: Get routes by gyms
+      description: |-
+        Note: Frontend calls another API to determine proximity
+      parameters:
+        - in: query
+          name: gymLocation
+          description: search string for gym location
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: query routes by gym success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                  - Item
+                properties:
+                  Message:
+                    type: string
+                    example: Query routes by gym success
+                  Item:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GymRoute'
+  /route/gym/all:
+    get:
+      tags:
+        - route
+      summary: Get gyms
+      parameters:
+        - in: query
+          name: countryCode
+          description: pass an optional search string for gym country code
+          required: false
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: scan all gyms success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                  - Item
+                properties:
+                  Message:
+                    type: string
+                    example: Query routes by gym success
+                  Item:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Gym'
+  /route:
+    delete:
+      tags:
+        - route
+      summary: Delete a particular route if you are route owner
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: createdAt
+          description: creation datetime of route
+          required: true
+          schema:
+            type: string
+            format: date-time
+        
+      responses:
+        '200':
+          description: delete route success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - Message
+                properties:
+                  Message:
+                    type: string
+                    example: Delete route success
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+components:
+  schemas:
+    Image:
+      type: object
+      required:
+        - width
+        - image
+      properties:
+        width:
+          type: number
+          format: float
+        image:
+          type: string
+          format: binary
+    Boxes:
+      type: object
+      required:
+        - x
+        - y
+        - w
+        - h
+        - confidence
+        - class
+      properties:
+        x:
+          type: number
+          format: float
+          example: 5
+        y:
+          type: number
+          format: float
+          example: 6
+        w:
+          type: number
+          format: float
+          example: 10
+        h:
+          type: number
+          format: float
+          example: 11
+        confidence:
+          type: number
+          format: float
+          example: 11
+        class:
+          type: string
+          example: hold
+    BoundingBoxes:
+      type: object
+      required:
+        - boxes
+        - height
+        - width
+      properties:
+        boxes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Boxes'
+        width:
+          type: number
+          format: float
+          example: 10
+        height:
+          type: number
+          format: float
+          example: 11
+    Registration:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          example: "y**@g**.com"
+        password:
+          type: string
+          format: password
+    Registered:
+      type: object
+      required:
+        - Message
+        - Destination
+        - DeliveryMedium
+        - AttributeName
+      properties:
+        Message:
+          type: string
+          example: "Sign up success"
+        Destination:
+          type: string
+          example: "y***@g***.com"
+        DeliveryMedium:
+          type: string
+          example: "EMAIL"
+        AttributeName:
+          type: string
+          example: "email"
+    Confirmation:
+      type: object
+      required:
+        - name
+        - code
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          format: password
+    AccessToken:
+      type: object
+      required:
+        - Message
+        - AccessToken
+        - ExpiresIn
+        - TokenType
+        - RefreshToken
+        - IdToken
+      properties:
+        Message:
+          type: string
+          example: "Sign in success"
+        AccessToken:
+          type: string
+        ExpiresIn:
+          type: integer
+          format: int32
+        TokenType:
+          type: string
+          example: "Bearer"
+        RefreshToken:
+          type: string
+        IdToken:
+          type: string
+    NewRoute:
+      type: object
+      required:
+        - countryCode
+        - expiredTime
+        - routeName
+        - gymLocation
+        - ownerGrade
+        - routePhoto
+      properties:
+        countryCode:
+          type: string
+        expiredTime:
+          type: string
+          format: date-time
+        routeName:
+          type: string
+        gymLocation:
+          type: string
+        ownerGrade:
+          type: number
+          format: float
+        routePhoto:
+          type: string
+          format: binary
+    GradeSubmission:
+      type: object
+      required:
+        - email
+        - grade
+      properties:
+        email:
+          type: string
+        grade:
+          type: integer
+          format: int32
+    Comment:
+      type: object
+      required:
+        - username
+        - comment
+        - timestamp
+      properties:
+        username:
+          type: string
+        comment:
+          type: string
+        timestamp:
+          type: integer
+          format: int32
+    CreateRouteItem:
+      type: object
+      required:
+        - username
+        - createdAt
+        - expiredTime
+        - routeName
+        - gymLocation
+        - routeURL
+        - ownerGrade
+        - publicGrade
+        - publicGradeSubmissions
+        - voteCount
+        - upVotes
+        - reports
+        - commentCount
+        - comments
+      properties:
+        username:
+          type: string
+        createdAt:
+          type: string
+        expiredTime:
+          type: string
+        routeName:
+          type: string
+        gymLocation:
+          type: string
+        routeURL:
+          type: string
+        ownerGrade:
+          type: integer
+          format: int32
+        publicGrade:
+          type: integer
+          format: int32
+        publicGradeSubmissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GradeSubmission'
+        voteCount:
+          type: integer
+          format: int32
+        upVotes:
+          type: array
+          items:
+            type: string
+        reports:
+          type: array
+          items:
+            type: string
+        commentCount:
+          type: integer
+          format: int32
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    RouteCreated:
+      type: object
+      required:
+        - Message
+        - Item
+      properties:
+        Message:
+          type: string
+          example: Create route success
+        Item:
+          $ref: '#/components/schemas/CreateRouteItem'
+    RouteIdentifier:
+      type: object
+      required:
+        - username
+        - createdAt
+      properties:
+        username:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    RouteItem:
+      type: object
+      required:
+        - username
+        - createdAt
+        - displayName
+        - expiredTime
+        - routeName
+        - gymLocation
+        - routeURL
+        - ownerGrade
+        - publicGrade
+        - voteCount
+        - comments
+        - hasVoted
+        - hasReported
+        - hasGraded
+        - graded
+      properties:
+        username:
+          type: string
+        createdAt:
+          type: string
+        displayName:
+          type: string
+        expiredTime:
+          type: string
+        routeName:
+          type: string
+        gymLocation:
+          type: string
+        routeURL:
+          type: string
+        ownerGrade:
+          type: integer
+          format: int32
+        publicGrade:
+          type: integer
+          format: int32
+        voteCount:
+          type: integer
+          format: int32
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        hasVoted:
+          type: boolean
+          example: false
+        hasReported: 
+          type: boolean
+          example: false
+        hasGraded:
+          type: boolean
+          example: false
+        graded:
+          type: number
+          format: float
+    RouteDetails:
+      type: object
+      required:
+        - Message
+        - Item
+      properties:
+        Message:
+          type: string
+          example: Get route details success
+        Item:
+          $ref: '#/components/schemas/RouteItem'
+    RouteGradeIdentifier:
+      type: object
+      required:
+        - username
+        - createdAt
+        - grade
+      properties:
+        username:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        grade:
+          type: number
+          format: float
+    GradeItem:
+      type: object
+      required:
+        - publicGrade
+        - ownerGrade
+      properties:
+        publicGrade:
+          type: number
+          format: float
+        ownerGrade:
+          type: number
+          format: float
+    RouteCommentIdentifier:
+      type: object
+      required:
+        - username
+        - createdAt
+        - comment
+      properties:
+        username:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        comment:
+          type: string
+          maxLength: 150
+    GymRoute:
+      type: object
+      required:
+        - username
+        - createdAt
+        - routeName
+        - gymLocation
+        - routeURL
+        - publicGrade
+        - voteCount
+        - commentCount
+      properties:
+        username:
+          type: string
+        createdAt:
+          type: string
+        routeName:
+          type: string
+        gymLocation:
+          type: string
+        routeURL:
+          type: string
+        publicGrade:
+          type: integer
+          format: int32
+        voteCount:
+          type: integer
+          format: int32
+        commentCount:
+          type: integer
+          format: int32
+    Gym:
+      type: object
+      required:
+        - countryCode
+        - gymLocation
+        - gymName
+      properties:
+        countryCode:
+          type: string
+          example: Singapore
+        gymLocation:
+          type: string
+        gymName:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
