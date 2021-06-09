@@ -1,5 +1,5 @@
 from requests_toolbelt.multipart import decoder
-from PIL import Image
+import cv2
 import numpy as np
 
 import io
@@ -23,19 +23,16 @@ def exception_handler(handler):
     return handler_with_exception
 
 
-def retrieve_numpy_image(imageBinary):
+def retrieve_numpy_image(imageBytes):
     """Given an API Gateway event, validates the input data and returns the attached image attached in a numpy format
 
     Args:
-        event (binary): imageBinary
+        event (bytes): imageBytes
 
     Returns:
         Decoded Image: Numpy array of shape (height, width, channels)
     """
-    imageStream = io.BytesIO(imageBinary)
-    imageFile = Image.open(imageStream)
-
-    return np.array(imageFile)
+    return cv2.imdecode(np.frombuffer(imageBytes, np.uint8), -1)
 
 
 def parse_multipart_data(body_dec, content_type):
