@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts">
+import { closeCircleOutline } from 'ionicons/icons';
 import { IonButton, IonIcon, IonItem, IonLabel } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 
@@ -36,6 +37,7 @@ export default defineComponent({
       errorMsg,
       showErrorMsg,
       closeErrorMsg,
+      closeCircleOutline,
     };
   },
 });

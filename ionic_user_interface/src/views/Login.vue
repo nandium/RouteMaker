@@ -59,7 +59,6 @@
 </template>
 
 <script lang="ts">
-import { closeCircleOutline } from 'ionicons/icons';
 import {
   IonButton,
   IonCol,
@@ -71,9 +70,9 @@ import {
   IonPage,
   IonRow,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref, onBeforeUpdate } from 'vue';
+import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
-import Header from '@/components/Header.vue';
+import Header from '@/components/header/Header.vue';
 import ErrorMessage from '@/components/ErrorMessage.vue';
 import router from '@/router';
 
@@ -96,17 +95,13 @@ export default defineComponent({
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const isLoggedIn: Ref<boolean> | undefined = inject('isLoggedIn');
+    const setLoggedIn: (loggedIn: boolean) => void = inject('setLoggedIn', () => undefined);
+    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
+    const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
+    const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
     const emailText = ref('');
     const passwordText = ref('');
     const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
-
-    onBeforeUpdate(() => {
-      // Redirect to home if already logged in
-      if (isLoggedIn && isLoggedIn.value === true) {
-        router.push('/home');
-      }
-    });
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -131,18 +126,21 @@ export default defineComponent({
       }
 
       // Valid credentials
+      setUserEmail(emailText.value);
       axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
-          email: emailText.value,
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/login', {
+          email: getUserEmail().value,
           password: passwordText.value,
         })
         .then((response) => {
-          console.log(response);
-          if (isLoggedIn) {
-            isLoggedIn.value = true;
-          }
+          // const { AccessToken, ExpiresIn, IdToken, Message, RefreshToken } = response.data;
+          setAccessToken(response.data.AccessToken);
+          setLoggedIn(true);
+          router.push('/home');
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log(error);
+          setUserEmail('');
           errorMsg.value?.showErrorMsg('Wrong email or password');
         });
       return true;
@@ -158,7 +156,6 @@ export default defineComponent({
       emailText,
       passwordText,
       errorMsg,
-      closeCircleOutline,
     };
   },
 });

@@ -9,7 +9,7 @@
               <h1>Sign up</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ErrorMessage ref="errorMsg" />
+              <ErrorMessage ref="errorMsg" class="margin" />
               <form @submit="onSubmit">
                 <ion-item class="rounded margin">
                   <ion-label position="stacked">Email</ion-label>
@@ -64,7 +64,7 @@
                 </ion-item>
                 <ion-button
                   id="signupButton"
-                  class="signup-button"
+                  class="form-button"
                   size="medium"
                   type="submit"
                   expand="block"
@@ -86,7 +86,6 @@
 </template>
 
 <script lang="ts">
-import { closeCircleOutline } from 'ionicons/icons';
 import {
   IonButton,
   IonCol,
@@ -98,15 +97,15 @@ import {
   IonPage,
   IonRow,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref, onBeforeUpdate, watch } from 'vue';
+import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import axios from 'axios';
 import PasswordMeter from 'vue-simple-password-meter';
-import Header from '@/components/Header.vue';
+import Header from '@/components/header/Header.vue';
 import ErrorMessage from '@/components/ErrorMessage.vue';
 import router from '@/router';
 
 export default defineComponent({
-  name: 'About',
+  name: 'Signup',
   components: {
     ErrorMessage,
     Header,
@@ -126,20 +125,18 @@ export default defineComponent({
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const usernamePattern = /^[a-zA-Z0-9 ]*$/;
-    const isLoggedIn: Ref<boolean> | undefined = inject('isLoggedIn');
+    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
+    const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
+    const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
+      'setConfirmationNeeded',
+      () => undefined,
+    );
     const emailText = ref('');
     const usernameText = ref('');
     const passwordText = ref('');
     const passwordStrength = ref('');
     const confirmPasswordText = ref('');
     const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
-
-    onBeforeUpdate(() => {
-      // Redirect to home if already logged in
-      if (isLoggedIn && isLoggedIn.value === true) {
-        router.push('/home');
-      }
-    });
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -179,14 +176,21 @@ export default defineComponent({
       }
 
       // Valid credentials
+      setUserEmail(emailText.value);
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
           name: usernameText.value,
-          email: emailText.value,
+          email: getUserEmail().value,
           password: passwordText.value,
         })
         .then((response) => {
-          console.log(response);
+          if (response.data.Message === 'Sign up success') {
+            errorMsg.value?.closeErrorMsg();
+            setConfirmationNeeded(true);
+            router.push('/confirm');
+          } else {
+            errorMsg.value?.showErrorMsg('Unable to sign up: ' + response.data.Message);
+          }
         })
         .catch((error) => {
           if (!error.status) {
@@ -218,37 +222,27 @@ export default defineComponent({
       document.getElementById('signupButton')?.click();
     };
 
+    const clickSendButton = (): void => {
+      document.getElementById('sendButton')?.click();
+    };
+
     return {
       onSubmit,
-      closeCircleOutline,
       clickSignupButton,
+      clickSendButton,
       emailText,
       usernameText,
       passwordText,
       confirmPasswordText,
       onPasswordScore,
       passwordStrength,
+      errorMsg,
     };
   },
 });
 </script>
 
 <style scoped>
-@keyframes popIn {
-  0% {
-    opacity: 0;
-    transform: scale(1, 0.1) translateY(-8px);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.error-message {
-  animation: popIn 0.2s both ease-in;
-}
-
 .password-strength {
   font-size: 0.9em;
 }

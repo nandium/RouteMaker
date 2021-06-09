@@ -67,7 +67,7 @@
 import { logoGithub } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import Header from '../components/Header.vue';
+import Header from '@/components/header/Header.vue';
 
 export default defineComponent({
   name: 'About',

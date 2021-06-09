@@ -7,7 +7,7 @@
       <ion-buttons slot="end">
         <ion-button router-link="/home">Home</ion-button>
         <ion-button router-link="/about">About</ion-button>
-        <ion-button router-link="/login" color="secondary">Login</ion-button>
+        <LoginButton />
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { IonButton, IonButtons, IonHeader, IonImg, IonTitle, IonToolbar } from '@ionic/vue';
+import LoginButton from './LoginButton.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -26,6 +27,7 @@ export default defineComponent({
     IonImg,
     IonTitle,
     IonToolbar,
+    LoginButton,
   },
   setup() {
     const publicPath = process.env.BASE_URL;
