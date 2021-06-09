@@ -9,11 +9,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate Swagger UI
-        uses: Legion2/swagger-ui-action@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Swagger ui action
+        id: swagger-ui-action
+        uses: pjoc-team/swagger-ui-action@v0.0.2
         with:
-          output: swagger-ui
-          spec-file: ./docs/yolo-bouldering-routemaker-1.1.2-api.json
+          dir: './docs'
+          pattern: '*.json'
+          debug: 'true'
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
