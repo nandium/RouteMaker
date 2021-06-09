@@ -32,7 +32,8 @@ net = cv2.dnn.readNet(
 )
 
 # Name custom object
-classes = ["hold", "volume"]
+# Refer to colab notebook for index to class mappings
+classes = ["hold"]
 
 # Images path
 images_path = glob.glob(join(os.curdir, "test_images", "*.jpg"))
@@ -97,7 +98,8 @@ for img_path in images_path:
         
         # Normalise for yolo labeling format
         x, y, w, h = normalise(x, y, w, h, width, height)
-        f.write(f'0 {x} {y} {w} {h}\n')
+        class_id = class_ids[i]
+        f.write(f'{class_id} {x} {y} {w} {h}\n')
     f.close()
 
     cv2.imshow("Image", img)

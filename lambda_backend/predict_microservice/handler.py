@@ -18,7 +18,8 @@ net = cv2.dnn.readNet(
 )
 
 # Names of custom objects
-classes = ["hold", "volume"]
+# Refer to colab notebook for index to class mappings
+classes = ["hold"]
 
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -105,6 +106,7 @@ def predict(event, context):
     # Non Maximum Suppression
     indexes = cv2.dnn.NMSBoxes(box_dimensions, box_confidences, 0.5, 0.4)
     for i in indexes:
+        i = int(i)
         x, y, w, h = box_dimensions[i]
         boxes.append({
             "x": x,
