@@ -38,7 +38,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoundingBoxes'
+                $ref: '#/components/schemas/BoundingBox'
   /user/signup:
     post:
       tags:
@@ -49,7 +49,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Registration'
-        description: Confirmation name and code
       responses:
         '200':
           description: sign up success
@@ -164,7 +163,7 @@ paths:
         - bearerAuth: []
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema: 
               $ref: '#/components/schemas/RouteIdentifier'
         
@@ -184,7 +183,7 @@ paths:
         - bearerAuth: []
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema: 
               $ref: '#/components/schemas/RouteIdentifier'
         
@@ -213,7 +212,7 @@ paths:
         - bearerAuth: []
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema: 
               $ref: '#/components/schemas/RouteGradeIdentifier'
         
@@ -223,24 +222,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - Message
-                  - Item
-                properties:
-                  Message:
-                    type: string
-                    example: Grade route success
-                  Item:
-                    $ref: '#/components/schemas/GradeItem'
+                $ref: '#/components/schemas/RouteGraded'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   /route/details/comment:
     post:
       tags:
         - route
-      summary: Assign grade to route
-      description: Handles differently for owner and public in backend
+      summary: Add a new comment
       security:
         - bearerAuth: []
       requestBody:
@@ -255,16 +244,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - Message
-                  - Item
-                properties:
-                  Message:
-                    type: string
-                    example: Comment route success
-                  Item:
-                    $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/CommentAdded'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
     delete:
@@ -303,7 +283,6 @@ paths:
                 type: object
                 required:
                   - Message
-                  - Item
                 properties:
                   Message:
                     type: string
@@ -352,25 +331,13 @@ paths:
           required: true
           schema:
             type: string
-        
       responses:
         '200':
           description: query routes by gym success
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - Message
-                  - Item
-                properties:
-                  Message:
-                    type: string
-                    example: Query routes by gym success
-                  Item:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/GymRoute'
+                $ref: '#/components/schemas/GymRoutesQueried'
   /route/gym/all:
     get:
       tags:
@@ -390,18 +357,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - Message
-                  - Item
-                properties:
-                  Message:
-                    type: string
-                    example: Query routes by gym success
-                  Item:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Gym'
+                $ref: '#/components/schemas/GymsScanned'
   /route:
     delete:
       tags:
@@ -447,7 +403,7 @@ components:
         image:
           type: string
           format: binary
-    Boxes:
+    Box:
       type: object
       required:
         - x
@@ -480,7 +436,7 @@ components:
         class:
           type: string
           example: hold
-    BoundingBoxes:
+    BoundingBox:
       type: object
       required:
         - boxes
@@ -490,7 +446,7 @@ components:
         boxes:
           type: array
           items:
-            $ref: '#/components/schemas/Boxes'
+            $ref: '#/components/schemas/Box'
         width:
           type: number
           format: float
@@ -806,6 +762,17 @@ components:
         ownerGrade:
           type: number
           format: float
+    RouteGraded:
+      type: object
+      required:
+        - Message
+        - Item
+      properties:
+        Message:
+          type: string
+          example: Grade route success
+        Item:
+          $ref: '#/components/schemas/GradeItem'
     RouteCommentIdentifier:
       type: object
       required:
@@ -821,6 +788,17 @@ components:
         comment:
           type: string
           maxLength: 150
+    CommentAdded:
+      type: object
+      required:
+        - Message
+        - Item
+      properties:
+        Message:
+          type: string
+          example: Comment route success
+        Item:
+          $ref: '#/components/schemas/Comment'
     GymRoute:
       type: object
       required:
@@ -852,6 +830,19 @@ components:
         commentCount:
           type: integer
           format: int32
+    GymRoutesQueried:
+      type: object
+      required:
+        - Message
+        - Items
+      properties:
+        Message:
+          type: string
+          example: Query routes by gym success
+        Items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GymRoute'
     Gym:
       type: object
       required:
@@ -866,6 +857,19 @@ components:
           type: string
         gymName:
           type: string
+    GymsScanned:
+      type: object
+      required:
+        - Message
+        - Items
+      properties:
+        Message:
+          type: string
+          example: Scan all gyms success
+        Items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gym'
   securitySchemes:
     bearerAuth:
       type: http
