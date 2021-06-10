@@ -7,7 +7,7 @@ When contributing to this repository, please first discuss the change you wish t
 1. Write a summary with details of the changes in the pull request and link the related issue
 2. For UI changes: Test with browser and the android build
 3. For UI changes: Modify the deployment script at `./ionic_user_interface/.github` if necessary
-4. For API changes: Include Postman Collections and update `./docs`
+4. For API changes: Include Postman Collections and update swagger UI in `./docs`
 5. For API changes: Modify the deployment script at `./lambda_backend/serverless-deploy.sh` if necessary
 6. Ensure all tests in the pipeline passes
 7. Request a reviewer for approval
@@ -29,7 +29,7 @@ There are currently three microservices.
 2. User: Provides authentication and authorization via AWS Cognito
 3. Route: Provides functions related to gyms and climbing routes
 
-API Documentation is available at `./docs`. Postman Collections are available at `./lambda_backend/postman_collections`.
+API Documentation is available at the repo's [github page](https://yarkhinephyo.github.io/yolo_bouldering/). Postman Collections are available at `./lambda_backend/postman_collections`.
 
 There is a bash script to setup everything via Serverless Framework. Ensure that [AWS Credentials](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html) with administrator permissions is set up for deployment and that Docker engine is running for preparing Python packages.
 
