@@ -17,7 +17,7 @@
 import { IonContent, IonHeader, IonPage } from '@ionic/vue';
 import { defineComponent, onUnmounted } from 'vue';
 
-import Header from '@/components/Header.vue';
+import Header from '@/components/header/Header.vue';
 import GymSelector from '@/components/gym-selector/GymSelector.vue';
 import { useCanvasWidth } from '@/composables/useCanvasWidth';
 

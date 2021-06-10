@@ -26,6 +26,7 @@
     "axios": "^0.21.1",
     "browser-image-compression": "^1.0.14",
     "core-js": "^3.6.5",
+    "country-code-lookup": "^0.0.19",
     "jwt-decode": "^3.1.2",
     "konva": "^8.0.0",
     "lodash": "^4.17.21",
