@@ -1,5 +1,11 @@
 <template>
-  <ion-input class="ion-text-end" v-model="userInput" @keyup.enter="onEnter" />
+  <ion-input
+    v-bind="$attrs"
+    class="ion-text-end"
+    v-model="userInput"
+    @keyup.enter="onEnter"
+    @keydown.tab="onEnter"
+  />
   <ion-card class="suggestions-card" v-if="filteredSuggestions.length && showCard">
     <ion-text
       class="suggestion-item"
@@ -79,7 +85,9 @@ export default defineComponent({
         ) {
           state.showCard = false;
           // Returns completed input
-          emit('completed', state.filteredSuggestions[0]);
+          emit('matchedItem', state.filteredSuggestions[0]);
+        } else {
+          emit('matchedItem', null);
         }
       },
     );

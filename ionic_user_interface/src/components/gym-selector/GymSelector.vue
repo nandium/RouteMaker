@@ -7,7 +7,7 @@
         <auto-complete
           :options="countryNameList"
           optionsKey="country"
-          @completed="onCountrySelect"
+          @matchedItem="onCountrySelect"
         />
       </ion-item>
       <ion-item v-if="userHasSelectedCountry">
@@ -109,10 +109,21 @@ export default defineComponent({
       countryNameList.value = [...Lookup.countries.sort()];
     });
 
+    const reset = () => {
+      selectedCountry.value = '';
+      gymLocationList.value = [];
+      selectedGym.value = '';
+      selectedCountry.value = '';
+    };
+
     const onCountrySelect = async (country: Country) => {
-      selectedCountry.value = country.iso3;
-      const countryGymLocations = await getGyms(country.iso3);
-      gymLocationList.value = countryGymLocations;
+      if (country) {
+        selectedCountry.value = country.iso3;
+        const countryGymLocations = await getGyms(country.iso3);
+        gymLocationList.value = countryGymLocations;
+      } else {
+        reset();
+      }
     };
 
     const onGymSelect = (gymLocation: string) => {
