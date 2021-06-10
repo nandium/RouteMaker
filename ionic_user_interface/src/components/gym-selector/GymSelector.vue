@@ -1,5 +1,6 @@
 <template>
   <div :style="{ width: width + 'px' }">
+    <ErrorMessage ref="errorMsg" />
     <ion-list>
       <ion-item>
         <ion-label>Country</ion-label>
@@ -40,14 +41,6 @@
           </ion-button>
         </ion-col>
       </ion-row>
-      <ion-item class="rounded error-message" color="danger" v-if="showErrorMsg">
-        <ion-label>
-          {{ errorMsg }}
-        </ion-label>
-        <ion-button fill="clear" color="dark" shape="round" @click="clickCloseErrorMsg">
-          <ion-icon :icon="closeCircleOutline"></ion-icon>
-        </ion-button>
-      </ion-item>
     </ion-list>
 
     <iframe
@@ -63,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent, computed } from 'vue';
+import { ref, onMounted, defineComponent, computed, Ref } from 'vue';
 import {
   IonList,
   IonItem,
@@ -72,12 +65,11 @@ import {
   IonSelectOption,
   IonRow,
   IonCol,
-  IonIcon,
   IonButton,
 } from '@ionic/vue';
-import { closeCircleOutline } from 'ionicons/icons';
 import Lookup, { Country } from 'country-code-lookup';
 
+import ErrorMessage from '@/components/ErrorMessage.vue';
 import getGyms, { GymLocation } from '@/common/api/route/getGyms';
 import AutoComplete from './AutoComplete.vue';
 
@@ -91,9 +83,9 @@ export default defineComponent({
     IonSelectOption,
     IonRow,
     IonCol,
-    IonIcon,
     IonButton,
     AutoComplete,
+    ErrorMessage,
   },
   props: {
     width: {
@@ -108,8 +100,7 @@ export default defineComponent({
     const gymLocationList = ref<Array<GymLocation>>([]);
     const selectedCountry = ref('');
     const selectedGym = ref('');
-    const errorMsg = ref('');
-    const showErrorMsg = ref(false);
+    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
 
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountry.value !== '');
@@ -125,19 +116,14 @@ export default defineComponent({
     };
 
     const onGymSelect = async (gymLocation: string) => {
+      errorMsg.value?.closeErrorMsg();
       selectedGym.value = gymLocation;
       embedMapPointerLocation.value = gymLocation;
     };
 
-    const clickCloseErrorMsg = () => {
-      showErrorMsg.value = false;
-    };
-
     const onClickSearchRoutes = () => {
-      showErrorMsg.value = false;
       if (!userHasSelectedGym.value) {
-        errorMsg.value = 'Please select a gym';
-        showErrorMsg.value = true;
+        errorMsg.value?.showErrorMsg('Please select a gym');
       } else {
         // TODO: Display routes
       }
@@ -160,9 +146,6 @@ export default defineComponent({
       userHasSelectedGym,
       userHasSelectedCountry,
       errorMsg,
-      showErrorMsg,
-      clickCloseErrorMsg,
-      closeCircleOutline,
       onClickSearchRoutes,
       onClickCantFindGym,
     };
