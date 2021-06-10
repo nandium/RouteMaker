@@ -26,11 +26,13 @@
     "axios": "^0.21.1",
     "browser-image-compression": "^1.0.14",
     "core-js": "^3.6.5",
+    "jwt-decode": "^3.1.2",
     "konva": "^8.0.0",
     "lodash": "^4.17.21",
     "vue": "^3.0.0-0",
     "vue-loading-overlay": "^4.0.2",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vue-simple-password-meter": "^1.0.3"
   },
   "devDependencies": {
     "@capacitor/cli": "^3.0.0",

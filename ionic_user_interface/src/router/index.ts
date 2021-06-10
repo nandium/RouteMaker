@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import Home from '../views/Home.vue';
+import Home from '@/views/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -26,6 +26,57 @@ const routes: Array<RouteRecordRaw> = [
     path: '/about',
     name: 'About',
     component: () => import('@/views/About.vue'),
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue'),
+    beforeEnter: (_, __, next) => {
+      if (localStorage.getItem('isLoggedIn') === 'yes') {
+        next('/home');
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: '/signup',
+    name: 'Signup',
+    component: () => import('@/views/Signup.vue'),
+    beforeEnter: (_, __, next) => {
+      if (localStorage.getItem('isLoggedIn') === 'yes') {
+        next('/home');
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: '/confirm',
+    name: 'Confirm',
+    component: () => import('@/views/Confirm.vue'),
+    beforeEnter: (_, __, next) => {
+      if (
+        localStorage.getItem('isLoggedIn') === 'yes' ||
+        localStorage.getItem('isConfirmationNeeded') !== 'yes'
+      ) {
+        next('/home');
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/views/Profile.vue'),
+    beforeEnter: (_, __, next) => {
+      if (localStorage.getItem('isLoggedIn') !== 'yes') {
+        next('/home');
+      } else {
+        next();
+      }
+    },
   },
 ];
 
