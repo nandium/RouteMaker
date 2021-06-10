@@ -23,10 +23,11 @@
 import { camera } from 'ionicons/icons';
 import { IonButton, IonContent, IonHeader, IonIcon, IonPage } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted } from 'vue';
+
 import Canvas from '@/components/wall-image-viewer/Canvas.vue';
 import Header from '@/components/header/Header.vue';
 import { usePhotoGallery } from '@/composables/usePhotoGallery';
-import { debounce } from 'lodash';
+import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
 export default defineComponent({
   name: 'Home',
@@ -40,25 +41,10 @@ export default defineComponent({
     Header,
   },
   setup() {
-    const canvasWidth = ref(0);
     const photoData = ref('');
     const photoUploaded = ref(false);
     const { photo, takePhoto } = usePhotoGallery();
-
-    /**
-     * Get width of the device as platform-independent as possible
-     * https://stackoverflow.com/questions/6942785/window-innerwidth-vs-document-documentelement-clientwidth
-     */
-    const updateCanvasWidth = debounce(() => {
-      const windowWidth =
-        window.innerWidth && document.documentElement.clientWidth
-          ? Math.min(window.innerWidth, document.documentElement.clientWidth)
-          : window.innerWidth ||
-            document.documentElement.clientWidth ||
-            document.getElementsByTagName('body')[0].clientWidth;
-
-      canvasWidth.value = Math.min(windowWidth, 800);
-    }, 100);
+    const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
 
     watch(photo, (oldPhoto, newPhoto) => {
       if (newPhoto !== oldPhoto && oldPhoto !== null) {

@@ -15,6 +15,7 @@ const providers = {
         Authorization: `Bearer ${accessToken.value}`,
       },
     };
+    console.log(config);
     return axios
       .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/logout', {}, config)
       .then((response) => {
