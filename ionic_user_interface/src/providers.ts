@@ -1,4 +1,5 @@
 import { ref, Ref } from 'vue';
+import axios from 'axios';
 import router from '@/router';
 
 const isLoggedIn = ref(false);
@@ -8,18 +9,32 @@ const idToken = ref('');
 const isConfirmationNeeded = ref(false);
 
 const providers = {
-  forceLogout: (): void => {
-    isLoggedIn.value = false;
-    userEmail.value = '';
-    accessToken.value = '';
-    idToken.value = '';
-    isConfirmationNeeded.value = false;
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('idToken');
-    localStorage.removeItem('isConfirmationNeeded');
-    router.push('/home');
+  forceLogout: async (): Promise<void> => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken.value}`,
+      },
+    };
+    return axios
+      .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/logout', {}, config)
+      .then((response) => {
+        if (response.status === 200) {
+          isLoggedIn.value = false;
+          userEmail.value = '';
+          accessToken.value = '';
+          idToken.value = '';
+          isConfirmationNeeded.value = false;
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('idToken');
+          localStorage.removeItem('isConfirmationNeeded');
+          router.push('/home');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   },
   getLoggedIn: (): Ref<boolean> => {
     isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'yes';

@@ -36,6 +36,7 @@
 
 <script lang="ts">
 import {
+  alertController,
   IonButton,
   IonCol,
   IonContent,
@@ -48,7 +49,9 @@ import {
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import Header from '@/components/header/Header.vue';
+import router from '@/router';
 import jwt_decode from 'jwt-decode';
+import axios from 'axios';
 
 export default defineComponent({
   name: 'Profile',
@@ -65,8 +68,9 @@ export default defineComponent({
     IonRow,
   },
   setup() {
-    const forceLogout: () => void = inject('forceLogout', () => undefined);
+    const forceLogout: () => Promise<void> = inject('forceLogout', () => Promise.resolve());
     const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
+    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
     const emailText = getUserEmail();
     const idToken = getIdToken();
@@ -89,8 +93,40 @@ export default defineComponent({
       usernameText.value = decodeIdToken();
     });
 
-    const clickDeleteAccountButton = (): void => {
-      console.log('delete');
+    const clickDeleteAccountButton = async (): Promise<void> => {
+      const alert = await alertController.create({
+        header: 'Delete account?',
+        subHeader: 'This action cannot be undone.',
+        message: 'Are you sure?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+          },
+          {
+            text: 'Delete',
+            cssClass: 'ion-color-danger',
+            handler: async () => {
+              await axios
+                .delete(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/delete', {
+                  headers: {
+                    Authorization: `Bearer ${getAccessToken().value}`,
+                  },
+                })
+                .then(async (response) => {
+                  if (response.status === 204) {
+                    await forceLogout();
+                    router.push('/home');
+                  }
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            },
+          },
+        ],
+      });
+      return alert.present();
     };
 
     return {

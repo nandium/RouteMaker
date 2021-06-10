@@ -10,11 +10,10 @@
             </div>
             <div class="ion-padding ion-text-center">
               <ErrorMessage ref="errorMsg" class="margin" />
-              <form v-if="showConfirmSignup" @submit="onSubmit">
+              <form @submit="onSubmit">
                 <ion-item class="rounded margin">
                   <ion-label position="stacked">Confirmation code</ion-label>
                   <ion-input
-                    @keyup.enter="clickSendButton"
                     v-model="confirmationCodeText"
                     name="code"
                     inputmode="numeric"
@@ -115,7 +114,7 @@ export default defineComponent({
         .then((response) => {
           if (response.data.Message === 'Confirmation success') {
             setConfirmationNeeded(false);
-            router.push('/home');
+            router.push('/login');
           } else {
             errorMsg.value?.showErrorMsg('Unable to verify: ' + response.data.Message);
           }

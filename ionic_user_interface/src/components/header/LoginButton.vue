@@ -32,7 +32,7 @@ export default defineComponent({
     IonPopover,
   },
   setup() {
-    const forceLogout: () => void = inject('forceLogout', () => undefined);
+    const forceLogout: () => Promise<void> = inject('forceLogout', () => Promise.resolve());
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const isLoggedIn = getLoggedIn();
 
@@ -44,9 +44,9 @@ export default defineComponent({
       isPopoverOpen.value = state;
     };
 
-    const clickLogoutButton = () => {
+    const clickLogoutButton = async () => {
       setPopoverOpen(false);
-      forceLogout();
+      await forceLogout();
     };
 
     const clickProfileButton = () => {
