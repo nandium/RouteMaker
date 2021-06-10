@@ -105,7 +105,7 @@ export default defineComponent({
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountry.value !== '');
 
-    onMounted(async () => {
+    onMounted(() => {
       countryNameList.value = [...Lookup.countries.sort()];
     });
 
@@ -115,7 +115,7 @@ export default defineComponent({
       gymLocationList.value = countryGymLocations;
     };
 
-    const onGymSelect = async (gymLocation: string) => {
+    const onGymSelect = (gymLocation: string) => {
       errorMsg.value?.closeErrorMsg();
       selectedGym.value = gymLocation;
       embedMapPointerLocation.value = gymLocation;
@@ -152,5 +152,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style></style>
