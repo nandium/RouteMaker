@@ -61,36 +61,36 @@ export default defineComponent({
       },
     );
 
-    watch(
-      () => state.userInput,
-      () => {
-        state.showCard = true;
-        if (state.userInput.length === 0) {
-          state.filteredSuggestions = [];
-          return;
-        }
-        // The number of suggestions can be edited here
-        state.filteredSuggestions = state.suggestions
-          .filter(
-            (suggestion) =>
-              suggestion[props.optionsKey as string]
-                .toLowerCase()
-                .indexOf(state.userInput.toLowerCase()) === 0,
-          )
-          .slice(0, 1);
-        // Don't show anymore if the user input is the same as suggestion
-        if (
-          state.filteredSuggestions.length === 1 &&
-          state.filteredSuggestions[0][props.optionsKey as string] === state.userInput
-        ) {
-          state.showCard = false;
-          // Returns completed input
-          emit('matchedItem', state.filteredSuggestions[0]);
-        } else {
-          emit('matchedItem', null);
-        }
-      },
-    );
+    // Emits null if no match-
+    const emitItemIfMatchFound = () => {
+      state.showCard = true;
+      if (state.userInput.length === 0) {
+        state.filteredSuggestions = [];
+        return;
+      }
+      // The number of suggestions can be edited here
+      state.filteredSuggestions = state.suggestions
+        .filter(
+          (suggestion) =>
+            suggestion[props.optionsKey as string]
+              .toLowerCase()
+              .indexOf(state.userInput.toLowerCase()) === 0,
+        )
+        .slice(0, 1);
+      // Don't show anymore if the user input is the same as suggestion
+      if (
+        state.filteredSuggestions.length === 1 &&
+        state.filteredSuggestions[0][props.optionsKey as string] === state.userInput
+      ) {
+        state.showCard = false;
+        // Returns completed input
+        emit('matchedItem', state.filteredSuggestions[0]);
+      } else {
+        emit('matchedItem', null);
+      }
+    };
+
+    watch(() => state.userInput, emitItemIfMatchFound);
 
     return {
       ...toRefs(state),
