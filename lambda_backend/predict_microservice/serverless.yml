@@ -12,6 +12,7 @@ provider:
     binaryMediaTypes:
       - 'multipart/form-data'
   logRetentionInDays: 30
+  lambdaHashingVersion: 20201221
   environment:
     PYTHON_ENV: ${self:custom.stage}
     ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
@@ -41,18 +42,18 @@ custom:
 
   _maxRequestsPerSecond:
     dev: 1
-    prod: 5
+    prod: 3
   _maxConcurrentRequests:
     dev: 1
-    prod: 5
+    prod: 3
   _origin:
     dev: '*'
-    prod: 'https://yarkhinephyo.github.io'
+    prod: '*'
 
 plugins:
   - serverless-python-requirements
   - serverless-api-gateway-throttling
 
 package:
-  exclude:
-    - node_modules/**
+  patterns:
+    - '!node_modules/**'

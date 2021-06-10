@@ -6,6 +6,7 @@ provider:
   name: aws
   stage: dev
   region: ap-southeast-1
+  lambdaHashingVersion: 20201221
   # iamRoleStatements:
   # - Effect: "Allow"
   #   Principal:
@@ -13,7 +14,7 @@ provider:
   #   Action:
   #    - ses:SendEmail
   #    - ses:SendRawEmail
-  #   Resource: <arn:email>
+  #   Resource: <arn:verified email in us-east-1>
 
 resources:
   Resources:
@@ -68,6 +69,14 @@ resources:
         Name: /${self:custom.stage}/cognito/clientId
         Type: String
         Value: !Ref CognitoUserPoolClient
+        Tags:
+          Environment: ${self:custom.stage}
+    SSMParameterCognitoUserPoolId:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/cognito/poolId
+        Type: String
+        Value: !Ref CognitoUserPool
         Tags:
           Environment: ${self:custom.stage}
 

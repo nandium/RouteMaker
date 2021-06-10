@@ -32,15 +32,15 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { country, routeName, expiredTime, gymLocation, ownerGrade, routePhoto },
+    body: { countryCode, routeName, expiredTime, gymLocation, ownerGrade, routePhoto },
   } = event;
 
   const queryInput: QueryInput = {
     TableName: process.env['GYM_TABLE_NAME'],
     ConsistentRead: false,
-    KeyConditionExpression: 'country = :country AND gymLocation = :gymLocation',
+    KeyConditionExpression: 'countryCode = :countryCode AND gymLocation = :gymLocation',
     ExpressionAttributeValues: {
-      ':country': country as AttributeValue,
+      ':countryCode': countryCode as AttributeValue,
       ':gymLocation': gymLocation as AttributeValue,
     },
   };
@@ -50,8 +50,11 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   } catch (error) {
     throw createError(500, 'Error querying table :' + error.stack);
   }
-  if (!Items) {
-    createError(400, 'Gym is not registered.');
+  if (Items.length === 0) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: 'Unregistered gym' }),
+    };
   }
 
   const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
@@ -81,14 +84,14 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   const routeItem: RouteItem = {
     username,
     createdAt,
-    expiredTime,
+    ttl: new Date(expiredTime).getTime(),
     routeName,
     gymLocation,
     routeURL,
     ownerGrade,
     publicGrade: ownerGrade,
     publicGradeSubmissions: [{ username, grade: ownerGrade }],
-    vote: 0,
+    voteCount: 0,
     upVotes: [],
     reports: [],
     commentCount: 0,

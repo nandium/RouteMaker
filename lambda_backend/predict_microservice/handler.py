@@ -13,12 +13,13 @@ ALLOWED_TYPES = ["image/jpeg"]
 
 # Load Yolo
 net = cv2.dnn.readNet(
-    join("weights", "yolov4-tiny-obj_2000.weights"),
+    join("weights", "yolov4-tiny-obj.weights"),
     join("weights", "yolov4-tiny-obj.cfg")
 )
 
 # Names of custom objects
-classes = ["hold", "volume"]
+# Refer to colab notebook for index to class mappings
+classes = ["hold"]
 
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -104,17 +105,17 @@ def predict(event, context):
     boxes = []
     # Non Maximum Suppression
     indexes = cv2.dnn.NMSBoxes(box_dimensions, box_confidences, 0.5, 0.4)
-    for i in range(len(box_dimensions)):
-        if i in indexes:
-            x, y, w, h = box_dimensions[i]
-            boxes.append({
-                "x": x,
-                "y": y,
-                "w": w,
-                "h": h,
-                "confidence": float(box_confidences[i]),
-                "class": str(classes[class_ids[i]])
-            })
+    for i in indexes:
+        i = int(i)
+        x, y, w, h = box_dimensions[i]
+        boxes.append({
+            "x": x,
+            "y": y,
+            "w": w,
+            "h": h,
+            "confidence": float(box_confidences[i]),
+            "class": str(classes[class_ids[i]])
+        })
 
     # Sort boxes in descending sizes
     boxes = sorted(boxes, key=lambda box: box["w"] * box["h"], reverse=True)

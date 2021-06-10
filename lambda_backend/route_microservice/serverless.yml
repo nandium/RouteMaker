@@ -17,27 +17,41 @@ provider:
     S3_BUCKET_NAME: ${self:custom.s3BucketName}
     ROUTE_TABLE_NAME: ${self:custom.routeTableName}
     GYM_TABLE_NAME: ${self:custom.gymTableName}
+    TELEGRAM_SNS_ARN: ${self:custom.telegramSNSArn}
+    COGNITO_USERPOOL_ID: ${self:custom.cognitoUserpoolId}
   logRetentionInDays: 30
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - s3:PutObject
-        - s3:DeleteObject
-      Resource:
-        - '${self:custom.s3BucketArn}/*'
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:DeleteItem
-        - dynamodb:UpdateItem
-        - dynamodb:Query
-        - dynamodb:Scan
-      Resource:
-        - '${self:custom.routeTableArn}'
-        - '${self:custom.routeTableArn}/index/*'
-        - '${self:custom.gymTableArn}'
-        - '${self:custom.gymTableArn}/index/*'
+  lambdaHashingVersion: 20201221
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:DeleteObject
+          Resource:
+            - '${self:custom.s3BucketArn}/*'
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - '${self:custom.routeTableArn}'
+            - '${self:custom.routeTableArn}/index/*'
+            - '${self:custom.gymTableArn}'
+            - '${self:custom.gymTableArn}/index/*'
+        - Effect: Allow
+          Action:
+            - sns:publish
+          Resource:
+            - '${self:custom.telegramSNSArn}'
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminGetUser
+          Resource: ${self:custom.cognitoArn}
 
 plugins:
   - serverless-plugin-typescript
@@ -162,15 +176,30 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  requestGym:
+    handler: src/requestGym.handler
+    events:
+      - http:
+          path: route/gym/request
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
 custom:
   stage: ${opt:stage, self:provider.stage}
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
+  cognitoUserpoolId: ${ssm:/${self:custom.stage}/cognito/poolId}
   s3BucketArn: ${ssm:/${self:custom.stage}/s3/assets/arn}
   s3BucketName: ${ssm:/${self:custom.stage}/s3/assets/name}
   routeTableArn: ${ssm:/${self:custom.stage}/dynamodb/route/arn}
   routeTableName: ${ssm:/${self:custom.stage}/dynamodb/route/name}
   gymTableArn: ${ssm:/${self:custom.stage}/dynamodb/gym/arn}
   gymTableName: ${ssm:/${self:custom.stage}/dynamodb/gym/name}
+  telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
@@ -183,4 +212,4 @@ custom:
     prod: 5
   _origin:
     dev: '*'
-    prod: 'https://yarkhinephyo.github.io'
+    prod: '*'

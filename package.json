@@ -8,12 +8,10 @@
   "lint-staged": {
     "*.{js,jsx,vue,html,css,ts}": [
       "prettier --write",
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
-    "*.{yml}": [
-      "prettier --write",
-      "git add"
+    "*.{yml,json,md}": [
+      "prettier --write"
     ]
   },
   "repository": {

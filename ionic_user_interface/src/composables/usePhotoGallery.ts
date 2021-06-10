@@ -35,7 +35,7 @@ export function usePhotoGallery(): {
         const response = await fetch(photo.webPath);
         const compressImageOptions = {
           maxSizeMB: 6,
-          maxWidthOrHeight: 1024,
+          maxWidthOrHeight: 2048,
           useWebWorker: true,
           fileType: 'image/jpeg',
         };

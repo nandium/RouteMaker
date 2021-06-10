@@ -13,13 +13,16 @@ provider:
     ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
     COGNITO_CLIENT_ID: ${self:custom.cognitoClientId}
   logRetentionInDays: 30
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - cognito-idp:SignUp
-        - cognito-idp:ConfirmSignUp
-        - cognito-idp:InitiateAuth
-      Resource: '*'
+  lambdaHashingVersion: 20201221
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - cognito-idp:SignUp
+            - cognito-idp:ConfirmSignUp
+            - cognito-idp:InitiateAuth
+          Resource: ${self:custom.cognitoArn}
 
 plugins:
   - serverless-plugin-typescript
@@ -66,6 +69,19 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  deleteUser:
+    handler: src/deleteUser.handler
+    events:
+      - http:
+          path: user/delete
+          method: delete
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
 custom:
   stage: ${opt:stage, self:provider.stage}
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
@@ -76,10 +92,10 @@ custom:
 
   _maxRequestsPerSecond:
     dev: 1
-    prod: 5
+    prod: 3
   _maxConcurrentRequests:
     dev: 1
-    prod: 5
+    prod: 3
   _origin:
     dev: '*'
-    prod: 'https://yarkhinephyo.github.io'
+    prod: '*'
