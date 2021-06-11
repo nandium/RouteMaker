@@ -86,6 +86,7 @@ export default defineComponent({
 
     onBeforeRouteLeave(() => {
       errorMsg.value?.closeErrorMsg();
+      confirmationCodeText.value = '';
       setConfirmationNeeded(false);
     });
 
@@ -128,9 +129,13 @@ export default defineComponent({
         })
         .catch((error) => {
           if (error.response) {
-            errorMsg.value?.showErrorMsg('Error: ' + error.response.data.Message);
+            if (error.response.data.Message === 'CodeMismatchException') {
+              errorMsg.value?.showErrorMsg('Wrong confirmation code');
+            } else {
+              errorMsg.value?.showErrorMsg('Error: ' + error.response.data.Message);
+            }
           } else if (error.request) {
-            errorMsg.value?.showErrorMsg('Invalid confirmation code');
+            errorMsg.value?.showErrorMsg('Bad request');
           } else {
             errorMsg.value?.showErrorMsg('Error: ' + error.message);
           }

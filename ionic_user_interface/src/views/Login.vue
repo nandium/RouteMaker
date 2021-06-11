@@ -75,6 +75,7 @@ import axios from 'axios';
 import Header from '@/components/header/Header.vue';
 import ErrorMessage from '@/components/ErrorMessage.vue';
 import router from '@/router';
+import { onBeforeRouteLeave } from 'vue-router';
 
 export default defineComponent({
   name: 'About',
@@ -107,6 +108,10 @@ export default defineComponent({
     const emailText = ref('');
     const passwordText = ref('');
     const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+
+    onBeforeRouteLeave(() => {
+      errorMsg.value?.closeErrorMsg();
+    });
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -165,7 +170,6 @@ export default defineComponent({
           } else {
             errorMsg.value?.showErrorMsg('Error: ' + error.message);
           }
-          setUserEmail('');
         });
       return true;
     };

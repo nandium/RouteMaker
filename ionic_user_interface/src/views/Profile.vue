@@ -47,7 +47,7 @@ import {
   IonPage,
   IonRow,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref } from 'vue';
+import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import Header from '@/components/header/Header.vue';
 import router from '@/router';
 import jwt_decode from 'jwt-decode';
@@ -75,6 +75,9 @@ export default defineComponent({
     const emailText = getUserEmail();
     const idToken = getIdToken();
     const decodeIdToken = (): string => {
+      if (idToken.value === '') {
+        return '';
+      }
       try {
         const idObject: {
           name: string;
@@ -88,6 +91,10 @@ export default defineComponent({
       return '';
     };
     const usernameText = ref(decodeIdToken());
+
+    watch(idToken, () => {
+      usernameText.value = decodeIdToken();
+    });
 
     const clickDeleteAccountButton = async (): Promise<void> => {
       const alert = await alertController.create({
