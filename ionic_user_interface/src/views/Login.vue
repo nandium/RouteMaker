@@ -100,6 +100,10 @@ export default defineComponent({
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
     const setIdToken: (idToken: string) => void = inject('setIdToken', () => undefined);
+    const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
+      'setConfirmationNeeded',
+      () => undefined,
+    );
     const emailText = ref('');
     const passwordText = ref('');
     const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
@@ -115,6 +119,8 @@ export default defineComponent({
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
       errorMsg.value?.closeErrorMsg();
+
+      emailText.value = emailText.value.trim();
 
       // Invalid credentials
       if (!isValidEmail(emailText.value)) {
@@ -141,9 +147,25 @@ export default defineComponent({
           router.push('/home');
         })
         .catch((error) => {
-          console.log(error);
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            if (error.response.data.Message === 'UserNotFoundException') {
+              errorMsg.value?.showErrorMsg('Account not found, please sign up!');
+            } else if (error.response.data.Message === 'NotAuthorizedException') {
+              errorMsg.value?.showErrorMsg('Wrong email or password');
+            } else if (error.response.data.Message === 'UserNotConfirmedException') {
+              setConfirmationNeeded(true);
+              router.push('/confirm');
+            } else {
+              console.log(error.response.data);
+            }
+          } else if (error.request) {
+            errorMsg.value?.showErrorMsg('Invalid credentials');
+          } else {
+            errorMsg.value?.showErrorMsg('Error: ' + error.message);
+          }
           setUserEmail('');
-          errorMsg.value?.showErrorMsg('Wrong email or password');
         });
       return true;
     };

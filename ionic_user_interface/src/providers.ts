@@ -15,26 +15,40 @@ const providers = {
         Authorization: `Bearer ${accessToken.value}`,
       },
     };
-    console.log(config);
     return axios
       .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/logout', {}, config)
       .then((response) => {
-        if (response.status === 200) {
-          isLoggedIn.value = false;
-          userEmail.value = '';
-          accessToken.value = '';
-          idToken.value = '';
-          isConfirmationNeeded.value = false;
-          localStorage.removeItem('isLoggedIn');
-          localStorage.removeItem('userEmail');
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('idToken');
-          localStorage.removeItem('isConfirmationNeeded');
-          router.push('/home');
-        }
+        console.log(response.data);
       })
       .catch((error) => {
-        console.error(error);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+      })
+      .finally(() => {
+        isLoggedIn.value = false;
+        userEmail.value = '';
+        accessToken.value = '';
+        idToken.value = '';
+        isConfirmationNeeded.value = false;
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('idToken');
+        localStorage.removeItem('isConfirmationNeeded');
+        router.push('/home');
       });
   },
   getLoggedIn: (): Ref<boolean> => {

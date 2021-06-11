@@ -152,8 +152,10 @@ export default defineComponent({
 
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
-
       errorMsg.value?.closeErrorMsg();
+
+      emailText.value = emailText.value.trim();
+      usernameText.value = usernameText.value.trim();
 
       // Invalid credentials
       if (!isValidEmail(emailText.value)) {
@@ -193,10 +195,20 @@ export default defineComponent({
           }
         })
         .catch((error) => {
-          if (!error.status) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            if (error.response.data.Message === 'UsernameExistsException') {
+              errorMsg.value?.showErrorMsg('Account already exists, please login!');
+            } else {
+              console.log(error.response.data);
+            }
+          } else if (error.request) {
             errorMsg.value?.showErrorMsg('Unknown error occured');
+            console.log(error.request);
           } else {
-            errorMsg.value?.showErrorMsg('Error: ' + error.response.data.Message);
+            // Something happened in setting up the request that triggered an Error
+            errorMsg.value?.showErrorMsg('Error: ' + error.message);
           }
         });
 

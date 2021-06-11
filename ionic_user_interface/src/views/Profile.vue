@@ -47,7 +47,7 @@ import {
   IonPage,
   IonRow,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref, watch } from 'vue';
+import { defineComponent, inject, ref, Ref } from 'vue';
 import Header from '@/components/header/Header.vue';
 import router from '@/router';
 import jwt_decode from 'jwt-decode';
@@ -89,10 +89,6 @@ export default defineComponent({
     };
     const usernameText = ref(decodeIdToken());
 
-    watch(idToken, () => {
-      usernameText.value = decodeIdToken();
-    });
-
     const clickDeleteAccountButton = async (): Promise<void> => {
       const alert = await alertController.create({
         header: 'Delete account?',
@@ -120,7 +116,22 @@ export default defineComponent({
                   }
                 })
                 .catch((error) => {
-                  console.error(error);
+                  if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                  } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    console.log(error.request);
+                  } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                  }
+                  console.log(error.config);
                 });
             },
           },

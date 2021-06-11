@@ -26,6 +26,7 @@ export default defineComponent({
     const errorMsg = ref('');
 
     const showErrorMsg = (message: string): void => {
+      closeErrorMsg();
       errorMsg.value = message;
     };
 

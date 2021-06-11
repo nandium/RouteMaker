@@ -58,6 +58,7 @@ import axios from 'axios';
 import Header from '@/components/header/Header.vue';
 import ErrorMessage from '@/components/ErrorMessage.vue';
 import router from '@/router';
+import { onBeforeRouteLeave } from 'vue-router';
 
 export default defineComponent({
   name: 'Confirm',
@@ -83,6 +84,11 @@ export default defineComponent({
       () => undefined,
     );
 
+    onBeforeRouteLeave(() => {
+      errorMsg.value?.closeErrorMsg();
+      setConfirmationNeeded(false);
+    });
+
     const isValidConfirmationCode = (code: string): boolean => {
       if (code.length !== 6) {
         return false;
@@ -98,8 +104,9 @@ export default defineComponent({
 
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
-
       errorMsg.value?.closeErrorMsg();
+
+      confirmationCodeText.value = confirmationCodeText.value.trim();
 
       if (!isValidConfirmationCode(confirmationCodeText.value)) {
         errorMsg.value?.showErrorMsg('Confirmation code must be 6 digits');
@@ -120,10 +127,12 @@ export default defineComponent({
           }
         })
         .catch((error) => {
-          if (!error.status) {
-            errorMsg.value?.showErrorMsg('Unknown error occured');
-          } else {
+          if (error.response) {
             errorMsg.value?.showErrorMsg('Error: ' + error.response.data.Message);
+          } else if (error.request) {
+            errorMsg.value?.showErrorMsg('Invalid confirmation code');
+          } else {
+            errorMsg.value?.showErrorMsg('Error: ' + error.message);
           }
         });
 
