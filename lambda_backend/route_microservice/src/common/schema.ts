@@ -62,7 +62,7 @@ export const createRouteSchema = {
 export const deleteRouteSchema = {
   type: 'object',
   properties: {
-    body: {
+    queryStringParameters: {
       type: 'object',
       properties: {
         createdAt: {
@@ -130,10 +130,14 @@ export const addCommentSchema = {
 export const deleteCommentSchema = {
   type: 'object',
   properties: {
-    body: {
+    queryStringParameters: {
       type: 'object',
       properties: {
         ...getRouteDetailsSchema.properties.body.properties,
+        commenterName: {
+          type: 'string',
+          pattern: AlphanumericSpaceHyphen,
+        },
         timestamp: { type: 'number' },
       },
       required: [...getRouteDetailsSchema.properties.body.required, 'timestamp'],
