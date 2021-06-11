@@ -28,7 +28,12 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
 
   // Delete only if requester is route owner or comment writer
   if (requestUsername !== commenterName && requestUsername !== routeOwnerUsername) {
-    return { statusCode: 403 };
+    return {
+      statusCode: 403,
+      body: JSON.stringify({
+        Message: 'Unauthorized',
+      }),
+    };
   }
 
   let { comments } = Item;
