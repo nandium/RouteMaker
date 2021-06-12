@@ -130,6 +130,8 @@ export interface CognitoUserDetails {
 
 export interface RequestGymEvent extends AuthHeader {
   body: {
-    gymLocation: string;
+    countryCode: string;
+    postal: string;
+    gymName: string;
   };
 }
