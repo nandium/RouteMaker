@@ -47,7 +47,7 @@ import {
   IonPage,
   IonRow,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref, watch } from 'vue';
+import { computed, defineComponent, inject, ref, Ref } from 'vue';
 import Header from '@/components/header/Header.vue';
 import router from '@/router';
 import jwt_decode from 'jwt-decode';
@@ -74,7 +74,7 @@ export default defineComponent({
     const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
     const emailText = getUserEmail();
     const idToken = getIdToken();
-    const decodeIdToken = (): string => {
+    const usernameText = computed(() => {
       if (idToken.value === '') {
         return '';
       }
@@ -89,11 +89,6 @@ export default defineComponent({
         forceLogout();
       }
       return '';
-    };
-    const usernameText = ref(decodeIdToken());
-
-    watch(idToken, () => {
-      usernameText.value = decodeIdToken();
     });
 
     const clickDeleteAccountButton = async (): Promise<void> => {

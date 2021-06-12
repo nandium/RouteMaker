@@ -69,6 +69,7 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  toastController,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
@@ -149,6 +150,24 @@ export default defineComponent({
           setIdToken(response.data.IdToken);
           setAccessToken(response.data.AccessToken);
           setLoggedIn(true);
+
+          toastController
+            .create({
+              header: 'Logged in successfully',
+              position: 'bottom',
+              color: 'success',
+              duration: 3000,
+              buttons: [
+                {
+                  text: 'Close',
+                  role: 'cancel',
+                },
+              ],
+            })
+            .then((toast) => {
+              toast.present();
+            });
+
           router.push('/home');
         })
         .catch((error) => {

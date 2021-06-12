@@ -52,6 +52,7 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  toastController,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
@@ -122,6 +123,24 @@ export default defineComponent({
         .then((response) => {
           if (response.data.Message === 'Confirmation success') {
             setConfirmationNeeded(false);
+
+            toastController
+              .create({
+                header: 'Confirmation successful, please log in',
+                position: 'bottom',
+                color: 'success',
+                duration: 3000,
+                buttons: [
+                  {
+                    text: 'Close',
+                    role: 'cancel',
+                  },
+                ],
+              })
+              .then((toast) => {
+                toast.present();
+              });
+
             router.push('/login');
           } else {
             errorMsg.value?.showErrorMsg('Unable to verify: ' + response.data.Message);
