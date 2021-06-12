@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { IonContent, IonHeader, IonPage } from '@ionic/vue';
-import { defineComponent, onUnmounted } from 'vue';
+import { defineComponent, onMounted, onUnmounted } from 'vue';
 
 import Header from '@/components/header/Header.vue';
 import GymSelector from '@/components/gym-selector/GymSelector.vue';
@@ -32,8 +32,10 @@ export default defineComponent({
   },
   setup() {
     const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
-    window.onload = updateCanvasWidth;
     window.addEventListener('resize', updateCanvasWidth);
+    onMounted(() => {
+      updateCanvasWidth();
+    });
     onUnmounted(() => {
       window.removeEventListener('resize', updateCanvasWidth);
     });
