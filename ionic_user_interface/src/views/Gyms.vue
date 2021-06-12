@@ -7,7 +7,7 @@
         <strong>Route Maker</strong>
         <p>Find climbing routes by gym</p>
         <br />
-        <gym-selector v-if="canvasWidth > 0" class="gymSelector" :width="canvasWidth" />
+        <gym-selector v-if="canvasWidth > 0" :width="canvasWidth" />
       </div>
     </ion-content>
   </ion-page>
@@ -22,7 +22,7 @@ import GymSelector from '@/components/gym-selector/GymSelector.vue';
 import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
 export default defineComponent({
-  name: 'Home',
+  name: 'Gyms',
   components: {
     IonContent,
     IonHeader,
@@ -66,10 +66,5 @@ export default defineComponent({
 
 #container a {
   text-decoration: none;
-}
-
-.gymSelector {
-  width: max-content;
-  margin: 0 auto;
 }
 </style>

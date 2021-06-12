@@ -1,51 +1,57 @@
 <template>
-  <div :style="{ width: width + 'px' }">
-    <ErrorMessage ref="errorMsg" />
-    <ion-list>
-      <ion-item>
-        <ion-label>Country</ion-label>
-        <auto-complete
-          :options="countryNameList"
-          optionsKey="country"
-          @matchedItem="onCountrySelect"
-        />
-      </ion-item>
-      <ion-item v-if="userHasSelectedCountry">
-        <ion-label>Gym</ion-label>
-        <ion-select
-          :value="selectedGym"
-          @ionChange="onGymSelect($event.detail.value)"
-          interface="action-sheet"
-        >
-          <ion-select-option
-            v-for="(item, index) in gymLocationList"
-            :key="index"
-            :value="item.gymLocation"
-          >
-            {{ item.gymName }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-row
-        v-if="userHasSelectedCountry"
-        class="ion-align-items-center ion-justify-content-center"
-      >
-        <ion-col class="ion-align-self-center" size-xs="6">
-          <ion-button expand="full" fill="clear" color="dark" @click="onClickSearchRoutes">
-            Search Routes
-          </ion-button>
-        </ion-col>
-        <ion-col class="ion-align-self-center" size-xs="6">
-          <ion-button expand="full" fill="clear" color="dark" @click="onClickCantFindGym">
-            Can't Find Gym?
-          </ion-button>
+  <div>
+    <ion-grid>
+      <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+          <ErrorMessage ref="errorMsg" />
+          <ion-list>
+            <ion-item>
+              <ion-label>Country</ion-label>
+              <auto-complete
+                :options="countryNameList"
+                optionsKey="country"
+                @matchedItem="onCountrySelect"
+              />
+            </ion-item>
+            <ion-item v-if="userHasSelectedCountry">
+              <ion-label>Gym</ion-label>
+              <ion-select
+                :value="selectedGym"
+                @ionChange="onGymSelect($event.detail.value)"
+                interface="action-sheet"
+              >
+                <ion-select-option
+                  v-for="(item, index) in gymLocationList"
+                  :key="index"
+                  :value="item.gymLocation"
+                >
+                  {{ item.gymName }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-row
+              v-if="userHasSelectedCountry"
+              class="ion-align-items-center ion-justify-content-center"
+            >
+              <ion-col class="ion-align-self-center" size-xs="6">
+                <ion-button expand="full" fill="clear" color="dark" @click="onClickSearchRoutes">
+                  Search Routes
+                </ion-button>
+              </ion-col>
+              <ion-col class="ion-align-self-center" size-xs="6">
+                <ion-button expand="full" fill="clear" color="dark" @click="onClickCantFindGym">
+                  Can't Find Gym?
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-list>
         </ion-col>
       </ion-row>
-    </ion-list>
+    </ion-grid>
 
     <iframe
       v-if="userHasSelectedGym"
-      width="100%"
+      :width="width + 'px'"
       :height="width + 'px'"
       style="border: 0"
       loading="lazy"
