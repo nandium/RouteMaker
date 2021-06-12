@@ -290,9 +290,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/grade",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/grade",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "details", "grade"]
         }
       },
@@ -356,9 +356,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/report",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/report",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "details", "report"]
         }
       },
@@ -372,7 +372,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJaQXhUaUlxVHNJZU5lTHliMlRNWkpQQVM1S1A3TU9YSzM5TUU0MmQ1ZzZZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTE1MDIxZS0wYzc2LTQ4NWYtYmI2MC02NzZlMWE0MGU4NTEiLCJldmVudF9pZCI6IjVlN2NjMjkwLTIxZjAtNGNmMi1hNTY0LTY4ZTk1NjU4YTZlZSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjI3NzQzNDIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xZ2dxOXpMT2oiLCJleHAiOjE2MjI3OTU5NDIsImlhdCI6MTYyMjc3NDM0MiwianRpIjoiMGJlYjdmNDItMDMzMy00OTQ2LWFmMzEtZTk1MTQwNGUxMzI5IiwiY2xpZW50X2lkIjoiM2I3dHZsaHY5ajg0Y245NDN0ajE3ZXR2NjMiLCJ1c2VybmFtZSI6IjM5MTUwMjFlLTBjNzYtNDg1Zi1iYjYwLTY3NmUxYTQwZTg1MSJ9.L9NunJ1FDVvB90Gb04ixtZlkHOvbqyRY_E3SM7epCQRsKLnH5RhZTTtyHJ6v7ipO8HmUWb7DTru-JyiML3jCoWjZhbCKXB72P8xQhyvb81rln7QEUERGdnYv5JyJWGzjOcH7YvpH-Jfjp-1JcJQY7uv3OEjO8VcrqWPK9c2EZ5bfmLxT2AQNrfJjzj1x_omDOnURW9PDe6Mlav3lfkmuhU6kmoSbT4IZEqV5cNMtxlT2RFJ1Px5bJgH2MLm9Y9_kNjYRg60TQ1u-X3CdTm3eH1INdWjgSWTLip11QeL3Jqsd0l0Kd_r67XRCZKw36SghSn9ks58ZECN02lvCijROSg",
+              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3Y2RkZGIyMy1hNjNkLTRmMTctYmUyNy0xZjA3OGIxZWQzMDIiLCJldmVudF9pZCI6ImE4ZmM1NDZkLTliYmEtNDFiZS05Zjg3LTliYWNlYWVmMmM3NCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM0NjYwNTMsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM1NTI0NTMsImlhdCI6MTYyMzQ2NjA1MywianRpIjoiN2I1YjIwYzYtMGVjYS00ZWZjLWJjNGQtMmRlOWQ3YzZjY2QxIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2NkZGRiMjMtYTYzZC00ZjE3LWJlMjctMWYwNzhiMWVkMzAyIn0.ZJTO4WxMTgEEljct9lablYAccp0KVaHfrRA6BI97vpmIwp1-7qq1CjWwN5caHY8UulL6QvbVaTB424BShBZtY4b0Rw3fht5Zs0ewCUoXcA_79yGgTX6-jB1yP-LLhom6fWAQYstwfByVHH8dTRgTHnFuKt-g4Vr8whYveHhRu8ZlT_mN5e5dkOdIG3WBeQqcmdfnXTKgkY1o7-Zi-AAGowyxkkM0QmdwBVvpBD-vYozpwrgCSPm4xr955DrbrTc6oGdAfRjIFHwoJtU8rYHZFWRPt1Lu6Xfypg0yQLF3ZG8sCOUlb36486ES7YUIBXawA_vn47hjJP0jznNtRx2yEQ",
               "type": "string"
             }
           ]
@@ -381,7 +381,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"gymLocation\": \"1.3430632325232081, 103.7758850783227\"\r\n}",
+          "raw": "{\r\n    \"countryCode\": \"SGP\",\r\n    \"postal\": \"588179\",\r\n    \"gymName\": \"ZVertigo\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -389,9 +389,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/request",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/request",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "gym", "request"]
         }
       },

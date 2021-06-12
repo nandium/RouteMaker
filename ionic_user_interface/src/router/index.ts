@@ -33,6 +33,18 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Gyms.vue'),
   },
   {
+    path: '/gyms/request',
+    name: 'RequestGym',
+    component: () => import('@/views/RequestGym.vue'),
+    beforeEnter: (_, __, next) => {
+      if (localStorage.getItem('isLoggedIn') === 'yes') {
+        next();
+      } else {
+        next('/login');
+      }
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),

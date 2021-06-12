@@ -16,12 +16,12 @@ const requestGym: Handler = async (event: RequestGymEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { gymLocation },
+    body: { countryCode, postal, gymName },
   } = event;
 
   const { userEmail } = await getCognitoUserDetails(Authorization.split(' ')[1]);
   const publishInput: PublishInput = {
-    Message: `${userEmail} is requesting for the gym at location [${gymLocation}]`,
+    Message: `Email: ${userEmail}\nGym: [${gymName}]\nLoc: [${postal}] at [${countryCode}]`,
     TopicArn: process.env['TELEGRAM_SNS_ARN'],
   };
 

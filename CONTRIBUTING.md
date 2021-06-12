@@ -41,6 +41,17 @@ sudo ./serverless-deploy.sh deploy dev all
 
 Then should be a new file at `./lambda_backend/.env` which contains the required environment variables.
 
+#### Telegram Notification (Optional)
+
+Create a telegram bot. Then save the credentials as shown below before running `serverless-deploy.sh`. Notifications for the developers will be sent to the channel.
+
+```
+echo '{
+  "BOT_TOKEN": "1313131313:xxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "BOT_CHAT_ID": "-131313131"
+}' > ./lambda_backend/sns_setup/serverless-config.dev.json
+```
+
 ### Frontend Setup
 
 The Vue application can run in browser and also in Android through Capacitor plugin.

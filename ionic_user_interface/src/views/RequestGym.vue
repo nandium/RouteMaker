@@ -5,9 +5,9 @@
       <ion-header collapse="condense"></ion-header>
       <div id="container">
         <strong>Route Maker</strong>
-        <p>Find climbing routes by gym</p>
+        <p>Climbing Gym Request Form</p>
         <br />
-        <gym-selector v-if="canvasWidth > 0" :width="canvasWidth" />
+        <gym-request-form />
       </div>
     </ion-content>
   </ion-page>
@@ -15,33 +15,19 @@
 
 <script lang="ts">
 import { IonContent, IonHeader, IonPage } from '@ionic/vue';
-import { defineComponent, onMounted, onUnmounted } from 'vue';
+import { defineComponent } from 'vue';
 
 import Header from '@/components/header/Header.vue';
-import GymSelector from '@/components/gym-selector/GymSelector.vue';
-import { useCanvasWidth } from '@/composables/useCanvasWidth';
+import GymRequestForm from '@/components/gym-selector/GymRequestForm.vue';
 
 export default defineComponent({
-  name: 'Gyms',
+  name: 'RequestGym',
   components: {
     IonContent,
     IonHeader,
     IonPage,
     Header,
-    GymSelector,
-  },
-  setup() {
-    const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
-    window.addEventListener('resize', updateCanvasWidth);
-    onMounted(() => {
-      updateCanvasWidth();
-    });
-    onUnmounted(() => {
-      window.removeEventListener('resize', updateCanvasWidth);
-    });
-    return {
-      canvasWidth,
-    };
+    GymRequestForm,
   },
 });
 </script>

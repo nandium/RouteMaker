@@ -15,9 +15,12 @@ export const handler: Handler = async (event: SNSEvent) => {
   } = Records[0];
 
   try {
-    await axios.get(
-      `https://api.telegram.org/bot${process.env['BOT_TOKEN']}/sendMessage?chat_id=${process.env['BOT_CHAT_ID']}&text=${Message}`,
-    );
+    await axios.get(`https://api.telegram.org/bot${process.env['BOT_TOKEN']}/sendMessage`, {
+      params: {
+        chat_id: process.env['BOT_CHAT_ID'],
+        text: Message,
+      },
+    });
   } catch (error) {
     return {
       statusCode: 400,
