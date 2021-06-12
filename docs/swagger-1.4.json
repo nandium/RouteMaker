@@ -1391,12 +1391,12 @@
           "postal": {
             "type": "string",
             "maxLength": 12,
-            "pattern": "^[\\x00-\\x7F]+$"
+            "pattern": "^[ -~]+$"
           },
           "gymName": {
             "type": "string",
             "maxLength": 30,
-            "pattern": "^[\\x00-\\x7F]+$"
+            "pattern": "^[ -~]+$"
           }
         }
       }
