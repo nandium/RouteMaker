@@ -70,7 +70,7 @@ export default defineComponent({
     const gymNameInput: Ref<string> = ref('');
     const postalInput: Ref<string> = ref('');
 
-    const asciiPattern = /^[a-zA-Z0-9 \\-]*$/;
+    const asciiPattern = /^[ -~]+$/;
 
     onMounted(() => {
       countryNameList.value = [...Lookup.countries.sort()];
@@ -118,11 +118,11 @@ export default defineComponent({
         return false;
       }
       if (!isValidGymName(gymNameInput.value)) {
-        errorMsg.value?.showErrorMsg('Gym name has to be 1 to 30 characters');
+        errorMsg.value?.showErrorMsg('Gym name has to be 1 to 30 English chars');
         return false;
       }
       if (!isValidPostal(postalInput.value)) {
-        errorMsg.value?.showErrorMsg('Postal has to be 1 to 12 characters');
+        errorMsg.value?.showErrorMsg('Postal has to be 1 to 12 English chars');
         return false;
       }
 
