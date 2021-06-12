@@ -171,7 +171,7 @@ export const requestGymSchema = {
           pattern: AsciiCharacters,
         },
       },
-      required: ['countryCode'],
+      required: ['countryCode', 'postal', 'gymName'],
     },
   },
 };
