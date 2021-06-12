@@ -9,8 +9,8 @@ provider:
   region: ap-southeast-1
   memorySize: 1024
   environment:
-    BOT_TOKEN: ${file(../serverless-config.${self:custom.stage}.json):BOT_TOKEN, ''}
-    BOT_CHAT_ID: ${file(../serverless-config.${self:custom.stage}.json):BOT_CHAT_ID, ''}
+    BOT_TOKEN: ${file(./serverless-config.${self:custom.stage}.json):BOT_TOKEN, ''}
+    BOT_CHAT_ID: ${file(./serverless-config.${self:custom.stage}.json):BOT_CHAT_ID, ''}
   logRetentionInDays: 30
   lambdaHashingVersion: 20201221
 
