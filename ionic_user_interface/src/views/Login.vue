@@ -180,7 +180,7 @@ export default defineComponent({
               setConfirmationNeeded(true);
               router.push('/confirm');
             } else {
-              console.log(error.response.data);
+              console.error(error.response.data);
             }
           } else if (error.request) {
             errorMsg.value?.showMsg('Invalid credentials');

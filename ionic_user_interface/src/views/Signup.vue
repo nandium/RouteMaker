@@ -199,11 +199,11 @@ export default defineComponent({
             if (error.response.data.Message === 'UsernameExistsException') {
               errorMsg.value?.showMsg('Account already exists, please login!');
             } else {
-              console.log(error.response.data);
+              console.error(error.response.data);
             }
           } else if (error.request) {
             errorMsg.value?.showMsg('Unknown error occured');
-            console.log(error.request);
+            console.error(error.request);
           } else {
             // Something happened in setting up the request that triggered an Error
             errorMsg.value?.showMsg('Error: ' + error.message);
