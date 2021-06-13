@@ -6,7 +6,7 @@
           <MessageBox ref="errorMsg" color="danger" />
           <ion-list>
             <ion-item>
-              <ion-label>Country</ion-label>
+              <ion-label class="absolute-position">Country</ion-label>
               <auto-complete
                 :options="countryNameList"
                 optionsKey="country"
@@ -170,3 +170,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.absolute-position {
+  position: absolute;
+}
+</style>
