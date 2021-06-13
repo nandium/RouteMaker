@@ -76,9 +76,9 @@ import {
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
 import MessageBox from '@/components/MessageBox.vue';
-import useRouter from 'vue-router';
 import getGyms, { GymLocation } from '@/common/api/route/getGyms';
 import AutoComplete from './AutoComplete.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'GymSelector',

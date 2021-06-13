@@ -3,8 +3,8 @@
     <ion-label class="ion-text-wrap">
       {{ msgText }}
     </ion-label>
-    <ion-button fill="clear" color="dark" shape="round" @click="close">
-      <ion-icon :icon="closeCircleOutline"></ion-icon>
+    <ion-button fill="clear" color="light" shape="round" @click="close">
+      <ion-icon :icon="closeCircleOutline" color="light"></ion-icon>
     </ion-button>
   </ion-item>
 </template>
