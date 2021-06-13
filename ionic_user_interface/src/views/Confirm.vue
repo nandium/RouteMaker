@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
       <ion-grid>
         <ion-row color="primary" class="ion-align-items-center ion-justify-content-center">
@@ -9,7 +8,7 @@
               <h1>Confirm Signup</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ErrorMessage ref="errorMsg" class="margin" />
+              <MessageBox ref="msgBox" :color="msgBoxColor" class="rounded margin" />
               <form @submit="onSubmit">
                 <ion-item class="rounded margin">
                   <ion-label position="stacked">Confirmation code</ion-label>
@@ -52,20 +51,18 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  onIonViewDidLeave,
   toastController,
 } from '@ionic/vue';
-import { defineComponent, inject, ref, Ref } from 'vue';
+import { defineComponent, inject, onMounted, ref, Ref } from 'vue';
 import axios from 'axios';
-import Header from '@/components/header/Header.vue';
-import ErrorMessage from '@/components/ErrorMessage.vue';
-import router from '@/router';
-import { onBeforeRouteLeave } from 'vue-router';
+import MessageBox from '@/components/MessageBox.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Confirm',
   components: {
-    ErrorMessage,
-    Header,
+    MessageBox,
     IonButton,
     IonCol,
     IonContent,
@@ -77,7 +74,9 @@ export default defineComponent({
     IonRow,
   },
   setup() {
-    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const router = useRouter();
+    const msgBox: Ref<typeof MessageBox | null> = ref(null);
+    const msgBoxColor = ref('danger');
     const confirmationCodeText = ref('');
     const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
@@ -85,8 +84,8 @@ export default defineComponent({
       () => undefined,
     );
 
-    onBeforeRouteLeave(() => {
-      errorMsg.value?.closeErrorMsg();
+    onIonViewDidLeave(() => {
+      msgBox.value?.close();
       confirmationCodeText.value = '';
       setConfirmationNeeded(false);
     });
@@ -104,14 +103,20 @@ export default defineComponent({
       return true;
     };
 
+    onMounted(() => {
+      msgBoxColor.value = 'medium';
+      msgBox.value?.showMsg(`A confirmation code has been sent to ${getUserEmail().value}`);
+    });
+
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
-      errorMsg.value?.closeErrorMsg();
+      msgBox.value?.close();
+      msgBoxColor.value = 'danger';
 
       confirmationCodeText.value = confirmationCodeText.value.trim();
 
       if (!isValidConfirmationCode(confirmationCodeText.value)) {
-        errorMsg.value?.showErrorMsg('Confirmation code must be 6 digits');
+        msgBox.value?.showMsg('Confirmation code must be 6 digits');
         return false;
       }
 
@@ -143,20 +148,20 @@ export default defineComponent({
 
             router.push('/login');
           } else {
-            errorMsg.value?.showErrorMsg('Unable to verify: ' + response.data.Message);
+            msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
           }
         })
         .catch((error) => {
           if (error.response) {
             if (error.response.data.Message === 'CodeMismatchException') {
-              errorMsg.value?.showErrorMsg('Wrong confirmation code');
+              msgBox.value?.showMsg('Wrong confirmation code');
             } else {
-              errorMsg.value?.showErrorMsg('Error: ' + error.response.data.Message);
+              msgBox.value?.showMsg('Error: ' + error.response.data.Message);
             }
           } else if (error.request) {
-            errorMsg.value?.showErrorMsg('Bad request');
+            msgBox.value?.showMsg('Bad request');
           } else {
-            errorMsg.value?.showErrorMsg('Error: ' + error.message);
+            msgBox.value?.showMsg('Error: ' + error.message);
           }
         });
 
@@ -164,7 +169,8 @@ export default defineComponent({
     };
     return {
       onSubmit,
-      errorMsg,
+      msgBox,
+      msgBoxColor,
       confirmationCodeText,
     };
   },

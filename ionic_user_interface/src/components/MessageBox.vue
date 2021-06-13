@@ -1,9 +1,9 @@
 <template>
-  <ion-item class="rounded error-message" color="danger" v-if="errorMsg.length !== 0">
+  <ion-item class="message" :color="color" v-if="msgText.length !== 0">
     <ion-label class="ion-text-wrap">
-      {{ errorMsg }}
+      {{ msgText }}
     </ion-label>
-    <ion-button fill="clear" color="dark" shape="round" @click="closeErrorMsg">
+    <ion-button fill="clear" color="dark" shape="round" @click="close">
       <ion-icon :icon="closeCircleOutline"></ion-icon>
     </ion-button>
   </ion-item>
@@ -15,29 +15,35 @@ import { IonButton, IonIcon, IonItem, IonLabel } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  name: 'About',
+  name: 'MessageBox',
   components: {
     IonButton,
     IonIcon,
     IonItem,
     IonLabel,
   },
+  props: {
+    color: {
+      type: String,
+      required: true,
+    },
+  },
   setup() {
-    const errorMsg = ref('');
+    const msgText = ref('');
 
-    const showErrorMsg = (message: string): void => {
-      closeErrorMsg();
-      errorMsg.value = message;
+    const showMsg = (message: string): void => {
+      close();
+      msgText.value = message;
     };
 
-    const closeErrorMsg = (): void => {
-      errorMsg.value = '';
+    const close = (): void => {
+      msgText.value = '';
     };
 
     return {
-      errorMsg,
-      showErrorMsg,
-      closeErrorMsg,
+      msgText,
+      showMsg,
+      close,
       closeCircleOutline,
     };
   },
@@ -56,7 +62,7 @@ export default defineComponent({
   }
 }
 
-.error-message {
+.message {
   animation: popIn 0.2s both ease-in;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div :style="{ width: width + 'px' }">
-    <ErrorMessage ref="errorMsg" />
+    <MessageBox ref="errorMsg" color="danger" />
     <ion-list>
       <ion-item>
         <ion-label>Country</ion-label>
@@ -68,8 +68,7 @@ import {
   IonButton,
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
-
-import ErrorMessage from '@/components/ErrorMessage.vue';
+import MessageBox from '@/components/MessageBox.vue';
 import getGyms, { GymLocation } from '@/common/api/route/getGyms';
 import AutoComplete from './AutoComplete.vue';
 
@@ -85,7 +84,7 @@ export default defineComponent({
     IonCol,
     IonButton,
     AutoComplete,
-    ErrorMessage,
+    MessageBox,
   },
   props: {
     width: {
@@ -100,7 +99,7 @@ export default defineComponent({
     const gymLocationList = ref<Array<GymLocation>>([]);
     const selectedCountry = ref('');
     const selectedGym = ref('');
-    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const errorMsg: Ref<typeof MessageBox | null> = ref(null);
 
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountry.value !== '');
@@ -127,14 +126,14 @@ export default defineComponent({
     };
 
     const onGymSelect = (gymLocation: string) => {
-      errorMsg.value?.closeErrorMsg();
+      errorMsg.value?.close();
       selectedGym.value = gymLocation;
       embedMapPointerLocation.value = gymLocation;
     };
 
     const onClickSearchRoutes = () => {
       if (!userHasSelectedGym.value) {
-        errorMsg.value?.showErrorMsg('Please select a gym');
+        errorMsg.value?.showMsg('Please select a gym');
       } else {
         // TODO: Display routes
       }

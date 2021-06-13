@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
       <ion-grid>
         <ion-row color="primary" class="ion-align-items-center ion-justify-content-center">
@@ -9,7 +8,7 @@
               <h1>Login</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ErrorMessage ref="errorMsg" />
+              <MessageBox ref="errorMsg" color="danger" class="rounded" />
               <form @submit="onSubmit">
                 <ion-item class="rounded">
                   <ion-label position="stacked">Email</ion-label>
@@ -20,7 +19,7 @@
                     name="email"
                     type="text"
                     enterkeyhint="go"
-                    autofocus
+                    autofocus="true"
                     required
                   />
                 </ion-item>
@@ -69,20 +68,18 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  onIonViewDidLeave,
   toastController,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
-import Header from '@/components/header/Header.vue';
-import ErrorMessage from '@/components/ErrorMessage.vue';
-import router from '@/router';
-import { onBeforeRouteLeave } from 'vue-router';
+import MessageBox from '@/components/MessageBox.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'About',
+  name: 'Login',
   components: {
-    ErrorMessage,
-    Header,
+    MessageBox,
     IonButton,
     IonCol,
     IonContent,
@@ -94,6 +91,7 @@ export default defineComponent({
     IonRow,
   },
   setup() {
+    const router = useRouter();
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -108,10 +106,10 @@ export default defineComponent({
     );
     const emailText = ref('');
     const passwordText = ref('');
-    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const errorMsg: Ref<typeof MessageBox | null> = ref(null);
 
-    onBeforeRouteLeave(() => {
-      errorMsg.value?.closeErrorMsg();
+    onIonViewDidLeave(() => {
+      errorMsg.value?.close();
     });
 
     const isValidEmail = (email: string): boolean => {
@@ -124,17 +122,17 @@ export default defineComponent({
 
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
-      errorMsg.value?.closeErrorMsg();
+      errorMsg.value?.close();
 
       emailText.value = emailText.value.trim();
 
       // Invalid credentials
       if (!isValidEmail(emailText.value)) {
-        errorMsg.value?.showErrorMsg('Invalid email');
+        errorMsg.value?.showMsg('Invalid email');
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
-        errorMsg.value?.showErrorMsg('Password has to be at least 8 characters');
+        errorMsg.value?.showMsg('Password has to be at least 8 characters');
         return false;
       }
 
@@ -175,9 +173,9 @@ export default defineComponent({
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
             if (error.response.data.Message === 'UserNotFoundException') {
-              errorMsg.value?.showErrorMsg('Account not found, please sign up!');
+              errorMsg.value?.showMsg('Account not found, please sign up!');
             } else if (error.response.data.Message === 'NotAuthorizedException') {
-              errorMsg.value?.showErrorMsg('Wrong email or password');
+              errorMsg.value?.showMsg('Wrong email or password');
             } else if (error.response.data.Message === 'UserNotConfirmedException') {
               setConfirmationNeeded(true);
               router.push('/confirm');
@@ -185,9 +183,9 @@ export default defineComponent({
               console.log(error.response.data);
             }
           } else if (error.request) {
-            errorMsg.value?.showErrorMsg('Invalid credentials');
+            errorMsg.value?.showMsg('Invalid credentials');
           } else {
-            errorMsg.value?.showErrorMsg('Error: ' + error.message);
+            errorMsg.value?.showMsg('Error: ' + error.message);
           }
         });
       return true;

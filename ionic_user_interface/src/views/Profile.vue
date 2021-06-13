@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
       <ion-grid>
         <ion-row color="primary" class="ion-align-items-center ion-justify-content-center">
@@ -46,17 +45,16 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  toastController,
 } from '@ionic/vue';
 import { computed, defineComponent, inject, ref, Ref } from 'vue';
-import Header from '@/components/header/Header.vue';
-import router from '@/router';
+import { useRouter } from 'vue-router';
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 
 export default defineComponent({
   name: 'Profile',
   components: {
-    Header,
     IonButton,
     IonCol,
     IonContent,
@@ -68,6 +66,7 @@ export default defineComponent({
     IonRow,
   },
   setup() {
+    const router = useRouter();
     const forceLogout: () => Promise<void> = inject('forceLogout', () => Promise.resolve());
     const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
@@ -91,11 +90,30 @@ export default defineComponent({
       return '';
     });
 
+    const showFailedToDeleteAccountToast = (): void => {
+      toastController
+        .create({
+          header: 'Failed to delete account. Please login and try again',
+          position: 'bottom',
+          color: 'danger',
+          duration: 3000,
+          buttons: [
+            {
+              text: 'Close',
+              role: 'cancel',
+            },
+          ],
+        })
+        .then((toast) => {
+          toast.present();
+        });
+    };
+
     const clickDeleteAccountButton = async (): Promise<void> => {
       const alert = await alertController.create({
-        header: 'Delete account?',
-        subHeader: 'This action cannot be undone.',
-        message: 'Are you sure?',
+        header: 'Are you sure?',
+        message:
+          'This action cannot be undone. <br/><br/> Once your account is deleted, you will be unable to access and modify your uploaded routes.',
         buttons: [
           {
             text: 'Cancel',
@@ -103,7 +121,7 @@ export default defineComponent({
           },
           {
             text: 'Delete',
-            cssClass: 'ion-color-danger',
+            cssClass: 'danger-text',
             handler: async () => {
               await axios
                 .delete(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/delete', {
@@ -114,7 +132,27 @@ export default defineComponent({
                 .then(async (response) => {
                   if (response.status === 204) {
                     await forceLogout();
+
+                    toastController
+                      .create({
+                        header: 'Account deleted successfully',
+                        position: 'bottom',
+                        color: 'success',
+                        duration: 3000,
+                        buttons: [
+                          {
+                            text: 'Close',
+                            role: 'cancel',
+                          },
+                        ],
+                      })
+                      .then((toast) => {
+                        toast.present();
+                      });
+
                     router.push('/home');
+                  } else {
+                    showFailedToDeleteAccountToast();
                   }
                 })
                 .catch((error) => {
@@ -134,6 +172,7 @@ export default defineComponent({
                     console.log('Error', error.message);
                   }
                   console.log(error.config);
+                  showFailedToDeleteAccountToast();
                 });
             },
           },
