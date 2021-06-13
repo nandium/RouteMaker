@@ -46,7 +46,6 @@ resources:
                 - publicGrade
                 - voteCount
                 - commentCount
-                - routeURL
               ProjectionType: INCLUDE
             ProvisionedThroughput:
               ReadCapacityUnits: ${self:custom._routeDataTableGSI.ReadCapacityUnits.${self:custom.stage}}
