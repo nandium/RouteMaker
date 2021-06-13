@@ -1,42 +1,94 @@
 import { ref, Ref } from 'vue';
 import axios from 'axios';
 import router from '@/router';
+import jwt_decode from 'jwt-decode';
+import { toastController } from '@ionic/vue';
 
 const isLoggedIn = ref(false);
 const userEmail = ref('');
 const accessToken = ref('');
 const idToken = ref('');
 const isConfirmationNeeded = ref(false);
+const prefersDarkMode = ref(false);
+
+const forceLogout = async (): Promise<void> => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken.value}`,
+    },
+  };
+  return axios
+    .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/logout', {}, config)
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error(error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.error(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error', error.message);
+      }
+    })
+    .finally(() => {
+      isLoggedIn.value = false;
+      userEmail.value = '';
+      accessToken.value = '';
+      idToken.value = '';
+      isConfirmationNeeded.value = false;
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('idToken');
+      localStorage.removeItem('isConfirmationNeeded');
+      router.push('/home');
+    });
+};
+
+const checkExpiry = async (): Promise<void> => {
+  if (isLoggedIn.value && accessToken.value !== '') {
+    let expired = false;
+    try {
+      const token: { exp: number } = jwt_decode(accessToken.value);
+      if (token.exp <= Math.floor(Date.now() / 1000)) {
+        await forceLogout();
+        expired = true;
+      }
+    } catch (error) {
+      console.error(error);
+      await forceLogout();
+      expired = true;
+    }
+    if (expired) {
+      toastController
+        .create({
+          header: 'Logged out due to session expiry. Please login again!',
+          position: 'bottom',
+          color: 'danger',
+          buttons: [
+            {
+              text: 'Close',
+              role: 'cancel',
+            },
+          ],
+        })
+        .then((toast) => {
+          toast.present();
+        });
+    }
+  }
+};
 
 const providers = {
-  forceLogout: async (): Promise<void> => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken.value}`,
-      },
-    };
-    console.log(config);
-    return axios
-      .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/logout', {}, config)
-      .then((response) => {
-        if (response.status === 200) {
-          isLoggedIn.value = false;
-          userEmail.value = '';
-          accessToken.value = '';
-          idToken.value = '';
-          isConfirmationNeeded.value = false;
-          localStorage.removeItem('isLoggedIn');
-          localStorage.removeItem('userEmail');
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('idToken');
-          localStorage.removeItem('isConfirmationNeeded');
-          router.push('/home');
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  },
+  checkExpiry,
+  forceLogout,
   getLoggedIn: (): Ref<boolean> => {
     isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'yes';
     return isLoggedIn;
@@ -76,6 +128,25 @@ const providers = {
   setConfirmationNeeded: (confirmationNeeded: boolean): void => {
     isConfirmationNeeded.value = confirmationNeeded;
     localStorage.setItem('isConfirmationNeeded', confirmationNeeded ? 'yes' : 'no');
+  },
+  getPrefersDarkMode: (): Ref<boolean> => {
+    // If user has not overrided using the dark mode toggle under /profile, we try and set it according to his @media properties
+    if (
+      localStorage.getItem('prefersDarkMode') !== 'no' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      localStorage.setItem('prefersDarkMode', 'yes');
+    }
+    if (localStorage.getItem('prefersDarkMode') === 'yes') {
+      prefersDarkMode.value = true;
+    } else {
+      prefersDarkMode.value = false;
+    }
+    return prefersDarkMode;
+  },
+  setPrefersDarkMode: (darkMode: boolean): void => {
+    prefersDarkMode.value = darkMode;
+    localStorage.setItem('prefersDarkMode', darkMode ? 'yes' : 'no');
   },
 };
 

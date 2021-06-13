@@ -1,8 +1,6 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense"></ion-header>
       <div id="container">
         <strong>Route Maker</strong>
         <p>Find climbing routes by gym</p>
@@ -14,10 +12,9 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage } from '@ionic/vue';
+import { IonContent, IonPage } from '@ionic/vue';
 import { defineComponent, onMounted, onUnmounted } from 'vue';
 
-import Header from '@/components/header/Header.vue';
 import GymSelector from '@/components/gym-selector/GymSelector.vue';
 import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
@@ -25,9 +22,7 @@ export default defineComponent({
   name: 'Gyms',
   components: {
     IonContent,
-    IonHeader,
     IonPage,
-    Header,
     GymSelector,
   },
   setup() {

@@ -18,9 +18,9 @@
 
 <script lang="ts">
 import { personCircleOutline } from 'ionicons/icons';
-import { IonButton, IonIcon, IonItem, IonList, IonPopover } from '@ionic/vue';
+import { IonButton, IonIcon, IonItem, IonList, IonPopover, toastController } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
-import router from '@/router';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'LoginButton',
@@ -32,6 +32,7 @@ export default defineComponent({
     IonPopover,
   },
   setup() {
+    const router = useRouter();
     const forceLogout: () => Promise<void> = inject('forceLogout', () => Promise.resolve());
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const isLoggedIn = getLoggedIn();
@@ -47,6 +48,23 @@ export default defineComponent({
     const clickLogoutButton = async () => {
       setPopoverOpen(false);
       await forceLogout();
+
+      toastController
+        .create({
+          header: 'Logged out successfully',
+          position: 'bottom',
+          color: 'success',
+          duration: 3000,
+          buttons: [
+            {
+              text: 'Close',
+              role: 'cancel',
+            },
+          ],
+        })
+        .then((toast) => {
+          toast.present();
+        });
     };
 
     const clickProfileButton = () => {

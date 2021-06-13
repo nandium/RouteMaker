@@ -1,9 +1,6 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense"></ion-header>
-
       <div id="container">
         <strong>Route Maker</strong>
         <p>Quickly make custom climbing routes</p>
@@ -21,11 +18,10 @@
 
 <script lang="ts">
 import { camera } from 'ionicons/icons';
-import { IonButton, IonContent, IonHeader, IonIcon, IonPage } from '@ionic/vue';
+import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted, onMounted } from 'vue';
 
 import Canvas from '@/components/wall-image-viewer/Canvas.vue';
-import Header from '@/components/header/Header.vue';
 import { usePhotoGallery } from '@/composables/usePhotoGallery';
 import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
@@ -34,11 +30,9 @@ export default defineComponent({
   components: {
     IonButton,
     IonContent,
-    IonHeader,
     IonIcon,
     IonPage,
     Canvas,
-    Header,
   },
   setup() {
     const photoData = ref('');
@@ -56,9 +50,11 @@ export default defineComponent({
       }
     });
     window.addEventListener('resize', updateCanvasWidth);
+
     onMounted(() => {
       updateCanvasWidth();
     });
+
     onUnmounted(() => {
       window.removeEventListener('resize', updateCanvasWidth);
     });

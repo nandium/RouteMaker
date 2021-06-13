@@ -2,7 +2,7 @@
   <ion-grid>
     <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-        <ErrorMessage ref="errorMsg" />
+        <MessageBox ref="errorMsg" color="danger" />
         <form @submit="onSubmit">
           <ion-list>
             <ion-item>
@@ -45,7 +45,7 @@ import {
 import Lookup, { Country } from 'country-code-lookup';
 
 import router from '@/router';
-import ErrorMessage from '@/components/ErrorMessage.vue';
+import MessageBox from '@/components/MessageBox.vue';
 import AutoComplete from './AutoComplete.vue';
 import requestGym from '@/common/api/route/requestGym';
 
@@ -61,10 +61,10 @@ export default defineComponent({
     IonInput,
     IonButton,
     AutoComplete,
-    ErrorMessage,
+    MessageBox,
   },
   setup() {
-    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const errorMsg: Ref<typeof MessageBox | null> = ref(null);
     const countryNameList = ref<Array<Country>>([]);
     const selectedCountryIso3 = ref('');
     const gymNameInput: Ref<string> = ref('');
@@ -110,26 +110,26 @@ export default defineComponent({
 
     const onSubmit = async (event: Event): Promise<boolean> => {
       event.preventDefault();
-      errorMsg.value?.closeErrorMsg();
+      errorMsg.value?.close();
 
       // Invalid credentials
       if (!selectedCountryIso3.value) {
-        errorMsg.value?.showErrorMsg('Invalid country');
+        errorMsg.value?.showMsg('Invalid country');
         return false;
       }
       if (!isValidGymName(gymNameInput.value)) {
-        errorMsg.value?.showErrorMsg('Gym name has to be 1 to 30 English chars');
+        errorMsg.value?.showMsg('Gym name has to be 1 to 30 English chars');
         return false;
       }
       if (!isValidPostal(postalInput.value)) {
-        errorMsg.value?.showErrorMsg('Postal has to be 1 to 12 English chars');
+        errorMsg.value?.showMsg('Postal has to be 1 to 12 English chars');
         return false;
       }
 
       try {
         await requestGym(selectedCountryIso3.value, postalInput.value, gymNameInput.value);
       } catch (error) {
-        errorMsg.value?.showErrorMsg('Error submitting form');
+        errorMsg.value?.showMsg('Error submitting form');
         return false;
       }
       alertSubmissionSuccess();

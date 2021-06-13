@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
       <ion-grid>
         <ion-row color="primary" class="ion-align-items-center ion-justify-content-center">
@@ -9,7 +8,7 @@
               <h1>Login</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ErrorMessage ref="errorMsg" />
+              <MessageBox ref="errorMsg" color="danger" class="rounded" />
               <form @submit="onSubmit">
                 <ion-item class="rounded">
                   <ion-label position="stacked">Email</ion-label>
@@ -20,7 +19,7 @@
                     name="email"
                     type="text"
                     enterkeyhint="go"
-                    autofocus
+                    autofocus="true"
                     required
                   />
                 </ion-item>
@@ -69,18 +68,18 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  onIonViewDidLeave,
+  toastController,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
-import Header from '@/components/header/Header.vue';
-import ErrorMessage from '@/components/ErrorMessage.vue';
-import router from '@/router';
+import MessageBox from '@/components/MessageBox.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'About',
+  name: 'Login',
   components: {
-    ErrorMessage,
-    Header,
+    MessageBox,
     IonButton,
     IonCol,
     IonContent,
@@ -92,6 +91,7 @@ export default defineComponent({
     IonRow,
   },
   setup() {
+    const router = useRouter();
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -100,9 +100,17 @@ export default defineComponent({
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
     const setIdToken: (idToken: string) => void = inject('setIdToken', () => undefined);
+    const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
+      'setConfirmationNeeded',
+      () => undefined,
+    );
     const emailText = ref('');
     const passwordText = ref('');
-    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const errorMsg: Ref<typeof MessageBox | null> = ref(null);
+
+    onIonViewDidLeave(() => {
+      errorMsg.value?.close();
+    });
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -114,15 +122,17 @@ export default defineComponent({
 
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
-      errorMsg.value?.closeErrorMsg();
+      errorMsg.value?.close();
+
+      emailText.value = emailText.value.trim();
 
       // Invalid credentials
       if (!isValidEmail(emailText.value)) {
-        errorMsg.value?.showErrorMsg('Invalid email');
+        errorMsg.value?.showMsg('Invalid email');
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
-        errorMsg.value?.showErrorMsg('Password has to be at least 8 characters');
+        errorMsg.value?.showMsg('Password has to be at least 8 characters');
         return false;
       }
 
@@ -138,12 +148,45 @@ export default defineComponent({
           setIdToken(response.data.IdToken);
           setAccessToken(response.data.AccessToken);
           setLoggedIn(true);
+
+          toastController
+            .create({
+              header: 'Logged in successfully',
+              position: 'bottom',
+              color: 'success',
+              duration: 3000,
+              buttons: [
+                {
+                  text: 'Close',
+                  role: 'cancel',
+                },
+              ],
+            })
+            .then((toast) => {
+              toast.present();
+            });
+
           router.push('/home');
         })
         .catch((error) => {
-          console.log(error);
-          setUserEmail('');
-          errorMsg.value?.showErrorMsg('Wrong email or password');
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            if (error.response.data.Message === 'UserNotFoundException') {
+              errorMsg.value?.showMsg('Account not found, please sign up!');
+            } else if (error.response.data.Message === 'NotAuthorizedException') {
+              errorMsg.value?.showMsg('Wrong email or password');
+            } else if (error.response.data.Message === 'UserNotConfirmedException') {
+              setConfirmationNeeded(true);
+              router.push('/confirm');
+            } else {
+              console.error(error.response.data);
+            }
+          } else if (error.request) {
+            errorMsg.value?.showMsg('Invalid credentials');
+          } else {
+            errorMsg.value?.showMsg('Error: ' + error.message);
+          }
         });
       return true;
     };

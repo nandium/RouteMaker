@@ -3,7 +3,7 @@
     <ion-grid>
       <ion-row class="ion-align-items-center ion-justify-content-center">
         <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-          <ErrorMessage ref="errorMsg" />
+          <MessageBox ref="errorMsg" color="danger" />
           <ion-list>
             <ion-item>
               <ion-label>Country</ion-label>
@@ -75,11 +75,10 @@ import {
   IonButton,
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
-
-import router from '@/router';
-import ErrorMessage from '@/components/ErrorMessage.vue';
+import MessageBox from '@/components/MessageBox.vue';
 import getGyms, { GymLocation } from '@/common/api/route/getGyms';
 import AutoComplete from './AutoComplete.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'GymSelector',
@@ -94,7 +93,7 @@ export default defineComponent({
     IonCol,
     IonButton,
     AutoComplete,
-    ErrorMessage,
+    MessageBox,
   },
   props: {
     width: {
@@ -103,13 +102,14 @@ export default defineComponent({
     },
   },
   setup() {
+    const router = useRouter();
     const embedMapSrcStart = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_MAP_EMBED_API}&q=`;
     const embedMapPointerLocation = ref('');
     const countryNameList = ref<Array<Country>>([]);
     const gymLocationList = ref<Array<GymLocation>>([]);
     const selectedCountryIso3 = ref('');
     const selectedGym = ref('');
-    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const errorMsg: Ref<typeof MessageBox | null> = ref(null);
 
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
@@ -135,14 +135,14 @@ export default defineComponent({
     };
 
     const onGymSelect = (gymLocation: string) => {
-      errorMsg.value?.closeErrorMsg();
+      errorMsg.value?.close();
       selectedGym.value = gymLocation;
       embedMapPointerLocation.value = gymLocation;
     };
 
     const onClickSearchRoutes = () => {
       if (!userHasSelectedGym.value) {
-        errorMsg.value?.showErrorMsg('Please select a gym');
+        errorMsg.value?.showMsg('Please select a gym');
       } else {
         // TODO: Display routes
       }

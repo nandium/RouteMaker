@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
       <div id="container">
         <strong>Hello Climbers! &#129495;</strong>
@@ -67,7 +66,6 @@
 import { logoGithub } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import Header from '@/components/header/Header.vue';
 
 export default defineComponent({
   name: 'About',
@@ -76,7 +74,6 @@ export default defineComponent({
     IonContent,
     IonIcon,
     IonPage,
-    Header,
   },
   setup() {
     const publicPath = process.env.BASE_URL;

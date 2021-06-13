@@ -1,8 +1,6 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense"></ion-header>
       <div id="container">
         <strong>Route Maker</strong>
         <p>Climbing Gym Request Form</p>
@@ -14,19 +12,16 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage } from '@ionic/vue';
+import { IonContent, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
-import Header from '@/components/header/Header.vue';
 import GymRequestForm from '@/components/gym-selector/GymRequestForm.vue';
 
 export default defineComponent({
   name: 'RequestGym',
   components: {
     IonContent,
-    IonHeader,
     IonPage,
-    Header,
     GymRequestForm,
   },
 });
