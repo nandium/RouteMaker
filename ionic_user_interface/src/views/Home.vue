@@ -19,7 +19,7 @@
 <script lang="ts">
 import { camera } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
-import { defineComponent, watch, ref, onUnmounted } from 'vue';
+import { defineComponent, watch, ref, onUnmounted, onMounted } from 'vue';
 
 import Canvas from '@/components/wall-image-viewer/Canvas.vue';
 import { usePhotoGallery } from '@/composables/usePhotoGallery';
@@ -49,8 +49,12 @@ export default defineComponent({
         updateCanvasWidth();
       }
     });
-    window.onload = updateCanvasWidth;
     window.addEventListener('resize', updateCanvasWidth);
+
+    onMounted(() => {
+      updateCanvasWidth();
+    });
+
     onUnmounted(() => {
       window.removeEventListener('resize', updateCanvasWidth);
     });

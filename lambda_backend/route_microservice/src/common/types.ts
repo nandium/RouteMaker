@@ -26,7 +26,7 @@ export interface CreateRouteEvent extends AuthHeader {
 }
 
 export interface DeleteRouteEvent extends AuthHeader {
-  body: {
+  queryStringParameters: {
     createdAt: string;
   };
 }
@@ -73,9 +73,10 @@ export interface AddCommentEvent extends AuthHeader {
 }
 
 export interface DeleteCommentEvent extends AuthHeader {
-  body: {
+  queryStringParameters: {
     username: string;
     createdAt: string;
+    commenterName: string;
     timestamp: number;
   };
 }
@@ -129,6 +130,8 @@ export interface CognitoUserDetails {
 
 export interface RequestGymEvent extends AuthHeader {
   body: {
-    gymLocation: string;
+    countryCode: string;
+    postal: string;
+    gymName: string;
   };
 }

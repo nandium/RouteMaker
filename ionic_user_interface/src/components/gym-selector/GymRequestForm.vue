@@ -1,0 +1,149 @@
+<template>
+  <ion-grid>
+    <ion-row class="ion-align-items-center ion-justify-content-center">
+      <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+        <ErrorMessage ref="errorMsg" />
+        <form @submit="onSubmit">
+          <ion-list>
+            <ion-item>
+              <ion-label>Country</ion-label>
+              <auto-complete
+                :options="countryNameList"
+                optionsKey="country"
+                @matchedItem="onCountrySelect"
+              />
+            </ion-item>
+            <ion-item>
+              <ion-label>Gym Name</ion-label>
+              <ion-input class="ion-text-end" v-model="gymNameInput" />
+            </ion-item>
+            <ion-item>
+              <ion-label>Postal</ion-label>
+              <ion-input class="ion-text-end" v-model="postalInput" />
+            </ion-item>
+          </ion-list>
+          <ion-button expand="full" type="submit">Submit Request</ion-button>
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</template>
+
+<script lang="ts">
+import { ref, onMounted, defineComponent, Ref } from 'vue';
+import {
+  alertController,
+  IonGrid,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonCol,
+  IonInput,
+  IonButton,
+} from '@ionic/vue';
+import Lookup, { Country } from 'country-code-lookup';
+
+import router from '@/router';
+import ErrorMessage from '@/components/ErrorMessage.vue';
+import AutoComplete from './AutoComplete.vue';
+import requestGym from '@/common/api/route/requestGym';
+
+export default defineComponent({
+  name: 'GymRequestForm',
+  components: {
+    IonGrid,
+    IonLabel,
+    IonList,
+    IonItem,
+    IonRow,
+    IonCol,
+    IonInput,
+    IonButton,
+    AutoComplete,
+    ErrorMessage,
+  },
+  setup() {
+    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const countryNameList = ref<Array<Country>>([]);
+    const selectedCountryIso3 = ref('');
+    const gymNameInput: Ref<string> = ref('');
+    const postalInput: Ref<string> = ref('');
+
+    const asciiPattern = /^[ -~]+$/;
+
+    onMounted(() => {
+      countryNameList.value = [...Lookup.countries.sort()];
+    });
+
+    const onCountrySelect = async (country: Country) => {
+      if (country) {
+        selectedCountryIso3.value = country.iso3;
+      } else {
+        selectedCountryIso3.value = '';
+      }
+    };
+
+    const isValidGymName = (gymName: string): boolean => {
+      return asciiPattern.test(gymName) && gymName.length > 0 && gymName.length <= 30;
+    };
+
+    const isValidPostal = (postal: string): boolean => {
+      return asciiPattern.test(postal) && postal.length > 0 && postal.length <= 12;
+    };
+
+    const alertSubmissionSuccess = async () => {
+      const alert = await alertController.create({
+        header: 'Request Submitted',
+        subHeader: 'Thank you! We will respond to you in 12 hours',
+        buttons: [
+          {
+            text: 'Okay',
+            handler: () => {
+              router.push('/home');
+            },
+          },
+        ],
+      });
+      return alert.present();
+    };
+
+    const onSubmit = async (event: Event): Promise<boolean> => {
+      event.preventDefault();
+      errorMsg.value?.closeErrorMsg();
+
+      // Invalid credentials
+      if (!selectedCountryIso3.value) {
+        errorMsg.value?.showErrorMsg('Invalid country');
+        return false;
+      }
+      if (!isValidGymName(gymNameInput.value)) {
+        errorMsg.value?.showErrorMsg('Gym name has to be 1 to 30 English chars');
+        return false;
+      }
+      if (!isValidPostal(postalInput.value)) {
+        errorMsg.value?.showErrorMsg('Postal has to be 1 to 12 English chars');
+        return false;
+      }
+
+      try {
+        await requestGym(selectedCountryIso3.value, postalInput.value, gymNameInput.value);
+      } catch (error) {
+        errorMsg.value?.showErrorMsg('Error submitting form');
+        return false;
+      }
+      alertSubmissionSuccess();
+      return true;
+    };
+
+    return {
+      countryNameList,
+      onCountrySelect,
+      errorMsg,
+      gymNameInput,
+      postalInput,
+      onSubmit,
+    };
+  },
+});
+</script>

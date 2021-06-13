@@ -18,19 +18,28 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { username: routeOwnerUsername, createdAt, timestamp },
+    queryStringParameters: { username: routeOwnerUsername, createdAt, commenterName, timestamp },
   } = event;
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
+  const { username: requestUsername } = (await jwt_decode(
+    Authorization.split(' ')[1],
+  )) as JwtPayload;
 
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+  // Delete only if requester is route owner or comment writer
+  if (requestUsername !== commenterName && requestUsername !== routeOwnerUsername) {
+    return {
+      statusCode: 403,
+      body: JSON.stringify({
+        Message: 'Unauthorized',
+      }),
+    };
+  }
+
   let { comments } = Item;
   comments = comments.filter((comment) => {
     const { timestamp: currTimestamp, username: currUsername } = comment;
-    if (timestamp === currTimestamp) {
-      if (username !== currUsername) {
-        createError(403, 'Not authorized');
-      }
+    if (timestamp === currTimestamp && currUsername === commenterName) {
       return false;
     }
     return true;

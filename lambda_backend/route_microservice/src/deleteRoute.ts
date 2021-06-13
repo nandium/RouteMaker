@@ -1,5 +1,5 @@
 import { Handler } from 'aws-lambda';
-import DynamoDB, { AttributeValue, QueryInput, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
+import DynamoDB, { AttributeValue, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
 import S3, { DeleteObjectRequest } from 'aws-sdk/clients/s3';
 
 import {
@@ -7,6 +7,7 @@ import {
   DeleteRouteEvent,
   deleteRouteSchema,
   JwtPayload,
+  getItemFromRouteTable,
 } from './common';
 import { createHash } from 'crypto';
 import jwt_decode from 'jwt-decode';
@@ -25,31 +26,14 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { createdAt },
+    queryStringParameters: { createdAt },
   } = event;
 
   const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
-  const queryInput: QueryInput = {
-    TableName: process.env['ROUTE_TABLE_NAME'],
-    ConsistentRead: false,
-    KeyConditionExpression: 'username = :username AND createdAt = :createdAt',
-    ExpressionAttributeValues: {
-      ':username': username as AttributeValue,
-      ':createdAt': createdAt as AttributeValue,
-    },
-  };
-  let Items;
-  try {
-    ({ Items } = await dynamoDb.query(queryInput).promise());
-  } catch (error) {
-    throw createError(500, 'Error querying table :' + error.stack);
-  }
-  if (!Items) {
-    createError(400, 'Route does not exist.');
-  }
+  const Item = await getItemFromRouteTable(username, createdAt);
 
   const usernameHash = createHash('sha256').update(username).digest('base64');
-  const decodedRouteURL = decodeURIComponent(Items[0].routeURL as string);
+  const decodedRouteURL = decodeURIComponent(Item.routeURL as string);
   const deleteObjectRequest: DeleteObjectRequest = {
     Bucket: process.env['S3_BUCKET_NAME'],
     Key: `public/${usernameHash}${decodedRouteURL.split(usernameHash)[1]}`,

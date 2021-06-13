@@ -43,8 +43,8 @@ resources:
         ExplicitAuthFlows:
           - ALLOW_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
-        AccessTokenValidity: 6
-        IdTokenValidity: 3
+        AccessTokenValidity: 24
+        IdTokenValidity: 24
         RefreshTokenValidity: 365
         TokenValidityUnits:
           AccessToken: hours

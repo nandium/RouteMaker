@@ -11,14 +11,14 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/all?countryCode=Singapore",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/all?countryCode=SGP",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "gym", "all"],
           "query": [
             {
               "key": "countryCode",
-              "value": "Singapore"
+              "value": "SGP"
             }
           ]
         }
@@ -33,7 +33,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJaQXhUaUlxVHNJZU5lTHliMlRNWkpQQVM1S1A3TU9YSzM5TUU0MmQ1ZzZZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTE1MDIxZS0wYzc2LTQ4NWYtYmI2MC02NzZlMWE0MGU4NTEiLCJldmVudF9pZCI6IjhjZjg0OTcxLTlhMGYtNDBiNy04MGM2LTk0YjA2YjNkNmRkNSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjIzNzY0NjEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xZ2dxOXpMT2oiLCJleHAiOjE2MjIzOTgwNjEsImlhdCI6MTYyMjM3NjQ2MiwianRpIjoiZmFkNWZhMTItNzE3OS00ZWQ2LWE4YzQtMjM1MDc4NDNiNTc1IiwiY2xpZW50X2lkIjoiM2I3dHZsaHY5ajg0Y245NDN0ajE3ZXR2NjMiLCJ1c2VybmFtZSI6IjM5MTUwMjFlLTBjNzYtNDg1Zi1iYjYwLTY3NmUxYTQwZTg1MSJ9.na1yckSx3hBCwwjSKph3Cr4B5GWWqY0wChLCljV84LgOelxSQBn_4x1CF5LYtqn3dQyO7GDXvIiL5ECSeJY8axozyQ-BID6Ur2TSGD61odCCJf_ajkKBucmofmHsYs2KXF_ybksWok4xKpusL3IXb-kCNZAuc2xEdOR6Irl5YPSYaMeoQO5j2-05e4vXu41XtQ4TKBn6kndXTsQFyCGLOrEDt1fLTjqdtgypxMY6TNp1jvApoSKi6BuNUpTkfaPAAfFkpaxE6ORPljqf1l9dSTKG9eTsYJd2lDg44eZ3m6qhtsn_WjIIvCOKL-XykELqH80VREQ4eeS6xrc13WB-Ow",
+              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3Y2RkZGIyMy1hNjNkLTRmMTctYmUyNy0xZjA3OGIxZWQzMDIiLCJldmVudF9pZCI6IjY2N2I5YzU3LTQ2MWEtNDcyNi04YjJmLTg3OWYwNTczNmMyNiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM0MjE2MjUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM0NDMyMjUsImlhdCI6MTYyMzQyMTYyNSwianRpIjoiMzZmMjNhMmUtOGU2Zi00M2U2LWI0NmEtMDk5YTYzNzVmZTRmIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2NkZGRiMjMtYTYzZC00ZjE3LWJlMjctMWYwNzhiMWVkMzAyIn0.sOrT5XMynNFAOIdsAqQPyYrT4wt3Qn5IEub0PBrOP_vbWG853NkxUiZXIFCB-DUgNBC9VqEc6HqhHUKU37gGipwqm8wNKhPY3VkeMonrmv22mpkK34pn4I78RrOC6cnYCgF2BkxxrweyIMp4bKR8slzVwlRrYj-dBazzL1znpNT4-vFllP7WRCHnrj8k85loJnG1rjV1HZV6qz8V0Xw8xAmA-iBxM5TIYm8X2hYvUSXLj4tFCcxrvRHJfB3XTdW5Y8b14kLnvv9jUkaZoqIKEstn1PEUXc6K5WJpzrb-ednpkeFja5mtkwuZH1HZQlHo-hP71AyObgmctMM5k2txoQ",
               "type": "string"
             }
           ]
@@ -52,7 +52,7 @@
           "formdata": [
             {
               "key": "countryCode",
-              "value": "Singapore",
+              "value": "SGP",
               "type": "text"
             },
             {
@@ -62,7 +62,7 @@
             },
             {
               "key": "gymLocation",
-              "value": "1.3430632325232081, 103.7758850783227",
+              "value": "1.314631906100423, 103.85734340244836",
               "type": "text"
             },
             {
@@ -83,9 +83,9 @@
           ]
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/new",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/new",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "new"]
         }
       },
@@ -99,7 +99,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJaQXhUaUlxVHNJZU5lTHliMlRNWkpQQVM1S1A3TU9YSzM5TUU0MmQ1ZzZZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTE1MDIxZS0wYzc2LTQ4NWYtYmI2MC02NzZlMWE0MGU4NTEiLCJldmVudF9pZCI6IjhjZjg0OTcxLTlhMGYtNDBiNy04MGM2LTk0YjA2YjNkNmRkNSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjIzNzY0NjEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xZ2dxOXpMT2oiLCJleHAiOjE2MjIzOTgwNjEsImlhdCI6MTYyMjM3NjQ2MiwianRpIjoiZmFkNWZhMTItNzE3OS00ZWQ2LWE4YzQtMjM1MDc4NDNiNTc1IiwiY2xpZW50X2lkIjoiM2I3dHZsaHY5ajg0Y245NDN0ajE3ZXR2NjMiLCJ1c2VybmFtZSI6IjM5MTUwMjFlLTBjNzYtNDg1Zi1iYjYwLTY3NmUxYTQwZTg1MSJ9.na1yckSx3hBCwwjSKph3Cr4B5GWWqY0wChLCljV84LgOelxSQBn_4x1CF5LYtqn3dQyO7GDXvIiL5ECSeJY8axozyQ-BID6Ur2TSGD61odCCJf_ajkKBucmofmHsYs2KXF_ybksWok4xKpusL3IXb-kCNZAuc2xEdOR6Irl5YPSYaMeoQO5j2-05e4vXu41XtQ4TKBn6kndXTsQFyCGLOrEDt1fLTjqdtgypxMY6TNp1jvApoSKi6BuNUpTkfaPAAfFkpaxE6ORPljqf1l9dSTKG9eTsYJd2lDg44eZ3m6qhtsn_WjIIvCOKL-XykELqH80VREQ4eeS6xrc13WB-Ow",
+              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3Y2RkZGIyMy1hNjNkLTRmMTctYmUyNy0xZjA3OGIxZWQzMDIiLCJldmVudF9pZCI6IjY2N2I5YzU3LTQ2MWEtNDcyNi04YjJmLTg3OWYwNTczNmMyNiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM0MjE2MjUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM0NDMyMjUsImlhdCI6MTYyMzQyMTYyNSwianRpIjoiMzZmMjNhMmUtOGU2Zi00M2U2LWI0NmEtMDk5YTYzNzVmZTRmIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2NkZGRiMjMtYTYzZC00ZjE3LWJlMjctMWYwNzhiMWVkMzAyIn0.sOrT5XMynNFAOIdsAqQPyYrT4wt3Qn5IEub0PBrOP_vbWG853NkxUiZXIFCB-DUgNBC9VqEc6HqhHUKU37gGipwqm8wNKhPY3VkeMonrmv22mpkK34pn4I78RrOC6cnYCgF2BkxxrweyIMp4bKR8slzVwlRrYj-dBazzL1znpNT4-vFllP7WRCHnrj8k85loJnG1rjV1HZV6qz8V0Xw8xAmA-iBxM5TIYm8X2hYvUSXLj4tFCcxrvRHJfB3XTdW5Y8b14kLnvv9jUkaZoqIKEstn1PEUXc6K5WJpzrb-ednpkeFja5mtkwuZH1HZQlHo-hP71AyObgmctMM5k2txoQ",
               "type": "string"
             }
           ]
@@ -113,20 +113,17 @@
             "disabled": true
           }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"createdAt\": \"2021-05-30T13:02:04.888Z\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route?createdAt=2021-06-11T14:31:41.118Z",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "route"]
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "route"],
+          "query": [
+            {
+              "key": "createdAt",
+              "value": "2021-06-11T14:31:41.118Z"
+            }
+          ]
         }
       },
       "response": []
@@ -137,14 +134,14 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/all?gymLocation=1.3430632325232081, 103.7758850783227",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/all?gymLocation=1.3430693085444936, 103.77586270905111",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "all"],
           "query": [
             {
               "key": "gymLocation",
-              "value": "1.3430632325232081, 103.7758850783227"
+              "value": "1.3430693085444936, 103.77586270905111"
             }
           ]
         }
@@ -159,7 +156,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJYTmk5ZFwvY1JcL3haTXJ4dytOQVJPemNpSUNacUJzdU90WXc1ME9uSWNzc0k9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJiMGJjYTRkMy0xODYyLTQ4M2UtOTcyMi05MDQxOWYyMDdjMzkiLCJldmVudF9pZCI6ImVmODRkYWQwLTE4YTgtNGVmZi1hZTY3LWQxNzlkMGVhZTk0MCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MTk5MjQ5OTEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV9JMFk5WEZpUTkiLCJleHAiOjE2MTk5NDY1OTEsImlhdCI6MTYxOTkyNDk5MSwianRpIjoiYTIwZjkwZTAtZmRiNC00OGM4LWFkZjktZTI4MWY5OTkxOWFjIiwiY2xpZW50X2lkIjoiNTJjZHI4MTJtczFldjdmcDZsdnZscHJzMWMiLCJ1c2VybmFtZSI6ImIwYmNhNGQzLTE4NjItNDgzZS05NzIyLTkwNDE5ZjIwN2MzOSJ9.TlhxAz_RTUA-kaMmIal7hr-xfpGhsmHi_X5qHJzze0jIoAfM_0K4LDZY80QarRDRAPBzUse9EjejwsU1wuPzeMVbv4b0-2IDAV5dh1BMyBaY0OoPRIexmF9cVpoxsbMEPVh-XNziYF9ILDOGCcJ33W-B2HeNX9AEmHTd1uqJinL70ocH5aHU6PkCLAW-40552NV7dNrd4U4v0ARqJg4hZyfkfu5Cf3YYAYwOY9aIZvWPn68PUO33iWx9J-F290s0hgU7-USEEYifgyah68FxXhUQp9E4hwp81CQgHu36HdZq-YZN0hBQene7GfaPNIQI0hk7LVlfj1CS8Xv2OHZpMQ",
+              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJiOWUyNWMyNi00N2QxLTRmMTEtOTY2MC05NTYxNWZiNmRjYjUiLCJldmVudF9pZCI6ImNmMzFkOWZjLTk2MTMtNGE1NC1hNTJiLTRiY2E1MWY2MmFkZiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjI5OTYxNjYsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjMwMTc3NjYsImlhdCI6MTYyMjk5NjE2NiwianRpIjoiNjlmYjdlOWMtY2U3MC00Mzc0LWI2MTQtNmYzZTFmOTlmZGM0IiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiYjllMjVjMjYtNDdkMS00ZjExLTk2NjAtOTU2MTVmYjZkY2I1In0.YEXCdyrIPA3AP5vGZFeR8SA-5EMKVEDUrSImJYpTbVqWayZdMDk3Sr5-gYgCaaHxRLgIgk4f47ySeahvjJ_7_1Y5w9SxRTNVp_3_epWdudnZW1EKLVxF01VrhYj640NJw-aTsFRfLO_axJkLjqAmUE1QWQ1YIDrVH3PkLV-GMIzJzYL2ot236NkDXlQDxQ9IkjHg0MwoMRKb83PvhJlAAthmiVNdmC4ORirSi1fPMIgEiWG3S7iOhitG7vjw3D-bzZIlkVpc_rniPQB08gsBO9XTi7UkFfCo8RgQ0jr6XnFmlBwySGybPQugmxd2_MmJGHl0FUndzsxJI_3bJE-lpw",
               "type": "string"
             }
           ]
@@ -168,7 +165,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"3915021e-0c76-485f-bb60-676e1a40e851\",\r\n    \"createdAt\": \"2021-05-30T12:21:26.122Z\"\r\n}",
+          "raw": "{\r\n    \"username\": \"7cdddb23-a63d-4f17-be27-1f078b1ed302\",\r\n    \"createdAt\": \"2021-06-11T14:31:41.118Z\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -176,9 +173,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/details",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "details"]
         }
       },
@@ -225,7 +222,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJYTmk5ZFwvY1JcL3haTXJ4dytOQVJPemNpSUNacUJzdU90WXc1ME9uSWNzc0k9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJiMGJjYTRkMy0xODYyLTQ4M2UtOTcyMi05MDQxOWYyMDdjMzkiLCJldmVudF9pZCI6ImVmODRkYWQwLTE4YTgtNGVmZi1hZTY3LWQxNzlkMGVhZTk0MCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MTk5MjQ5OTEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV9JMFk5WEZpUTkiLCJleHAiOjE2MTk5NDY1OTEsImlhdCI6MTYxOTkyNDk5MSwianRpIjoiYTIwZjkwZTAtZmRiNC00OGM4LWFkZjktZTI4MWY5OTkxOWFjIiwiY2xpZW50X2lkIjoiNTJjZHI4MTJtczFldjdmcDZsdnZscHJzMWMiLCJ1c2VybmFtZSI6ImIwYmNhNGQzLTE4NjItNDgzZS05NzIyLTkwNDE5ZjIwN2MzOSJ9.TlhxAz_RTUA-kaMmIal7hr-xfpGhsmHi_X5qHJzze0jIoAfM_0K4LDZY80QarRDRAPBzUse9EjejwsU1wuPzeMVbv4b0-2IDAV5dh1BMyBaY0OoPRIexmF9cVpoxsbMEPVh-XNziYF9ILDOGCcJ33W-B2HeNX9AEmHTd1uqJinL70ocH5aHU6PkCLAW-40552NV7dNrd4U4v0ARqJg4hZyfkfu5Cf3YYAYwOY9aIZvWPn68PUO33iWx9J-F290s0hgU7-USEEYifgyah68FxXhUQp9E4hwp81CQgHu36HdZq-YZN0hBQene7GfaPNIQI0hk7LVlfj1CS8Xv2OHZpMQ",
+              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3Y2RkZGIyMy1hNjNkLTRmMTctYmUyNy0xZjA3OGIxZWQzMDIiLCJldmVudF9pZCI6IjY2N2I5YzU3LTQ2MWEtNDcyNi04YjJmLTg3OWYwNTczNmMyNiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM0MjE2MjUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM0NDMyMjUsImlhdCI6MTYyMzQyMTYyNSwianRpIjoiMzZmMjNhMmUtOGU2Zi00M2U2LWI0NmEtMDk5YTYzNzVmZTRmIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2NkZGRiMjMtYTYzZC00ZjE3LWJlMjctMWYwNzhiMWVkMzAyIn0.sOrT5XMynNFAOIdsAqQPyYrT4wt3Qn5IEub0PBrOP_vbWG853NkxUiZXIFCB-DUgNBC9VqEc6HqhHUKU37gGipwqm8wNKhPY3VkeMonrmv22mpkK34pn4I78RrOC6cnYCgF2BkxxrweyIMp4bKR8slzVwlRrYj-dBazzL1znpNT4-vFllP7WRCHnrj8k85loJnG1rjV1HZV6qz8V0Xw8xAmA-iBxM5TIYm8X2hYvUSXLj4tFCcxrvRHJfB3XTdW5Y8b14kLnvv9jUkaZoqIKEstn1PEUXc6K5WJpzrb-ednpkeFja5mtkwuZH1HZQlHo-hP71AyObgmctMM5k2txoQ",
               "type": "string"
             }
           ]
@@ -234,7 +231,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"b0bca4d3-1862-483e-9722-90419f207c39\",\r\n    \"createdAt\": \"2021-05-02T04:46:05.583Z\",\r\n    \"timestamp\": 1619937865302\r\n}",
+          "raw": "",
           "options": {
             "raw": {
               "language": "json"
@@ -242,10 +239,28 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/comment",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/comment?username=7cdddb23-a63d-4f17-be27-1f078b1ed302&createdAt=2021-06-11T14:31:41.118Z&commenterName=7cdddb23-a63d-4f17-be27-1f078b1ed302&timestamp=1623421971086",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "route", "details", "comment"]
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "route", "details", "comment"],
+          "query": [
+            {
+              "key": "username",
+              "value": "7cdddb23-a63d-4f17-be27-1f078b1ed302"
+            },
+            {
+              "key": "createdAt",
+              "value": "2021-06-11T14:31:41.118Z"
+            },
+            {
+              "key": "commenterName",
+              "value": "7cdddb23-a63d-4f17-be27-1f078b1ed302"
+            },
+            {
+              "key": "timestamp",
+              "value": "1623421971086"
+            }
+          ]
         }
       },
       "response": []
@@ -275,9 +290,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/grade",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/grade",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "details", "grade"]
         }
       },
@@ -291,7 +306,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJaQXhUaUlxVHNJZU5lTHliMlRNWkpQQVM1S1A3TU9YSzM5TUU0MmQ1ZzZZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTE1MDIxZS0wYzc2LTQ4NWYtYmI2MC02NzZlMWE0MGU4NTEiLCJldmVudF9pZCI6IjhjZjg0OTcxLTlhMGYtNDBiNy04MGM2LTk0YjA2YjNkNmRkNSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjIzNzY0NjEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xZ2dxOXpMT2oiLCJleHAiOjE2MjIzOTgwNjEsImlhdCI6MTYyMjM3NjQ2MiwianRpIjoiZmFkNWZhMTItNzE3OS00ZWQ2LWE4YzQtMjM1MDc4NDNiNTc1IiwiY2xpZW50X2lkIjoiM2I3dHZsaHY5ajg0Y245NDN0ajE3ZXR2NjMiLCJ1c2VybmFtZSI6IjM5MTUwMjFlLTBjNzYtNDg1Zi1iYjYwLTY3NmUxYTQwZTg1MSJ9.na1yckSx3hBCwwjSKph3Cr4B5GWWqY0wChLCljV84LgOelxSQBn_4x1CF5LYtqn3dQyO7GDXvIiL5ECSeJY8axozyQ-BID6Ur2TSGD61odCCJf_ajkKBucmofmHsYs2KXF_ybksWok4xKpusL3IXb-kCNZAuc2xEdOR6Irl5YPSYaMeoQO5j2-05e4vXu41XtQ4TKBn6kndXTsQFyCGLOrEDt1fLTjqdtgypxMY6TNp1jvApoSKi6BuNUpTkfaPAAfFkpaxE6ORPljqf1l9dSTKG9eTsYJd2lDg44eZ3m6qhtsn_WjIIvCOKL-XykELqH80VREQ4eeS6xrc13WB-Ow",
+              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3Y2RkZGIyMy1hNjNkLTRmMTctYmUyNy0xZjA3OGIxZWQzMDIiLCJldmVudF9pZCI6IjY2N2I5YzU3LTQ2MWEtNDcyNi04YjJmLTg3OWYwNTczNmMyNiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM0MjE2MjUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM0NDMyMjUsImlhdCI6MTYyMzQyMTYyNSwianRpIjoiMzZmMjNhMmUtOGU2Zi00M2U2LWI0NmEtMDk5YTYzNzVmZTRmIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2NkZGRiMjMtYTYzZC00ZjE3LWJlMjctMWYwNzhiMWVkMzAyIn0.sOrT5XMynNFAOIdsAqQPyYrT4wt3Qn5IEub0PBrOP_vbWG853NkxUiZXIFCB-DUgNBC9VqEc6HqhHUKU37gGipwqm8wNKhPY3VkeMonrmv22mpkK34pn4I78RrOC6cnYCgF2BkxxrweyIMp4bKR8slzVwlRrYj-dBazzL1znpNT4-vFllP7WRCHnrj8k85loJnG1rjV1HZV6qz8V0Xw8xAmA-iBxM5TIYm8X2hYvUSXLj4tFCcxrvRHJfB3XTdW5Y8b14kLnvv9jUkaZoqIKEstn1PEUXc6K5WJpzrb-ednpkeFja5mtkwuZH1HZQlHo-hP71AyObgmctMM5k2txoQ",
               "type": "string"
             }
           ]
@@ -300,7 +315,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"3915021e-0c76-485f-bb60-676e1a40e851\",\r\n    \"createdAt\": \"2021-05-30T12:21:26.122Z\",\r\n    \"comment\": \"This is a comment by me and this cannot be more than 150 chars\"\r\n}",
+          "raw": "{\r\n    \"username\": \"7cdddb23-a63d-4f17-be27-1f078b1ed302\",\r\n    \"createdAt\": \"2021-06-11T14:31:41.118Z\",\r\n    \"comment\": \"This is a comment by me and this cannot be more than 150 chars\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -308,9 +323,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/comment",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/comment",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "details", "comment"]
         }
       },
@@ -341,9 +356,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/report",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/report",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "details", "report"]
         }
       },
@@ -357,7 +372,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJaQXhUaUlxVHNJZU5lTHliMlRNWkpQQVM1S1A3TU9YSzM5TUU0MmQ1ZzZZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTE1MDIxZS0wYzc2LTQ4NWYtYmI2MC02NzZlMWE0MGU4NTEiLCJldmVudF9pZCI6IjVlN2NjMjkwLTIxZjAtNGNmMi1hNTY0LTY4ZTk1NjU4YTZlZSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjI3NzQzNDIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xZ2dxOXpMT2oiLCJleHAiOjE2MjI3OTU5NDIsImlhdCI6MTYyMjc3NDM0MiwianRpIjoiMGJlYjdmNDItMDMzMy00OTQ2LWFmMzEtZTk1MTQwNGUxMzI5IiwiY2xpZW50X2lkIjoiM2I3dHZsaHY5ajg0Y245NDN0ajE3ZXR2NjMiLCJ1c2VybmFtZSI6IjM5MTUwMjFlLTBjNzYtNDg1Zi1iYjYwLTY3NmUxYTQwZTg1MSJ9.L9NunJ1FDVvB90Gb04ixtZlkHOvbqyRY_E3SM7epCQRsKLnH5RhZTTtyHJ6v7ipO8HmUWb7DTru-JyiML3jCoWjZhbCKXB72P8xQhyvb81rln7QEUERGdnYv5JyJWGzjOcH7YvpH-Jfjp-1JcJQY7uv3OEjO8VcrqWPK9c2EZ5bfmLxT2AQNrfJjzj1x_omDOnURW9PDe6Mlav3lfkmuhU6kmoSbT4IZEqV5cNMtxlT2RFJ1Px5bJgH2MLm9Y9_kNjYRg60TQ1u-X3CdTm3eH1INdWjgSWTLip11QeL3Jqsd0l0Kd_r67XRCZKw36SghSn9ks58ZECN02lvCijROSg",
+              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3Y2RkZGIyMy1hNjNkLTRmMTctYmUyNy0xZjA3OGIxZWQzMDIiLCJldmVudF9pZCI6ImE4ZmM1NDZkLTliYmEtNDFiZS05Zjg3LTliYWNlYWVmMmM3NCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM0NjYwNTMsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM1NTI0NTMsImlhdCI6MTYyMzQ2NjA1MywianRpIjoiN2I1YjIwYzYtMGVjYS00ZWZjLWJjNGQtMmRlOWQ3YzZjY2QxIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2NkZGRiMjMtYTYzZC00ZjE3LWJlMjctMWYwNzhiMWVkMzAyIn0.ZJTO4WxMTgEEljct9lablYAccp0KVaHfrRA6BI97vpmIwp1-7qq1CjWwN5caHY8UulL6QvbVaTB424BShBZtY4b0Rw3fht5Zs0ewCUoXcA_79yGgTX6-jB1yP-LLhom6fWAQYstwfByVHH8dTRgTHnFuKt-g4Vr8whYveHhRu8ZlT_mN5e5dkOdIG3WBeQqcmdfnXTKgkY1o7-Zi-AAGowyxkkM0QmdwBVvpBD-vYozpwrgCSPm4xr955DrbrTc6oGdAfRjIFHwoJtU8rYHZFWRPt1Lu6Xfypg0yQLF3ZG8sCOUlb36486ES7YUIBXawA_vn47hjJP0jznNtRx2yEQ",
               "type": "string"
             }
           ]
@@ -366,7 +381,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"gymLocation\": \"1.3430632325232081, 103.7758850783227\"\r\n}",
+          "raw": "{\r\n    \"countryCode\": \"SGP\",\r\n    \"postal\": \"588179\",\r\n    \"gymName\": \"ZVertigo\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -374,9 +389,9 @@
           }
         },
         "url": {
-          "raw": "https://3xzyacsfo6.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/request",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/request",
           "protocol": "https",
-          "host": ["3xzyacsfo6", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route", "gym", "request"]
         }
       },
