@@ -16,6 +16,16 @@
                 <ion-label position="stacked">Username</ion-label>
                 <ion-input v-model="usernameText" type="text" disabled />
               </ion-item>
+              <ion-item class="rounded" lines="full">
+                <ion-icon v-if="prefersDarkMode" slot="start" :icon="moon"></ion-icon>
+                <ion-icon v-if="!prefersDarkMode" slot="start" :icon="sunny"></ion-icon>
+                <ion-label>Toggle Dark Theme</ion-label>
+                <ion-toggle
+                  @ionChange="toggleTheme"
+                  :checked="prefersDarkMode"
+                  slot="end"
+                ></ion-toggle>
+              </ion-item>
               <ion-button
                 class="delete-account-button"
                 size="medium"
@@ -40,13 +50,17 @@ import {
   IonCol,
   IonContent,
   IonGrid,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
   IonPage,
   IonRow,
+  IonToggle,
   toastController,
 } from '@ionic/vue';
+import { ToggleChangeEventDetail } from '@ionic/core/dist/types/interface';
+import { sunny, moon } from 'ionicons/icons';
 import { computed, defineComponent, inject, ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import jwt_decode from 'jwt-decode';
@@ -59,11 +73,13 @@ export default defineComponent({
     IonCol,
     IonContent,
     IonGrid,
+    IonIcon,
     IonInput,
     IonItem,
     IonLabel,
     IonPage,
     IonRow,
+    IonToggle,
   },
   setup() {
     const router = useRouter();
@@ -89,6 +105,17 @@ export default defineComponent({
       }
       return '';
     });
+
+    const setPrefersDarkMode: (darkMode: boolean) => void = inject(
+      'setPrefersDarkMode',
+      () => undefined,
+    );
+    const getPrefersDarkMode: () => Ref<boolean> = inject('getPrefersDarkMode', () => ref(false));
+    const prefersDarkMode = getPrefersDarkMode();
+
+    const toggleTheme = (event: CustomEvent<ToggleChangeEventDetail>) => {
+      setPrefersDarkMode(event.detail.checked);
+    };
 
     const showFailedToDeleteAccountToast = (): void => {
       toastController
@@ -182,8 +209,12 @@ export default defineComponent({
     };
 
     return {
+      sunny,
+      moon,
+      prefersDarkMode,
       emailText,
       usernameText,
+      toggleTheme,
       clickDeleteAccountButton,
     };
   },

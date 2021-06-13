@@ -9,6 +9,7 @@ const userEmail = ref('');
 const accessToken = ref('');
 const idToken = ref('');
 const isConfirmationNeeded = ref(false);
+const prefersDarkMode = ref(false);
 
 const forceLogout = async (): Promise<void> => {
   const config = {
@@ -129,6 +130,25 @@ const providers = {
   setConfirmationNeeded: (confirmationNeeded: boolean): void => {
     isConfirmationNeeded.value = confirmationNeeded;
     localStorage.setItem('isConfirmationNeeded', confirmationNeeded ? 'yes' : 'no');
+  },
+  getPrefersDarkMode: (): Ref<boolean> => {
+    // If user has not overrided using the dark mode toggle under /profile, we try and set it according to his @media properties
+    if (
+      localStorage.getItem('prefersDarkMode') !== 'no' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      localStorage.setItem('prefersDarkMode', 'yes');
+    }
+    if (localStorage.getItem('prefersDarkMode') === 'yes') {
+      prefersDarkMode.value = true;
+    } else {
+      prefersDarkMode.value = false;
+    }
+    return prefersDarkMode;
+  },
+  setPrefersDarkMode: (darkMode: boolean): void => {
+    prefersDarkMode.value = darkMode;
+    localStorage.setItem('prefersDarkMode', darkMode ? 'yes' : 'no');
   },
 };
 
