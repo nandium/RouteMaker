@@ -110,6 +110,7 @@ export interface RouteItem {
   username: string;
   createdAt: string;
   ttl: number;
+  displayName: string;
   routeName: string;
   gymLocation: string;
   routeURL: string;

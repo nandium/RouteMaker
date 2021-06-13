@@ -1,6 +1,5 @@
 import { Handler } from 'aws-lambda';
 import {
-  adminGetCognitoUserDetails,
   getItemFromRouteTable,
   getMiddlewareAddedHandler,
   GetRouteDetailsEvent,
@@ -21,14 +20,13 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
-  const { fullName: routeOwnerDisplayName } = await adminGetCognitoUserDetails(routeOwnerUsername);
-
   let hasVoted = false;
   let hasReported = false;
   let hasGraded = false;
   let graded = -1;
   const {
     ttl,
+    displayName,
     routeName,
     gymLocation,
     routeURL,
@@ -66,8 +64,8 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
       Item: {
         username: routeOwnerUsername,
         createdAt,
-        displayName: routeOwnerDisplayName,
         expiredTime: new Date(ttl).toISOString(),
+        displayName,
         routeName,
         gymLocation,
         routeURL,

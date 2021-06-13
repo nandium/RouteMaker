@@ -1,4 +1,4 @@
-import DynamoDB, { AttributeValue, GetItemInput } from 'aws-sdk/clients/dynamodb';
+import DynamoDB, { AttributeValue, GetItemInput, QueryInput } from 'aws-sdk/clients/dynamodb';
 import { RouteItem } from './types';
 import createError from 'http-errors';
 
@@ -26,4 +26,26 @@ export const getItemFromRouteTable = async (
     throw createError(400, 'Route does not exist');
   }
   return Item as RouteItem;
+};
+
+export const getGymIsRegistered = async (
+  countryCode: string,
+  gymLocation: string,
+): Promise<boolean> => {
+  const queryInput: QueryInput = {
+    TableName: process.env['GYM_TABLE_NAME'] || '',
+    ConsistentRead: false,
+    KeyConditionExpression: 'countryCode = :countryCode AND gymLocation = :gymLocation',
+    ExpressionAttributeValues: {
+      ':countryCode': countryCode as AttributeValue,
+      ':gymLocation': gymLocation as AttributeValue,
+    },
+  };
+  let Items;
+  try {
+    ({ Items } = await dynamoDb.query(queryInput).promise());
+  } catch (error) {
+    throw createError(500, 'Error querying table :' + error.stack);
+  }
+  return Items.length > 0;
 };
