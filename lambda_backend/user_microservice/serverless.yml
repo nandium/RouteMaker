@@ -47,6 +47,15 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
+  resendCode:
+    handler: src/resendCode.handler
+    events:
+      - http:
+          path: user/resend
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
   login:
     handler: src/login.handler
     events:

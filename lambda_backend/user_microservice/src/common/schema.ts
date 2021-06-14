@@ -44,6 +44,19 @@ export const loginSchema = {
   },
 };
 
+export const resendCodeSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', pattern: Email },
+      },
+      required: ['email'],
+    },
+  },
+};
+
 export const refreshTokenSchema = {
   type: 'object',
   properties: {

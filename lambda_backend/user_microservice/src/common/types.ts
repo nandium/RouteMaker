@@ -13,6 +13,12 @@ export interface ConfirmSignupEvent {
   };
 }
 
+export interface ResendCodeEvent {
+  body: {
+    email: string;
+  };
+}
+
 export interface LoginEvent {
   body: {
     email: string;
