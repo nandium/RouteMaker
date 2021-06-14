@@ -3,14 +3,10 @@ import CognitoIdentity, {
   ForgotPasswordRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { ForgotPasswordEvent, forgotPasswordSchema, getMiddlewareAddedHandler } from './common';
-import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentity();
 
 const forgotPassword: Handler = async (event: ForgotPasswordEvent) => {
-  if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(500, 'Cognito Client ID is not set');
-  }
   const {
     body: { email },
   } = event;

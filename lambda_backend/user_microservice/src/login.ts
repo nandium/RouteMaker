@@ -3,14 +3,10 @@ import CognitoIdentity, {
   InitiateAuthRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { LoginEvent, loginSchema, getMiddlewareAddedHandler } from './common';
-import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentity();
 
 const login: Handler = async (event: LoginEvent) => {
-  if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(500, 'Cognito Client ID is not set');
-  }
   const {
     body: { email, password },
   } = event;

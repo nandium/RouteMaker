@@ -3,14 +3,10 @@ import CognitoIdentity, {
   InitiateAuthRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { RefreshTokenEvent, refreshTokenSchema, getMiddlewareAddedHandler } from './common';
-import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentity();
 
 const refreshToken: Handler = async (event: RefreshTokenEvent) => {
-  if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(500, 'Cognito Client ID is not set');
-  }
   const {
     body: { refreshToken },
   } = event;

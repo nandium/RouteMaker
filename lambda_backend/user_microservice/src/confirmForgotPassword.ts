@@ -7,14 +7,10 @@ import {
   confirmForgotPasswordSchema,
   getMiddlewareAddedHandler,
 } from './common';
-import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentity();
 
 const confirmForgotPassword: Handler = async (event: ConfirmForgotPasswordEvent) => {
-  if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(500, 'Cognito Client ID is not set');
-  }
   const {
     body: { code, email, password },
   } = event;
