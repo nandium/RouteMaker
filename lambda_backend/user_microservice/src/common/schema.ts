@@ -43,3 +43,16 @@ export const loginSchema = {
     },
   },
 };
+
+export const refreshTokenSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        refreshToken: { type: 'string' },
+      },
+      required: ['refreshToken'],
+    },
+  },
+};

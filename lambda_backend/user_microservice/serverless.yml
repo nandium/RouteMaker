@@ -56,6 +56,15 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
+  refreshToken:
+    handler: src/refreshToken.handler
+    events:
+      - http:
+          path: user/refreshToken
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
   logout:
     handler: src/logout.handler
     events:

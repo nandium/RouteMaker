@@ -20,6 +20,12 @@ export interface LoginEvent {
   };
 }
 
+export interface RefreshTokenEvent {
+  body: {
+    refreshToken: string;
+  };
+}
+
 interface AuthHeader {
   headers: {
     Authorization: string;
