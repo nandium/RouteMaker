@@ -9,7 +9,7 @@ const cognitoIdentity = new CognitoIdentity();
 
 const login: Handler = async (event: LoginEvent) => {
   if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(400, 'Cognito Client ID is not set');
+    throw createError(500, 'Cognito Client ID is not set');
   }
   const {
     body: { email, password },

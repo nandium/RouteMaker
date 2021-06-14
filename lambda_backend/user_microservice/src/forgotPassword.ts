@@ -1,25 +1,25 @@
 import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
-  ResendConfirmationCodeRequest,
+  ForgotPasswordRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { ResendCodeEvent, resendCodeSchema, getMiddlewareAddedHandler } from './common';
+import { ForgotPasswordEvent, forgotPasswordSchema, getMiddlewareAddedHandler } from './common';
 import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentity();
 
-const resendCode: Handler = async (event: ResendCodeEvent) => {
+const forgotPassword: Handler = async (event: ForgotPasswordEvent) => {
   if (!process.env['COGNITO_CLIENT_ID']) {
     throw createError(500, 'Cognito Client ID is not set');
   }
   const {
     body: { email },
   } = event;
-  const resendConfirmationCodeRequest: ResendConfirmationCodeRequest = {
+  const forgotPasswordRequest: ForgotPasswordRequest = {
     Username: email,
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
   try {
-    await cognitoIdentity.resendConfirmationCode(resendConfirmationCodeRequest).promise();
+    await cognitoIdentity.forgotPassword(forgotPasswordRequest).promise();
   } catch (error) {
     return {
       statusCode: 400,
@@ -28,8 +28,8 @@ const resendCode: Handler = async (event: ResendCodeEvent) => {
   }
   return {
     statusCode: 200,
-    body: JSON.stringify({ Message: 'Resend code success' }),
+    body: JSON.stringify({ Message: 'Request password reset success' }),
   };
 };
 
-export const handler = getMiddlewareAddedHandler(resendCode, resendCodeSchema);
+export const handler = getMiddlewareAddedHandler(forgotPassword, forgotPasswordSchema);

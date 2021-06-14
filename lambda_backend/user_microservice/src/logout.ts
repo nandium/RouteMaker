@@ -9,7 +9,7 @@ const cognitoIdentity = new CognitoIdentity();
 
 const logout: Handler = async (event: LogoutEvent) => {
   if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(400, 'Cognito Client ID is not set');
+    throw createError(500, 'Cognito Client ID is not set');
   }
   const {
     headers: { Authorization },

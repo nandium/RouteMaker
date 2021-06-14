@@ -51,7 +51,7 @@ functions:
     handler: src/resendCode.handler
     events:
       - http:
-          path: user/resend
+          path: user/resendCode
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -70,6 +70,24 @@ functions:
     events:
       - http:
           path: user/refreshToken
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
+  forgotPassword:
+    handler: src/forgotPassword.handler
+    events:
+      - http:
+          path: user/forgotPassword
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
+  confirmForgotPassword:
+    handler: src/confirmForgotPassword.handler
+    events:
+      - http:
+          path: user/resetPassword
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}

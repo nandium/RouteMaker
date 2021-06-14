@@ -7,7 +7,7 @@ const cognitoIdentity = new CognitoIdentity();
 
 const signup: Handler = async (event: SignupEvent) => {
   if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(400, 'Cognito Client ID is not set');
+    throw createError(500, 'Cognito Client ID is not set');
   }
   const {
     body: { email, name, password },

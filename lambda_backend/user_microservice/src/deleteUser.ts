@@ -7,7 +7,7 @@ const cognitoIdentity = new CognitoIdentity();
 
 const deleteUser: Handler = async (event: DeleteEvent) => {
   if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(400, 'Cognito Client ID is not set');
+    throw createError(500, 'Cognito Client ID is not set');
   }
   const {
     headers: { Authorization },

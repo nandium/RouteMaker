@@ -44,7 +44,7 @@ export const loginSchema = {
   },
 };
 
-export const resendCodeSchema = {
+const emailIdentiferSchema = {
   type: 'object',
   properties: {
     body: {
@@ -53,6 +53,24 @@ export const resendCodeSchema = {
         email: { type: 'string', pattern: Email },
       },
       required: ['email'],
+    },
+  },
+};
+
+export const resendCodeSchema = emailIdentiferSchema;
+
+export const forgotPasswordSchema = emailIdentiferSchema;
+
+export const confirmForgotPasswordSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        ...loginSchema.properties.body.properties,
+        code: { type: 'string', pattern: AlphanumericSpace },
+      },
+      required: [...loginSchema.properties.body.required, 'code'],
     },
   },
 };
