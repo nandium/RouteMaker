@@ -76,7 +76,7 @@ export interface DeleteCommentEvent extends AuthHeader {
   queryStringParameters: {
     username: string;
     createdAt: string;
-    commenterName: string;
+    commentUsername: string;
     timestamp: number;
   };
 }
@@ -103,6 +103,7 @@ interface GradeSubmission {
 export interface Comment {
   username: string;
   timestamp: number;
+  displayName: string;
   comment: string;
 }
 

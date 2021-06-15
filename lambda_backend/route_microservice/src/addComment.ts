@@ -2,11 +2,12 @@ import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, UpdateItemInput } from 'aws-sdk/clients/dynamodb';
 import {
   getMiddlewareAddedHandler,
-  AddCommentEvent,
-  addCommentSchema,
-  JwtPayload,
   getItemFromRouteTable,
+  getCognitoUserDetails,
+  addCommentSchema,
+  AddCommentEvent,
   Comment,
+  JwtPayload,
 } from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
@@ -19,17 +20,20 @@ const addComment: Handler = async (event: AddCommentEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { username: routeOwnerUsername, createdAt, comment },
+    body: { username: routeOwnerUsername, createdAt, comment: commentStr },
   } = event;
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+  const accessToken = Authorization.split(' ')[1];
+  const { username } = (await jwt_decode(accessToken)) as JwtPayload;
+  const displayName = (await getCognitoUserDetails(accessToken)).fullName;
   let { comments } = Item;
   const newComment: Comment = {
     username,
     timestamp: Date.now(),
-    comment,
+    displayName,
+    comment: commentStr,
   };
   comments = [...comments, newComment];
 
