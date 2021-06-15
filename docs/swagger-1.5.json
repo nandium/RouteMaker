@@ -600,7 +600,7 @@
           },
           {
             "in": "query",
-            "name": "commenterName",
+            "name": "commentUsername",
             "description": "username of the particular comment",
             "required": true,
             "schema": {
@@ -820,6 +820,15 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "username",
+            "description": "username of route owner",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1178,6 +1187,10 @@
             "type": "integer",
             "format": "int32",
             "example": 1623466053
+          },
+          "displayName": {
+            "type": "string",
+            "example": "yarkhinephyo"
           }
         }
       },
@@ -1186,6 +1199,7 @@
         "required": [
           "username",
           "createdAt",
+          "displayName",
           "expiredTime",
           "routeName",
           "gymLocation",
@@ -1206,6 +1220,9 @@
           "createdAt": {
             "type": "string",
             "example": ""
+          },
+          "displayName": {
+            "type": "string"
           },
           "expiredTime": {
             "type": "string"
@@ -1512,7 +1529,7 @@
           "gymLocation": {
             "type": "string"
           },
-          "routeURL": {
+          "displayName": {
             "type": "string"
           },
           "publicGrade": {
