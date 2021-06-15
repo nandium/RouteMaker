@@ -27,6 +27,7 @@ export interface CreateRouteEvent extends AuthHeader {
 
 export interface DeleteRouteEvent extends AuthHeader {
   queryStringParameters: {
+    username: string;
     createdAt: string;
   };
 }

@@ -66,12 +66,16 @@ export const deleteRouteSchema = {
     queryStringParameters: {
       type: 'object',
       properties: {
+        username: {
+          type: 'string',
+          pattern: AlphanumericSpaceHyphen,
+        },
         createdAt: {
           type: 'string',
           pattern: ISODateStringPattern,
         },
       },
-      required: ['createdAt'],
+      required: ['username', 'createdAt'],
     },
   },
 };
