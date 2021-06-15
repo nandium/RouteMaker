@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "This is the RouteMaker API",
-    "version": "1.4",
+    "version": "1.5",
     "title": "RouteMaker API",
     "contact": {
       "email": "yarkhinephyo@gmail.com"
@@ -151,6 +151,168 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AccessToken"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/refreshToken": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "refreshes user's access token",
+        "requestBody": {
+          "description": "Refresh token",
+          "content": {
+            "application/json:": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": {
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "refresh token success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenRefreshed"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/NotAuthorizedException"
+          }
+        }
+      }
+    },
+    "/user/resendCode": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "resends confirmation code for email",
+        "requestBody": {
+          "content": {
+            "application/json:": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "resend code success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "Message"
+                  ],
+                  "properties": {
+                    "Message": {
+                      "type": "string",
+                      "example": "Resend code success"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/forgotPassword": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "sends password reset token to email",
+        "requestBody": {
+          "content": {
+            "application/json:": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request password reset success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "Message"
+                  ],
+                  "properties": {
+                    "Message": {
+                      "type": "string",
+                      "example": "Request password reset success"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/resetPassword": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Resets password with token",
+        "requestBody": {
+          "content": {
+            "application/json:": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "password reset success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "Message"
+                  ],
+                  "properties": {
+                    "Message": {
+                      "type": "string",
+                      "example": "Password reset success"
+                    }
+                  }
                 }
               }
             }
@@ -438,7 +600,7 @@
           },
           {
             "in": "query",
-            "name": "commenterName",
+            "name": "commentUsername",
             "description": "username of the particular comment",
             "required": true,
             "schema": {
@@ -659,6 +821,15 @@
               "type": "string",
               "format": "date-time"
             }
+          },
+          {
+            "in": "query",
+            "name": "username",
+            "description": "username of route owner",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -856,6 +1027,26 @@
           }
         }
       },
+      "ResetPassword": {
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "code"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
       "AccessToken": {
         "type": "object",
         "required": [
@@ -884,6 +1075,36 @@
           },
           "RefreshToken": {
             "type": "string"
+          },
+          "IdToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AccessTokenRefreshed": {
+        "type": "object",
+        "required": [
+          "Message",
+          "AccessToken",
+          "ExpiresIn",
+          "TokenType",
+          "IdToken"
+        ],
+        "properties": {
+          "Message": {
+            "type": "string",
+            "example": "Refresh token success"
+          },
+          "AccessToken": {
+            "type": "string"
+          },
+          "ExpiresIn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TokenType": {
+            "type": "string",
+            "example": "Bearer"
           },
           "IdToken": {
             "type": "string"
@@ -966,6 +1187,10 @@
             "type": "integer",
             "format": "int32",
             "example": 1623466053
+          },
+          "displayName": {
+            "type": "string",
+            "example": "yarkhinephyo"
           }
         }
       },
@@ -974,6 +1199,7 @@
         "required": [
           "username",
           "createdAt",
+          "displayName",
           "expiredTime",
           "routeName",
           "gymLocation",
@@ -994,6 +1220,9 @@
           "createdAt": {
             "type": "string",
             "example": ""
+          },
+          "displayName": {
+            "type": "string"
           },
           "expiredTime": {
             "type": "string"
@@ -1300,7 +1529,7 @@
           "gymLocation": {
             "type": "string"
           },
-          "routeURL": {
+          "displayName": {
             "type": "string"
           },
           "publicGrade": {
@@ -1421,6 +1650,25 @@
                 "Message": {
                   "type": "string",
                   "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotAuthorizedException": {
+        "description": "Refresh token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "Message"
+              ],
+              "properties": {
+                "Message": {
+                  "type": "string",
+                  "example": "NotAuthorizedException"
                 }
               }
             }
