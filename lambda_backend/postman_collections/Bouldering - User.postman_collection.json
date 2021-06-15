@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "86ec4b97-f4fd-4b3b-8b4d-7e3268aa7209",
     "name": "Bouldering - User",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
   },
   "item": [
     {
@@ -19,12 +19,7 @@
             }
           }
         },
-        "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/signup",
-          "protocol": "https",
-          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "signup"]
-        }
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/signup"
       },
       "response": []
     },
@@ -35,24 +30,73 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"code\": \"852666\"\r\n}",
+          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"code\": \"147310\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
         },
-        "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/confirm",
-          "protocol": "https",
-          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "confirm"]
-        }
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/confirm"
       },
       "response": []
     },
     {
-      "name": "Log in",
+      "name": "Resend Code",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/resendCode"
+      },
+      "response": []
+    },
+    {
+      "name": "Forgot Password",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/forgotPassword"
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"password\": \"Qwer!234\",\r\n    \"code\": \"659676\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/resetPassword"
+      },
+      "response": []
+    },
+    {
+      "name": "Log In",
       "request": {
         "method": "POST",
         "header": [],
@@ -65,12 +109,25 @@
             }
           }
         },
-        "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/login",
-          "protocol": "https",
-          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "login"]
-        }
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/login"
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"refreshToken\": \"eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.rVTHcObKSTOOjW7pqtd_zmmjP1bjETsBIFurLcoFCVQGSg4Wga3hR3--lKTRa-oad8G4lkQNPT6QHx1297IniEyX_ufOceA8ViuyWIiknYOoOqoyqmpET6WajvGJVyiERZabfus6lGA5DJd8oGvHQjSGJHXlSsVpdS7M69ocxfh9fUZ6SY9adcfMn2HtzF08YPSGSWRifVA2qoq2vq3viprnywgxoP2DRUxTa9ibXZFR31teqzELTjhshmNiGWjJghT248QPcN2wvuO7ra5R4OFXmiw6ZTA43Bo0OSQvwPPyqwWkpk2LcdLmLitm4ejy5pgVEuKtLJ0qwlP-NEh1jw.W_OITFTRIkXKSPvc.2yXwW6xMf25yiLWiTGkfk747nYuZIZ7f_SKp48YAj1UpfTJ4uVBKDJONVvTb38ZEnIP9lBbrds5OS4dBCbfXsq1JSz_bKRLXClSOjwAGSQjXYHD9t7Wp78PflJBEHOFIC26FwTr-79pjLMXdA0X30DOsmdQyCrSzba8ukSC0u9bnSuXZu_Wk2uMzfwRP-aYaEQU3MVXD6LeqozTVs_Rj7W5dljVPUwT5VZCCLc_du-Xo1TAljPe_3-usCBko0shBe2-hI5pDGLFef4poC9-22pIT5iYdHqYAOa-_DoUaP-3Y4ukxD2rPFFs1zbtgkN84m4Ri-KU8I7eufzpc3qzrz9rSsnh2tpskrky6V1uzmdiAs6VKV5P9CuNl3MdWfoeNuEHhmQN-bQh35ErZ2lZbcI7e-ZAzI8nIw679jtcigG0PW4ns4cjpg2MK3poQ6H_SQK_us-F3PUktpi8apv9nmqN3kPpPOdOLIh_pLqHM3D2jJoFk75b0qZdiO2Iz46ZBjK5NCcRa8rbE7U48UjJ7O6ngzIqIBY8VkwpMLrhmnUNLv6tjgxtS1TSD6JzdOx6_Nc7nJaZZMFDxPk3oyNUl1EwcDFP8fGbgjHrIUVa65plE_WV_sfyD_z6DfkIbDGaWq6CG-fHPY-vqrysZKXWpshtM0Kia2UzoMr4S5svESEu-AoByURK240lhnIaahljwQigEzvgOmkPJARR9dyg_qE2DleVb7ar4-lgyNrghejnY-n-BRkyx_phh2YaQ7bkkPvU6vdc06_a49FWEapxqc7XRKjQTJUu0YON6hbpGjuXlpjaE35RTAA1DXWQ0SACqy9OsZiNdWT-mnxHVnCRtXpEvz_8xUBvnrFn91GstTZPQxkWwrBWIc3FM3cfy3EMhHUOrNbfKq5atHSqvo4JQ92yA4W5QMy5gLutY1VuM040bkj_lTu8l7Fwc3rOaAE1bxheg8j8Inw40WO23D_fl7_LTQMUQPQq5zNACvmFTxQIG2x-e5vI1X4ANB6zBfDI8ukeixwFCagr9fN0dZ0EiMpuBa0AGbvArNNFhpcU_Rne_qQhoZi0RirAd_iiCdrc4in-VkunmUvDUeilkG6nrC9sL76F6FfbexJcJhgkaXrPTAPXdBzmQ102iu2tbkmFYGbP3K7oOIgabr7ihQkBFpoZvHnKV663SPMHtjoghxBr3v-BG6TD2KY2rK_KT0dsnZTia_38QUXL8mvlYS9H5uzO0nLwvf78-5obYYZDbyONK5W9FEVgsNPHoF66t7B9vXbb8m1zXIVZ-1aMJVrrfZBYrRb_nvryYQY3478rKLA0zFmt7x04TeaDKwSCYAGESJ4V8ws7gsA.ojYJzYRUQjoN4RYMRp_RQg\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/refreshToken"
       },
       "response": []
     },
@@ -79,13 +136,9 @@
       "request": {
         "auth": {
           "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "eyJraWQiOiJYY3h6akl2V0pySFZnTjhrWWdHQUY3WXZqR2FGZEhUeWpYOXV0R0lGTmRNPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI0ZTBmZDFhYy0xMjRmLTQ0NGMtODA4NS1iNzhjYTUzYWJjYWIiLCJldmVudF9pZCI6ImU5NGQ3NjYyLWVjOTQtNDFhYi05MjRlLTk0ZDI4ZGI0ZDk3OSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MTk3MDYxNDUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV9GTkJyZUZWcTciLCJleHAiOjE2MTk3MTY5NDUsImlhdCI6MTYxOTcwNjE0NSwianRpIjoiNGEzOGM2MjktMWIxZi00NjJiLWJmMzQtNzgxODQ0MTRjMDE2IiwiY2xpZW50X2lkIjoiM3BpYTVzMHNwaGxxcTJqaGFkaW1mNjhmbzIiLCJ1c2VybmFtZSI6IjRlMGZkMWFjLTEyNGYtNDQ0Yy04MDg1LWI3OGNhNTNhYmNhYiJ9.cg2j6jcpNMbCvAq9KHvBdziOEF7rV8Bl-Dm5kHkhTWrBG8NjzJWIcLUus4wQLD8jx_maXpnIb-U7V43jvW6vkzPu4Ur4zM2gm8z2tX5X3q619CGql1nKbucLjtyU_hN-bI0OI7C5fSxgkaf8LDHFPCMXMyWz22U_L7NvG-Xfg25vj74nYPs6lkdSNHDRwa1Eq3hFBSwDw2N-FmyYShzQnTFHwBYkDK-fXVKJPU-ChUrVymEpP23D6X6pMiQQJmGxV_NyFtI_FXVGNv40USpllFeIbU8lLolWUexU8dKQTRiL2om4Q4p3ehSY8zf19R4n05TFzrFVxYtcuvdxppWxRQ",
-              "type": "string"
-            }
-          ]
+          "bearer": {
+            "token": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJlZmYzZDYzYi0wY2QyLTRmNmYtOTJkYS04OGRjZTYzMDA0ZjAiLCJldmVudF9pZCI6IjQ2MDg1YTg0LWNlZWYtNDE5ZS1hYTkyLWVhMTI0NDc3YWE1NiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM2ODEwOTEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM3Njc0OTEsImlhdCI6MTYyMzY4MTA5MSwianRpIjoiNDgyYzllZmMtMTUwYS00NzUzLWI0OTctNTk5ZWVmMmY3YTkwIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiZWZmM2Q2M2ItMGNkMi00ZjZmLTkyZGEtODhkY2U2MzAwNGYwIn0.JQjKf3b5K1hkPParfVDDwjRpg7K9wS3b-Cnbewhoxly2da_IkIxnEAF1BH0ph3jwvfV5QAnKS8mWU48em8xKfdk9injmQcEar9NGsk7jQSedplHlfORsH8uJDUX5zqFH0BjKOi7cVxyr4Y5q59dAZbktri4apkqcv0azv77BkllH8ibCLHFXbiyI2H6daxDpqR3-yMd77qkV-WYxnIeQh64t-dpIx1RNGacUnWJkEN7F22J2hlRdarzgFea_XUkaZqrFAKwAfAMahACQU0m6SmP-7ZQFJgA6OQDA95OVbWzHNFLwmqgJEClUPTk2pDEpY80tUb5Zn1pdysnR_mYvZg"
+          }
         },
         "method": "POST",
         "header": [],
@@ -93,12 +146,7 @@
           "mode": "raw",
           "raw": ""
         },
-        "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/logout",
-          "protocol": "https",
-          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "logout"]
-        }
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/logout"
       },
       "response": []
     },
@@ -107,22 +155,13 @@
       "request": {
         "auth": {
           "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3ZDAwY2Y4ZS0wY2UwLTRkZmYtOGViNC1lMGE1MDlmMWY5MWQiLCJldmVudF9pZCI6ImYyYjk2MDFmLTk2NTMtNGU5ZS1hOTVjLTg1MmFmOGU5MjM2ZCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjI5NDc0MzYsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjI5NjkwMzYsImlhdCI6MTYyMjk0NzQzNiwianRpIjoiZDMwOGRlOTYtMDFkMC00NWRlLTgyNmMtYjA2YjI5NzVmNGJmIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2QwMGNmOGUtMGNlMC00ZGZmLThlYjQtZTBhNTA5ZjFmOTFkIn0.IgFAj5rYoq1Anc6xkHRhwhlKy1Fy_-Y69xxkn-EFaGjU1w25JIVE8zseOo1iOIjQA8-0lSqUJfxtwkJwNjl1Z5dBwyBazMQE4zYhXBkj1AB_36Jj0tZB8GpYDZDHrVsXgD4BeksIDhrppoxgzGRSve7TfN0Ho2Ms6vzagX0uaaRSvquBOoA34eyyNovhPV_uMdhvfWCCXXa7WC-T3mkmEw6NnL5h6bm4Ly4AOfOveBRP5IszeBMD08I6Sps1Uc9BUyt024tye-PhBtxzfvr634fpApPcwAI06C5I9xsEzb1TSaUc_f7iGJhCKH1TGXo2Uaa61sfIlVHSW0NBWSip3w",
-              "type": "string"
-            }
-          ]
+          "bearer": {
+            "token": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI5YTEyNTFhMi01NGE5LTQ2YzgtYTk4Yy03YmJkMWU5NTAyYWMiLCJldmVudF9pZCI6IjQxNTY1ZmI4LTk3NTEtNGNhMy1iYzlkLWNlZmJkODBhNzQ3ZCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM2NjcwMzAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM3NTM0MzAsImlhdCI6MTYyMzY2NzAzMCwianRpIjoiNzE3YmM2NjMtYTk4NC00NzdlLWIyMTYtYjM0NGE3ODE2ZjdkIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiOWExMjUxYTItNTRhOS00NmM4LWE5OGMtN2JiZDFlOTUwMmFjIn0.E6YThuB17PKaTlVvaI_ukdm6e3WXvZ7RnjxWGFHck_CFjGZriibJw-JVZC4jnbR215MS_J9QEBlGec8P_MOR-2_Dby8r58gMZ8shy5PydJGCzVSBX_ENnrDJBkRoJhI8Wj07rFOFhMzXHeUiW04oSlkQKP8cumaiIuR55n3ETcxtJRUtuxe6tgzPUCuLfkUrfSPqTeGu6coXE-_9oMtwa41Dp7fCQFwMn-ZV0xLTQyq6WLruhG5hZFqnBwdKqDOVB8HL2UpaU3DM1jkuVfb9CqstJl0tJMdGw_ZmearTO4R_ET8B_QJb54UwssOrl2aFNb_tm1PYtNSeDhKMpjjUQQ"
+          }
         },
         "method": "DELETE",
         "header": [],
-        "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/delete",
-          "protocol": "https",
-          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "delete"]
-        }
+        "url": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/delete"
       },
       "response": []
     }

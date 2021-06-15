@@ -66,12 +66,16 @@ export const deleteRouteSchema = {
     queryStringParameters: {
       type: 'object',
       properties: {
+        username: {
+          type: 'string',
+          pattern: AlphanumericSpaceHyphen,
+        },
         createdAt: {
           type: 'string',
           pattern: ISODateStringPattern,
         },
       },
-      required: ['createdAt'],
+      required: ['username', 'createdAt'],
     },
   },
 };
@@ -139,13 +143,13 @@ export const deleteCommentSchema = {
       type: 'object',
       properties: {
         ...getRouteDetailsSchema.properties.body.properties,
-        commenterName: {
+        commentUsername: {
           type: 'string',
           pattern: AlphanumericSpaceHyphen,
         },
         timestamp: { type: 'number' },
       },
-      required: [...getRouteDetailsSchema.properties.body.required, 'timestamp'],
+      required: [...getRouteDetailsSchema.properties.body.required, 'timestamp', 'commentUsername'],
     },
   },
 };

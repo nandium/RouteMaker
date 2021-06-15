@@ -1,14 +1,10 @@
 import { Handler } from 'aws-lambda';
 import CognitoIdentity, { DeleteUserRequest } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { DeleteEvent, getMiddlewareAddedHandler } from './common';
-import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentity();
 
 const deleteUser: Handler = async (event: DeleteEvent) => {
-  if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(400, 'Cognito Client ID is not set');
-  }
   const {
     headers: { Authorization },
   } = event;

@@ -43,3 +43,47 @@ export const loginSchema = {
     },
   },
 };
+
+const emailIdentiferSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', pattern: Email },
+      },
+      required: ['email'],
+    },
+  },
+};
+
+export const resendCodeSchema = emailIdentiferSchema;
+
+export const forgotPasswordSchema = emailIdentiferSchema;
+
+export const confirmForgotPasswordSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        ...loginSchema.properties.body.properties,
+        code: { type: 'string', pattern: AlphanumericSpace },
+      },
+      required: [...loginSchema.properties.body.required, 'code'],
+    },
+  },
+};
+
+export const refreshTokenSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        refreshToken: { type: 'string' },
+      },
+      required: ['refreshToken'],
+    },
+  },
+};

@@ -26,13 +26,25 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   }
   const {
     headers: { Authorization },
-    queryStringParameters: { createdAt },
+    queryStringParameters: { username: routeOwnerUsername, createdAt },
   } = event;
 
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
-  const Item = await getItemFromRouteTable(username, createdAt);
+  const { username: requestUsername } = (await jwt_decode(
+    Authorization.split(' ')[1],
+  )) as JwtPayload;
+  // Delete only if requester is route owner
+  if (requestUsername !== routeOwnerUsername) {
+    return {
+      statusCode: 403,
+      body: JSON.stringify({
+        Message: 'Unauthorized',
+      }),
+    };
+  }
 
-  const usernameHash = createHash('sha256').update(username).digest('base64');
+  const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
+
+  const usernameHash = createHash('sha256').update(routeOwnerUsername).digest('base64');
   const decodedRouteURL = decodeURIComponent(Item.routeURL as string);
   const deleteObjectRequest: DeleteObjectRequest = {
     Bucket: process.env['S3_BUCKET_NAME'],
@@ -47,7 +59,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   const deleteItemInput: DeleteItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     Key: {
-      username: username as AttributeValue,
+      username: routeOwnerUsername as AttributeValue,
       createdAt: createdAt as AttributeValue,
     },
   };

@@ -18,7 +18,7 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   }
   const {
     headers: { Authorization },
-    queryStringParameters: { username: routeOwnerUsername, createdAt, commenterName, timestamp },
+    queryStringParameters: { username: routeOwnerUsername, createdAt, commentUsername, timestamp },
   } = event;
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
@@ -27,7 +27,7 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   )) as JwtPayload;
 
   // Delete only if requester is route owner or comment writer
-  if (requestUsername !== commenterName && requestUsername !== routeOwnerUsername) {
+  if (requestUsername !== commentUsername && requestUsername !== routeOwnerUsername) {
     return {
       statusCode: 403,
       body: JSON.stringify({
@@ -39,7 +39,7 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   let { comments } = Item;
   comments = comments.filter((comment) => {
     const { timestamp: currTimestamp, username: currUsername } = comment;
-    if (timestamp === currTimestamp && currUsername === commenterName) {
+    if (timestamp === currTimestamp && currUsername === commentUsername) {
       return false;
     }
     return true;

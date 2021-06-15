@@ -27,6 +27,7 @@ export interface CreateRouteEvent extends AuthHeader {
 
 export interface DeleteRouteEvent extends AuthHeader {
   queryStringParameters: {
+    username: string;
     createdAt: string;
   };
 }
@@ -76,7 +77,7 @@ export interface DeleteCommentEvent extends AuthHeader {
   queryStringParameters: {
     username: string;
     createdAt: string;
-    commenterName: string;
+    commentUsername: string;
     timestamp: number;
   };
 }
@@ -103,6 +104,7 @@ interface GradeSubmission {
 export interface Comment {
   username: string;
   timestamp: number;
+  displayName: string;
   comment: string;
 }
 
@@ -110,6 +112,7 @@ export interface RouteItem {
   username: string;
   createdAt: string;
   ttl: number;
+  displayName: string;
   routeName: string;
   gymLocation: string;
   routeURL: string;
