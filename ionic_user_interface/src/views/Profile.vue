@@ -84,21 +84,20 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const forceLogout: () => Promise<void> = inject('forceLogout', () => Promise.resolve());
-    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
-    const emailText = getUserEmail();
+    const usernameText = getUsername();
     const idToken = getIdToken();
-    const usernameText = computed(() => {
+    const emailText = computed(() => {
       if (idToken.value === '') {
         return '';
       }
       try {
         const idObject: {
-          name: string;
           email: string;
         } = jwt_decode(idToken.value);
-        return idObject.name;
+        return idObject.email;
       } catch (error) {
         console.error(error);
         forceLogout();

@@ -5,7 +5,7 @@ import jwt_decode from 'jwt-decode';
 import { toastController } from '@ionic/vue';
 
 const isLoggedIn = ref(false);
-const userEmail = ref('');
+const username = ref('');
 const accessToken = ref('');
 const idToken = ref('');
 const isConfirmationNeeded = ref(false);
@@ -39,12 +39,12 @@ const forceLogout = async (): Promise<void> => {
     })
     .finally(() => {
       isLoggedIn.value = false;
-      userEmail.value = '';
+      username.value = '';
       accessToken.value = '';
       idToken.value = '';
       isConfirmationNeeded.value = false;
       localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userEmail');
+      localStorage.removeItem('username');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('idToken');
       localStorage.removeItem('isConfirmationNeeded');
@@ -97,13 +97,13 @@ const providers = {
     localStorage.setItem('isLoggedIn', loggedIn ? 'yes' : 'no');
     isLoggedIn.value = loggedIn;
   },
-  getUserEmail: (): Ref<string> => {
-    userEmail.value = localStorage.getItem('userEmail') ?? '';
-    return userEmail;
+  getUsername: (): Ref<string> => {
+    username.value = localStorage.getItem('username') ?? '';
+    return username;
   },
-  setUserEmail: (email: string): void => {
-    localStorage.setItem('userEmail', email);
-    userEmail.value = email;
+  setUsername: (name: string): void => {
+    localStorage.setItem('username', name);
+    username.value = name;
   },
   getAccessToken: (): Ref<string> => {
     accessToken.value = localStorage.getItem('accessToken') ?? '';

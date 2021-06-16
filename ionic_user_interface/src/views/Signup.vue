@@ -123,8 +123,8 @@ export default defineComponent({
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const usernamePattern = /^[a-zA-Z0-9 ]*$/;
-    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
-    const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
+    const setUsername: (email: string) => void = inject('setUsername', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
       () => undefined,
@@ -176,11 +176,11 @@ export default defineComponent({
       }
 
       // Valid credentials
-      setUserEmail(emailText.value);
+      setUsername(usernameText.value);
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
-          name: usernameText.value,
-          email: getUserEmail().value,
+          name: getUsername().value,
+          email: emailText.value,
           password: passwordText.value,
         })
         .then((response) => {
@@ -197,7 +197,7 @@ export default defineComponent({
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
             if (error.response.data.Message === 'UsernameExistsException') {
-              errorMsg.value?.showMsg('Account already exists, please login!');
+              errorMsg.value?.showMsg('Username exists!');
             } else {
               console.error(error.response.data);
             }
