@@ -8,10 +8,10 @@ const cognitoIdentity = new CognitoIdentity();
 
 const forgotPassword: Handler = async (event: ForgotPasswordEvent) => {
   const {
-    body: { email },
+    body: { name },
   } = event;
   const forgotPasswordRequest: ForgotPasswordRequest = {
-    Username: email,
+    Username: name,
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
   try {

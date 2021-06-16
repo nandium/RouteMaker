@@ -8,10 +8,10 @@ const cognitoIdentity = new CognitoIdentity();
 
 const confirmSignup: Handler = async (event: ConfirmSignupEvent) => {
   const {
-    body: { email, code },
+    body: { name, code },
   } = event;
   const confirmSignUpRequest: ConfirmSignUpRequest = {
-    Username: email,
+    Username: name,
     ConfirmationCode: code,
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };

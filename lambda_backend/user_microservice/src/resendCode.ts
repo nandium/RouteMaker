@@ -8,10 +8,10 @@ const cognitoIdentity = new CognitoIdentity();
 
 const resendCode: Handler = async (event: ResendCodeEvent) => {
   const {
-    body: { email },
+    body: { name },
   } = event;
   const resendConfirmationCodeRequest: ResendConfirmationCodeRequest = {
-    Username: email,
+    Username: name,
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
   try {

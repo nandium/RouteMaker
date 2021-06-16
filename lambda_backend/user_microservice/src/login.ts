@@ -8,12 +8,12 @@ const cognitoIdentity = new CognitoIdentity();
 
 const login: Handler = async (event: LoginEvent) => {
   const {
-    body: { email, password },
+    body: { name, password },
   } = event;
   const initiateAuthRequest: InitiateAuthRequest = {
     AuthFlow: 'USER_PASSWORD_AUTH',
     AuthParameters: {
-      USERNAME: email,
+      USERNAME: name,
       PASSWORD: password,
     },
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',

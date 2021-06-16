@@ -8,24 +8,24 @@ export interface SignupEvent {
 
 export interface ConfirmSignupEvent {
   body: {
-    email: string;
+    name: string;
     code: string;
   };
 }
 
-interface EmailIdentifer {
+interface UserIdentifer {
   body: {
-    email: string;
+    name: string;
   };
 }
 
-export type ResendCodeEvent = EmailIdentifer;
+export type ResendCodeEvent = UserIdentifer;
 
-export type ForgotPasswordEvent = EmailIdentifer;
+export type ForgotPasswordEvent = UserIdentifer;
 
 export interface ConfirmForgotPasswordEvent {
   body: {
-    email: string;
+    name: string;
     code: string;
     password: string;
   };
@@ -33,7 +33,7 @@ export interface ConfirmForgotPasswordEvent {
 
 export interface LoginEvent {
   body: {
-    email: string;
+    name: string;
     password: string;
   };
 }

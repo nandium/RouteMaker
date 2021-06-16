@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "This is the RouteMaker API",
-    "version": "1.5",
+    "version": "1.6",
     "title": "RouteMaker API",
     "contact": {
       "email": "yarkhinephyo@gmail.com"
@@ -208,7 +208,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
+                  "name": {
                     "format": "string"
                   }
                 }
@@ -251,7 +251,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
+                  "name": {
                     "format": "string"
                   }
                 }
@@ -1014,11 +1014,11 @@
       "Login": {
         "type": "object",
         "required": [
-          "email",
+          "name",
           "password"
         ],
         "properties": {
-          "email": {
+          "name": {
             "type": "string"
           },
           "password": {
@@ -1030,12 +1030,12 @@
       "ResetPassword": {
         "type": "object",
         "required": [
-          "email",
+          "name",
           "password",
           "code"
         ],
         "properties": {
-          "email": {
+          "name": {
             "type": "string"
           },
           "password": {
