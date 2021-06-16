@@ -1176,7 +1176,7 @@
         "properties": {
           "username": {
             "type": "string",
-            "example": "7cdddb23-a63d-4f17-be27-1f078b1ed302"
+            "example": "yarkhinephyo"
           },
           "comment": {
             "type": "string",
@@ -1187,10 +1187,6 @@
             "type": "integer",
             "format": "int32",
             "example": 1623466053
-          },
-          "displayName": {
-            "type": "string",
-            "example": "yarkhinephyo"
           }
         }
       },
@@ -1199,7 +1195,6 @@
         "required": [
           "username",
           "createdAt",
-          "displayName",
           "expiredTime",
           "routeName",
           "gymLocation",
@@ -1220,9 +1215,6 @@
           "createdAt": {
             "type": "string",
             "example": ""
-          },
-          "displayName": {
-            "type": "string"
           },
           "expiredTime": {
             "type": "string"
@@ -1303,7 +1295,7 @@
         "properties": {
           "username": {
             "type": "string",
-            "example": "7cdddb23-a63d-4f17-be27-1f078b1ed302"
+            "example": "yarkhinephyo"
           },
           "createdAt": {
             "type": "string",
@@ -1316,7 +1308,6 @@
         "required": [
           "username",
           "createdAt",
-          "displayName",
           "expiredTime",
           "routeName",
           "gymLocation",
@@ -1338,10 +1329,6 @@
           "createdAt": {
             "type": "string",
             "example": "2021-05-01T09:00:34.516Z"
-          },
-          "displayName": {
-            "type": "string",
-            "example": "yarkhinephyo"
           },
           "expiredTime": {
             "type": "string",
@@ -1420,7 +1407,7 @@
         "properties": {
           "username": {
             "type": "string",
-            "example": "7cdddb23-a63d-4f17-be27-1f078b1ed302"
+            "example": "yarkhinephyo"
           },
           "createdAt": {
             "type": "string",
@@ -1475,7 +1462,7 @@
         "properties": {
           "username": {
             "type": "string",
-            "example": "7cdddb23-a63d-4f17-be27-1f078b1ed302"
+            "example": "yarkhinephyo"
           },
           "createdAt": {
             "type": "string",
@@ -1511,7 +1498,6 @@
           "createdAt",
           "routeName",
           "gymLocation",
-          "routeURL",
           "publicGrade",
           "voteCount",
           "commentCount"
@@ -1527,9 +1513,6 @@
             "type": "string"
           },
           "gymLocation": {
-            "type": "string"
-          },
-          "displayName": {
             "type": "string"
           },
           "publicGrade": {
