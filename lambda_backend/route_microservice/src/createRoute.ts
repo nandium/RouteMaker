@@ -9,7 +9,6 @@ import {
   createRouteSchema,
   JwtPayload,
   RouteItem,
-  getCognitoUserDetails,
 } from './common';
 import { MAX_PHOTO_SIZE } from './config';
 import { createHash } from 'crypto';
@@ -65,13 +64,10 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     throw createError(500, 'S3 upload failed.' + error.stack);
   }
 
-  const displayName = (await getCognitoUserDetails(accessToken)).fullName;
-
   const routeItem: RouteItem = {
     username,
     createdAt,
     ttl: new Date(expiredTime).getTime(),
-    displayName,
     routeName,
     gymLocation,
     routeURL,

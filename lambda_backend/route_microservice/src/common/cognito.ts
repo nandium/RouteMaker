@@ -36,7 +36,5 @@ export const adminGetCognitoUserDetails = async (Username: string): Promise<Cogn
 const parseUserAttributes = (UserAttributes: AttributeType[]): CognitoUserDetails => {
   const userEmail = UserAttributes.filter((attribute) => attribute.Name === 'email')[0]
     .Value as string;
-  const fullName = UserAttributes.filter((attribute) => attribute.Name === 'name')[0]
-    .Value as string;
-  return { fullName, userEmail };
+  return { userEmail };
 };

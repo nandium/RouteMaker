@@ -3,7 +3,6 @@ import DynamoDB, { AttributeValue, UpdateItemInput } from 'aws-sdk/clients/dynam
 import {
   getMiddlewareAddedHandler,
   getItemFromRouteTable,
-  getCognitoUserDetails,
   addCommentSchema,
   AddCommentEvent,
   Comment,
@@ -27,12 +26,10 @@ const addComment: Handler = async (event: AddCommentEvent) => {
 
   const accessToken = Authorization.split(' ')[1];
   const { username } = (await jwt_decode(accessToken)) as JwtPayload;
-  const displayName = (await getCognitoUserDetails(accessToken)).fullName;
   let { comments } = Item;
   const newComment: Comment = {
     username,
     timestamp: Date.now(),
-    displayName,
     comment: commentStr,
   };
   comments = [...comments, newComment];
