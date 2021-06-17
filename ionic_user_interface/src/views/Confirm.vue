@@ -78,6 +78,7 @@ export default defineComponent({
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const msgBoxColor = ref('danger');
     const confirmationCodeText = ref('');
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
@@ -122,7 +123,7 @@ export default defineComponent({
 
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/confirm', {
-          email: getUserEmail().value,
+          name: getUsername().value,
           code: confirmationCodeText.value,
         })
         .then((response) => {

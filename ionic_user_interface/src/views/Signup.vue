@@ -123,7 +123,7 @@ export default defineComponent({
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const usernamePattern = /^[a-zA-Z0-9 ]*$/;
-    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
+    const setUsername: (name: string) => void = inject('setUsername', () => undefined);
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
@@ -145,7 +145,7 @@ export default defineComponent({
     };
 
     const isValidUsername = (username: string): boolean => {
-      return username.length >= 5 && usernamePattern.test(username);
+      return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
     const onSubmit = (event: Event): boolean => {
@@ -162,7 +162,7 @@ export default defineComponent({
       }
       if (!isValidUsername(usernameText.value)) {
         errorMsg.value?.showMsg(
-          'Username has to be at least 5 characters and contain only letters, numbers, and spaces',
+          'Username has to be between 5 to 20 characters and contains only letters, numbers, and spaces',
         );
         return false;
       }
@@ -176,11 +176,12 @@ export default defineComponent({
       }
 
       // Valid credentials
+      setUsername(usernameText.value);
       setUserEmail(emailText.value);
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
           name: usernameText.value,
-          email: getUserEmail().value,
+          email: emailText.value,
           password: passwordText.value,
         })
         .then((response) => {
@@ -197,7 +198,7 @@ export default defineComponent({
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
             if (error.response.data.Message === 'UsernameExistsException') {
-              errorMsg.value?.showMsg('Account already exists, please login!');
+              errorMsg.value?.showMsg('Username exists!');
             } else {
               console.error(error.response.data);
             }

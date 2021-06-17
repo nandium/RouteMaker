@@ -5,6 +5,7 @@ import jwt_decode from 'jwt-decode';
 import { toastController } from '@ionic/vue';
 
 const isLoggedIn = ref(false);
+const username = ref('');
 const userEmail = ref('');
 const accessToken = ref('');
 const idToken = ref('');
@@ -39,11 +40,13 @@ const forceLogout = async (): Promise<void> => {
     })
     .finally(() => {
       isLoggedIn.value = false;
+      username.value = '';
       userEmail.value = '';
       accessToken.value = '';
       idToken.value = '';
       isConfirmationNeeded.value = false;
       localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
       localStorage.removeItem('userEmail');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('idToken');
@@ -97,6 +100,14 @@ const providers = {
     localStorage.setItem('isLoggedIn', loggedIn ? 'yes' : 'no');
     isLoggedIn.value = loggedIn;
   },
+  getUsername: (): Ref<string> => {
+    username.value = localStorage.getItem('username') ?? '';
+    return username;
+  },
+  setUsername: (name: string): void => {
+    localStorage.setItem('username', name);
+    username.value = name;
+  },
   getUserEmail: (): Ref<string> => {
     userEmail.value = localStorage.getItem('userEmail') ?? '';
     return userEmail;
@@ -121,7 +132,7 @@ const providers = {
     localStorage.setItem('idToken', token);
     idToken.value = token;
   },
-  getConformationNeeded: (): Ref<boolean> => {
+  getConfirmationNeeded: (): Ref<boolean> => {
     isConfirmationNeeded.value = localStorage.getItem('isConfirmationNeeded') === 'yes';
     return isConfirmationNeeded;
   },

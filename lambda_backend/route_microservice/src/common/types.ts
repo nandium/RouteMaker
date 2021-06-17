@@ -104,7 +104,6 @@ interface GradeSubmission {
 export interface Comment {
   username: string;
   timestamp: number;
-  displayName: string;
   comment: string;
 }
 
@@ -112,7 +111,6 @@ export interface RouteItem {
   username: string;
   createdAt: string;
   ttl: number;
-  displayName: string;
   routeName: string;
   gymLocation: string;
   routeURL: string;
@@ -127,7 +125,6 @@ export interface RouteItem {
 }
 
 export interface CognitoUserDetails {
-  fullName: string;
   userEmail: string;
 }
 

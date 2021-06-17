@@ -16,6 +16,7 @@ const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
     TableName: process.env['ROUTE_TABLE_NAME'],
     IndexName: 'gymLocationIndex',
     ConsistentRead: false,
+    ScanIndexForward: false,
     KeyConditionExpression: 'gymLocation = :gymLocation',
     ExpressionAttributeValues: {
       ':gymLocation': gymLocation as AttributeValue,

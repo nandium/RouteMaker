@@ -12,10 +12,10 @@ const cognitoIdentity = new CognitoIdentity();
 
 const confirmForgotPassword: Handler = async (event: ConfirmForgotPasswordEvent) => {
   const {
-    body: { code, email, password },
+    body: { code, name, password },
   } = event;
   const confirmForgotPasswordRequest: ConfirmForgotPasswordRequest = {
-    Username: email,
+    Username: name,
     ConfirmationCode: code,
     Password: password,
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',

@@ -9,7 +9,7 @@ export const signupSchema = {
       properties: {
         email: { type: 'string', pattern: Email },
         password: { type: 'string' },
-        name: { type: 'string', pattern: AlphanumericSpace },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
       },
       required: ['email', 'password', 'name'],
     },
@@ -22,10 +22,10 @@ export const confirmSignupSchema = {
     body: {
       type: 'object',
       properties: {
-        email: { type: 'string', pattern: Email },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
         code: { type: 'string', pattern: AlphanumericSpace },
       },
-      required: ['email', 'code'],
+      required: ['name', 'code'],
     },
   },
 };
@@ -36,30 +36,30 @@ export const loginSchema = {
     body: {
       type: 'object',
       properties: {
-        email: { type: 'string', pattern: Email },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
         password: { type: 'string' },
       },
-      required: ['email', 'password'],
+      required: ['name', 'password'],
     },
   },
 };
 
-const emailIdentiferSchema = {
+const identiferSchema = {
   type: 'object',
   properties: {
     body: {
       type: 'object',
       properties: {
-        email: { type: 'string', pattern: Email },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
       },
-      required: ['email'],
+      required: ['name'],
     },
   },
 };
 
-export const resendCodeSchema = emailIdentiferSchema;
+export const resendCodeSchema = identiferSchema;
 
-export const forgotPasswordSchema = emailIdentiferSchema;
+export const forgotPasswordSchema = identiferSchema;
 
 export const confirmForgotPasswordSchema = {
   type: 'object',

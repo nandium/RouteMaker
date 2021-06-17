@@ -11,10 +11,10 @@
               <MessageBox ref="errorMsg" color="danger" class="rounded" />
               <form @submit="onSubmit">
                 <ion-item class="rounded">
-                  <ion-label position="stacked">Email</ion-label>
+                  <ion-label position="stacked">Username</ion-label>
                   <ion-input
                     @keyup.enter="clickLoginButton"
-                    v-model="emailText"
+                    v-model="usernameText"
                     inputmode="email"
                     name="email"
                     type="text"
@@ -93,18 +93,17 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
-    const emailPattern =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const usernamePattern = /^[a-zA-Z0-9 ]*$/;
     const setLoggedIn: (loggedIn: boolean) => void = inject('setLoggedIn', () => undefined);
-    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
+    const setUsername: (name: string) => void = inject('setUsername', () => undefined);
     const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
     const setIdToken: (idToken: string) => void = inject('setIdToken', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
       () => undefined,
     );
-    const emailText = ref('');
+    const usernameText = ref('');
     const passwordText = ref('');
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
 
@@ -112,8 +111,8 @@ export default defineComponent({
       errorMsg.value?.close();
     });
 
-    const isValidEmail = (email: string): boolean => {
-      return emailPattern.test(email.toLowerCase());
+    const isValidUsername = (username: string): boolean => {
+      return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
     const isValidPassword = (password: string): boolean => {
@@ -124,11 +123,13 @@ export default defineComponent({
       event.preventDefault();
       errorMsg.value?.close();
 
-      emailText.value = emailText.value.trim();
+      usernameText.value = usernameText.value.trim();
 
       // Invalid credentials
-      if (!isValidEmail(emailText.value)) {
-        errorMsg.value?.showMsg('Invalid email');
+      if (!isValidUsername(usernameText.value)) {
+        errorMsg.value?.showMsg(
+          'Username has to be between 5 to 20 characters and contains only letters, numbers, and spaces',
+        );
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
@@ -137,10 +138,10 @@ export default defineComponent({
       }
 
       // Valid credentials
-      setUserEmail(emailText.value);
+      setUsername(usernameText.value);
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/login', {
-          email: getUserEmail().value,
+          name: usernameText.value,
           password: passwordText.value,
         })
         .then((response) => {
@@ -178,6 +179,7 @@ export default defineComponent({
               errorMsg.value?.showMsg('Wrong email or password');
             } else if (error.response.data.Message === 'UserNotConfirmedException') {
               setConfirmationNeeded(true);
+              setUserEmail(error.response.data.Email);
               router.push('/confirm');
             } else {
               console.error(error.response.data);
@@ -198,7 +200,7 @@ export default defineComponent({
     return {
       onSubmit,
       clickLoginButton,
-      emailText,
+      usernameText,
       passwordText,
       errorMsg,
     };
