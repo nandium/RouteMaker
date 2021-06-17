@@ -12,6 +12,7 @@ provider:
     NODE_ENV: ${self:custom.stage}
     ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
     COGNITO_CLIENT_ID: ${self:custom.cognitoClientId}
+    COGNITO_USERPOOL_ID: ${self:custom.cognitoUserpoolId}
   logRetentionInDays: 30
   lambdaHashingVersion: 20201221
   iam:
@@ -22,6 +23,10 @@ provider:
             - cognito-idp:SignUp
             - cognito-idp:ConfirmSignUp
             - cognito-idp:InitiateAuth
+          Resource: ${self:custom.cognitoArn}
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminGetUser
           Resource: ${self:custom.cognitoArn}
 
 plugins:
@@ -122,6 +127,7 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
   cognitoClientId: ${ssm:/${self:custom.stage}/cognito/clientId}
+  cognitoUserpoolId: ${ssm:/${self:custom.stage}/cognito/poolId}
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}

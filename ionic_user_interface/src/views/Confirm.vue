@@ -79,6 +79,7 @@ export default defineComponent({
     const msgBoxColor = ref('danger');
     const confirmationCodeText = ref('');
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
+    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
       () => undefined,
@@ -105,7 +106,7 @@ export default defineComponent({
 
     onMounted(() => {
       msgBoxColor.value = 'medium';
-      msgBox.value?.showMsg(`A confirmation code has been sent to the email`);
+      msgBox.value?.showMsg(`A confirmation code has been sent to ${getUserEmail().value}`);
     });
 
     const onSubmit = (event: Event): boolean => {

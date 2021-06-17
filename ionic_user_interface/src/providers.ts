@@ -6,6 +6,7 @@ import { toastController } from '@ionic/vue';
 
 const isLoggedIn = ref(false);
 const username = ref('');
+const userEmail = ref('');
 const accessToken = ref('');
 const idToken = ref('');
 const isConfirmationNeeded = ref(false);
@@ -40,11 +41,13 @@ const forceLogout = async (): Promise<void> => {
     .finally(() => {
       isLoggedIn.value = false;
       username.value = '';
+      userEmail.value = '';
       accessToken.value = '';
       idToken.value = '';
       isConfirmationNeeded.value = false;
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('username');
+      localStorage.removeItem('userEmail');
       localStorage.removeItem('accessToken');
       localStorage.removeItem('idToken');
       localStorage.removeItem('isConfirmationNeeded');
@@ -105,6 +108,14 @@ const providers = {
     localStorage.setItem('username', name);
     username.value = name;
   },
+  getUserEmail: (): Ref<string> => {
+    userEmail.value = localStorage.getItem('userEmail') ?? '';
+    return userEmail;
+  },
+  setUserEmail: (email: string): void => {
+    localStorage.setItem('userEmail', email);
+    userEmail.value = email;
+  },
   getAccessToken: (): Ref<string> => {
     accessToken.value = localStorage.getItem('accessToken') ?? '';
     return accessToken;
@@ -121,7 +132,7 @@ const providers = {
     localStorage.setItem('idToken', token);
     idToken.value = token;
   },
-  getConformationNeeded: (): Ref<boolean> => {
+  getConfirmationNeeded: (): Ref<boolean> => {
     isConfirmationNeeded.value = localStorage.getItem('isConfirmationNeeded') === 'yes';
     return isConfirmationNeeded;
   },

@@ -123,8 +123,8 @@ export default defineComponent({
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const usernamePattern = /^[a-zA-Z0-9 ]*$/;
-    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
-    const setUsername: (email: string) => void = inject('setUsername', () => undefined);
+    const setUsername: (name: string) => void = inject('setUsername', () => undefined);
+    const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
       () => undefined,
@@ -177,9 +177,10 @@ export default defineComponent({
 
       // Valid credentials
       setUsername(usernameText.value);
+      setUserEmail(emailText.value);
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
-          name: getUsername().value,
+          name: usernameText.value,
           email: emailText.value,
           password: passwordText.value,
         })

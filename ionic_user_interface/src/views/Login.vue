@@ -95,8 +95,8 @@ export default defineComponent({
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
     const usernamePattern = /^[a-zA-Z0-9 ]*$/;
     const setLoggedIn: (loggedIn: boolean) => void = inject('setLoggedIn', () => undefined);
-    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
-    const setUsername: (email: string) => void = inject('setUsername', () => undefined);
+    const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
+    const setUsername: (name: string) => void = inject('setUsername', () => undefined);
     const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
     const setIdToken: (idToken: string) => void = inject('setIdToken', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
@@ -141,7 +141,7 @@ export default defineComponent({
       setUsername(usernameText.value);
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/login', {
-          name: getUsername().value,
+          name: usernameText.value,
           password: passwordText.value,
         })
         .then((response) => {
@@ -179,6 +179,7 @@ export default defineComponent({
               errorMsg.value?.showMsg('Wrong email or password');
             } else if (error.response.data.Message === 'UserNotConfirmedException') {
               setConfirmationNeeded(true);
+              setUserEmail(error.response.data.Email);
               router.push('/confirm');
             } else {
               console.error(error.response.data);
