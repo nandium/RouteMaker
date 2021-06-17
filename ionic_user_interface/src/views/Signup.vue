@@ -145,7 +145,7 @@ export default defineComponent({
     };
 
     const isValidUsername = (username: string): boolean => {
-      return username.length >= 5 && usernamePattern.test(username);
+      return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
     const onSubmit = (event: Event): boolean => {
@@ -162,7 +162,7 @@ export default defineComponent({
       }
       if (!isValidUsername(usernameText.value)) {
         errorMsg.value?.showMsg(
-          'Username has to be at least 5 characters and contain only letters, numbers, and spaces',
+          'Username has to be between 5 to 20 characters and contains only letters, numbers, and spaces',
         );
         return false;
       }

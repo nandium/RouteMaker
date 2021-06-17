@@ -9,7 +9,7 @@ export const signupSchema = {
       properties: {
         email: { type: 'string', pattern: Email },
         password: { type: 'string' },
-        name: { type: 'string', pattern: AlphanumericSpace },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
       },
       required: ['email', 'password', 'name'],
     },
@@ -22,7 +22,7 @@ export const confirmSignupSchema = {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', pattern: AlphanumericSpace },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
         code: { type: 'string', pattern: AlphanumericSpace },
       },
       required: ['name', 'code'],
@@ -36,7 +36,7 @@ export const loginSchema = {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', pattern: AlphanumericSpace },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
         password: { type: 'string' },
       },
       required: ['name', 'password'],
@@ -50,7 +50,7 @@ const identiferSchema = {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', pattern: AlphanumericSpace },
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
       },
       required: ['name'],
     },
