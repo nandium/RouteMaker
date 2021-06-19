@@ -43,8 +43,9 @@ import {
   IonButton,
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
+import { useRouter } from 'vue-router';
+import { throttle } from 'lodash';
 
-import router from '@/router';
 import MessageBox from '@/components/MessageBox.vue';
 import AutoComplete from './AutoComplete.vue';
 import requestGym from '@/common/api/route/requestGym';
@@ -64,6 +65,7 @@ export default defineComponent({
     MessageBox,
   },
   setup() {
+    const router = useRouter();
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
     const countryNameList = ref<Array<Country>>([]);
     const selectedCountryIso3 = ref('');
@@ -108,7 +110,7 @@ export default defineComponent({
       return alert.present();
     };
 
-    const onSubmit = async (event: Event): Promise<boolean> => {
+    const onSubmit = throttle(async (event: Event): Promise<boolean> => {
       event.preventDefault();
       errorMsg.value?.close();
 
@@ -134,7 +136,7 @@ export default defineComponent({
       }
       alertSubmissionSuccess();
       return true;
-    };
+    }, 1000);
 
     return {
       countryNameList,

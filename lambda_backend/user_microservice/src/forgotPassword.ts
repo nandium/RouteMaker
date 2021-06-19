@@ -15,17 +15,19 @@ const forgotPassword: Handler = async (event: ForgotPasswordEvent) => {
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
   try {
-    await cognitoIdentity.forgotPassword(forgotPasswordRequest).promise();
+    const { CodeDeliveryDetails } = await cognitoIdentity
+      .forgotPassword(forgotPasswordRequest)
+      .promise();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ Message: 'Request password reset success', ...CodeDeliveryDetails }),
+    };
   } catch (error) {
     return {
       statusCode: 400,
       body: JSON.stringify({ Message: error.code }),
     };
   }
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ Message: 'Request password reset success' }),
-  };
 };
 
 export const handler = getMiddlewareAddedHandler(forgotPassword, forgotPasswordSchema);

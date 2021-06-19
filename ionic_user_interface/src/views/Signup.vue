@@ -101,6 +101,7 @@ import axios from 'axios';
 import PasswordMeter from 'vue-simple-password-meter';
 import MessageBox from '@/components/MessageBox.vue';
 import { useRouter } from 'vue-router';
+import { throttle } from 'lodash';
 
 export default defineComponent({
   name: 'Signup',
@@ -148,7 +149,7 @@ export default defineComponent({
       return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
-    const onSubmit = (event: Event): boolean => {
+    const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
       errorMsg.value?.close();
 
@@ -212,7 +213,7 @@ export default defineComponent({
         });
 
       return true;
-    };
+    }, 1000);
 
     const onPasswordScore = (payload: { score: number; strength: string }): void => {
       if (passwordText.value.length === 0) {

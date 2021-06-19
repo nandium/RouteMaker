@@ -15,8 +15,8 @@
                   <ion-input
                     @keyup.enter="clickLoginButton"
                     v-model="usernameText"
-                    inputmode="email"
-                    name="email"
+                    inputmode="text"
+                    name="username"
                     type="text"
                     enterkeyhint="go"
                     autofocus="true"
@@ -43,6 +43,18 @@
                 >
                   Login
                 </ion-button>
+                <router-link style="text-decoration: none" to="/forgotPassword">
+                  <ion-button
+                    id="forgotButton"
+                    class="forgot-button"
+                    size="medium"
+                    expand="block"
+                    fill="clear"
+                  >
+                    Forgot Password
+                  </ion-button>
+                </router-link>
+
                 <h5>
                   Don't have an account?
                   <router-link to="/signup">Sign up</router-link>
@@ -73,8 +85,9 @@ import {
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
-import MessageBox from '@/components/MessageBox.vue';
 import { useRouter } from 'vue-router';
+import { throttle } from 'lodash';
+import MessageBox from '@/components/MessageBox.vue';
 
 export default defineComponent({
   name: 'Login',
@@ -98,6 +111,10 @@ export default defineComponent({
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setUsername: (name: string) => void = inject('setUsername', () => undefined);
     const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
+    const setRefreshToken: (refreshToken: string) => void = inject(
+      'setRefreshToken',
+      () => undefined,
+    );
     const setIdToken: (idToken: string) => void = inject('setIdToken', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
@@ -119,7 +136,7 @@ export default defineComponent({
       return password.length >= 8;
     };
 
-    const onSubmit = (event: Event): boolean => {
+    const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
       errorMsg.value?.close();
 
@@ -148,6 +165,7 @@ export default defineComponent({
           // const { AccessToken, ExpiresIn, IdToken, Message, RefreshToken } = response.data;
           setIdToken(response.data.IdToken);
           setAccessToken(response.data.AccessToken);
+          setRefreshToken(response.data.RefreshToken);
           setLoggedIn(true);
 
           toastController
@@ -191,7 +209,7 @@ export default defineComponent({
           }
         });
       return true;
-    };
+    }, 1000);
 
     const clickLoginButton = (): void => {
       document.getElementById('loginButton')?.click();
@@ -216,6 +234,10 @@ export default defineComponent({
 
 .login-button {
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
+}
+
+.forgot-button {
+  margin-bottom: 20px;
 }
 </style>

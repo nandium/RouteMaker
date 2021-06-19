@@ -53,7 +53,7 @@
       v-if="userHasSelectedGym"
       :width="width + 'px'"
       :height="width + 'px'"
-      style="border: 0"
+      class="google-embed-map"
       loading="lazy"
       allowfullscreen
       :src="embedMapSrcStart + embedMapPointerLocation"
@@ -174,5 +174,14 @@ export default defineComponent({
 <style scoped>
 .absolute-position {
   position: absolute;
+}
+
+body.dark .google-embed-map {
+  border: 0;
+  filter: invert(90%);
+}
+
+body .google-embed-map {
+  border: 0;
 }
 </style>

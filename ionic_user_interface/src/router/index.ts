@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import Home from '@/views/Home.vue';
+import providers from '@/providers';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -37,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'RequestGym',
     component: () => import('@/views/RequestGym.vue'),
     beforeEnter: (_, __, next) => {
-      if (localStorage.getItem('isLoggedIn') === 'yes') {
+      if (providers.getLoggedIn().value) {
         next();
       } else {
         next('/login');
@@ -49,8 +50,34 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Login',
     component: () => import('@/views/Login.vue'),
     beforeEnter: (_, __, next) => {
-      if (localStorage.getItem('isLoggedIn') === 'yes') {
+      if (providers.getLoggedIn().value) {
         next('/home');
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: '/forgotPassword',
+    name: 'ForgotPassword',
+    component: () => import('@/views/ForgotPassword.vue'),
+    beforeEnter: (_, __, next) => {
+      if (providers.getLoggedIn().value) {
+        next('/home');
+      } else {
+        next();
+      }
+    },
+  },
+  {
+    path: '/resetPassword',
+    name: 'ResetPassword',
+    component: () => import('@/views/ResetPassword.vue'),
+    beforeEnter: (_, __, next) => {
+      if (providers.getLoggedIn().value) {
+        next('/home');
+      } else if (providers.getUsername().value === '') {
+        next('/forgotPassword');
       } else {
         next();
       }
@@ -61,7 +88,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Signup',
     component: () => import('@/views/Signup.vue'),
     beforeEnter: (_, __, next) => {
-      if (localStorage.getItem('isLoggedIn') === 'yes') {
+      if (providers.getLoggedIn().value) {
         next('/home');
       } else {
         next();
@@ -73,10 +100,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Confirm',
     component: () => import('@/views/Confirm.vue'),
     beforeEnter: (_, __, next) => {
-      if (
-        localStorage.getItem('isLoggedIn') === 'yes' ||
-        localStorage.getItem('isConfirmationNeeded') !== 'yes'
-      ) {
+      if (providers.getLoggedIn().value || !providers.getConfirmationNeeded().value) {
         next('/home');
       } else {
         next();
@@ -88,10 +112,10 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Profile',
     component: () => import('@/views/Profile.vue'),
     beforeEnter: (_, __, next) => {
-      if (localStorage.getItem('isLoggedIn') !== 'yes') {
-        next('/home');
-      } else {
+      if (providers.getLoggedIn().value) {
         next();
+      } else {
+        next('/login');
       }
     },
   },

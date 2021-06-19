@@ -23,13 +23,23 @@
                   />
                 </ion-item>
                 <ion-button
-                  id="sendButton"
-                  class="send-button"
+                  id="confirmButton"
+                  class="confirm-button"
                   size="medium"
                   type="submit"
                   expand="block"
                 >
-                  Send
+                  Confirm
+                </ion-button>
+                <ion-button
+                  id="resendButton"
+                  class="resend-button"
+                  size="medium"
+                  expand="block"
+                  fill="clear"
+                  @click="resendConfirmationCode(false)"
+                >
+                  Resend Code
                 </ion-button>
               </form>
             </div>
@@ -58,6 +68,7 @@ import { defineComponent, inject, onMounted, ref, Ref } from 'vue';
 import axios from 'axios';
 import MessageBox from '@/components/MessageBox.vue';
 import { useRouter } from 'vue-router';
+import { throttle } from 'lodash';
 
 export default defineComponent({
   name: 'Confirm',
@@ -109,7 +120,34 @@ export default defineComponent({
       msgBox.value?.showMsg(`A confirmation code has been sent to ${getUserEmail().value}`);
     });
 
-    const onSubmit = (event: Event): boolean => {
+    const resendConfirmationCode = throttle(async (isExpired: boolean): Promise<void> => {
+      msgBox.value?.close();
+      try {
+        const {
+          data: { Message },
+        } = await axios.post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/resendCode', {
+          name: getUsername().value,
+        });
+        if (Message === 'Resend code success') {
+          if (isExpired) {
+            msgBox.value?.showMsg(
+              `Confirmation code has expired. It has been resent to ${getUserEmail().value}`,
+            );
+          } else {
+            msgBox.value?.showMsg(`A confirmation code has been sent to ${getUserEmail().value}`);
+          }
+        }
+      } catch (error) {
+        // This should never occur because only successful signup and unconfirmed login will route to this page
+        if (error.response.data.Message === 'UserNotFoundException') {
+          msgBox.value?.showMsg(`Account not found, please sign up!`);
+        } else {
+          msgBox.value?.showMsg('Error: ' + error.response.data.Message);
+        }
+      }
+    }, 1000);
+
+    const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
       msgBox.value?.close();
       msgBoxColor.value = 'danger';
@@ -156,6 +194,8 @@ export default defineComponent({
           if (error.response) {
             if (error.response.data.Message === 'CodeMismatchException') {
               msgBox.value?.showMsg('Wrong confirmation code');
+            } else if (error.response.data.Message === 'ExpiredCodeException') {
+              resendConfirmationCode(true);
             } else {
               msgBox.value?.showMsg('Error: ' + error.response.data.Message);
             }
@@ -167,12 +207,14 @@ export default defineComponent({
         });
 
       return true;
-    };
+    }, 1000);
+
     return {
       onSubmit,
       msgBox,
       msgBoxColor,
       confirmationCodeText,
+      resendConfirmationCode,
     };
   },
 });
@@ -187,8 +229,12 @@ export default defineComponent({
   margin-bottom: 1.4em;
 }
 
-.send-button {
+.confirm-button {
   margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.resend-button {
   margin-bottom: 40px;
 }
 </style>
