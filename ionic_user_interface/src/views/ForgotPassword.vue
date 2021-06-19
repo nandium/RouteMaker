@@ -76,6 +76,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const usernamePattern = /^[a-zA-Z0-9 ]*$/;
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const msgBoxColor = ref('danger');
     const usernameText = ref('');
@@ -84,10 +85,21 @@ export default defineComponent({
       msgBox.value?.close();
     });
 
+    const isValidUsername = (username: string): boolean => {
+      return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
+    };
+
     const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
       msgBox.value?.close();
       msgBoxColor.value = 'danger';
+
+      if (!isValidUsername(usernameText.value)) {
+        msgBox.value?.showMsg(
+          'Username has to be between 5 to 20 characters and contains only letters, numbers, and spaces',
+        );
+        return false;
+      }
 
       axios
         .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/forgotPassword', {
