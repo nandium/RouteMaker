@@ -8,6 +8,7 @@ const isLoggedIn = ref(false);
 const username = ref('');
 const userEmail = ref('');
 const accessToken = ref('');
+const refreshToken = ref('');
 const idToken = ref('');
 const isConfirmationNeeded = ref(false);
 const prefersDarkMode = ref(false);
@@ -15,13 +16,13 @@ const prefersDarkMode = ref(false);
 const forceLogout = async (): Promise<void> => {
   const config = {
     headers: {
-      Authorization: `Bearer ${accessToken.value}`,
+      Authorization: `Bearer ${providers.getAccessToken().value}`,
     },
   };
   return axios
     .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/logout', {}, config)
     .then((response) => {
-      console.log(response.data);
+      console.log(response.data.Message);
     })
     .catch((error) => {
       if (error.response) {
@@ -43,12 +44,14 @@ const forceLogout = async (): Promise<void> => {
       username.value = '';
       userEmail.value = '';
       accessToken.value = '';
+      refreshToken.value = '';
       idToken.value = '';
       isConfirmationNeeded.value = false;
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('username');
       localStorage.removeItem('userEmail');
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       localStorage.removeItem('idToken');
       localStorage.removeItem('isConfirmationNeeded');
       router.push('/home');
@@ -56,13 +59,19 @@ const forceLogout = async (): Promise<void> => {
 };
 
 const checkExpiry = async (): Promise<void> => {
-  if (isLoggedIn.value && accessToken.value !== '') {
+  if (providers.getLoggedIn().value && providers.getAccessToken().value !== '') {
     let expired = false;
     try {
-      const token: { exp: number } = jwt_decode(accessToken.value);
+      const token: { exp: number } = jwt_decode(providers.getAccessToken().value);
+      // Expired AccessToken is refreshed
       if (token.exp <= Math.floor(Date.now() / 1000)) {
-        await forceLogout();
-        expired = true;
+        const response = await axios.post(
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/user/refreshToken',
+          {
+            refreshToken: providers.getRefreshToken().value,
+          },
+        );
+        providers.setAccessToken(response.data.AccessToken);
       }
     } catch (error) {
       console.error(error);
@@ -123,6 +132,14 @@ const providers = {
   setAccessToken: (token: string): void => {
     localStorage.setItem('accessToken', token);
     accessToken.value = token;
+  },
+  getRefreshToken: (): Ref<string> => {
+    refreshToken.value = localStorage.getItem('refreshToken') ?? '';
+    return refreshToken;
+  },
+  setRefreshToken: (token: string): void => {
+    localStorage.setItem('refreshToken', token);
+    refreshToken.value = token;
   },
   getIdToken: (): Ref<string> => {
     idToken.value = localStorage.getItem('idToken') ?? '';

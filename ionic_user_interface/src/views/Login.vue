@@ -98,6 +98,10 @@ export default defineComponent({
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setUsername: (name: string) => void = inject('setUsername', () => undefined);
     const setAccessToken: (accessToken: string) => void = inject('setAccessToken', () => undefined);
+    const setRefreshToken: (refreshToken: string) => void = inject(
+      'setRefreshToken',
+      () => undefined,
+    );
     const setIdToken: (idToken: string) => void = inject('setIdToken', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
@@ -148,6 +152,7 @@ export default defineComponent({
           // const { AccessToken, ExpiresIn, IdToken, Message, RefreshToken } = response.data;
           setIdToken(response.data.IdToken);
           setAccessToken(response.data.AccessToken);
+          setRefreshToken(response.data.RefreshToken);
           setLoggedIn(true);
 
           toastController
