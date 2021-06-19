@@ -8,7 +8,7 @@
               <h1>Forgot Password</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="rounded margin" />
+              <MessageBox ref="errorMsg" color="danger" class="rounded margin" />
               <form @submit="onSubmit">
                 <ion-item class="rounded margin">
                   <ion-label position="stacked">Username</ion-label>
@@ -76,13 +76,12 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const usernamePattern = /^[a-zA-Z0-9 ]*$/;
-    const msgBox: Ref<typeof MessageBox | null> = ref(null);
-    const msgBoxColor = ref('danger');
+    const errorMsg: Ref<typeof MessageBox | null> = ref(null);
     const usernameText = ref('');
     const setUsername: (name: string) => void = inject('setUsername', () => undefined);
 
     onIonViewDidLeave(() => {
-      msgBox.value?.close();
+      errorMsg.value?.close();
     });
 
     const isValidUsername = (username: string): boolean => {
@@ -91,11 +90,10 @@ export default defineComponent({
 
     const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
-      msgBox.value?.close();
-      msgBoxColor.value = 'danger';
+      errorMsg.value?.close();
 
       if (!isValidUsername(usernameText.value)) {
-        msgBox.value?.showMsg(
+        errorMsg.value?.showMsg(
           'Username has to be between 5 to 20 characters and contains only letters, numbers, and spaces',
         );
         return false;
@@ -110,20 +108,20 @@ export default defineComponent({
             setUsername(usernameText.value);
             router.push('/resetPassword');
           } else {
-            msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+            errorMsg.value?.showMsg('Unable to verify: ' + response.data.Message);
           }
         })
         .catch((error) => {
           if (error.response) {
             if (error.response.data.Message === 'UserNotFoundException') {
-              msgBox.value?.showMsg('Account not found, please sign up!');
+              errorMsg.value?.showMsg('Account not found, please sign up!');
             } else {
-              msgBox.value?.showMsg('Error: ' + error.response.data.Message);
+              errorMsg.value?.showMsg('Error: ' + error.response.data.Message);
             }
           } else if (error.request) {
-            msgBox.value?.showMsg('Bad request');
+            errorMsg.value?.showMsg('Bad request');
           } else {
-            msgBox.value?.showMsg('Error: ' + error.message);
+            errorMsg.value?.showMsg('Error: ' + error.message);
           }
         });
 
@@ -137,8 +135,7 @@ export default defineComponent({
     return {
       clickEmailButton,
       onSubmit,
-      msgBox,
-      msgBoxColor,
+      errorMsg,
       usernameText,
     };
   },
