@@ -85,8 +85,9 @@ import {
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
-import MessageBox from '@/components/MessageBox.vue';
 import { useRouter } from 'vue-router';
+import { throttle } from 'lodash';
+import MessageBox from '@/components/MessageBox.vue';
 
 export default defineComponent({
   name: 'Login',
@@ -135,7 +136,7 @@ export default defineComponent({
       return password.length >= 8;
     };
 
-    const onSubmit = (event: Event): boolean => {
+    const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
       errorMsg.value?.close();
 
@@ -208,7 +209,7 @@ export default defineComponent({
           }
         });
       return true;
-    };
+    }, 1000);
 
     const clickLoginButton = (): void => {
       document.getElementById('loginButton')?.click();
