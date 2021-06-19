@@ -31,8 +31,9 @@ export default defineComponent({
       await checkExpiry();
     });
 
-    onMounted(() => {
+    onMounted(async () => {
       document.body.classList.toggle('dark', prefersDarkMode.value);
+      await checkExpiry();
     });
 
     watch(prefersDarkMode, () => {
