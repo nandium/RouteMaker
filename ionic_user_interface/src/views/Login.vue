@@ -15,8 +15,8 @@
                   <ion-input
                     @keyup.enter="clickLoginButton"
                     v-model="usernameText"
-                    inputmode="email"
-                    name="email"
+                    inputmode="text"
+                    name="username"
                     type="text"
                     enterkeyhint="go"
                     autofocus="true"
@@ -43,6 +43,18 @@
                 >
                   Login
                 </ion-button>
+                <router-link style="text-decoration: none" to="/forgotPassword">
+                  <ion-button
+                    id="forgotButton"
+                    class="forgot-button"
+                    size="medium"
+                    expand="block"
+                    fill="clear"
+                  >
+                    Forgot Password
+                  </ion-button>
+                </router-link>
+
                 <h5>
                   Don't have an account?
                   <router-link to="/signup">Sign up</router-link>
@@ -221,6 +233,10 @@ export default defineComponent({
 
 .login-button {
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
+}
+
+.forgot-button {
+  margin-bottom: 20px;
 }
 </style>

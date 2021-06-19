@@ -57,6 +57,18 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/forgotPassword',
+    name: 'ForgotPassword',
+    component: () => import('@/views/ForgotPassword.vue'),
+    beforeEnter: (_, __, next) => {
+      if (localStorage.getItem('isLoggedIn') === 'yes') {
+        next('/home');
+      } else {
+        next();
+      }
+    },
+  },
+  {
     path: '/signup',
     name: 'Signup',
     component: () => import('@/views/Signup.vue'),
