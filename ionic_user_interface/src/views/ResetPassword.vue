@@ -103,7 +103,7 @@ import { defineComponent, inject, ref, Ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import PasswordMeter from 'vue-simple-password-meter';
 import MessageBox from '@/components/MessageBox.vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { throttle } from 'lodash';
 
 export default defineComponent({
@@ -123,6 +123,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const msgBoxColor = ref('danger');
     const usernameText = ref('');
@@ -139,8 +140,9 @@ export default defineComponent({
     onMounted(() => {
       usernameText.value = getUsername().value;
       msgBoxColor.value = 'medium';
-      // Email is not displayed explicitly for security
-      msgBox.value?.showMsg(`A password reset code has been sent to the user email`);
+      if (route.params.Destination) {
+        msgBox.value?.showMsg(`A password reset code has been sent to ${route.params.Destination}`);
+      }
     });
 
     const onPasswordScore = (payload: { score: number; strength: string }): void => {
@@ -186,7 +188,9 @@ export default defineComponent({
         );
         if (response.data.Message === 'Request password reset success') {
           msgBoxColor.value = 'medium';
-          msgBox.value?.showMsg(`A password reset code has been sent to the user email`);
+          msgBox.value?.showMsg(
+            `A password reset code has been sent to ${response.data.Destination}`,
+          );
         } else {
           msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
         }

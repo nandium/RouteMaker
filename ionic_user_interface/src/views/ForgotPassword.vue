@@ -106,7 +106,10 @@ export default defineComponent({
         .then((response) => {
           if (response.data.Message === 'Request password reset success') {
             setUsername(usernameText.value);
-            router.push('/resetPassword');
+            router.push({
+              name: 'ResetPassword',
+              params: { Destination: response.data.Destination },
+            });
           } else {
             errorMsg.value?.showMsg('Unable to verify: ' + response.data.Message);
           }
@@ -115,6 +118,8 @@ export default defineComponent({
           if (error.response) {
             if (error.response.data.Message === 'UserNotFoundException') {
               errorMsg.value?.showMsg('Account not found, please sign up!');
+            } else if (error.response.data.Message === 'LimitExceededException') {
+              errorMsg.value?.showMsg('Too many attempts');
             } else {
               errorMsg.value?.showMsg('Error: ' + error.response.data.Message);
             }
