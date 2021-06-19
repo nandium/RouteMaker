@@ -66,6 +66,16 @@
                 >
                   Reset Password
                 </ion-button>
+                <ion-button
+                  id="resendButton"
+                  class="resend-button"
+                  size="medium"
+                  expand="block"
+                  fill="clear"
+                  @click="resendPasswordResetCode"
+                >
+                  Resend Code
+                </ion-button>
               </form>
             </div>
           </ion-col>
@@ -128,6 +138,9 @@ export default defineComponent({
 
     onMounted(() => {
       usernameText.value = getUsername().value;
+      msgBoxColor.value = 'medium';
+      // Email is not displayed explicitly for security
+      msgBox.value?.showMsg(`A password reset code has been sent to the user email`);
     });
 
     const onPasswordScore = (payload: { score: number; strength: string }): void => {
@@ -161,6 +174,32 @@ export default defineComponent({
     const isValidPassword = (password: string): boolean => {
       return password.length >= 8;
     };
+
+    const resendPasswordResetCode = throttle(async (): Promise<void> => {
+      msgBox.value?.close();
+      try {
+        const response = await axios.post(
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/user/forgotPassword',
+          {
+            name: usernameText.value,
+          },
+        );
+        if (response.data.Message === 'Request password reset success') {
+          msgBoxColor.value = 'medium';
+          msgBox.value?.showMsg(`A password reset code has been sent to the user email`);
+        } else {
+          msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+        }
+      } catch (error) {
+        if (error.response) {
+          msgBox.value?.showMsg('Error: ' + error.response.data.Message);
+        } else if (error.request) {
+          msgBox.value?.showMsg('Bad request');
+        } else {
+          msgBox.value?.showMsg('Error: ' + error.message);
+        }
+      }
+    }, 1000);
 
     const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
@@ -211,7 +250,10 @@ export default defineComponent({
         })
         .catch((error) => {
           if (error.response) {
-            if (error.response.data.Message === 'ExpiredCodeException') {
+            if (
+              error.response.data.Message === 'ExpiredCodeException' ||
+              error.response.data.Message === 'CodeMismatchException'
+            ) {
               msgBox.value?.showMsg('Wrong password reset code');
             } else {
               msgBox.value?.showMsg('Error: ' + error.response.data.Message);
@@ -232,6 +274,7 @@ export default defineComponent({
 
     return {
       clickResetPasswordButton,
+      resendPasswordResetCode,
       onSubmit,
       msgBox,
       msgBoxColor,
@@ -262,5 +305,9 @@ export default defineComponent({
 .reset-password-button {
   margin-top: 30px;
   margin-bottom: 10px;
+}
+
+.resend-button {
+  margin-bottom: 40px;
 }
 </style>

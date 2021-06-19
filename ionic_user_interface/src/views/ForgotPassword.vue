@@ -52,7 +52,6 @@ import {
   IonPage,
   IonRow,
   onIonViewDidLeave,
-  toastController,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
@@ -108,22 +107,6 @@ export default defineComponent({
         })
         .then((response) => {
           if (response.data.Message === 'Request password reset success') {
-            toastController
-              .create({
-                header: 'If the user exists, the password reset code has been emailed',
-                position: 'bottom',
-                color: 'medium',
-                duration: 5000,
-                buttons: [
-                  {
-                    text: 'Close',
-                    role: 'cancel',
-                  },
-                ],
-              })
-              .then((toast) => {
-                toast.present();
-              });
             setUsername(usernameText.value);
             router.push('/resetPassword');
           } else {
