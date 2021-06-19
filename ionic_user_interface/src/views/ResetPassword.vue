@@ -294,10 +294,6 @@ export default defineComponent({
   border-radius: 5px;
 }
 
-.rounded {
-  border-radius: 5px;
-}
-
 .margin {
   margin-bottom: 1.4em;
 }
