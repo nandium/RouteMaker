@@ -9,7 +9,7 @@
             </div>
             <div class="ion-padding ion-text-center">
               <MessageBox ref="errorMsg" color="danger" class="rounded margin" />
-              <form @submit="onSubmit">
+              <form @submit.prevent="onSubmit">
                 <ion-item class="rounded margin">
                   <ion-label position="stacked">Username</ion-label>
                   <ion-input
@@ -123,8 +123,6 @@ export default defineComponent({
             } else {
               errorMsg.value?.showMsg('Error: ' + error.response.data.Message);
             }
-          } else if (error.request) {
-            errorMsg.value?.showMsg('Bad request');
           } else {
             errorMsg.value?.showMsg('Error: ' + error.message);
           }
