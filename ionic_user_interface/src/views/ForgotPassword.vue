@@ -54,7 +54,7 @@ import {
   onIonViewDidLeave,
   toastController,
 } from '@ionic/vue';
-import { defineComponent, ref, Ref } from 'vue';
+import { defineComponent, inject, ref, Ref } from 'vue';
 import axios from 'axios';
 import MessageBox from '@/components/MessageBox.vue';
 import { useRouter } from 'vue-router';
@@ -80,6 +80,7 @@ export default defineComponent({
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const msgBoxColor = ref('danger');
     const usernameText = ref('');
+    const setUsername: (name: string) => void = inject('setUsername', () => undefined);
 
     onIonViewDidLeave(() => {
       msgBox.value?.close();
@@ -123,7 +124,8 @@ export default defineComponent({
               .then((toast) => {
                 toast.present();
               });
-            router.push('/login');
+            setUsername(usernameText.value);
+            router.push('/resetPassword');
           } else {
             msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
           }
