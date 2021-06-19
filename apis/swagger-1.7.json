@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "This is the RouteMaker API",
-    "version": "1.6",
+    "version": "1.7",
     "title": "RouteMaker API",
     "contact": {
       "email": "yarkhinephyo@gmail.com"
@@ -73,7 +73,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Registration"
+                "$ref": "#/components/schemas/SignupRequest"
               }
             }
           }
@@ -84,7 +84,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Registered"
+                  "$ref": "#/components/schemas/SignupResponse"
                 }
               }
             }
@@ -138,7 +138,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Login"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           },
@@ -265,16 +265,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "Message"
-                  ],
-                  "properties": {
-                    "Message": {
-                      "type": "string",
-                      "example": "Request password reset success"
-                    }
-                  }
+                  "$ref": "#/components/schemas/ForgotPasswordResponse"
                 }
               }
             }
@@ -292,7 +283,7 @@
           "content": {
             "application/json:": {
               "schema": {
-                "$ref": "#/components/schemas/ResetPassword"
+                "$ref": "#/components/schemas/ResetPasswordRequest"
               }
             }
           }
@@ -769,7 +760,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RequestGym"
+                "$ref": "#/components/schemas/RequestGymRequest"
               }
             }
           }
@@ -948,7 +939,7 @@
           }
         }
       },
-      "Registration": {
+      "SignupRequest": {
         "type": "object",
         "required": [
           "name",
@@ -969,7 +960,7 @@
           }
         }
       },
-      "Registered": {
+      "SignupResponse": {
         "type": "object",
         "required": [
           "Message",
@@ -1011,7 +1002,7 @@
           }
         }
       },
-      "Login": {
+      "LoginRequest": {
         "type": "object",
         "required": [
           "name",
@@ -1027,7 +1018,32 @@
           }
         }
       },
-      "ResetPassword": {
+      "ForgotPasswordResponse": {
+        "type": "object",
+        "required": [
+          "Message",
+          "Destination",
+          "DeliveryMedium",
+          "AttributeName"
+        ],
+        "properties": {
+          "Message": {
+            "type": "string",
+            "example": "Request password reset success"
+          },
+          "Destination": {
+            "type": "string",
+            "example": "y***@g***.com"
+          },
+          "DeliveryMedium": {
+            "type": "string"
+          },
+          "AttributeName": {
+            "type": "string"
+          }
+        }
+      },
+      "ResetPasswordRequest": {
         "type": "object",
         "required": [
           "name",
@@ -1587,7 +1603,7 @@
           }
         }
       },
-      "RequestGym": {
+      "RequestGymRequest": {
         "type": "object",
         "required": [
           "countryCode",
