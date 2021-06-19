@@ -123,6 +123,9 @@ export default defineComponent({
             } else {
               errorMsg.value?.showMsg('Error: ' + error.response.data.Message);
             }
+          } else if (error.request) {
+            // Error when user presses enter instead of click, but does not seem to cause an issue
+            console.error(error.request);
           } else {
             errorMsg.value?.showMsg('Error: ' + error.message);
           }
