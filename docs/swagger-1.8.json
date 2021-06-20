@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "This is the RouteMaker API",
-    "version": "1.7",
+    "version": "1.8",
     "title": "RouteMaker API",
     "contact": {
       "email": "yarkhinephyo@gmail.com"
@@ -341,6 +341,54 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user/disable": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "disables a user as admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json:": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "disable user success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "Message"
+                  ],
+                  "properties": {
+                    "Message": {
+                      "type": "string",
+                      "example": "Disable user success"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
