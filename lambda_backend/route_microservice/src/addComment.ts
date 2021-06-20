@@ -1,15 +1,13 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, UpdateItemInput } from 'aws-sdk/clients/dynamodb';
-import {
-  getMiddlewareAddedHandler,
-  getItemFromRouteTable,
-  addCommentSchema,
-  AddCommentEvent,
-  Comment,
-  JwtPayload,
-} from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { addCommentSchema } from './common/schema';
+import { AddCommentEvent, Comment, JwtPayload } from './common/types';
+import { cleanBadwords } from './common/badwords';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -30,7 +28,7 @@ const addComment: Handler = async (event: AddCommentEvent) => {
   const newComment: Comment = {
     username,
     timestamp: Date.now(),
-    comment: commentStr,
+    comment: cleanBadwords(commentStr),
   };
   comments = [...comments, newComment];
 

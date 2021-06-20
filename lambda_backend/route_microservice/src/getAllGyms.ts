@@ -5,8 +5,10 @@ import DynamoDB, {
   QueryInput,
   ItemList,
 } from 'aws-sdk/clients/dynamodb';
-import { getMiddlewareAddedHandler, GetAllGymsEvent } from './common';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { GetAllGymsEvent } from './common/types';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 

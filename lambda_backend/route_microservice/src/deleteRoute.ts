@@ -1,17 +1,14 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
 import S3, { DeleteObjectRequest } from 'aws-sdk/clients/s3';
-
-import {
-  getMiddlewareAddedHandler,
-  DeleteRouteEvent,
-  deleteRouteSchema,
-  JwtPayload,
-  getItemFromRouteTable,
-} from './common';
-import { createHash } from 'crypto';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
+import { createHash } from 'crypto';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { deleteRouteSchema } from './common/schema';
+import { DeleteRouteEvent, JwtPayload } from './common/types';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 const s3 = new S3();

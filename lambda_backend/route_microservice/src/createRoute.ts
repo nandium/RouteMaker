@@ -1,19 +1,16 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { PutItemInput, AttributeMap } from 'aws-sdk/clients/dynamodb';
 import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
-
-import {
-  getMiddlewareAddedHandler,
-  getGymIsRegistered,
-  CreateRouteEvent,
-  createRouteSchema,
-  JwtPayload,
-  RouteItem,
-} from './common';
-import { MAX_PHOTO_SIZE } from './config';
 import { createHash } from 'crypto';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getGymIsRegistered } from './common/db';
+import { createRouteSchema } from './common/schema';
+import { CreateRouteEvent, RouteItem, JwtPayload } from './common/types';
+import { cleanBadwords } from './common/badwords';
+import { MAX_PHOTO_SIZE } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 const s3 = new S3();
@@ -68,7 +65,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     username,
     createdAt,
     ttl: new Date(expiredTime).getTime(),
-    routeName,
+    routeName: cleanBadwords(routeName),
     gymLocation,
     routeURL,
     ownerGrade,

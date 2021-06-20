@@ -1,14 +1,12 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, UpdateItemInput } from 'aws-sdk/clients/dynamodb';
-import {
-  getMiddlewareAddedHandler,
-  GradeRouteEvent,
-  gradeRouteSchema,
-  JwtPayload,
-  getItemFromRouteTable,
-} from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { gradeRouteSchema } from './common/schema';
+import { GradeRouteEvent, JwtPayload } from './common/types';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
