@@ -1,10 +1,24 @@
 import CognitoIdentityServiceProvider, {
   AdminGetUserRequest,
+  AdminUpdateUserAttributesRequest,
   AttributeType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentityServiceProvider();
+
+export const enableAdminPermission = async (Username: string): Promise<void> => {
+  const adminUpdateUserAttributesParams: AdminUpdateUserAttributesRequest = {
+    Username,
+    UserPoolId: process.env['COGNITO_USERPOOL_ID'] as string,
+    UserAttributes: [{ Name: 'custom:role', Value: 'admin' }],
+  };
+  try {
+    await cognitoIdentity.adminUpdateUserAttributes(adminUpdateUserAttributesParams).promise();
+  } catch (error) {
+    throw createError(500, 'Error updating Cognito user details');
+  }
+};
 
 export const adminGetCognitoUserDetails = async (Username: string): Promise<CognitoUserDetails> => {
   const adminGetUserParams: AdminGetUserRequest = {

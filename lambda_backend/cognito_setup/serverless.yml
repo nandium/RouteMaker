@@ -35,6 +35,10 @@ resources:
           # Ensure SES has AWS production access
           # EmailSendingAccount: DEVELOPER
           # SourceArn: <arn:email>
+        Schema:
+          - Name: role
+            Mutable: true
+            AttributeDataType: String
     CognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:

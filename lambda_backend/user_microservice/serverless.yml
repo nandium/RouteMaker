@@ -23,10 +23,8 @@ provider:
             - cognito-idp:SignUp
             - cognito-idp:ConfirmSignUp
             - cognito-idp:InitiateAuth
-          Resource: ${self:custom.cognitoArn}
-        - Effect: Allow
-          Action:
             - cognito-idp:AdminGetUser
+            - cognito-idp:AdminUpdateUserAttributes
           Resource: ${self:custom.cognitoArn}
 
 plugins:
@@ -122,6 +120,9 @@ functions:
             arn: ${self:custom.cognitoArn}
             scopes:
               - aws.cognito.signin.user.admin
+
+  enableAdmin:
+    handler: src/enableAdmin.handler
 
 custom:
   stage: ${opt:stage, self:provider.stage}
