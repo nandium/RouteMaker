@@ -2,7 +2,9 @@ import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
   GlobalSignOutRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { LogoutEvent, getMiddlewareAddedHandler } from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { LogoutEvent } from './common/types';
 
 const cognitoIdentity = new CognitoIdentity();
 

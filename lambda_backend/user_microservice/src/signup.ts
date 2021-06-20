@@ -1,6 +1,9 @@
 import { Handler } from 'aws-lambda';
 import CognitoIdentity, { SignUpRequest } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { SignupEvent, signupSchema, getMiddlewareAddedHandler } from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { SignupEvent } from './common/types';
+import { signupSchema } from './common/schema';
 
 const cognitoIdentity = new CognitoIdentity();
 
