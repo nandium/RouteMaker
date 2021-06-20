@@ -119,6 +119,22 @@ const routes: Array<RouteRecordRaw> = [
       }
     },
   },
+  {
+    path: '/uploadRoute',
+    name: 'UploadRoute',
+    component: () => import('@/views/UploadRoute.vue'),
+    beforeEnter: (_, __, next) => {
+      if (providers.getLoggedIn().value) {
+        if (providers.getRouteImageUri().value !== '') {
+          next();
+        } else {
+          next('/home');
+        }
+      } else {
+        next('/login');
+      }
+    },
+  },
 ];
 
 const router = createRouter({

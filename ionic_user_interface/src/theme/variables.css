@@ -12,6 +12,10 @@ http://ionicframework.com/docs/theming/ */
   font-weight: bold !important;
 }
 
+.padding-top {
+  padding-top: 2em;
+}
+
 /** Ionic CSS Variables **/
 :root {
   --ion-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Oxygen, Ubuntu,
