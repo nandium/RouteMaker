@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" ref="content">
       <ion-grid>
         <ion-row color="primary" class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-md="6" size-lg="5" size-xs="12">
@@ -20,6 +20,8 @@
                     autofocus
                     required
                   />
+                  <!-- Fix to prevent enter submit -->
+                  <ion-input class="ion-hide"></ion-input>
                 </ion-item>
                 <ion-list class="rounded margin">
                   <ion-item>
@@ -33,7 +35,11 @@
                 </ion-list>
                 <ion-item class="rounded margin">
                   <ion-label>Route expiry date</ion-label>
-                  <ion-datetime display-format="D MMM YYYY" :max="maxRouteExpiry"></ion-datetime>
+                  <ion-datetime
+                    display-format="D MMM YYYY"
+                    :min="minRouteExpiry"
+                    :max="maxRouteExpiry"
+                  ></ion-datetime>
                 </ion-item>
                 <ion-img :src="routeImage" class="margin"></ion-img>
                 <ion-button class="upload-button" size="medium" type="submit" expand="block">
@@ -91,6 +97,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const content: Ref<typeof IonContent | null> = ref(null);
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const msgBoxColor = ref('danger');
     const routeNameText = ref('');
@@ -99,16 +106,15 @@ export default defineComponent({
     const getRouteImageUri: () => Ref<string> = inject('getRouteImageUri', () => ref(''));
     const routeImage = getRouteImageUri();
 
-    const maxRouteExpiry = computed(() => {
-      const maxDays = 90;
-      const maxExpiryDate = new Date(new Date().getTime() + maxDays * 24 * 60 * 60 * 1000);
-      const mm = maxExpiryDate.getMonth() + 1;
-      const dd = maxExpiryDate.getDate();
-      // Format to yyyy-dd-mm;
-      return [maxExpiryDate.getFullYear(), (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join(
-        '-',
-      );
-    });
+    const transformDaysAwayToYYYYMMDD = (daysAway: number): string => {
+      const date = new Date(new Date().getTime() + daysAway * 24 * 60 * 60 * 1000);
+      const mm = date.getMonth() + 1;
+      const dd = date.getDate();
+      // Format to yyyy-mm-dd;
+      return [date.getFullYear(), (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join('-');
+    };
+    const minRouteExpiry = computed(() => transformDaysAwayToYYYYMMDD(1));
+    const maxRouteExpiry = computed(() => transformDaysAwayToYYYYMMDD(90));
 
     onIonViewDidLeave(() => {
       msgBox.value?.close();
@@ -119,16 +125,21 @@ export default defineComponent({
     });
 
     const isValidRouteName = (routeName: string): boolean => {
-      return routeName.length > 0;
+      return routeName.length > 0 && routeName.length <= 30;
+    };
+
+    const showErrorMsg = (errorMsg: string): void => {
+      msgBoxColor.value = 'danger';
+      msgBox.value?.showMsg(errorMsg);
+      content.value?.$el.scrollToTop(400);
     };
 
     const onSubmit = (event: Event): boolean => {
       event.preventDefault();
       msgBox.value?.close();
-      msgBoxColor.value = 'danger';
 
       if (!isValidRouteName(routeNameText.value)) {
-        msgBox.value?.showErrorMsg('Route name is invalid');
+        showErrorMsg('Route name is invalid');
         return false;
       }
 
@@ -155,29 +166,31 @@ export default defineComponent({
 
             router.push('/login');
           } else {
-            msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+            showErrorMsg('Unable to verify: ' + response.data.Message);
           }
         })
         .catch((error) => {
           if (error.response) {
             if (error.response.data.Message === 'CodeMismatchException') {
-              msgBox.value?.showMsg('Wrong confirmation code');
+              showErrorMsg('Wrong confirmation code');
             } else {
-              msgBox.value?.showMsg('Error: ' + error.response.data.Message);
+              showErrorMsg('Error: ' + error.response.data.Message);
             }
           } else if (error.request) {
-            msgBox.value?.showMsg('Bad request');
+            showErrorMsg('Bad request');
           } else {
-            msgBox.value?.showMsg('Error: ' + error.message);
+            showErrorMsg('Error: ' + error.message);
           }
         });
 
       return true;
     };
     return {
+      content,
       onSubmit,
       msgBox,
       msgBoxColor,
+      minRouteExpiry,
       maxRouteExpiry,
       routeImage,
       routeNameText,

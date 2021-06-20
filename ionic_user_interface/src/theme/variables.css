@@ -12,8 +12,9 @@ http://ionicframework.com/docs/theming/ */
   font-weight: bold !important;
 }
 
-.padding-top {
-  padding-top: 2em;
+.light-color {
+  color: white !important;
+  --ion-text-color: white !important;
 }
 
 /** Ionic CSS Variables **/

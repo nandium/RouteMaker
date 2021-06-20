@@ -48,6 +48,7 @@ const forceLogout = async (): Promise<void> => {
       refreshToken.value = '';
       idToken.value = '';
       isConfirmationNeeded.value = false;
+      routeImageUri.value = '';
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('username');
       localStorage.removeItem('userEmail');
@@ -55,6 +56,7 @@ const forceLogout = async (): Promise<void> => {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('idToken');
       localStorage.removeItem('isConfirmationNeeded');
+      localStorage.removeItem('routeImageUri');
       router.push('/home');
     });
 };
