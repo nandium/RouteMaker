@@ -43,7 +43,7 @@ const reportRoute: Handler = async (event: ReportRouteEvent) => {
     try {
       await dynamoDb.update(updateItemInput).promise();
     } catch (error) {
-      throw createError(500, 'Error updating item :' + error.stack);
+      throw createError(500, 'Error updating item', error);
     }
 
     const publishInput: PublishInput = {
@@ -53,7 +53,7 @@ const reportRoute: Handler = async (event: ReportRouteEvent) => {
     try {
       await SNSInstance.publish(publishInput).promise();
     } catch (error) {
-      throw createError(500, 'Error publishing SNS :' + error.stack);
+      throw createError(500, 'Error publishing SNS', error);
     }
 
     return {

@@ -30,10 +30,16 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
 
   const { content, mimetype } = routePhoto;
   if (mimetype !== 'image/jpeg') {
-    throw createError(400, 'Only JPEG is accepted');
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: 'Invalid image type' }),
+    };
   }
   if (content.byteLength > MAX_PHOTO_SIZE) {
-    throw createError(400, 'Max allowed size is 5MB');
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: 'Invalid file size' }),
+    };
   }
   const gymIsRegistered = await getGymIsRegistered(countryCode, gymLocation);
   if (!gymIsRegistered) {
@@ -58,7 +64,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   try {
     ({ Location: routeURL } = await s3.upload(putObjectRequest).promise());
   } catch (error) {
-    throw createError(500, 'S3 upload failed.' + error.stack);
+    throw createError(500, 'S3 upload failed', error);
   }
 
   const routeItem: RouteItem = {
@@ -84,7 +90,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   try {
     await dynamoDb.put(putItemInput).promise();
   } catch (error) {
-    throw createError(500, 'DB put operation failed: ' + error.stack);
+    throw createError(500, 'DB put operation failed', error);
   }
   return {
     statusCode: 201,

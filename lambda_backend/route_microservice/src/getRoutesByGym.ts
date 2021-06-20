@@ -31,7 +31,7 @@ const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
       body: JSON.stringify({ Message: 'Query routes by gym success', Items }),
     };
   } catch (error) {
-    throw createError(500, 'Error querying table :' + error.stack);
+    throw createError(500, 'Error querying table', error);
   }
 };
 

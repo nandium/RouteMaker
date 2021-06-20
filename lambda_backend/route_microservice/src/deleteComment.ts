@@ -60,7 +60,7 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   try {
     await dynamoDb.update(updateItemInput).promise();
   } catch (error) {
-    throw createError(500, 'Error updating item :' + error.stack);
+    throw createError(500, 'Error updating item', error);
   }
 
   return {

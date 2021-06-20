@@ -27,7 +27,7 @@ const requestGym: Handler = async (event: RequestGymEvent) => {
   try {
     await SNSInstance.publish(publishInput).promise();
   } catch (error) {
-    throw createError(500, 'Error publishing SNS :' + error.stack);
+    throw createError(500, 'Error publishing SNS', error);
   }
 
   return {

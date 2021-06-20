@@ -40,7 +40,7 @@ const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
     try {
       await dynamoDb.update(updateItemInput).promise();
     } catch (error) {
-      throw createError(500, 'Error updating item :' + error.stack);
+      throw createError(500, 'Error updating item', error);
     }
   }
   return {

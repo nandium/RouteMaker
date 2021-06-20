@@ -50,7 +50,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   try {
     await s3.deleteObject(deleteObjectRequest).promise();
   } catch (error) {
-    throw createError(500, 'S3 deletion failed.' + error.stack);
+    throw createError(500, 'S3 deletion failed', error);
   }
 
   const deleteItemInput: DeleteItemInput = {
@@ -63,7 +63,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   try {
     await dynamoDb.delete(deleteItemInput).promise();
   } catch (error) {
-    throw createError(500, 'DB delete operation failed: ' + error.stack);
+    throw createError(500, 'DB delete operation failed', error);
   }
 
   return {
