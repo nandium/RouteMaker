@@ -5,8 +5,6 @@ import CognitoIdentityServiceProvider, {
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import createError from 'http-errors';
 
-import { CognitoUserDetails } from './types';
-
 const cognitoIdentity = new CognitoIdentityServiceProvider();
 
 export const getCognitoUserDetails = async (AccessToken: string): Promise<CognitoUserDetails> => {
@@ -36,5 +34,12 @@ export const adminGetCognitoUserDetails = async (Username: string): Promise<Cogn
 const parseUserAttributes = (UserAttributes: AttributeType[]): CognitoUserDetails => {
   const userEmail = UserAttributes.filter((attribute) => attribute.Name === 'email')[0]
     .Value as string;
-  return { userEmail };
+  const userRole = UserAttributes.filter((attribute) => attribute.Name === 'custom:role')[0]
+    .Value as 'admin' | 'user';
+  return { userEmail, userRole };
 };
+
+interface CognitoUserDetails {
+  userEmail: string;
+  userRole: 'admin' | 'user';
+}

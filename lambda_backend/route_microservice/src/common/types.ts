@@ -124,10 +124,6 @@ export interface RouteItem {
   comments: Array<Comment>;
 }
 
-export interface CognitoUserDetails {
-  userEmail: string;
-}
-
 export interface RequestGymEvent extends AuthHeader {
   body: {
     countryCode: string;

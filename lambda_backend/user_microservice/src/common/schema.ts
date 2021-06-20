@@ -61,6 +61,8 @@ export const resendCodeSchema = identiferSchema;
 
 export const forgotPasswordSchema = identiferSchema;
 
+export const disableUserSchema = identiferSchema;
+
 export const confirmForgotPasswordSchema = {
   type: 'object',
   properties: {

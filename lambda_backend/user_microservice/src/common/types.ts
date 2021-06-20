@@ -53,3 +53,5 @@ interface AuthHeader {
 export type LogoutEvent = AuthHeader;
 
 export type DeleteEvent = AuthHeader;
+
+export interface DisableUserEvent extends AuthHeader, UserIdentifer {}

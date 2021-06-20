@@ -14,7 +14,10 @@ const signup: Handler = async (event: SignupEvent) => {
   const signUpRequest: SignUpRequest = {
     Username: name,
     Password: password,
-    UserAttributes: [{ Name: 'email', Value: email }],
+    UserAttributes: [
+      { Name: 'email', Value: email },
+      { Name: 'custom:role', Value: 'user' },
+    ],
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
   try {

@@ -25,6 +25,7 @@ provider:
             - cognito-idp:InitiateAuth
             - cognito-idp:AdminGetUser
             - cognito-idp:AdminUpdateUserAttributes
+            - cognito-idp:AdminDisableUser
           Resource: ${self:custom.cognitoArn}
 
 plugins:
@@ -114,6 +115,19 @@ functions:
       - http:
           path: user/delete
           method: delete
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  disableUser:
+    handler: src/disableUser.handler
+    events:
+      - http:
+          path: user/disable
+          method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
           authorizer:
