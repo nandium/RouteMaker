@@ -34,11 +34,39 @@
                   </ion-item>
                 </ion-list>
                 <ion-item class="rounded margin">
+                  <ion-label class="absolute-position">Country</ion-label>
+                  <auto-complete
+                    :options="countryNameList"
+                    optionsKey="country"
+                    @matchedItem="onCountrySelect"
+                  />
+                </ion-item>
+                <ion-list class="rounded margin" v-if="userHasSelectedCountry">
+                  <ion-item>
+                    <ion-label>Gym</ion-label>
+                    <ion-select v-model="selectedGymLocation" interface="action-sheet">
+                      <ion-select-option
+                        v-for="(item, index) in gymLocationList"
+                        :key="index"
+                        :value="item.gymLocation"
+                      >
+                        {{ item.gymName }}
+                      </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                  <router-link style="text-decoration: none" to="/gyms/request">
+                    <ion-button expand="block" fill="clear" color="dark">
+                      Can't Find Gym?
+                    </ion-button>
+                  </router-link>
+                </ion-list>
+                <ion-item class="rounded margin">
                   <ion-label>Route expiry date</ion-label>
                   <ion-datetime
                     display-format="D MMM YYYY"
                     :min="minRouteExpiry"
                     :max="maxRouteExpiry"
+                    v-model="expiryTime"
                   ></ion-datetime>
                 </ion-item>
                 <ion-img :src="routeImage" class="margin"></ion-img>
@@ -69,17 +97,24 @@ import {
   IonPage,
   IonRange,
   IonRow,
+  IonSelect,
+  IonSelectOption,
   onIonViewDidLeave,
   toastController,
 } from '@ionic/vue';
-import { computed, defineComponent, inject, ref, Ref, watch } from 'vue';
+import { computed, defineComponent, inject, onMounted, ref, Ref } from 'vue';
 import axios from 'axios';
+import Lookup, { Country } from 'country-code-lookup';
 import MessageBox from '@/components/MessageBox.vue';
+import getGyms, { GymLocation } from '@/common/api/route/getGyms';
+import AutoComplete from '@/components/gym-selector/AutoComplete.vue';
 import { useRouter } from 'vue-router';
+import { throttle } from 'lodash';
 
 export default defineComponent({
   name: 'UploadRoute',
   components: {
+    AutoComplete,
     MessageBox,
     IonButton,
     IonCol,
@@ -94,17 +129,27 @@ export default defineComponent({
     IonPage,
     IonRange,
     IonRow,
+    IonSelect,
+    IonSelectOption,
   },
   setup() {
     const router = useRouter();
     const content: Ref<typeof IonContent | null> = ref(null);
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
+    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const msgBoxColor = ref('danger');
     const routeNameText = ref('');
     const gradeNumber = ref(0);
-    const gradeText = ref('V0');
+    const gradeText = computed(() => 'V' + gradeNumber.value);
     const getRouteImageUri: () => Ref<string> = inject('getRouteImageUri', () => ref(''));
     const routeImage = getRouteImageUri();
+    const countryNameList = ref<Array<Country>>([]);
+    const gymLocationList = ref<Array<GymLocation>>([]);
+    const selectedCountryIso3 = ref('');
+    const selectedGymLocation = ref('');
+    const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
+
+    const asciiPattern = /^[ -~]+$/;
 
     const transformDaysAwayToYYYYMMDD = (daysAway: number): string => {
       const date = new Date(new Date().getTime() + daysAway * 24 * 60 * 60 * 1000);
@@ -115,17 +160,33 @@ export default defineComponent({
     };
     const minRouteExpiry = computed(() => transformDaysAwayToYYYYMMDD(1));
     const maxRouteExpiry = computed(() => transformDaysAwayToYYYYMMDD(90));
+    const expiryTime = ref('');
 
     onIonViewDidLeave(() => {
       msgBox.value?.close();
     });
 
-    watch(gradeNumber, () => {
-      gradeText.value = 'V' + gradeNumber.value;
+    onMounted(() => {
+      countryNameList.value = [...Lookup.countries.sort()];
     });
 
+    const reset = () => {
+      gymLocationList.value = [];
+      selectedCountryIso3.value = '';
+      selectedGymLocation.value = '';
+    };
+
+    const onCountrySelect = async (country: Country) => {
+      if (country) {
+        selectedCountryIso3.value = country.iso3;
+        gymLocationList.value = await getGyms(country.iso3);
+      } else {
+        reset();
+      }
+    };
+
     const isValidRouteName = (routeName: string): boolean => {
-      return routeName.length > 0 && routeName.length <= 30;
+      return routeName.length > 0 && routeName.length <= 30 && asciiPattern.test(routeName);
     };
 
     const showErrorMsg = (errorMsg: string): void => {
@@ -134,22 +195,46 @@ export default defineComponent({
       content.value?.$el.scrollToTop(400);
     };
 
-    const onSubmit = (event: Event): boolean => {
+    const onSubmit = throttle(async (event: Event): Promise<boolean> => {
       event.preventDefault();
       msgBox.value?.close();
 
       if (!isValidRouteName(routeNameText.value)) {
-        showErrorMsg('Route name is invalid');
+        showErrorMsg('Route name has to be 0-30 ASCII characters');
         return false;
       }
 
+      if (!userHasSelectedCountry.value || selectedGymLocation.value === '') {
+        showErrorMsg('Please select a country and gym');
+        return false;
+      }
+
+      if (expiryTime.value === '') {
+        showErrorMsg('Please select an expiry date');
+        return false;
+      }
+      const routeImageBlob = await fetch(routeImage.value).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append('countryCode', selectedCountryIso3.value);
+      formData.append('expiredTime', new Date(expiryTime.value).toISOString());
+      formData.append('gymLocation', selectedGymLocation.value);
+      formData.append('ownerGrade', gradeNumber.value.toString());
+      formData.append('routePhoto', routeImageBlob);
+      formData.append('routeName', routeNameText.value);
+
       axios
-        .post(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/new', {})
+        .post(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/new', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${getAccessToken().value}`,
+          },
+        })
         .then((response) => {
-          if (response.data.Message === 'Confirmation success') {
+          console.log(response);
+          if (response.data.Message === 'Create route success') {
             toastController
               .create({
-                header: 'Confirmation successful, please log in',
+                header: 'Route has been uploaded successfully',
                 position: 'bottom',
                 color: 'success',
                 duration: 3000,
@@ -164,9 +249,9 @@ export default defineComponent({
                 toast.present();
               });
 
-            router.push('/login');
+            router.push('/home');
           } else {
-            showErrorMsg('Unable to verify: ' + response.data.Message);
+            showErrorMsg('Unable to create route: ' + response.data.Message);
           }
         })
         .catch((error) => {
@@ -184,14 +269,20 @@ export default defineComponent({
         });
 
       return true;
-    };
+    }, 1000);
     return {
       content,
+      countryNameList,
+      onCountrySelect,
+      selectedGymLocation,
+      userHasSelectedCountry,
+      gymLocationList,
       onSubmit,
       msgBox,
       msgBoxColor,
       minRouteExpiry,
       maxRouteExpiry,
+      expiryTime,
       routeImage,
       routeNameText,
       gradeNumber,
