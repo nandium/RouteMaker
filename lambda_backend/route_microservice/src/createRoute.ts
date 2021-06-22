@@ -32,7 +32,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   if (mimetype !== 'image/jpeg') {
     return {
       statusCode: 400,
-      body: JSON.stringify({ Message: 'Invalid image type' }),
+      body: JSON.stringify({ Message: 'Invalid file type' }),
     };
   }
   if (content.byteLength > MAX_PHOTO_SIZE) {
