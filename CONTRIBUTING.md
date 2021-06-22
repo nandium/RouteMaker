@@ -29,7 +29,7 @@ There are currently three microservices.
 2. User: Provides authentication and authorization via AWS Cognito
 3. Route: Provides functions related to gyms and climbing routes
 
-API Documentation is available at the repo's [github page](https://yarkhinephyo.github.io/yolo_bouldering/). Postman Collections are available at `./lambda_backend/postman_collections`.
+API Documentation is available at the repo's [github page](https://nandium.github.io/RouteMaker/). Postman Collections are available at `./lambda_backend/postman_collections`.
 
 There is a bash script to setup everything via Serverless Framework. Ensure that [AWS Credentials](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html) with administrator permissions is set up for deployment and that Docker engine is running for preparing Python packages.
 
