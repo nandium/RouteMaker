@@ -65,6 +65,7 @@ import { computed, defineComponent, inject, ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
+import { throttle } from 'lodash';
 
 export default defineComponent({
   name: 'Profile',
@@ -148,7 +149,7 @@ export default defineComponent({
           {
             text: 'Delete',
             cssClass: 'danger-text',
-            handler: async () => {
+            handler: throttle(async () => {
               await axios
                 .delete(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/delete', {
                   headers: {
@@ -197,7 +198,7 @@ export default defineComponent({
                   }
                   showFailedToDeleteAccountToast();
                 });
-            },
+            }, 1000),
           },
         ],
       });

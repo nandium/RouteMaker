@@ -23,9 +23,7 @@
                   />
                 </ion-item>
                 <!-- This hidden input is to fix the single input submit bug -->
-                <ion-item class="hidden">
-                  <ion-input inputmode="text" name="hidden" type="text" />
-                </ion-item>
+                <ion-input class="ion-hide"></ion-input>
                 <ion-button
                   id="emailButton"
                   class="email-button"
@@ -163,9 +161,5 @@ export default defineComponent({
 .email-button {
   margin-top: 30px;
   margin-bottom: 10px;
-}
-
-.hidden {
-  display: none;
 }
 </style>
