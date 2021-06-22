@@ -9,6 +9,7 @@ import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
 import { deleteRouteSchema } from './common/schema';
 import { DeleteRouteEvent, JwtPayload } from './common/types';
+import { getCognitoUserDetails } from './common/cognito';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 const s3 = new S3();
@@ -26,17 +27,19 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
     queryStringParameters: { username: routeOwnerUsername, createdAt },
   } = event;
 
-  const { username: requestUsername } = (await jwt_decode(
-    Authorization.split(' ')[1],
-  )) as JwtPayload;
-  // Delete only if requester is route owner
+  const accessToken = Authorization.split(' ')[1];
+  const { username: requestUsername } = (await jwt_decode(accessToken)) as JwtPayload;
+  // Delete only if requester is route owner or an admin
   if (requestUsername !== routeOwnerUsername) {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({
-        Message: 'Unauthorized',
-      }),
-    };
+    const { userRole } = await getCognitoUserDetails(accessToken);
+    if (userRole !== 'admin') {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({
+          Message: 'Unauthorized',
+        }),
+      };
+    }
   }
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
