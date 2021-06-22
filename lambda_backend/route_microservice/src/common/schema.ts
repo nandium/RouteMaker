@@ -1,6 +1,6 @@
 const ISODateStringPattern =
   '^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
-const AlphanumericSpaceHyphen = '^[a-zA-Z0-9 \\-]*$';
+const AlphanumericSpace = '^[a-zA-Z0-9 ]*$';
 const CapitalizedAlphabets = '^[A-Z]*$';
 const NumericDecimalCommaSpace = '^[0-9., ]*$';
 const AsciiCharacters = '^[ -~]+$';
@@ -18,8 +18,8 @@ export const createRouteSchema = {
         },
         routeName: {
           type: 'string',
-          maxLength: 50,
-          pattern: AlphanumericSpaceHyphen,
+          maxLength: 30,
+          pattern: AsciiCharacters,
         },
         expiredTime: {
           type: 'string',
@@ -68,7 +68,7 @@ export const deleteRouteSchema = {
       properties: {
         username: {
           type: 'string',
-          pattern: AlphanumericSpaceHyphen,
+          pattern: AlphanumericSpace,
         },
         createdAt: {
           type: 'string',
@@ -88,7 +88,7 @@ export const getRouteDetailsSchema = {
       properties: {
         username: {
           type: 'string',
-          pattern: AlphanumericSpaceHyphen,
+          pattern: AlphanumericSpace,
         },
         createdAt: {
           type: 'string',
@@ -145,7 +145,7 @@ export const deleteCommentSchema = {
         ...getRouteDetailsSchema.properties.body.properties,
         commentUsername: {
           type: 'string',
-          pattern: AlphanumericSpaceHyphen,
+          pattern: AlphanumericSpace,
         },
         timestamp: { type: 'number' },
       },
