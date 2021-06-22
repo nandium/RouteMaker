@@ -35,6 +35,11 @@
               "key": "token",
               "value": "{{AccessToken}}",
               "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{{{AccessToken}}}}",
+              "type": "string"
             }
           ]
         },
@@ -114,14 +119,14 @@
           }
         ],
         "url": {
-          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route?createdAt=2021-06-20T11:48:45.490Z&username=yarkhinephyo",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route?createdAt=2021-06-20T14:31:08.195Z&username=yarkhinephyo",
           "protocol": "https",
           "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route"],
           "query": [
             {
               "key": "createdAt",
-              "value": "2021-06-20T11:48:45.490Z"
+              "value": "2021-06-20T14:31:08.195Z"
             },
             {
               "key": "username",
@@ -169,7 +174,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-20T11:44:19.130Z\"\r\n}",
+          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-22T03:21:14.754Z\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -202,7 +207,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-16T15:11:18.602Z\"\r\n}",
+          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-22T14:55:20.359Z\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -210,10 +215,10 @@
           }
         },
         "url": {
-          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/vote",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/upvote",
           "protocol": "https",
           "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "route", "details", "vote"]
+          "path": ["dev", "route", "details", "upvote"]
         }
       },
       "response": []
@@ -310,7 +315,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-16T15:11:18.602Z\",\r\n    \"comment\": \"This is a comment by me and this cannot be more than 150 chars\"\r\n}",
+          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-22T03:21:14.754Z\",\r\n    \"comment\": \"This is a comment by me and this cannot be more than 150 chars\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
