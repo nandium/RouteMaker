@@ -3,6 +3,7 @@ import CognitoIdentityServiceProvider, {
   AttributeType,
   GetUserRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import { CognitoUserDetails, UserRole } from './types';
 import createError from 'http-errors';
 
 const cognitoIdentity = new CognitoIdentityServiceProvider();
@@ -38,10 +39,3 @@ const parseUserAttributes = (UserAttributes: AttributeType[]): CognitoUserDetail
     .Value as UserRole;
   return { userEmail, userRole };
 };
-
-interface CognitoUserDetails {
-  userEmail: string;
-  userRole: UserRole;
-}
-
-type UserRole = 'admin' | 'user';

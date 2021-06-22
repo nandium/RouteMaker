@@ -76,3 +76,10 @@ export interface JwtPayload {
   client_id: string;
   username: string;
 }
+
+export interface CognitoUserDetails {
+  userEmail: string;
+  userRole: UserRole;
+}
+
+export type UserRole = 'admin' | 'user';

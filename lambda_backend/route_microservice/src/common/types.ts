@@ -131,3 +131,10 @@ export interface RequestGymEvent extends AuthHeader {
     gymName: string;
   };
 }
+
+export interface CognitoUserDetails {
+  userEmail: string;
+  userRole: UserRole;
+}
+
+export type UserRole = 'admin' | 'user';
