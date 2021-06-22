@@ -35,7 +35,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"code\": \"754414\"\r\n}",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"code\": \"223017\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -233,6 +233,39 @@
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "user", "logout"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Report User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{AccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"testing\",\r\n    \"reason\": \"spammer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/report",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "user", "report"]
         }
       },
       "response": []
