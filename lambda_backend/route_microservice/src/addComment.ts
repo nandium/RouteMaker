@@ -8,6 +8,7 @@ import { getItemFromRouteTable } from './common/db';
 import { addCommentSchema } from './common/schema';
 import { AddCommentEvent, Comment, JwtPayload } from './common/types';
 import { cleanBadwords } from './common/badwords';
+import { COMMENT_LIMIT } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -25,6 +26,16 @@ const addComment: Handler = async (event: AddCommentEvent) => {
   const accessToken = Authorization.split(' ')[1];
   const { username } = (await jwt_decode(accessToken)) as JwtPayload;
   let { comments } = Item;
+
+  const isCommentLimitReached =
+    comments.filter((comment) => username === comment.username).length >= COMMENT_LIMIT;
+  if (isCommentLimitReached) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: 'User comment limit reached' }),
+    };
+  }
+
   const newComment: Comment = {
     username,
     timestamp: Date.now(),
