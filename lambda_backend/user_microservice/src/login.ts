@@ -2,12 +2,11 @@ import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
   InitiateAuthRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import {
-  LoginEvent,
-  loginSchema,
-  getMiddlewareAddedHandler,
-  adminGetCognitoUserDetails,
-} from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { LoginEvent } from './common/types';
+import { loginSchema } from './common/schema';
+import { adminGetCognitoUserDetails } from './common/identityProvider';
 
 const cognitoIdentity = new CognitoIdentity();
 

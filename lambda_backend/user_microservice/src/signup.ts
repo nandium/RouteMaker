@@ -1,6 +1,9 @@
 import { Handler } from 'aws-lambda';
 import CognitoIdentity, { SignUpRequest } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { SignupEvent, signupSchema, getMiddlewareAddedHandler } from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { SignupEvent } from './common/types';
+import { signupSchema } from './common/schema';
 
 const cognitoIdentity = new CognitoIdentity();
 
@@ -11,7 +14,10 @@ const signup: Handler = async (event: SignupEvent) => {
   const signUpRequest: SignUpRequest = {
     Username: name,
     Password: password,
-    UserAttributes: [{ Name: 'email', Value: email }],
+    UserAttributes: [
+      { Name: 'email', Value: email },
+      { Name: 'custom:role', Value: 'user' },
+    ],
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
   try {

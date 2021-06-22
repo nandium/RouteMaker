@@ -35,7 +35,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"code\": \"536856\"\r\n}",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"code\": \"223017\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -123,6 +123,16 @@
     {
       "name": "Log In",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{AccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
@@ -144,13 +154,46 @@
       "response": []
     },
     {
+      "name": "Disable User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{AccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"testingboy\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/disable",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "user", "disable"]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "Refresh Token",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"refreshToken\": \"eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.rVTHcObKSTOOjW7pqtd_zmmjP1bjETsBIFurLcoFCVQGSg4Wga3hR3--lKTRa-oad8G4lkQNPT6QHx1297IniEyX_ufOceA8ViuyWIiknYOoOqoyqmpET6WajvGJVyiERZabfus6lGA5DJd8oGvHQjSGJHXlSsVpdS7M69ocxfh9fUZ6SY9adcfMn2HtzF08YPSGSWRifVA2qoq2vq3viprnywgxoP2DRUxTa9ibXZFR31teqzELTjhshmNiGWjJghT248QPcN2wvuO7ra5R4OFXmiw6ZTA43Bo0OSQvwPPyqwWkpk2LcdLmLitm4ejy5pgVEuKtLJ0qwlP-NEh1jw.W_OITFTRIkXKSPvc.2yXwW6xMf25yiLWiTGkfk747nYuZIZ7f_SKp48YAj1UpfTJ4uVBKDJONVvTb38ZEnIP9lBbrds5OS4dBCbfXsq1JSz_bKRLXClSOjwAGSQjXYHD9t7Wp78PflJBEHOFIC26FwTr-79pjLMXdA0X30DOsmdQyCrSzba8ukSC0u9bnSuXZu_Wk2uMzfwRP-aYaEQU3MVXD6LeqozTVs_Rj7W5dljVPUwT5VZCCLc_du-Xo1TAljPe_3-usCBko0shBe2-hI5pDGLFef4poC9-22pIT5iYdHqYAOa-_DoUaP-3Y4ukxD2rPFFs1zbtgkN84m4Ri-KU8I7eufzpc3qzrz9rSsnh2tpskrky6V1uzmdiAs6VKV5P9CuNl3MdWfoeNuEHhmQN-bQh35ErZ2lZbcI7e-ZAzI8nIw679jtcigG0PW4ns4cjpg2MK3poQ6H_SQK_us-F3PUktpi8apv9nmqN3kPpPOdOLIh_pLqHM3D2jJoFk75b0qZdiO2Iz46ZBjK5NCcRa8rbE7U48UjJ7O6ngzIqIBY8VkwpMLrhmnUNLv6tjgxtS1TSD6JzdOx6_Nc7nJaZZMFDxPk3oyNUl1EwcDFP8fGbgjHrIUVa65plE_WV_sfyD_z6DfkIbDGaWq6CG-fHPY-vqrysZKXWpshtM0Kia2UzoMr4S5svESEu-AoByURK240lhnIaahljwQigEzvgOmkPJARR9dyg_qE2DleVb7ar4-lgyNrghejnY-n-BRkyx_phh2YaQ7bkkPvU6vdc06_a49FWEapxqc7XRKjQTJUu0YON6hbpGjuXlpjaE35RTAA1DXWQ0SACqy9OsZiNdWT-mnxHVnCRtXpEvz_8xUBvnrFn91GstTZPQxkWwrBWIc3FM3cfy3EMhHUOrNbfKq5atHSqvo4JQ92yA4W5QMy5gLutY1VuM040bkj_lTu8l7Fwc3rOaAE1bxheg8j8Inw40WO23D_fl7_LTQMUQPQq5zNACvmFTxQIG2x-e5vI1X4ANB6zBfDI8ukeixwFCagr9fN0dZ0EiMpuBa0AGbvArNNFhpcU_Rne_qQhoZi0RirAd_iiCdrc4in-VkunmUvDUeilkG6nrC9sL76F6FfbexJcJhgkaXrPTAPXdBzmQ102iu2tbkmFYGbP3K7oOIgabr7ihQkBFpoZvHnKV663SPMHtjoghxBr3v-BG6TD2KY2rK_KT0dsnZTia_38QUXL8mvlYS9H5uzO0nLwvf78-5obYYZDbyONK5W9FEVgsNPHoF66t7B9vXbb8m1zXIVZ-1aMJVrrfZBYrRb_nvryYQY3478rKLA0zFmt7x04TeaDKwSCYAGESJ4V8ws7gsA.ojYJzYRUQjoN4RYMRp_RQg\"\r\n}",
+          "raw": "{\r\n    \"refreshToken\": \"eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.BriGs4y2sS9fGgs_si1JDbZsVVy1PnYMVXIvWidFWe0B2hSK9s6_L9BFo-SGrjAXzVer05iC9MqSBtyWeuVA0pfsFT4D11E-0FruOvmqk5pB_rB4476E650f8cB8Be0GZna5jD4t0Q0mSjwwGTL24VzqkY_r6ElzGxV-PROekQt4ztwH3APNyrnExXyhKmFVCq7-blJazHLVpIjhxbUNyYQ_tdASN_5ERNHph9j1E6AehZUDUtjm130YNjbx8hZ_1kSgyR4aEL8ibB1I4zQnh5xrw9PJcvParo7zhh6iwmecksoPTMfR4qScE-WkzWWV-wd-a-KMzhXj4IwWYJfzKg.Q8ogcFEEZ4VN8wll.gqqhJznMvIr7DxUE4G59aBS000P4ObOxOSaFghhgRt4p7DVwFc9cc2soP4CG9QLlofUZyTJYW2rhOrWurSrd6tT-niC_39Xr5eDJ5nxJjdRLDuUF23WmQD8BetSzPfz-MMZhhNxuvk-GCL3Tbe4s5baRDUPdtOsGypIkjcJr0rzyCwfymJrXkOAsN9-zITSEfL1ULseXE0xSVtW0mwL3s_5GV45oZUejlHhfvK89z-NFQsG-BWgUvT40JCTMm9RrAMGB_qcIJV2gTR7RBcCnqIzb-RvvTqnOHky-GjqEUT5si1UPSP60tp-PsBPvOGTzw61QLh2USZx04ylKmc_PCrfTxcTw0oU5pZ3_zYEG7Oc2Ad0nUISp48gtWNqhepWFSRFYLIUwNW2yeX6QciydEX9-fNz3DKSEOdYpFq80HKEsyvgpF9-SuLWDkfsuurXlA0B8IhiBdUZf4odx_vCqQVOhCN6NxLratq9xPSwOC1_c5KYnEivd5pwlvu78ZfHP34pYb1MIEyWGi3SljnTv5CyLN7m04RPsXND8nlyhN4FTBDe_6qcWZNYhw2AdzHZAjejszCyIw-MCT5le2iWQ4qauFVi1DiAYmuQYeP61hBRzY87z0EQ2wQQUVqeluHbgWlIUb5-i9V5X7l_1oioQhl4dnEmYwIdF3b_QymInLK1-rEIwUU9TX1PlpIbs83poG94gQCoC5P_Yt2s1VmU7it72oaCOiP7IOMNGfxrhcZ0oxjjRlsvrvdUkJAwtCJhdE-YyXegsFK5aUTulSgHn-bl2uv0oURcGkWvGY5NYqn7p-U4GorPzQKePMwDeZTYG0Vtr1EP5n798bR2jHdFvMtrl1ZipU5NSK4x2xy5qD1C_CLfi-pmR4wHaOGLxUD49iT9lwo1_vJB0okjDS0QIc3uK6MNLAPptHuZwmsK8MZ3CI4svKtXkwZe7CZNvSiMIp1vBrC6lUsV5Ync7j5IJ-jExo_rLnPXR_MNZIdZlgshF7y8uzdRECsPIPfUMSy6UL8fn8MVIFilFUDNGPCWJvaH3FKs-UAubsQBelx7d21hI1vz47a2bqyxCtWcHsrGX5FGQyjapPQwbnT8L4kZsK14Ba06RF6dWMdjSPiR7niKcej_bdMpOpzySrpSWNsMqcLgAdYOglJbFL4d-2dgH_Zx5AoRS_Fxn3cfrRAxqqUb8dP7ePtmaQ0msVui1ZJtyMOK8fOyVP2nIk5Llm0NOlBr3WzgWjnc43QMQbjxufi4ukLovFQrDnrzsHKnFqrZmc1Vccy__Wzc3nshTniV7mYDOC_KCnUTLhg.2OVRwtlkM8pSpUdjSyQ0jw\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -174,7 +217,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJlZmYzZDYzYi0wY2QyLTRmNmYtOTJkYS04OGRjZTYzMDA0ZjAiLCJldmVudF9pZCI6IjQ2MDg1YTg0LWNlZWYtNDE5ZS1hYTkyLWVhMTI0NDc3YWE1NiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjM2ODEwOTEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjM3Njc0OTEsImlhdCI6MTYyMzY4MTA5MSwianRpIjoiNDgyYzllZmMtMTUwYS00NzUzLWI0OTctNTk5ZWVmMmY3YTkwIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiZWZmM2Q2M2ItMGNkMi00ZjZmLTkyZGEtODhkY2U2MzAwNGYwIn0.JQjKf3b5K1hkPParfVDDwjRpg7K9wS3b-Cnbewhoxly2da_IkIxnEAF1BH0ph3jwvfV5QAnKS8mWU48em8xKfdk9injmQcEar9NGsk7jQSedplHlfORsH8uJDUX5zqFH0BjKOi7cVxyr4Y5q59dAZbktri4apkqcv0azv77BkllH8ibCLHFXbiyI2H6daxDpqR3-yMd77qkV-WYxnIeQh64t-dpIx1RNGacUnWJkEN7F22J2hlRdarzgFea_XUkaZqrFAKwAfAMahACQU0m6SmP-7ZQFJgA6OQDA95OVbWzHNFLwmqgJEClUPTk2pDEpY80tUb5Zn1pdysnR_mYvZg",
+              "value": "{{AccessToken}}",
               "type": "string"
             }
           ]
@@ -195,6 +238,39 @@
       "response": []
     },
     {
+      "name": "Report User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{AccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"testing\",\r\n    \"reason\": \"spammer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/report",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "user", "report"]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "Delete User",
       "request": {
         "auth": {
@@ -202,7 +278,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJVa3o4cUVIV1FVazZ4dTl5M1VtTGJHT2hldUZZOWRxZWR4bU80YmNEU0VzPSIsImFsZyI6IlJTMjU2In0.eyJvcmlnaW5fanRpIjoiZWEzZGJiMjAtMGQ4Yy00Yzk3LTkyNzctOGIwYWI2OGZiNTdmIiwic3ViIjoiZjY4MzhlMGMtMTBlOC00YWNlLTg3ZmQtMjRhMGY0Mzc4Zjc4IiwiZXZlbnRfaWQiOiI0MGQ2NjYyYy03NWQ3LTQyZjgtOGI3ZC0zMmI3NTg2NDYxMTYiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjIzODUyMzcwLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTFfVWxTOFNWQ3V1IiwiZXhwIjoxNjIzOTM4NzcwLCJpYXQiOjE2MjM4NTIzNzAsImp0aSI6ImU5ZmU4NTEyLThhNTQtNDBhNS04ZjVkLWFhYjRhNmE3NGYwMSIsImNsaWVudF9pZCI6IjNncHRrdmpmcG9xaXVuZWptMnNpbmNqaWVmIiwidXNlcm5hbWUiOiJ5YXJraGluZXBoeW8ifQ.cSqq_bC4t23JOVp7NkdFCLQFPTud-EMSlvHcPKsmgXw9I43K2Ir0FvzR6D1e2-YFAxcDHkJuqe04gqs3etrqj04DFGMQi04hKrDZGG4q-JLhtgl9b2UIpYCANfqajkctbxdVvmfYDzpOpdggnIjpiPOSg-krx2Sa2CB86yoGHD0LKpwDHryS-V_k7ub5j3qo4i_B65rPiDBcmzaN_iqXDkxIM2yIfbl9Julw1XZj9wYYAV1dzfEdj5rNfUtp-DWXfS-9UcvcSD3bpVoRVLhtoXVOYvRENUpQNoM_yX4LDgU182WxkX_i9NtEp4gwBYRql_Jif44Nr_1Qee86j4SL8g",
+              "value": "{{AccessToken}}",
               "type": "string"
             }
           ]

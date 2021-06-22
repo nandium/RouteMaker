@@ -1,7 +1,9 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, QueryInput } from 'aws-sdk/clients/dynamodb';
-import { getMiddlewareAddedHandler, GetRoutesByGymEvent } from './common';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { GetRoutesByGymEvent } from './common/types';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -29,7 +31,7 @@ const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
       body: JSON.stringify({ Message: 'Query routes by gym success', Items }),
     };
   } catch (error) {
-    throw createError(500, 'Error querying table :' + error.stack);
+    throw createError(500, 'Error querying table', error);
   }
 };
 

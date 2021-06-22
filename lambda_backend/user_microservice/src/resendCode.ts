@@ -2,7 +2,10 @@ import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
   ResendConfirmationCodeRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { ResendCodeEvent, resendCodeSchema, getMiddlewareAddedHandler } from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { ResendCodeEvent } from './common/types';
+import { resendCodeSchema } from './common/schema';
 
 const cognitoIdentity = new CognitoIdentity();
 

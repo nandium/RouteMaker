@@ -13,6 +13,7 @@ provider:
     ALLOWED_ORIGIN: ${self:custom._origin.${self:custom.stage}}
     COGNITO_CLIENT_ID: ${self:custom.cognitoClientId}
     COGNITO_USERPOOL_ID: ${self:custom.cognitoUserpoolId}
+    TELEGRAM_SNS_ARN: ${self:custom.telegramSNSArn}
   logRetentionInDays: 30
   lambdaHashingVersion: 20201221
   iam:
@@ -23,11 +24,15 @@ provider:
             - cognito-idp:SignUp
             - cognito-idp:ConfirmSignUp
             - cognito-idp:InitiateAuth
+            - cognito-idp:AdminGetUser
+            - cognito-idp:AdminUpdateUserAttributes
+            - cognito-idp:AdminDisableUser
           Resource: ${self:custom.cognitoArn}
         - Effect: Allow
           Action:
-            - cognito-idp:AdminGetUser
-          Resource: ${self:custom.cognitoArn}
+            - sns:publish
+          Resource:
+            - '${self:custom.telegramSNSArn}'
 
 plugins:
   - serverless-plugin-typescript
@@ -123,11 +128,41 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  disableUser:
+    handler: src/disableUser.handler
+    events:
+      - http:
+          path: user/disable
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  reportUser:
+    handler: src/reportUser.handler
+    events:
+      - http:
+          path: user/report
+          method: post
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+          authorizer:
+            arn: ${self:custom.cognitoArn}
+            scopes:
+              - aws.cognito.signin.user.admin
+
+  enableAdmin:
+    handler: src/enableAdmin.handler
+
 custom:
   stage: ${opt:stage, self:provider.stage}
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
   cognitoClientId: ${ssm:/${self:custom.stage}/cognito/clientId}
   cognitoUserpoolId: ${ssm:/${self:custom.stage}/cognito/poolId}
+  telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}

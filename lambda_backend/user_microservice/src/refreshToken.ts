@@ -2,7 +2,10 @@ import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
   InitiateAuthRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { RefreshTokenEvent, refreshTokenSchema, getMiddlewareAddedHandler } from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { RefreshTokenEvent } from './common/types';
+import { refreshTokenSchema } from './common/schema';
 
 const cognitoIdentity = new CognitoIdentity();
 

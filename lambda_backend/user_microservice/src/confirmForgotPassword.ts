@@ -2,11 +2,10 @@ import { Handler } from 'aws-lambda';
 import CognitoIdentity, {
   ConfirmForgotPasswordRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import {
-  ConfirmForgotPasswordEvent,
-  confirmForgotPasswordSchema,
-  getMiddlewareAddedHandler,
-} from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { ConfirmForgotPasswordEvent } from './common/types';
+import { confirmForgotPasswordSchema } from './common/schema';
 
 const cognitoIdentity = new CognitoIdentity();
 

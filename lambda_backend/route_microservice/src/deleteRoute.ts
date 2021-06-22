@@ -1,17 +1,15 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
 import S3, { DeleteObjectRequest } from 'aws-sdk/clients/s3';
-
-import {
-  getMiddlewareAddedHandler,
-  DeleteRouteEvent,
-  deleteRouteSchema,
-  JwtPayload,
-  getItemFromRouteTable,
-} from './common';
-import { createHash } from 'crypto';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
+import { createHash } from 'crypto';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { deleteRouteSchema } from './common/schema';
+import { DeleteRouteEvent, JwtPayload } from './common/types';
+import { getCognitoUserDetails } from './common/cognito';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 const s3 = new S3();
@@ -29,17 +27,19 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
     queryStringParameters: { username: routeOwnerUsername, createdAt },
   } = event;
 
-  const { username: requestUsername } = (await jwt_decode(
-    Authorization.split(' ')[1],
-  )) as JwtPayload;
-  // Delete only if requester is route owner
+  const accessToken = Authorization.split(' ')[1];
+  const { username: requestUsername } = (await jwt_decode(accessToken)) as JwtPayload;
+  // Delete only if requester is route owner or an admin
   if (requestUsername !== routeOwnerUsername) {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({
-        Message: 'Unauthorized',
-      }),
-    };
+    const { userRole } = await getCognitoUserDetails(accessToken);
+    if (userRole !== 'admin') {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({
+          Message: 'Unauthorized',
+        }),
+      };
+    }
   }
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
@@ -53,7 +53,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   try {
     await s3.deleteObject(deleteObjectRequest).promise();
   } catch (error) {
-    throw createError(500, 'S3 deletion failed.' + error.stack);
+    throw createError(500, 'S3 deletion failed', error);
   }
 
   const deleteItemInput: DeleteItemInput = {
@@ -66,7 +66,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   try {
     await dynamoDb.delete(deleteItemInput).promise();
   } catch (error) {
-    throw createError(500, 'DB delete operation failed: ' + error.stack);
+    throw createError(500, 'DB delete operation failed', error);
   }
 
   return {

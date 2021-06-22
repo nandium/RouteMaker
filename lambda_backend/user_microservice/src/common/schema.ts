@@ -61,6 +61,22 @@ export const resendCodeSchema = identiferSchema;
 
 export const forgotPasswordSchema = identiferSchema;
 
+export const disableUserSchema = identiferSchema;
+
+export const reportUserSchema = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
+        reason: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
+      },
+      required: ['name', 'reason'],
+    },
+  },
+};
+
 export const confirmForgotPasswordSchema = {
   type: 'object',
   properties: {

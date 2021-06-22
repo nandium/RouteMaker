@@ -1,6 +1,8 @@
 import { Handler } from 'aws-lambda';
 import CognitoIdentity, { DeleteUserRequest } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { DeleteEvent, getMiddlewareAddedHandler } from './common';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { DeleteEvent } from './common/types';
 
 const cognitoIdentity = new CognitoIdentity();
 

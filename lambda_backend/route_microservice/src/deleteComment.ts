@@ -1,14 +1,13 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, UpdateItemInput } from 'aws-sdk/clients/dynamodb';
-import {
-  getMiddlewareAddedHandler,
-  DeleteCommentEvent,
-  deleteCommentSchema,
-  JwtPayload,
-  getItemFromRouteTable,
-} from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { deleteCommentSchema } from './common/schema';
+import { DeleteCommentEvent, JwtPayload } from './common/types';
+import { getCognitoUserDetails } from './common/cognito';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -22,18 +21,20 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   } = event;
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
-  const { username: requestUsername } = (await jwt_decode(
-    Authorization.split(' ')[1],
-  )) as JwtPayload;
+  const accessToken = Authorization.split(' ')[1];
+  const { username: requestUsername } = (await jwt_decode(accessToken)) as JwtPayload;
 
-  // Delete only if requester is route owner or comment writer
+  // Delete only if requester is route owner or comment writer or admin
   if (requestUsername !== commentUsername && requestUsername !== routeOwnerUsername) {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({
-        Message: 'Unauthorized',
-      }),
-    };
+    const { userRole } = await getCognitoUserDetails(accessToken);
+    if (userRole !== 'admin') {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({
+          Message: 'Unauthorized',
+        }),
+      };
+    }
   }
 
   let { comments } = Item;
@@ -62,7 +63,7 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   try {
     await dynamoDb.update(updateItemInput).promise();
   } catch (error) {
-    throw createError(500, 'Error updating item :' + error.stack);
+    throw createError(500, 'Error updating item', error);
   }
 
   return {

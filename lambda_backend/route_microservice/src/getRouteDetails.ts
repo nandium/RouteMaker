@@ -1,13 +1,11 @@
 import { Handler } from 'aws-lambda';
-import {
-  getItemFromRouteTable,
-  getMiddlewareAddedHandler,
-  GetRouteDetailsEvent,
-  getRouteDetailsSchema,
-  JwtPayload,
-} from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { getRouteDetailsSchema } from './common/schema';
+import { GetRouteDetailsEvent, JwtPayload } from './common/types';
 
 const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   if (!process.env['ROUTE_TABLE_NAME'] || !process.env['COGNITO_USERPOOL_ID']) {
@@ -33,7 +31,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     publicGrade,
     publicGradeSubmissions,
     voteCount,
-    upVotes,
+    upvotes,
     reports,
     comments,
   } = Item;
@@ -45,7 +43,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
         graded = grade;
       }
     });
-    upVotes.forEach((name) => {
+    upvotes.forEach((name) => {
       if (name === username) {
         hasVoted = true;
       }

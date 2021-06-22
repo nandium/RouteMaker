@@ -20,7 +20,7 @@ export const getItemFromRouteTable = async (
   try {
     ({ Item } = await dynamoDb.get(getItemInput).promise());
   } catch (error) {
-    throw createError(500, 'Error getting item :' + error.stack);
+    throw createError(500, 'Error getting item', error);
   }
   if (!Item) {
     throw createError(400, 'Route does not exist');
@@ -45,7 +45,7 @@ export const getGymIsRegistered = async (
   try {
     ({ Items } = await dynamoDb.query(queryInput).promise());
   } catch (error) {
-    throw createError(500, 'Error querying table :' + error.stack);
+    throw createError(500, 'Error querying table', error);
   }
   return Items.length > 0;
 };

@@ -1,12 +1,11 @@
 import { Handler } from 'aws-lambda';
 import SNS, { PublishInput } from 'aws-sdk/clients/sns';
-import {
-  getMiddlewareAddedHandler,
-  getCognitoUserDetails,
-  RequestGymEvent,
-  requestGymSchema,
-} from './common';
 import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getCognitoUserDetails } from './common/cognito';
+import { requestGymSchema } from './common/schema';
+import { RequestGymEvent } from './common/types';
 
 const SNSInstance = new SNS();
 
@@ -28,7 +27,7 @@ const requestGym: Handler = async (event: RequestGymEvent) => {
   try {
     await SNSInstance.publish(publishInput).promise();
   } catch (error) {
-    throw createError(500, 'Error publishing SNS :' + error.stack);
+    throw createError(500, 'Error publishing SNS', error);
   }
 
   return {

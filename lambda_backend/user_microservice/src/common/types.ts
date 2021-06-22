@@ -53,3 +53,33 @@ interface AuthHeader {
 export type LogoutEvent = AuthHeader;
 
 export type DeleteEvent = AuthHeader;
+
+export interface DisableUserEvent extends AuthHeader, UserIdentifer {}
+
+export interface ReportUserEvent extends AuthHeader {
+  body: {
+    name: string;
+    reason: string;
+  };
+}
+
+export interface JwtPayload {
+  sub: string;
+  event_id: string;
+  token_use: string;
+  scope: 'aws.cognito.signin.user.admin';
+  auth_time: number;
+  iss: string;
+  exp: number;
+  iat: number;
+  jti: string;
+  client_id: string;
+  username: string;
+}
+
+export interface CognitoUserDetails {
+  userEmail: string;
+  userRole: UserRole;
+}
+
+export type UserRole = 'admin' | 'user';

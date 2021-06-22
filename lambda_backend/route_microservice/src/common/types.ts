@@ -48,14 +48,14 @@ export interface GetRouteDetailsEvent {
   };
 }
 
-export interface UpVoteRouteEvent extends AuthHeader {
+export interface UpvoteRouteEvent extends AuthHeader {
   body: {
     username: string;
     createdAt: string;
   };
 }
 
-export type ReportRouteEvent = UpVoteRouteEvent;
+export type ReportRouteEvent = UpvoteRouteEvent;
 
 export interface GradeRouteEvent extends AuthHeader {
   body: {
@@ -118,14 +118,10 @@ export interface RouteItem {
   publicGrade: number;
   publicGradeSubmissions: Array<GradeSubmission>;
   voteCount: number;
-  upVotes: Array<string>;
+  upvotes: Array<string>;
   reports: Array<string>;
   commentCount: number;
   comments: Array<Comment>;
-}
-
-export interface CognitoUserDetails {
-  userEmail: string;
 }
 
 export interface RequestGymEvent extends AuthHeader {
@@ -135,3 +131,10 @@ export interface RequestGymEvent extends AuthHeader {
     gymName: string;
   };
 }
+
+export interface CognitoUserDetails {
+  userEmail: string;
+  userRole: UserRole;
+}
+
+export type UserRole = 'admin' | 'user';
