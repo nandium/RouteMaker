@@ -39,9 +39,9 @@
                 </ion-button>
               </ion-col>
               <ion-col class="ion-align-self-center" size-xs="6">
-                <ion-button expand="full" fill="clear" color="dark" @click="onClickCantFindGym">
-                  Can't Find Gym?
-                </ion-button>
+                <router-link style="text-decoration: none" to="/gyms/request">
+                  <ion-button expand="full" fill="clear" color="dark">Can't Find Gym?</ion-button>
+                </router-link>
               </ion-col>
             </ion-row>
           </ion-list>
@@ -78,7 +78,6 @@ import Lookup, { Country } from 'country-code-lookup';
 import MessageBox from '@/components/MessageBox.vue';
 import getGyms, { GymLocation } from '@/common/api/route/getGyms';
 import AutoComplete from './AutoComplete.vue';
-import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'GymSelector',
@@ -102,7 +101,6 @@ export default defineComponent({
     },
   },
   setup() {
-    const router = useRouter();
     const embedMapSrcStart = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_MAP_EMBED_API}&q=`;
     const embedMapPointerLocation = ref('');
     const countryNameList = ref<Array<Country>>([]);
@@ -148,11 +146,6 @@ export default defineComponent({
       }
     };
 
-    const onClickCantFindGym = () => {
-      router.push('/gyms/request');
-      return;
-    };
-
     return {
       embedMapSrcStart,
       embedMapPointerLocation,
@@ -165,17 +158,12 @@ export default defineComponent({
       userHasSelectedCountry,
       errorMsg,
       onClickSearchRoutes,
-      onClickCantFindGym,
     };
   },
 });
 </script>
 
 <style scoped>
-.absolute-position {
-  position: absolute;
-}
-
 body.dark .google-embed-map {
   border: 0;
   filter: invert(90%);

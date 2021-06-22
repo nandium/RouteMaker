@@ -12,6 +12,7 @@ const refreshToken = ref('');
 const idToken = ref('');
 const isConfirmationNeeded = ref(false);
 const prefersDarkMode = ref(false);
+const routeImageUri = ref('');
 
 const forceLogout = async (): Promise<void> => {
   const config = {
@@ -47,6 +48,7 @@ const forceLogout = async (): Promise<void> => {
       refreshToken.value = '';
       idToken.value = '';
       isConfirmationNeeded.value = false;
+      routeImageUri.value = '';
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('username');
       localStorage.removeItem('userEmail');
@@ -54,6 +56,7 @@ const forceLogout = async (): Promise<void> => {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('idToken');
       localStorage.removeItem('isConfirmationNeeded');
+      localStorage.removeItem('routeImageUri');
       router.push('/home');
     });
 };
@@ -175,6 +178,14 @@ const providers = {
   setPrefersDarkMode: (darkMode: boolean): void => {
     prefersDarkMode.value = darkMode;
     localStorage.setItem('prefersDarkMode', darkMode ? 'yes' : 'no');
+  },
+  getRouteImageUri: (): Ref<string> => {
+    routeImageUri.value = localStorage.getItem('routeImageUri') ?? '';
+    return routeImageUri;
+  },
+  setRouteImageUri: (imageUri: string): void => {
+    localStorage.setItem('routeImageUri', imageUri);
+    routeImageUri.value = imageUri;
   },
 };
 

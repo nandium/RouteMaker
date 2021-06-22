@@ -22,15 +22,14 @@
         <ion-label>MarkDone</ion-label>
       </ion-segment-button>
     </ion-segment>
-    <ion-button
-      v-if="+selectedMode === SelectMode.MARKDONE"
-      @click="handleExportClick"
-      class="solid-button"
-      fill="solid"
-      color="secondary"
-    >
-      Export
-    </ion-button>
+    <div v-if="+selectedMode === SelectMode.MARKDONE">
+      <ion-button @click="handleExportClick" class="solid-button" fill="outline" color="secondary">
+        Export
+      </ion-button>
+      <ion-button @click="handlePostClick" class="solid-button" fill="solid" color="primary">
+        Post
+      </ion-button>
+    </div>
     <div v-if="+selectedMode === SelectMode.HANDHOLD || +selectedMode === SelectMode.FOOTHOLD">
       <ion-button
         class="outline-button"
@@ -64,6 +63,7 @@
 import Konva from 'konva';
 import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
 import { defineComponent, inject, onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
 import { useBoxLayer, DrawLayer } from '@/components/wall-image-viewer/box-layer';
@@ -101,6 +101,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
     const tapeMode = ref<TapeMode>(TapeMode.NONE);
     const numberMode = ref<NumberMode>(NumberMode.ON);
@@ -109,6 +110,11 @@ export default defineComponent({
     const tapeFill = ref<string>('outline');
     const tapeText = ref<string>('No Tape');
     const loadingSpinner = inject('$loading') as Record<string, any>;
+
+    const setRouteImageUri: (imageUri: string) => void = inject(
+      'setRouteImageUri',
+      () => undefined,
+    );
 
     let stage: Konva.Stage;
     const imageLayer = new Konva.Layer();
@@ -216,6 +222,12 @@ export default defineComponent({
       await downloadURI(imageUri, 'Route.jpg');
     };
 
+    const handlePostClick = () => {
+      const imageUri = stage.toDataURL({ mimeType: 'image/jpeg', pixelRatio: 4 });
+      setRouteImageUri(imageUri);
+      router.push('/uploadRoute');
+    };
+
     const handleTapeClick = () => {
       if (tapeText.value === 'No Tape') {
         tapeFill.value = 'solid';
@@ -269,6 +281,7 @@ export default defineComponent({
       tapeText,
       handleTapeClick,
       handleExportClick,
+      handlePostClick,
       handleUndoDraw,
       handleReset,
     };

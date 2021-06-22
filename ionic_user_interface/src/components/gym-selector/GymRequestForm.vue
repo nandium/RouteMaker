@@ -149,9 +149,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.absolute-position {
-  position: absolute;
-}
-</style>
