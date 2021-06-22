@@ -35,11 +35,6 @@
               "key": "token",
               "value": "{{AccessToken}}",
               "type": "string"
-            },
-            {
-              "key": "password",
-              "value": "{{{{AccessToken}}}}",
-              "type": "string"
             }
           ]
         },
