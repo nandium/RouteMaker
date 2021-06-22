@@ -393,6 +393,49 @@
         }
       }
     },
+    "/user/report": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "report a user with reason",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json:": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "report user success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "Message"
+                  ],
+                  "properties": {
+                    "Message": {
+                      "type": "string",
+                      "example": "Report user success"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/delete": {
       "delete": {
         "tags": [
@@ -1111,6 +1154,23 @@
           }
         }
       },
+      "ReportUserRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "reason"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9 ]*$",
+            "maxLength": 20
+          }
+        }
+      },
       "AccessToken": {
         "type": "object",
         "required": [
@@ -1245,7 +1305,7 @@
           "comment": {
             "type": "string",
             "maxLength": 150,
-            "pattern": "^[\\x00-\\x7F]+$"
+            "pattern": "^[ -~]+$"
           },
           "timestamp": {
             "type": "integer",
@@ -1535,7 +1595,7 @@
           "comment": {
             "type": "string",
             "maxLength": 150,
-            "pattern": "^[\\x00-\\x7F]+$"
+            "pattern": "^[ -~]+$"
           }
         }
       },
