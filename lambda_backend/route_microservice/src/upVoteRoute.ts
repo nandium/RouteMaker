@@ -5,12 +5,12 @@ import createError from 'http-errors';
 
 import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
-import { upVoteRouteSchema } from './common/schema';
-import { UpVoteRouteEvent, JwtPayload } from './common/types';
+import { upvoteRouteSchema } from './common/schema';
+import { UpvoteRouteEvent, JwtPayload } from './common/types';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
+const upvoteRoute: Handler = async (event: UpvoteRouteEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');
   }
@@ -22,19 +22,19 @@ const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
   const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
-  const { upVotes } = Item;
-  if (!upVotes.includes(username)) {
-    upVotes.push(username);
+  const { upvotes } = Item;
+  if (!upvotes.includes(username)) {
+    upvotes.push(username);
     const updateItemInput: UpdateItemInput = {
       TableName: process.env['ROUTE_TABLE_NAME'],
       Key: {
         username: routeOwnerUsername as AttributeValue,
         createdAt: createdAt as AttributeValue,
       },
-      UpdateExpression: 'SET upVotes = :upVotes, voteCount = :voteCount',
+      UpdateExpression: 'SET upvotes = :upvotes, voteCount = :voteCount',
       ExpressionAttributeValues: {
-        ':upVotes': upVotes as AttributeValue,
-        ':voteCount': upVotes.length as AttributeValue,
+        ':upvotes': upvotes as AttributeValue,
+        ':voteCount': upvotes.length as AttributeValue,
       },
     };
     try {
@@ -49,4 +49,4 @@ const upVoteRoute: Handler = async (event: UpVoteRouteEvent) => {
   };
 };
 
-export const handler = getMiddlewareAddedHandler(upVoteRoute, upVoteRouteSchema);
+export const handler = getMiddlewareAddedHandler(upvoteRoute, upvoteRouteSchema);

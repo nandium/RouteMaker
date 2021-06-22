@@ -7,7 +7,7 @@ import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
 import { addCommentSchema } from './common/schema';
 import { AddCommentEvent, Comment, JwtPayload } from './common/types';
-import { cleanBadwords } from './common/badwords';
+import { cleanBadWords } from './common/badwords';
 import { COMMENT_LIMIT } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -39,7 +39,7 @@ const addComment: Handler = async (event: AddCommentEvent) => {
   const newComment: Comment = {
     username,
     timestamp: Date.now(),
-    comment: cleanBadwords(commentStr),
+    comment: cleanBadWords(commentStr),
   };
   comments = [...comments, newComment];
 

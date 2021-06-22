@@ -35,11 +35,13 @@ const parseUserAttributes = (UserAttributes: AttributeType[]): CognitoUserDetail
   const userEmail = UserAttributes.filter((attribute) => attribute.Name === 'email')[0]
     .Value as string;
   const userRole = UserAttributes.filter((attribute) => attribute.Name === 'custom:role')[0]
-    .Value as 'admin' | 'user';
+    .Value as UserRole;
   return { userEmail, userRole };
 };
 
 interface CognitoUserDetails {
   userEmail: string;
-  userRole: 'admin' | 'user';
+  userRole: UserRole;
 }
+
+type UserRole = 'admin' | 'user';

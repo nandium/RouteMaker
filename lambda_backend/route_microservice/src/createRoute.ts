@@ -9,7 +9,7 @@ import { getMiddlewareAddedHandler } from './common/middleware';
 import { getGymIsRegistered } from './common/db';
 import { createRouteSchema } from './common/schema';
 import { CreateRouteEvent, RouteItem, JwtPayload } from './common/types';
-import { cleanBadwords } from './common/badwords';
+import { cleanBadWords } from './common/badwords';
 import { MAX_PHOTO_SIZE } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -71,14 +71,14 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     username,
     createdAt,
     ttl: new Date(expiredTime).getTime(),
-    routeName: cleanBadwords(routeName),
+    routeName: cleanBadWords(routeName),
     gymLocation,
     routeURL,
     ownerGrade,
     publicGrade: ownerGrade,
     publicGradeSubmissions: [{ username, grade: ownerGrade }],
     voteCount: 0,
-    upVotes: [],
+    upvotes: [],
     reports: [],
     commentCount: 0,
     comments: [],

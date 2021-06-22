@@ -31,7 +31,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     publicGrade,
     publicGradeSubmissions,
     voteCount,
-    upVotes,
+    upvotes,
     reports,
     comments,
   } = Item;
@@ -43,7 +43,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
         graded = grade;
       }
     });
-    upVotes.forEach((name) => {
+    upvotes.forEach((name) => {
       if (name === username) {
         hasVoted = true;
       }

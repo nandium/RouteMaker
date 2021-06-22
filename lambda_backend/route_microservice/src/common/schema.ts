@@ -100,7 +100,7 @@ export const getRouteDetailsSchema = {
   },
 };
 
-export const upVoteRouteSchema = getRouteDetailsSchema;
+export const upvoteRouteSchema = getRouteDetailsSchema;
 
 export const reportRouteSchema = getRouteDetailsSchema;
 

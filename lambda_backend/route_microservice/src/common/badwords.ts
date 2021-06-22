@@ -2,6 +2,6 @@ import Filter from 'bad-words';
 
 const filter = new Filter();
 
-export const cleanBadwords = (str: string): string => {
+export const cleanBadWords = (str: string): string => {
   return filter.clean(str);
 };
