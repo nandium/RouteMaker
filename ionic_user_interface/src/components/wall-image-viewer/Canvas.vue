@@ -23,11 +23,11 @@
       </ion-segment-button>
     </ion-segment>
     <div v-if="+selectedMode === SelectMode.MARKDONE">
-      <ion-button @click="handleExportClick" class="solid-button" fill="solid" color="secondary">
+      <ion-button @click="handleExportClick" class="solid-button" fill="outline" color="secondary">
         Export
       </ion-button>
-      <ion-button @click="handleUploadClick" class="solid-button" fill="solid" color="primary">
-        Upload
+      <ion-button @click="handlePostClick" class="solid-button" fill="solid" color="primary">
+        Post
       </ion-button>
     </div>
     <div v-if="+selectedMode === SelectMode.HANDHOLD || +selectedMode === SelectMode.FOOTHOLD">
@@ -222,7 +222,7 @@ export default defineComponent({
       await downloadURI(imageUri, 'Route.jpg');
     };
 
-    const handleUploadClick = () => {
+    const handlePostClick = () => {
       const imageUri = stage.toDataURL({ mimeType: 'image/jpeg', pixelRatio: 4 });
       setRouteImageUri(imageUri);
       router.push('/uploadRoute');
@@ -281,7 +281,7 @@ export default defineComponent({
       tapeText,
       handleTapeClick,
       handleExportClick,
-      handleUploadClick,
+      handlePostClick,
       handleUndoDraw,
       handleReset,
     };

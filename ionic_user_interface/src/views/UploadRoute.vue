@@ -23,16 +23,11 @@
                   <!-- Fix to prevent enter submit -->
                   <ion-input class="ion-hide"></ion-input>
                 </ion-item>
-                <ion-list class="rounded margin">
-                  <ion-item>
-                    <ion-label>Grade</ion-label>
-                  </ion-item>
-                  <ion-item>
-                    <ion-range v-model="gradeNumber" min="0" max="20" step="1" snaps>
-                      <ion-label slot="start" class="grade-text">{{ gradeText }}</ion-label>
-                    </ion-range>
-                  </ion-item>
-                </ion-list>
+                <ion-item class="rounded margin">
+                  <ion-range v-model="gradeNumber" min="0" max="14" step="1" snaps>
+                    <ion-label slot="start" class="grade-text">{{ gradeText }}</ion-label>
+                  </ion-range>
+                </ion-item>
                 <ion-item class="rounded margin">
                   <ion-label class="absolute-position">Country</ion-label>
                   <auto-complete
@@ -61,7 +56,7 @@
                   </router-link>
                 </ion-list>
                 <ion-item class="rounded margin">
-                  <ion-label>Route expiry date</ion-label>
+                  <ion-label>Estimated Teardown Date</ion-label>
                   <ion-datetime
                     display-format="D MMM YYYY"
                     :min="minRouteExpiry"
@@ -213,10 +208,19 @@ export default defineComponent({
         showErrorMsg('Please select an expiry date');
         return false;
       }
+
+      let expiryTimeISO = '';
+      try {
+        expiryTimeISO = new Date(expiryTime.value).toISOString();
+      } catch (error) {
+        showErrorMsg('Invalid teardown date');
+        return false;
+      }
+
       const routeImageBlob = await fetch(routeImage.value).then((res) => res.blob());
       const formData = new FormData();
       formData.append('countryCode', selectedCountryIso3.value);
-      formData.append('expiredTime', new Date(expiryTime.value).toISOString());
+      formData.append('expiredTime', expiryTimeISO);
       formData.append('gymLocation', selectedGymLocation.value);
       formData.append('ownerGrade', gradeNumber.value.toString());
       formData.append('routePhoto', routeImageBlob);
@@ -251,13 +255,16 @@ export default defineComponent({
 
             router.push('/home');
           } else {
-            showErrorMsg('Unable to create route: ' + response.data.Message);
+            showErrorMsg('Unable to create route, please try again');
           }
         })
         .catch((error) => {
           if (error.response) {
-            if (error.response.data.Message === 'CodeMismatchException') {
-              showErrorMsg('Wrong confirmation code');
+            console.log(error.response.data.Message);
+            if (error.response.data.Message === 'Unregistered gym') {
+              showErrorMsg(
+                'Unregistered gym, please go to https://routemaker.rocks/gyms/request to register',
+              );
             } else {
               showErrorMsg('Error: ' + error.response.data.Message);
             }
@@ -307,7 +314,7 @@ export default defineComponent({
 }
 
 .grade-text {
-  font-size: 1.5em;
+  font-size: 1.4em;
   margin-right: 1.5em;
 }
 </style>
