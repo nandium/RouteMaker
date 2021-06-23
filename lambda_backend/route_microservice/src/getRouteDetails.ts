@@ -6,6 +6,7 @@ import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
 import { getRouteDetailsSchema } from './common/schema';
 import { GetRouteDetailsEvent, JwtPayload } from './common/types';
+import { restoreRouteURL } from './common/s3';
 
 const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   if (!process.env['ROUTE_TABLE_NAME'] || !process.env['COGNITO_USERPOOL_ID']) {
@@ -66,7 +67,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
         routeName,
         gymLocation,
         countryCode,
-        routeURL,
+        routeURL: restoreRouteURL(routeURL),
         ownerGrade,
         publicGrade,
         voteCount,

@@ -1,7 +1,5 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { PutItemInput, AttributeMap } from 'aws-sdk/clients/dynamodb';
-import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
-import { createHash } from 'crypto';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
@@ -10,10 +8,10 @@ import { getGymIsRegistered } from './common/db';
 import { createRouteSchema } from './common/schema';
 import { CreateRouteEvent, RouteItem, JwtPayload } from './common/types';
 import { cleanBadWords } from './common/badwords';
+import { uploadRouteContentS3, trimRouteURL } from './common/s3';
 import { MAX_PHOTO_SIZE } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
-const s3 = new S3();
 
 const createRoute: Handler = async (event: CreateRouteEvent) => {
   if (
@@ -51,21 +49,9 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
 
   const accessToken = Authorization.split(' ')[1];
   const { username } = (await jwt_decode(accessToken)) as JwtPayload;
-
   const createdAt = new Date().toISOString();
-  const usernameHash = createHash('sha256').update(username).digest('base64');
-  const putObjectRequest: PutObjectRequest = {
-    Bucket: process.env['S3_BUCKET_NAME'],
-    Key: `public/${usernameHash}/${createdAt}`,
-    ContentType: mimetype,
-    Body: content,
-  };
-  let routeURL;
-  try {
-    ({ Location: routeURL } = await s3.upload(putObjectRequest).promise());
-  } catch (error) {
-    throw createError(500, 'S3 upload failed', error);
-  }
+  const routeURL = await uploadRouteContentS3(username, createdAt, mimetype, content);
+  const trimedRouteURL = trimRouteURL(routeURL);
 
   const routeItem: RouteItem = {
     username,
@@ -74,7 +60,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     routeName: cleanBadWords(routeName),
     gymLocation,
     countryCode,
-    routeURL,
+    routeURL: trimedRouteURL,
     ownerGrade,
     publicGrade: ownerGrade,
     publicGradeSubmissions: [{ username, grade: ownerGrade }],
@@ -93,9 +79,12 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   } catch (error) {
     throw createError(500, 'DB put operation failed', error);
   }
+
+  const Item = Object.assign({}, routeItem);
+  Item.routeURL = routeURL;
   return {
     statusCode: 201,
-    body: JSON.stringify({ Message: 'Create route success', Item: putItemInput.Item }),
+    body: JSON.stringify({ Message: 'Create route success', Item }),
   };
 };
 
