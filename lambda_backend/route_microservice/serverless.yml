@@ -89,6 +89,15 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
+  getRoutesByUser:
+    handler: src/getRoutesByUser.handler
+    events:
+      - http:
+          path: route/user
+          method: get
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
   getRouteDetails:
     handler: src/getRouteDetails.handler
     events:

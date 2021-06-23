@@ -38,6 +38,12 @@ export interface GetRoutesByGymEvent {
   };
 }
 
+export interface GetRoutesByUserEvent {
+  queryStringParameters: {
+    username: string;
+  };
+}
+
 export interface GetRouteDetailsEvent {
   headers: {
     Authorization?: string;
