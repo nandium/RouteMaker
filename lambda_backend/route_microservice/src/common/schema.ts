@@ -5,54 +5,19 @@ const CapitalizedAlphabets = '^[A-Z]*$';
 const NumericDecimalCommaSpace = '^[0-9., ]*$';
 const AsciiCharacters = '^[ -~]+$';
 
-const countryCode = {
-  type: 'string',
-  maxLength: 3,
-  pattern: CapitalizedAlphabets,
-};
-const routeName = {
-  type: 'string',
-  maxLength: 30,
-  pattern: AsciiCharacters,
-};
-const expiredTime = {
-  type: 'string',
-  pattern: ISODateStringPattern,
-};
-const gymLocation = {
-  type: 'string',
-  maxLength: 40,
-  pattern: NumericDecimalCommaSpace,
-};
-const ownerGrade = {
-  type: 'number',
-};
-const username = {
-  type: 'string',
-  pattern: AlphanumericSpace,
-};
+const countryCode = { type: 'string', maxLength: 3, pattern: CapitalizedAlphabets };
+const routeName = { type: 'string', maxLength: 30, pattern: AsciiCharacters };
+const expiredTime = { type: 'string', pattern: ISODateStringPattern };
+const gymLocation = { type: 'string', maxLength: 40, pattern: NumericDecimalCommaSpace };
+const ownerGrade = { type: 'number' };
+const username = { type: 'string', pattern: AlphanumericSpace };
 const commentUsername = username;
-const createdAt = {
-  type: 'string',
-  pattern: ISODateStringPattern,
-};
+const createdAt = { type: 'string', pattern: ISODateStringPattern };
 const grade = { type: 'number' };
-const comment = {
-  type: 'string',
-  maxLength: 150,
-  pattern: AsciiCharacters,
-};
+const comment = { type: 'string', maxLength: 150, pattern: AsciiCharacters };
 const timestamp = { type: 'number' };
-const postal = {
-  type: 'string',
-  maxLength: 12,
-  pattern: AsciiCharacters,
-};
-const gymName = {
-  type: 'string',
-  maxLength: 30,
-  pattern: AsciiCharacters,
-};
+const postal = { type: 'string', maxLength: 12, pattern: AsciiCharacters };
+const gymName = { type: 'string', maxLength: 30, pattern: AsciiCharacters };
 const routePhoto = {
   type: 'object',
   properties: {
