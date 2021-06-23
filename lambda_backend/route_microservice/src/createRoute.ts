@@ -73,6 +73,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     ttl: new Date(expiredTime).getTime(),
     routeName: cleanBadWords(routeName),
     gymLocation,
+    countryCode,
     routeURL,
     ownerGrade,
     publicGrade: ownerGrade,

@@ -113,6 +113,7 @@ export interface RouteItem {
   ttl: number;
   routeName: string;
   gymLocation: string;
+  countryCode: string;
   routeURL: string;
   ownerGrade: number;
   publicGrade: number;
