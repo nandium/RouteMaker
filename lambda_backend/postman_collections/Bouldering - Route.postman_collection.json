@@ -119,14 +119,14 @@
           }
         ],
         "url": {
-          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route?createdAt=2021-06-20T14:31:08.195Z&username=yarkhinephyo",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route?createdAt=2021-06-23T14:30:22.833Z&username=yarkhinephyo",
           "protocol": "https",
           "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route"],
           "query": [
             {
               "key": "createdAt",
-              "value": "2021-06-20T14:31:08.195Z"
+              "value": "2021-06-23T14:30:22.833Z"
             },
             {
               "key": "username",
@@ -158,6 +158,26 @@
       "response": []
     },
     {
+      "name": "Get Routes By User",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/user?username=yarkhinephyo",
+          "protocol": "https",
+          "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "route", "user"],
+          "query": [
+            {
+              "key": "username",
+              "value": "yarkhinephyo"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "Get Route Details",
       "request": {
         "auth": {
@@ -174,7 +194,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-22T03:21:14.754Z\"\r\n}",
+          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-23T14:30:22.833Z\"\r\n}",
           "options": {
             "raw": {
               "language": "json"

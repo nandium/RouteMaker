@@ -38,6 +38,12 @@ export interface GetRoutesByGymEvent {
   };
 }
 
+export interface GetRoutesByUserEvent {
+  queryStringParameters: {
+    username: string;
+  };
+}
+
 export interface GetRouteDetailsEvent {
   headers: {
     Authorization?: string;
@@ -107,21 +113,31 @@ export interface Comment {
   comment: string;
 }
 
-export interface RouteItem {
+export interface UserRoutesIndexItem {
   username: string;
   createdAt: string;
-  ttl: number;
   routeName: string;
   gymLocation: string;
+  countryCode: string;
+  publicGrade: number;
+  voteCount: number;
+  commentCount: number;
+}
+
+export interface RouteItem extends UserRoutesIndexItem {
+  ttl: number;
   routeURL: string;
   ownerGrade: number;
-  publicGrade: number;
   publicGradeSubmissions: Array<GradeSubmission>;
-  voteCount: number;
   upvotes: Array<string>;
   reports: Array<string>;
-  commentCount: number;
   comments: Array<Comment>;
+}
+
+export interface GymItem {
+  countryCode: string;
+  gymLocation: string;
+  gymName: string;
 }
 
 export interface RequestGymEvent extends AuthHeader {

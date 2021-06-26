@@ -1,5 +1,12 @@
-const AlphanumericSpace = '^[a-zA-Z0-9 ]*$';
+const AlphanumericSpace = '^[a-zA-Z0-9 ]+$';
 const Email = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$";
+
+const email = { type: 'string', pattern: Email };
+const name = { type: 'string', pattern: AlphanumericSpace, maxLength: 20 };
+const password = { type: 'string' };
+const code = { type: 'string', pattern: AlphanumericSpace };
+const reason = { type: 'string', pattern: AlphanumericSpace, maxLength: 20 };
+const refreshToken = { type: 'string' };
 
 export const signupSchema = {
   type: 'object',
@@ -7,9 +14,9 @@ export const signupSchema = {
     body: {
       type: 'object',
       properties: {
-        email: { type: 'string', pattern: Email },
-        password: { type: 'string' },
-        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
+        email,
+        password,
+        name,
       },
       required: ['email', 'password', 'name'],
     },
@@ -22,8 +29,8 @@ export const confirmSignupSchema = {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
-        code: { type: 'string', pattern: AlphanumericSpace },
+        name,
+        code,
       },
       required: ['name', 'code'],
     },
@@ -36,8 +43,8 @@ export const loginSchema = {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
-        password: { type: 'string' },
+        name,
+        password,
       },
       required: ['name', 'password'],
     },
@@ -50,7 +57,7 @@ const identiferSchema = {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
+        name,
       },
       required: ['name'],
     },
@@ -69,8 +76,8 @@ export const reportUserSchema = {
     body: {
       type: 'object',
       properties: {
-        name: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
-        reason: { type: 'string', pattern: AlphanumericSpace, maxLength: 20 },
+        name,
+        reason,
       },
       required: ['name', 'reason'],
     },
@@ -83,10 +90,11 @@ export const confirmForgotPasswordSchema = {
     body: {
       type: 'object',
       properties: {
-        ...loginSchema.properties.body.properties,
-        code: { type: 'string', pattern: AlphanumericSpace },
+        name,
+        password,
+        code,
       },
-      required: [...loginSchema.properties.body.required, 'code'],
+      required: ['name', 'password', 'code'],
     },
   },
 };
@@ -97,7 +105,7 @@ export const refreshTokenSchema = {
     body: {
       type: 'object',
       properties: {
-        refreshToken: { type: 'string' },
+        refreshToken,
       },
       required: ['refreshToken'],
     },

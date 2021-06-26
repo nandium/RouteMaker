@@ -1,18 +1,16 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
-import S3, { DeleteObjectRequest } from 'aws-sdk/clients/s3';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
-import { createHash } from 'crypto';
 
 import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
 import { deleteRouteSchema } from './common/schema';
 import { DeleteRouteEvent, JwtPayload } from './common/types';
 import { getCognitoUserDetails } from './common/cognito';
+import { deleteRouteImageContent } from './common/s3';
 
 const dynamoDb = new DynamoDB.DocumentClient();
-const s3 = new S3();
 
 const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   if (
@@ -44,17 +42,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
-  const usernameHash = createHash('sha256').update(routeOwnerUsername).digest('base64');
-  const decodedRouteURL = decodeURIComponent(Item.routeURL as string);
-  const deleteObjectRequest: DeleteObjectRequest = {
-    Bucket: process.env['S3_BUCKET_NAME'],
-    Key: `public/${usernameHash}${decodedRouteURL.split(usernameHash)[1]}`,
-  };
-  try {
-    await s3.deleteObject(deleteObjectRequest).promise();
-  } catch (error) {
-    throw createError(500, 'S3 deletion failed', error);
-  }
+  await deleteRouteImageContent(routeOwnerUsername, Item.routeURL);
 
   const deleteItemInput: DeleteItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
