@@ -38,7 +38,7 @@
         "tags": [
           "predict"
         ],
-        "summary": "gets bounding boxes",
+        "summary": "Gets bounding boxes",
         "description": "Gets bounding boxes predicted by the YOLOv4 model. The dimensions are rescaled to given `width`.",
         "requestBody": {
           "content": {
@@ -68,7 +68,7 @@
         "tags": [
           "user"
         ],
-        "summary": "signs up and sends verification email",
+        "summary": "Signs up and sends verification email",
         "description": "Note: username has to be unique { Message: UserExistsException }.",
         "requestBody": {
           "content": {
@@ -98,7 +98,7 @@
         "tags": [
           "user"
         ],
-        "summary": "confirms sign up with verification",
+        "summary": "Confirms sign up with verification",
         "description": "Note: Verification code expires after 24 hours { Message: ExpiredCodeException }.",
         "requestBody": {
           "content": {
@@ -135,8 +135,8 @@
         "tags": [
           "user"
         ],
-        "summary": "logs in and returns access token",
-        "description": "To retrieve AccessToken for requesting authorized routes, IdToken which contains user details and RefreshToken to refresh the AccessToken after 24 hours.",
+        "summary": "Logs in and returns access token",
+        "description": "To retrieve the AccessToken for requesting authorized routes, the IdToken which contains user details, and the RefreshToken to refresh the AccessToken after 24 hours.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -166,7 +166,7 @@
         "tags": [
           "user"
         ],
-        "summary": "refreshes user's access token",
+        "summary": "Refreshes user's access token",
         "description": "RefreshToken itself expires after 365 days.",
         "requestBody": {
           "description": "Refresh token",
@@ -205,7 +205,7 @@
         "tags": [
           "user"
         ],
-        "summary": "resends confirmation code for email",
+        "summary": "Resends confirmation code for email",
         "description": "Resends email verification code to be used together with `/user/confirm`.",
         "requestBody": {
           "content": {
@@ -249,7 +249,7 @@
         "tags": [
           "user"
         ],
-        "summary": "sends password reset token to email",
+        "summary": "Sends password reset token to email",
         "description": "Sends a token to reset the password together with `/user/resetPassword`.",
         "requestBody": {
           "content": {
@@ -323,7 +323,7 @@
         "tags": [
           "user"
         ],
-        "summary": "logs out and invalidates access token",
+        "summary": "Logs out and invalidates access token",
         "security": [
           {
             "bearerAuth": []
@@ -357,7 +357,7 @@
         "tags": [
           "user"
         ],
-        "summary": "disables a user as admin",
+        "summary": "Disables a user as admin",
         "description": "Disables the user if the AccessToken is authorized as an admin role.",
         "security": [
           {
@@ -406,7 +406,7 @@
         "tags": [
           "user"
         ],
-        "summary": "report a user with reason",
+        "summary": "Report a user with reason",
         "description": "Notifies the related support channels for the application.",
         "security": [
           {
@@ -450,7 +450,7 @@
         "tags": [
           "user"
         ],
-        "summary": "deletes cognito user",
+        "summary": "Deletes cognito user",
         "security": [
           {
             "bearerAuth": []
@@ -472,7 +472,7 @@
           "route"
         ],
         "summary": "Create new route by saving to S3 bucket",
-        "description": "Note: Only allow if the gym exists in the database",
+        "description": "This operation is only allowed if the gym exists in the database.",
         "security": [
           {
             "bearerAuth": []
@@ -591,7 +591,7 @@
           "route"
         ],
         "summary": "Assign grade to route",
-        "description": "Handles differently for owner and the others in the backend",
+        "description": "The route owner's grading and the public's grading are handled differently in the backend.",
         "security": [
           {
             "bearerAuth": []
@@ -664,7 +664,7 @@
           "route"
         ],
         "summary": "Delete a comment",
-        "description": "Permitted for comment poster, route owner and admin",
+        "description": "Permitted for comment poster, route owner, and admins.",
         "security": [
           {
             "bearerAuth": []
@@ -820,7 +820,7 @@
         "tags": [
           "route"
         ],
-        "summary": "Get routes by gyms",
+        "summary": "Get routes by users",
         "description": "",
         "parameters": [
           {
@@ -929,7 +929,7 @@
           "route"
         ],
         "summary": "Delete a particular route",
-        "description": "Permitted for route owner and admin",
+        "description": "Permitted for that particular route's owner as well as admins.",
         "security": [
           {
             "bearerAuth": []
