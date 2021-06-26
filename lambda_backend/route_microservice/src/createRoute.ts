@@ -8,7 +8,8 @@ import { getGymIsRegistered } from './common/db';
 import { createRouteSchema } from './common/schema';
 import { CreateRouteEvent, RouteItem, JwtPayload } from './common/types';
 import { cleanBadWords } from './common/badwords';
-import { uploadRouteContentS3, trimRouteURL } from './common/s3';
+import { uploadRouteImageContent } from './common/s3';
+import { trimRouteURL } from './common/s3/utils';
 import { MAX_PHOTO_SIZE } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -50,7 +51,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   const accessToken = Authorization.split(' ')[1];
   const { username } = (await jwt_decode(accessToken)) as JwtPayload;
   const createdAt = new Date().toISOString();
-  const routeURL = await uploadRouteContentS3(username, createdAt, mimetype, content);
+  const routeURL = await uploadRouteImageContent(username, createdAt, mimetype, content);
   const trimedRouteURL = trimRouteURL(routeURL);
 
   const routeItem: RouteItem = {

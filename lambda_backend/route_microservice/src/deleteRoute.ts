@@ -8,7 +8,7 @@ import { getItemFromRouteTable } from './common/db';
 import { deleteRouteSchema } from './common/schema';
 import { DeleteRouteEvent, JwtPayload } from './common/types';
 import { getCognitoUserDetails } from './common/cognito';
-import { deleteRouteContentS3 } from './common/s3';
+import { deleteRouteImageContent } from './common/s3';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -42,7 +42,7 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
-  await deleteRouteContentS3(routeOwnerUsername, Item.routeURL);
+  await deleteRouteImageContent(routeOwnerUsername, Item.routeURL);
 
   const deleteItemInput: DeleteItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],

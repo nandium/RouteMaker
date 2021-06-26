@@ -4,7 +4,7 @@ import createError from 'http-errors';
 
 const s3 = new S3();
 
-export const uploadRouteContentS3 = async (
+export const uploadRouteImageContent = async (
   username: string,
   createdAt: string,
   mimetype: string,
@@ -29,21 +29,10 @@ export const uploadRouteContentS3 = async (
   return routeURL;
 };
 
-export const trimRouteURL = (routeURL: string): string => {
-  if (!process.env['S3_BUCKET_NAME']) {
-    throw createError(500, 'Bucket name is not set!');
-  }
-  return routeURL.split(process.env['S3_BUCKET_NAME'])[1];
-};
-
-export const restoreRouteURL = (trimedRouteURL: string): string => {
-  if (!process.env['S3_BUCKET_NAME']) {
-    throw createError(500, 'Bucket name is not set!');
-  }
-  return 'https://' + process.env['S3_BUCKET_NAME'] + trimedRouteURL;
-};
-
-export const deleteRouteContentS3 = async (username: string, routeURL: string): Promise<void> => {
+export const deleteRouteImageContent = async (
+  username: string,
+  routeURL: string,
+): Promise<void> => {
   if (!process.env['S3_BUCKET_NAME']) {
     throw createError(500, 'Bucket name is not set!');
   }
