@@ -1,8 +1,8 @@
 const ISODateStringPattern =
   '^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
-const AlphanumericSpace = '^[a-zA-Z0-9 ]*$';
-const CapitalizedAlphabets = '^[A-Z]*$';
-const NumericDecimalCommaSpace = '^[0-9., ]*$';
+const AlphanumericSpace = '^[a-zA-Z0-9 ]+$';
+const CapitalizedAlphabets = '^[A-Z]+$';
+const NumericDecimalCommaSpace = '^[0-9., ]+$';
 const AsciiCharacters = '^[ -~]+$';
 
 const countryCode = { type: 'string', maxLength: 3, pattern: CapitalizedAlphabets };

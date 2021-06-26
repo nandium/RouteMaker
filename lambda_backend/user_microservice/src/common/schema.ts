@@ -1,4 +1,4 @@
-const AlphanumericSpace = '^[a-zA-Z0-9 ]*$';
+const AlphanumericSpace = '^[a-zA-Z0-9 ]+$';
 const Email = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$";
 
 const email = { type: 'string', pattern: Email };
