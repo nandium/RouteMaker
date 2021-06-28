@@ -151,6 +151,19 @@ export const requestGymSchema = {
   },
 };
 
+export const getGymsByCountrySchema = {
+  type: 'object',
+  properties: {
+    queryStringParameters: {
+      type: 'object',
+      properties: {
+        countryCode,
+      },
+      required: ['countryCode'],
+    },
+  },
+};
+
 export const getRoutesByGymSchema = {
   type: 'object',
   properties: {

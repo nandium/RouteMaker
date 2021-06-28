@@ -58,11 +58,11 @@ plugins:
   - serverless-api-gateway-throttling
 
 functions:
-  getAllGyms:
-    handler: src/getAllGyms.handler
+  getGymsByCountry:
+    handler: src/getGymsByCountry.handler
     events:
       - http:
-          path: route/gym/all
+          path: route/gym/country
           method: get
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}

@@ -4,7 +4,7 @@ interface AuthHeader {
   };
 }
 
-export interface GetAllGymsEvent {
+export interface GetGymsByCountryEvent {
   queryStringParameters: {
     countryCode: string;
   };
