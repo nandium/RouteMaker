@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "This is the RouteMaker API",
-    "version": "1.9",
+    "version": "1.10",
     "title": "RouteMaker API",
     "contact": {
       "email": "yarkhinephyo@gmail.com"
@@ -539,12 +539,12 @@
         }
       }
     },
-    "/route/details/upvote": {
+    "/route/details/toggleUpvote": {
       "post": {
         "tags": [
           "route"
         ],
-        "summary": "Upvote route",
+        "summary": "Toggle upvote for a route",
         "security": [
           {
             "bearerAuth": []
@@ -561,20 +561,11 @@
         },
         "responses": {
           "200": {
-            "description": "upvote route success",
+            "description": "toggle upvote route success",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "Message"
-                  ],
-                  "properties": {
-                    "Message": {
-                      "type": "string",
-                      "example": "Upvote route success"
-                    }
-                  }
+                  "$ref": "#/components/schemas/ToggleUpvoteResponse"
                 }
               }
             }
@@ -612,7 +603,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RouteGraded"
+                  "$ref": "#/components/schemas/GradeRouteResponse"
                 }
               }
             }
@@ -649,7 +640,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommentAdded"
+                  "$ref": "#/components/schemas/AddCommentResponse"
                 }
               }
             }
@@ -846,18 +837,17 @@
         }
       }
     },
-    "/route/gym/all": {
+    "/route/gym/country": {
       "get": {
         "tags": [
           "route"
         ],
-        "summary": "Get gyms",
+        "summary": "Query gyms by country",
         "parameters": [
           {
             "in": "query",
             "name": "countryCode",
-            "description": "pass an optional search string for gym country code",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -865,11 +855,11 @@
         ],
         "responses": {
           "200": {
-            "description": "scan all gyms success",
+            "description": "query gyms success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GymsScanned"
+                  "$ref": "#/components/schemas/GetGymsByCountryResponse"
                 }
               }
             }
@@ -1610,7 +1600,28 @@
           }
         }
       },
-      "RouteGraded": {
+      "ToggleUpvoteResponse": {
+        "type": "object",
+        "required": [
+          "Message",
+          "Item"
+        ],
+        "properties": {
+          "Message": {
+            "type": "string",
+            "example": "Toggle upvote route success"
+          },
+          "Item": {
+            "type": "object",
+            "properties": {
+              "hasVoted": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "GradeRouteResponse": {
         "type": "object",
         "required": [
           "Message",
@@ -1649,7 +1660,7 @@
           }
         }
       },
-      "CommentAdded": {
+      "AddCommentResponse": {
         "type": "object",
         "required": [
           "Message",
@@ -1807,7 +1818,7 @@
           }
         }
       },
-      "GymsScanned": {
+      "GetGymsByCountryResponse": {
         "type": "object",
         "required": [
           "Message",
@@ -1816,7 +1827,7 @@
         "properties": {
           "Message": {
             "type": "string",
-            "example": "Scan all gyms success"
+            "example": "Query gyms success"
           },
           "Items": {
             "type": "array",
