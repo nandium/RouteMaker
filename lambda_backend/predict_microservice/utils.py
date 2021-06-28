@@ -68,5 +68,5 @@ def get_response_headers():
             'Access-Control-Allow-Origin': os.environ.get("ALLOWED_ORIGIN"),
             'Strict-Transport-Security': "max-age=31536000;"
         }
-    else:
-        return {'Access-Control-Allow-Origin': "*"}
+
+    return {'Access-Control-Allow-Origin': "*"}

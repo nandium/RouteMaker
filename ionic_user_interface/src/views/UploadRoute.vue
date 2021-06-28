@@ -101,7 +101,7 @@ import { computed, defineComponent, inject, onMounted, ref, Ref } from 'vue';
 import axios from 'axios';
 import Lookup, { Country } from 'country-code-lookup';
 import MessageBox from '@/components/MessageBox.vue';
-import getGyms, { GymLocation } from '@/common/api/route/getGyms';
+import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from '@/components/gym-selector/AutoComplete.vue';
 import { useRouter } from 'vue-router';
 import { throttle } from 'lodash';
@@ -174,7 +174,7 @@ export default defineComponent({
     const onCountrySelect = async (country: Country) => {
       if (country) {
         selectedCountryIso3.value = country.iso3;
-        gymLocationList.value = await getGyms(country.iso3);
+        gymLocationList.value = await getGymsByCountry(country.iso3);
       } else {
         reset();
       }

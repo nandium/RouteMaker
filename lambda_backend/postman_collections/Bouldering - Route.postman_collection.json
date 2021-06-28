@@ -6,15 +6,15 @@
   },
   "item": [
     {
-      "name": "Get All Gyms",
+      "name": "Get Gyms By Country",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/all?countryCode=SGP",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/gym/country?countryCode=SGP",
           "protocol": "https",
           "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "route", "gym", "all"],
+          "path": ["dev", "route", "gym", "country"],
           "query": [
             {
               "key": "countryCode",
@@ -119,14 +119,14 @@
           }
         ],
         "url": {
-          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route?createdAt=2021-06-23T14:30:22.833Z&username=yarkhinephyo",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route?createdAt=2021-06-26T08:01:09.593Z&username=yarkhinephyo",
           "protocol": "https",
           "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
           "path": ["dev", "route"],
           "query": [
             {
               "key": "createdAt",
-              "value": "2021-06-23T14:30:22.833Z"
+              "value": "2021-06-26T08:01:09.593Z"
             },
             {
               "key": "username",
@@ -194,7 +194,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-23T14:30:22.833Z\"\r\n}",
+          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-23T16:01:52.698Z\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -227,7 +227,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-22T14:55:20.359Z\"\r\n}",
+          "raw": "{\r\n    \"username\": \"yarkhinephyo\",\r\n    \"createdAt\": \"2021-06-23T16:01:52.698Z\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -235,10 +235,10 @@
           }
         },
         "url": {
-          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/upvote",
+          "raw": "https://g09kmjici5.execute-api.ap-southeast-1.amazonaws.com/dev/route/details/toggleUpvote",
           "protocol": "https",
           "host": ["g09kmjici5", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "route", "details", "upvote"]
+          "path": ["dev", "route", "details", "toggleUpvote"]
         }
       },
       "response": []

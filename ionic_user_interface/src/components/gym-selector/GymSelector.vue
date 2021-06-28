@@ -76,7 +76,7 @@ import {
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
 import MessageBox from '@/components/MessageBox.vue';
-import getGyms, { GymLocation } from '@/common/api/route/getGyms';
+import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
 
 export default defineComponent({
@@ -125,7 +125,7 @@ export default defineComponent({
     const onCountrySelect = async (country: Country) => {
       if (country) {
         selectedCountryIso3.value = country.iso3;
-        const countryGymLocations = await getGyms(country.iso3);
+        const countryGymLocations = await getGymsByCountry(country.iso3);
         gymLocationList.value = countryGymLocations;
       } else {
         reset();

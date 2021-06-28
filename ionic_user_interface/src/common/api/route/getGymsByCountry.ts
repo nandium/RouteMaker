@@ -1,18 +1,18 @@
 import axios from 'axios';
 import { routeBaseUrl } from './config';
 
-const getGymsUrl = routeBaseUrl + '/route/gym/all';
+const getGymsByCountryUrl = routeBaseUrl + '/route/gym/country';
 
 /**
  *
  * @param {string} countryCode
  * @returns {Array} array of gyms
  */
-const getGyms = async (countryCode: string): Promise<GymLocation[]> => {
+const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => {
   try {
     const {
       data: { Items },
-    } = await axios.get(getGymsUrl, {
+    } = await axios.get(getGymsByCountryUrl, {
       params: { countryCode },
     });
     return Items;
@@ -28,5 +28,5 @@ interface GymLocation {
   gymName: string;
 }
 
-export default getGyms;
+export default getGymsByCountry;
 export { GymLocation };

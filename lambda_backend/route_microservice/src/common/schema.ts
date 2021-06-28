@@ -86,7 +86,7 @@ export const getRouteDetailsSchema = {
   },
 };
 
-export const upvoteRouteSchema = getRouteDetailsSchema;
+export const toggleUpvoteRouteSchema = getRouteDetailsSchema;
 
 export const reportRouteSchema = getRouteDetailsSchema;
 
@@ -147,6 +147,19 @@ export const requestGymSchema = {
         gymName,
       },
       required: ['countryCode', 'postal', 'gymName'],
+    },
+  },
+};
+
+export const getGymsByCountrySchema = {
+  type: 'object',
+  properties: {
+    queryStringParameters: {
+      type: 'object',
+      properties: {
+        countryCode,
+      },
+      required: ['countryCode'],
     },
   },
 };
