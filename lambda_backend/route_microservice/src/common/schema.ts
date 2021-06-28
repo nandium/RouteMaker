@@ -86,7 +86,7 @@ export const getRouteDetailsSchema = {
   },
 };
 
-export const upvoteRouteSchema = getRouteDetailsSchema;
+export const toggleUpvoteRouteSchema = getRouteDetailsSchema;
 
 export const reportRouteSchema = getRouteDetailsSchema;
 

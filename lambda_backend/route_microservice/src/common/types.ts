@@ -54,14 +54,14 @@ export interface GetRouteDetailsEvent {
   };
 }
 
-export interface UpvoteRouteEvent extends AuthHeader {
+export interface ToggleUpvoteRouteEvent extends AuthHeader {
   body: {
     username: string;
     createdAt: string;
   };
 }
 
-export type ReportRouteEvent = UpvoteRouteEvent;
+export type ReportRouteEvent = ToggleUpvoteRouteEvent;
 
 export interface GradeRouteEvent extends AuthHeader {
   body: {
