@@ -1,4 +1,4 @@
-# YOLO Bouldering :boom:
+# RouteMaker :boom:
 
 ![GitHub](https://img.shields.io/github/license/yarkhinephyo/yolo_bouldering?style=flat-square) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) ![Website](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Froutemaker.rocks) ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/nandium/RouteMaker?style=flat-square)
 
