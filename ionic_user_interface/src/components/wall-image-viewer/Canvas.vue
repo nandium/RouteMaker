@@ -355,7 +355,7 @@ ion-button::part(native) {
 }
 
 .button-rows {
-  background-color: white;
+  background-color: var(--ion-background-color);
   position: sticky;
   position: -webkit-sticky; /* Safari */
   top: 0px;
