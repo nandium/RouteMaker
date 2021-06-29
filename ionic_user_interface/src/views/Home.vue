@@ -2,12 +2,9 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div id="container">
-        <div v-if="!photoData">
-          <strong>Route Maker</strong>
-          <p>Quickly make custom climbing routes</p>
-          <br />
-          <br />
-        </div>
+        <strong>Route Maker</strong>
+        <p>Quickly make custom climbing routes</p>
+        <br />
         <br />
         <ion-button @click="takePhoto()" color="tertiary">
           <ion-icon class="camera-icon" :icon="camera"></ion-icon>
