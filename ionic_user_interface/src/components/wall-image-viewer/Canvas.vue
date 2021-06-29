@@ -2,59 +2,71 @@
   <div>
     <br />
     <br />
-    <ion-segment
-      class="mode-switcher"
-      @ionChange="selectModeChanged($event)"
-      color="tertiary"
-      mode="ios"
-      :value="selectedMode"
-    >
-      <ion-segment-button :value="SelectMode.HANDHOLD">
-        <ion-label>HandHold</ion-label>
-      </ion-segment-button>
-      <ion-segment-button :value="SelectMode.FOOTHOLD">
-        <ion-label>FootHold</ion-label>
-      </ion-segment-button>
-      <ion-segment-button :value="SelectMode.DRAWBOX">
-        <ion-label>DrawBox</ion-label>
-      </ion-segment-button>
-      <ion-segment-button :value="SelectMode.MARKDONE">
-        <ion-label>MarkDone</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-    <div v-if="+selectedMode === SelectMode.MARKDONE">
-      <ion-button @click="handleExportClick" class="solid-button" fill="outline" color="secondary">
-        Export
-      </ion-button>
-      <ion-button @click="handlePostClick" class="solid-button" fill="solid" color="primary">
-        Post
-      </ion-button>
-    </div>
-    <div v-if="+selectedMode === SelectMode.HANDHOLD || +selectedMode === SelectMode.FOOTHOLD">
-      <ion-button
-        class="outline-button"
-        @click="handleHideNumbersClick"
-        :fill="hideNumbersFill"
+    <div class="button-rows">
+      <ion-segment
+        class="mode-switcher"
+        @ionChange="selectModeChanged($event)"
         color="tertiary"
+        mode="ios"
+        :value="selectedMode"
       >
-        {{ hideNumbersText }}
-      </ion-button>
-      <ion-button class="outline-button" @click="handleTapeClick" :fill="tapeFill" color="primary">
-        {{ tapeText }}
-      </ion-button>
-      <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset">
-        Reset
+        <ion-segment-button :value="SelectMode.HANDHOLD">
+          <ion-label>HandHold</ion-label>
+        </ion-segment-button>
+        <ion-segment-button :value="SelectMode.FOOTHOLD">
+          <ion-label>FootHold</ion-label>
+        </ion-segment-button>
+        <ion-segment-button :value="SelectMode.DRAWBOX">
+          <ion-label>DrawBox</ion-label>
+        </ion-segment-button>
+        <ion-segment-button :value="SelectMode.MARKDONE">
+          <ion-label>MarkDone</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <div v-if="+selectedMode === SelectMode.MARKDONE">
+        <ion-button
+          @click="handleExportClick"
+          class="solid-button"
+          fill="outline"
+          color="secondary"
+        >
+          Export
+        </ion-button>
+        <ion-button @click="handlePostClick" class="solid-button" fill="solid" color="primary">
+          Post
+        </ion-button>
+      </div>
+      <div v-if="+selectedMode === SelectMode.HANDHOLD || +selectedMode === SelectMode.FOOTHOLD">
+        <ion-button
+          class="outline-button"
+          @click="handleHideNumbersClick"
+          :fill="hideNumbersFill"
+          color="tertiary"
+        >
+          {{ hideNumbersText }}
+        </ion-button>
+        <ion-button
+          class="outline-button"
+          @click="handleTapeClick"
+          :fill="tapeFill"
+          color="primary"
+        >
+          {{ tapeText }}
+        </ion-button>
+        <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset">
+          Reset
+        </ion-button>
+      </div>
+      <ion-button
+        v-if="+selectedMode === SelectMode.DRAWBOX"
+        @click="handleUndoDraw"
+        class="solid-button"
+        fill="solid"
+        color="danger"
+      >
+        Undo Draw
       </ion-button>
     </div>
-    <ion-button
-      v-if="+selectedMode === SelectMode.DRAWBOX"
-      @click="handleUndoDraw"
-      class="solid-button"
-      fill="solid"
-      color="danger"
-    >
-      Undo Draw
-    </ion-button>
     <div id="konva-container" class="konva-container"></div>
   </div>
 </template>
@@ -340,5 +352,14 @@ ion-button::part(native) {
 .konva-container {
   width: max-content;
   margin: 0 auto;
+}
+
+.button-rows {
+  background-color: var(--ion-background-color);
+  position: sticky;
+  position: -webkit-sticky; /* Safari */
+  top: 0px;
+  padding-top: 10px;
+  z-index: 10;
 }
 </style>
