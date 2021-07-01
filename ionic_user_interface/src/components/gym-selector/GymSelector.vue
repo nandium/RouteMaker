@@ -45,12 +45,13 @@
               </ion-col>
             </ion-row>
           </ion-list>
+          <RouteList v-show="viewRoutes" ref="routeList" />
         </ion-col>
       </ion-row>
     </ion-grid>
 
     <iframe
-      v-if="userHasSelectedGym"
+      v-if="userHasSelectedGym && !viewRoutes"
       :width="width + 'px'"
       :height="width + 'px'"
       class="google-embed-map"
@@ -76,6 +77,7 @@ import {
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
 import MessageBox from '@/components/MessageBox.vue';
+import RouteList from '@/components/RouteList.vue';
 import getGyms, { GymLocation } from '@/common/api/route/getGyms';
 import AutoComplete from './AutoComplete.vue';
 
@@ -93,6 +95,7 @@ export default defineComponent({
     IonButton,
     AutoComplete,
     MessageBox,
+    RouteList,
   },
   props: {
     width: {
@@ -112,6 +115,9 @@ export default defineComponent({
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
 
+    const routeList = ref<typeof RouteList | null>(null);
+    const viewRoutes = ref(false);
+
     onMounted(() => {
       countryNameList.value = [...Lookup.countries.sort()];
     });
@@ -123,18 +129,25 @@ export default defineComponent({
     };
 
     const onCountrySelect = async (country: Country) => {
+      errorMsg.value?.close();
       if (country) {
         selectedCountryIso3.value = country.iso3;
         const countryGymLocations = await getGyms(country.iso3);
         gymLocationList.value = countryGymLocations;
+        viewRoutes.value = false;
       } else {
         reset();
       }
     };
 
     const onGymSelect = (gymLocation: string) => {
+      // Do nothing if the selected gym has not changed
+      if (selectedGym.value === gymLocation) {
+        return;
+      }
       errorMsg.value?.close();
       selectedGym.value = gymLocation;
+      viewRoutes.value = false;
       embedMapPointerLocation.value = gymLocation;
     };
 
@@ -143,6 +156,8 @@ export default defineComponent({
         errorMsg.value?.showMsg('Please select a gym');
       } else {
         // TODO: Display routes
+        viewRoutes.value = true;
+        routeList.value?.setGymLocation(selectedGym.value);
       }
     };
 
@@ -158,6 +173,8 @@ export default defineComponent({
       userHasSelectedCountry,
       errorMsg,
       onClickSearchRoutes,
+      viewRoutes,
+      routeList,
     };
   },
 });

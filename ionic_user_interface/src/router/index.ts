@@ -135,6 +135,11 @@ const routes: Array<RouteRecordRaw> = [
       }
     },
   },
+  {
+    path: '/viewRoute',
+    name: 'ViewRoute',
+    component: () => import('@/views/ViewRoute.vue'),
+  },
 ];
 
 const router = createRouter({
