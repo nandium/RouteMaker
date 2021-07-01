@@ -4,7 +4,7 @@ interface AuthHeader {
   };
 }
 
-export interface GetAllGymsEvent {
+export interface GetGymsByCountryEvent {
   queryStringParameters: {
     countryCode: string;
   };
@@ -38,6 +38,12 @@ export interface GetRoutesByGymEvent {
   };
 }
 
+export interface GetRoutesByUserEvent {
+  queryStringParameters: {
+    username: string;
+  };
+}
+
 export interface GetRouteDetailsEvent {
   headers: {
     Authorization?: string;
@@ -48,14 +54,14 @@ export interface GetRouteDetailsEvent {
   };
 }
 
-export interface UpvoteRouteEvent extends AuthHeader {
+export interface ToggleUpvoteRouteEvent extends AuthHeader {
   body: {
     username: string;
     createdAt: string;
   };
 }
 
-export type ReportRouteEvent = UpvoteRouteEvent;
+export type ReportRouteEvent = ToggleUpvoteRouteEvent;
 
 export interface GradeRouteEvent extends AuthHeader {
   body: {
@@ -107,21 +113,31 @@ export interface Comment {
   comment: string;
 }
 
-export interface RouteItem {
+export interface UserRoutesIndexItem {
   username: string;
   createdAt: string;
-  ttl: number;
   routeName: string;
   gymLocation: string;
+  countryCode: string;
+  publicGrade: number;
+  voteCount: number;
+  commentCount: number;
+}
+
+export interface RouteItem extends UserRoutesIndexItem {
+  ttl: number;
   routeURL: string;
   ownerGrade: number;
-  publicGrade: number;
   publicGradeSubmissions: Array<GradeSubmission>;
-  voteCount: number;
   upvotes: Array<string>;
   reports: Array<string>;
-  commentCount: number;
   comments: Array<Comment>;
+}
+
+export interface GymItem {
+  countryCode: string;
+  gymLocation: string;
+  gymName: string;
 }
 
 export interface RequestGymEvent extends AuthHeader {

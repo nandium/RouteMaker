@@ -32,6 +32,22 @@ resources:
         TimeToLiveSpecification:
           AttributeName: ttl
           Enabled: true
+        LocalSecondaryIndexes:
+          - IndexName: userRoutesIndex
+            KeySchema:
+              - AttributeName: username
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: INCLUDE
+              NonKeyAttributes:
+                - routeName
+                - gymLocation
+                - countryCode
+                - publicGrade
+                - voteCount
+                - commentCount
         GlobalSecondaryIndexes:
           - IndexName: gymLocationIndex
             KeySchema:

@@ -58,11 +58,11 @@ plugins:
   - serverless-api-gateway-throttling
 
 functions:
-  getAllGyms:
-    handler: src/getAllGyms.handler
+  getGymsByCountry:
+    handler: src/getGymsByCountry.handler
     events:
       - http:
-          path: route/gym/all
+          path: route/gym/country
           method: get
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -89,6 +89,15 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
+  getRoutesByUser:
+    handler: src/getRoutesByUser.handler
+    events:
+      - http:
+          path: route/user
+          method: get
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
   getRouteDetails:
     handler: src/getRouteDetails.handler
     events:
@@ -98,11 +107,11 @@ functions:
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
-  upvoteRoute:
-    handler: src/upvoteRoute.handler
+  toggleUpvoteRoute:
+    handler: src/toggleUpvoteRoute.handler
     events:
       - http:
-          path: route/details/upvote
+          path: route/details/toggleUpvote
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}

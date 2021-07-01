@@ -3,6 +3,7 @@ import DynamoDB, { AttributeValue, QueryInput } from 'aws-sdk/clients/dynamodb';
 import createError from 'http-errors';
 
 import { getMiddlewareAddedHandler } from './common/middleware';
+import { getRoutesByGymSchema } from './common/schema';
 import { GetRoutesByGymEvent } from './common/types';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -35,4 +36,4 @@ const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
   }
 };
 
-export const handler = getMiddlewareAddedHandler(getRoutesByGym);
+export const handler = getMiddlewareAddedHandler(getRoutesByGym, getRoutesByGymSchema);

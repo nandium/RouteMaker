@@ -78,7 +78,7 @@ import {
 import Lookup, { Country } from 'country-code-lookup';
 import MessageBox from '@/components/MessageBox.vue';
 import RouteList from '@/components/RouteList.vue';
-import getGyms, { GymLocation } from '@/common/api/route/getGyms';
+import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
 
 export default defineComponent({
@@ -132,7 +132,7 @@ export default defineComponent({
       errorMsg.value?.close();
       if (country) {
         selectedCountryIso3.value = country.iso3;
-        const countryGymLocations = await getGyms(country.iso3);
+        const countryGymLocations = await getGymsByCountry(country.iso3);
         gymLocationList.value = countryGymLocations;
         viewRoutes.value = false;
       } else {
