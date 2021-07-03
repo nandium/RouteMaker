@@ -2,6 +2,8 @@ import S3, { PutObjectRequest, DeleteObjectRequest } from 'aws-sdk/clients/s3';
 import { createHash } from 'crypto';
 import createError from 'http-errors';
 
+import { logger } from '../logger';
+
 const s3 = new S3();
 
 export const uploadRouteImageContent = async (
@@ -24,6 +26,9 @@ export const uploadRouteImageContent = async (
   try {
     ({ Location: routeURL } = await s3.upload(putObjectRequest).promise());
   } catch (error) {
+    logger.error('uploadRouteImageContent error', {
+      data: { username, createdAt, error: error.stack },
+    });
     throw createError(500, 'S3 upload failed', error);
   }
   return routeURL;
@@ -45,6 +50,9 @@ export const deleteRouteImageContent = async (
   try {
     await s3.deleteObject(deleteObjectRequest).promise();
   } catch (error) {
+    logger.error('deleteRouteImageContent error', {
+      data: { username, routeURL, error: error.stack },
+    });
     throw createError(500, 'S3 deletion failed', error);
   }
 };

@@ -52,6 +52,17 @@ echo '{
 }' > ./lambda_backend/sns_setup/serverless-config.dev.json
 ```
 
+#### New Relic Logging Dashboard (Optional)
+
+Create a [New Relic](https://docs.newrelic.com/docs/serverless-function-monitoring/aws-lambda-monitoring/get-started/monitoring-aws-lambda-serverless-monitoring/) account. Then save the credentials as shown below before running `serverless-deploy.sh`. Cloudwatch logs and Lambda insights will be sent to the dashboard.
+
+```
+echo '{
+  "NEW_RELIC_ACCOUNT_ID": 5555555,
+  "NEW_RELIC_API_KEY": "XXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+}' | tee ./lambda_backend/user_microservice/serverless-config.dev.json >> ./lambda_backend/route_microservice/serverless-config.dev.json
+```
+
 ### Frontend Setup
 
 The Vue application can run in browser and also in Android through Capacitor plugin.
