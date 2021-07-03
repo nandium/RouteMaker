@@ -23,7 +23,6 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
 
   let hasVoted = false;
   let hasReported = false;
-  let hasGraded = false;
   let graded = -1;
   const {
     ttl,
@@ -46,7 +45,6 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     });
     publicGradeSubmissions.forEach(({ username: name, grade }) => {
       if (name === username) {
-        hasGraded = true;
         graded = grade;
       }
     });
@@ -80,7 +78,6 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
         comments,
         hasVoted,
         hasReported,
-        hasGraded,
         graded,
       },
     }),
