@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "This is the RouteMaker API",
-    "version": "1.10",
+    "version": "1.11",
     "title": "RouteMaker API",
     "contact": {
       "email": "yarkhinephyo@gmail.com"
@@ -1359,7 +1359,6 @@
           "ownerGrade",
           "publicGrade",
           "publicGradeSubmissions",
-          "voteCount",
           "upvotes",
           "reports",
           "commentCount",
@@ -1401,10 +1400,6 @@
             "items": {
               "$ref": "#/components/schemas/GradeSubmission"
             }
-          },
-          "voteCount": {
-            "type": "integer",
-            "format": "int32"
           },
           "upvotes": {
             "type": "array",
@@ -1479,7 +1474,6 @@
           "comments",
           "hasVoted",
           "hasReported",
-          "hasGraded",
           "graded"
         ],
         "properties": {
@@ -1532,10 +1526,6 @@
             "example": false
           },
           "hasReported": {
-            "type": "boolean",
-            "example": false
-          },
-          "hasGraded": {
             "type": "boolean",
             "example": false
           },
@@ -1685,7 +1675,8 @@
           "gymLocation",
           "publicGrade",
           "voteCount",
-          "commentCount"
+          "commentCount",
+          "hasVoted"
         ],
         "properties": {
           "username": {
@@ -1711,6 +1702,10 @@
           "commentCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "hasVoted": {
+            "type": "boolean",
+            "example": false
           }
         }
       },
@@ -1725,7 +1720,8 @@
           "gymName",
           "publicGrade",
           "voteCount",
-          "commentCount"
+          "commentCount",
+          "hasVoted"
         ],
         "properties": {
           "username": {
@@ -1757,6 +1753,10 @@
           "commentCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "hasVoted": {
+            "type": "boolean",
+            "example": false
           }
         }
       },
