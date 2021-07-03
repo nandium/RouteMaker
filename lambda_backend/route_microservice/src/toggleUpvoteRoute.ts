@@ -7,6 +7,7 @@ import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
 import { toggleUpvoteRouteSchema } from './common/schema';
 import { ToggleUpvoteRouteEvent, JwtPayload } from './common/types';
+import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -18,10 +19,11 @@ const toggleUpvoteRoute: Handler = async (event: ToggleUpvoteRouteEvent) => {
     headers: { Authorization },
     body: { username: routeOwnerUsername, createdAt },
   } = event;
+  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+  logger.info('toggleUpvoteRoute initiated', { data: { username, routeOwnerUsername, createdAt } });
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
   let { upvotes } = Item;
   let hasVoted: boolean;
   if (upvotes.includes(username)) {
@@ -44,12 +46,15 @@ const toggleUpvoteRoute: Handler = async (event: ToggleUpvoteRouteEvent) => {
       ':voteCount': upvotes.length as AttributeValue,
     },
   };
+  logger.info('toggleUpvoteRoute updateItem', { data: { username } });
   try {
     await dynamoDb.update(updateItemInput).promise();
   } catch (error) {
+    logger.error('toggleUpvoteRoute error', { data: { username, error: error.stack } });
     throw createError(500, 'Error updating item', error);
   }
 
+  logger.info('toggleUpvoteRoute success', { data: { username } });
   return {
     statusCode: 200,
     body: JSON.stringify({ Message: 'Toggle upvote route success', Item: { hasVoted } }),

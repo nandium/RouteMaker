@@ -1,6 +1,8 @@
 import DynamoDB, { AttributeValue, GetItemInput, QueryInput } from 'aws-sdk/clients/dynamodb';
-import { RouteItem } from './types';
 import createError from 'http-errors';
+
+import { RouteItem } from './types';
+import { logger } from './logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -20,6 +22,9 @@ export const getItemFromRouteTable = async (
   try {
     ({ Item } = await dynamoDb.get(getItemInput).promise());
   } catch (error) {
+    logger.error('getItemFromRouteTable error', {
+      data: { routeOwnerUsername, createdAt, error: error.stack },
+    });
     throw createError(500, 'Error getting item', error);
   }
   if (!Item) {
@@ -45,6 +50,9 @@ export const getGymIsRegistered = async (
   try {
     ({ Items } = await dynamoDb.query(queryInput).promise());
   } catch (error) {
+    logger.error('getGymIsRegistered error', {
+      data: { countryCode, gymLocation, error: error.stack },
+    });
     throw createError(500, 'Error querying table', error);
   }
   return Items.length > 0;

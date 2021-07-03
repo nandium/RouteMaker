@@ -7,6 +7,7 @@ import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
 import { gradeRouteSchema } from './common/schema';
 import { GradeRouteEvent, JwtPayload } from './common/types';
+import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -18,12 +19,11 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
     headers: { Authorization },
     body: { username: routeOwnerUsername, createdAt, grade },
   } = event;
+  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+  logger.info('gradeRoute initiated', { data: { username, routeOwnerUsername, createdAt, grade } });
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
-
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
   let { publicGradeSubmissions, ownerGrade } = Item;
-
   let publicGradeTotal = 0;
   publicGradeSubmissions = publicGradeSubmissions.map((gradeSubmission) => {
     const { username: submittedName, grade: submittedGrade } = gradeSubmission;
@@ -57,12 +57,15 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
       ':ownerGrade': ownerGrade as AttributeValue,
     },
   };
+  logger.info('gradeRoute updateItem', { data: { username } });
   try {
     await dynamoDb.update(updateItemInput).promise();
   } catch (error) {
+    logger.error('gradeRoute error', { data: { username, error: error.stack } });
     throw createError(500, 'Error updating item', error);
   }
 
+  logger.info('gradeRoute success', { data: { username } });
   return {
     statusCode: 200,
     body: JSON.stringify({

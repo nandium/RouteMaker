@@ -5,6 +5,7 @@ import createError from 'http-errors';
 import { getMiddlewareAddedHandler } from './common/middleware';
 import { getRoutesByUserSchema } from './common/schema';
 import { GetRoutesByUserEvent, GymItem, UserRoutesIndexItem } from './common/types';
+import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -15,6 +16,8 @@ const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
   const {
     queryStringParameters: { username },
   } = event;
+  logger.info('getRoutesByUser initiated', { data: { username } });
+
   const routeQueryInput: QueryInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     IndexName: 'userRoutesIndex',
@@ -30,6 +33,7 @@ const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
     const response = await dynamoDb.query(routeQueryInput).promise();
     userRouteIndexItems = response.Items as UserRoutesIndexItem[];
   } catch (error) {
+    logger.error('getRoutesByUser error', { data: { username, error: error.stack } });
     throw createError(500, 'Error querying table', error);
   }
 
@@ -37,6 +41,9 @@ const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
   const countryCodeSet = new Set(userRouteIndexItems.map((item) => item.countryCode));
   const gymLocationToNameMapping = {};
 
+  logger.info('getRoutesByUser countryCodes', {
+    data: { username, countryCodes: Array.from(countryCodeSet) },
+  });
   for (const countryCode of Array.from(countryCodeSet)) {
     const gymQueryInput: QueryInput = {
       TableName: process.env['GYM_TABLE_NAME'],
@@ -51,6 +58,9 @@ const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
       const gymItems = response.Items as GymItem[];
       gymItems.forEach((gym) => (gymLocationToNameMapping[gym.gymLocation] = gym.gymName));
     } catch (error) {
+      logger.error('getRoutesByUser error', {
+        data: { username, countryCode, error: error.stack },
+      });
       throw createError(500, 'Error querying table', error);
     }
   }
@@ -59,6 +69,7 @@ const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
     return { ...item, gymName: gymLocationToNameMapping[item.gymLocation] };
   });
 
+  logger.info('getRoutesByUser success', { data: { username } });
   return {
     statusCode: 200,
     body: JSON.stringify({ Message: 'Query routes by user success', Items }),
