@@ -45,7 +45,7 @@ const reportRoute: Handler = async (event: ReportRouteEvent) => {
     try {
       await dynamoDb.update(updateItemInput).promise();
     } catch (error) {
-      logger.error('reportRoute error', { data: { username, error: error.stack } });
+      logger.error('reportRoute updateItem error', { data: { username, error: error.stack } });
       throw createError(500, 'Error updating item', error);
     }
 
@@ -57,7 +57,7 @@ const reportRoute: Handler = async (event: ReportRouteEvent) => {
     try {
       await SNSInstance.publish(publishInput).promise();
     } catch (error) {
-      logger.error('reportRoute error', { data: { username, error: error.stack } });
+      logger.error('reportRoute SNS error', { data: { username, error: error.stack } });
       throw createError(500, 'Error publishing SNS', error);
     }
 
