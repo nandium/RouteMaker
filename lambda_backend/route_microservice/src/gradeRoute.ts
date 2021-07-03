@@ -47,8 +47,8 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
       createdAt: createdAt as AttributeValue,
     },
     UpdateExpression: `
-      SET publicGradeSubmissions = :publicGradeSubmissions, 
-      publicGrade = :publicGrade, 
+      SET publicGradeSubmissions = :publicGradeSubmissions,
+      publicGrade = :publicGrade,
       ownerGrade = :ownerGrade
     `,
     ExpressionAttributeValues: {
