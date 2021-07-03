@@ -17,7 +17,7 @@ When contributing to this repository, please first discuss the change you wish t
 To ensure the PR passes checks in Github Actions, there are [CommitLint](https://github.com/conventional-changelog/commitlint), [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) set up as git hooks. Please enable it:
 
 ```
-cd ./yolo_bouldering
+cd ./RouteMaker
 npm ci
 ```
 
@@ -34,7 +34,7 @@ API Documentation is available at the repo's [github page](https://nandium.githu
 There is a bash script to setup everything via Serverless Framework. Ensure that [AWS Credentials](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html) with administrator permissions is set up for deployment and that Docker engine is running for preparing Python packages.
 
 ```
-cd ./yolo_bouldering/lambda_backend
+cd ./lambda_backend
 npm ci
 sudo ./serverless-deploy.sh deploy dev all
 ```

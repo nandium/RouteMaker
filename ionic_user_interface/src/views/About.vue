@@ -48,7 +48,7 @@
         <p class="lead my-4">Pull requests are welcomed!</p>
         <ion-button
           target="_blank"
-          href="https://github.com/yarkhinephyo/yolo_bouldering"
+          href="https://github.com/nandium/RouteMaker"
           color="light"
           size="large"
         >
