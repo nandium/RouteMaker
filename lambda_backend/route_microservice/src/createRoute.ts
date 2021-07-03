@@ -74,7 +74,6 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     ownerGrade,
     publicGrade: ownerGrade,
     publicGradeSubmissions: [{ username, grade: ownerGrade }],
-    voteCount: 0,
     upvotes: [],
     reports: [],
     commentCount: 0,

@@ -46,8 +46,8 @@ resources:
                 - gymLocation
                 - countryCode
                 - publicGrade
-                - voteCount
                 - commentCount
+                - upvotes
         GlobalSecondaryIndexes:
           - IndexName: gymLocationIndex
             KeySchema:
@@ -60,8 +60,8 @@ resources:
                 - routeName
                 - username
                 - publicGrade
-                - voteCount
                 - commentCount
+                - upvotes
               ProjectionType: INCLUDE
             ProvisionedThroughput:
               ReadCapacityUnits: ${self:custom._routeDataTableGSI.ReadCapacityUnits.${self:custom.stage}}

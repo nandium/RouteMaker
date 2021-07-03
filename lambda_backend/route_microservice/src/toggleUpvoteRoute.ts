@@ -40,10 +40,9 @@ const toggleUpvoteRoute: Handler = async (event: ToggleUpvoteRouteEvent) => {
       username: routeOwnerUsername as AttributeValue,
       createdAt: createdAt as AttributeValue,
     },
-    UpdateExpression: 'SET upvotes = :upvotes, voteCount = :voteCount',
+    UpdateExpression: 'SET upvotes = :upvotes',
     ExpressionAttributeValues: {
       ':upvotes': upvotes as AttributeValue,
-      ':voteCount': upvotes.length as AttributeValue,
     },
   };
   logger.info('toggleUpvoteRoute updateItem', { data: { username } });
