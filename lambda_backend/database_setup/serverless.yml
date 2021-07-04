@@ -129,13 +129,14 @@ resources:
 custom:
   stage: ${opt:stage, self:provider.stage}
 
+  # Free RCU: 25, Free WCU: 25
   _routeDataTable:
     ReadCapacityUnits:
       dev: 2
-      prod: 4
+      prod: 8
     WriteCapacityUnits:
       dev: 2
-      prod: 4
+      prod: 6
   _routeDataTableGSI:
     ReadCapacityUnits:
       dev: 2
