@@ -23,7 +23,6 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
 
   let hasVoted = false;
   let hasReported = false;
-  let hasGraded = false;
   let graded = -1;
   const {
     ttl,
@@ -34,19 +33,18 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     ownerGrade,
     publicGrade,
     publicGradeSubmissions,
-    voteCount,
     upvotes,
     reports,
     comments,
   } = Item;
   if (Authorization) {
+    // Only utilizes token for username, no enforcing authorization as endpoint is GET & public
     const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
-    logger.info('getRouteDetails token included', {
+    logger.info('getRouteDetails user identifier included', {
       data: { username, routeOwnerUsername, createdAt },
     });
     publicGradeSubmissions.forEach(({ username: name, grade }) => {
       if (name === username) {
-        hasGraded = true;
         graded = grade;
       }
     });
@@ -76,11 +74,10 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
         routeURL: restoreRouteURL(routeURL),
         ownerGrade,
         publicGrade,
-        voteCount,
+        voteCount: upvotes.length,
         comments,
         hasVoted,
         hasReported,
-        hasGraded,
         graded,
       },
     }),
