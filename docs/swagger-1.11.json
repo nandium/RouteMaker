@@ -780,7 +780,7 @@
           "route"
         ],
         "summary": "Get routes by gyms",
-        "description": "",
+        "description": "Returns slightly different data depending on if authorization header is provided. Including the Bearer Token will check if the user has voted. The default value is false.",
         "parameters": [
           {
             "in": "query",
@@ -812,7 +812,7 @@
           "route"
         ],
         "summary": "Get routes by users",
-        "description": "",
+        "description": "Returns slightly different data depending on if authorization header is provided. Including the Bearer Token will check if the user has voted. The default value is false.",
         "parameters": [
           {
             "in": "query",
