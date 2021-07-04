@@ -5,6 +5,7 @@ import createError from 'http-errors';
 import { getMiddlewareAddedHandler } from './common/middleware';
 import { getGymsByCountrySchema } from './common/schema';
 import { GetGymsByCountryEvent } from './common/types';
+import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -15,6 +16,7 @@ const getGymsByCountry: Handler = async (event: GetGymsByCountryEvent) => {
   const {
     queryStringParameters: { countryCode },
   } = event;
+  logger.info('getGymsByCountry initiated', { data: { countryCode } });
 
   const queryInput: QueryInput = {
     TableName: process.env['GYM_TABLE_NAME'],
@@ -26,11 +28,13 @@ const getGymsByCountry: Handler = async (event: GetGymsByCountryEvent) => {
   };
   try {
     const { Items } = await dynamoDb.query(queryInput).promise();
+    logger.info('getGymsByCountry success', { data: { countryCode } });
     return {
       statusCode: 200,
       body: JSON.stringify({ Message: 'Query gyms success', Items }),
     };
   } catch (error) {
+    logger.error('getGymsByCountry error', { data: { countryCode, error: error.stack } });
     throw createError(500, 'Error querying table', error);
   }
 };

@@ -7,6 +7,7 @@ import { getItemFromRouteTable } from './common/db';
 import { getRouteDetailsSchema } from './common/schema';
 import { GetRouteDetailsEvent, JwtPayload } from './common/types';
 import { restoreRouteURL } from './common/s3/utils';
+import { logger } from './common/logger';
 
 const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   if (!process.env['ROUTE_TABLE_NAME'] || !process.env['COGNITO_USERPOOL_ID']) {
@@ -16,12 +17,12 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     headers: { Authorization },
     body: { username: routeOwnerUsername, createdAt },
   } = event;
+  logger.info('getRouteDetails initiated', { data: { routeOwnerUsername, createdAt } });
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
   let hasVoted = false;
   let hasReported = false;
-  let hasGraded = false;
   let graded = -1;
   const {
     ttl,
@@ -32,16 +33,18 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     ownerGrade,
     publicGrade,
     publicGradeSubmissions,
-    voteCount,
     upvotes,
     reports,
     comments,
   } = Item;
   if (Authorization) {
+    // Only utilizes token for username, no enforcing authorization as endpoint is GET & public
     const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+    logger.info('getRouteDetails user identifier included', {
+      data: { username, routeOwnerUsername, createdAt },
+    });
     publicGradeSubmissions.forEach(({ username: name, grade }) => {
       if (name === username) {
-        hasGraded = true;
         graded = grade;
       }
     });
@@ -56,6 +59,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
       }
     });
   }
+  logger.info('getRouteDetails success', { data: { routeOwnerUsername, createdAt } });
   return {
     statusCode: 200,
     body: JSON.stringify({
@@ -70,11 +74,10 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
         routeURL: restoreRouteURL(routeURL),
         ownerGrade,
         publicGrade,
-        voteCount,
+        voteCount: upvotes.length,
         comments,
         hasVoted,
         hasReported,
-        hasGraded,
         graded,
       },
     }),

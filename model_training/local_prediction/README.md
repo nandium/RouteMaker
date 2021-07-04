@@ -27,7 +27,7 @@ Tested on
    $ pipenv shell
    Launching subshell in virtual environment...
    ```
-1. Running the Python script now will give predictions on images in `.\test_images\` based on weights and config given by the repo, located at [`..\..\lambda_backend\predict_microservice\weights`](https://github.com/yarkhinephyo/yolo_bouldering/tree/main/lambda_backend/predict_microservice/weights). Images will appear with the predicted bounding boxes, and the labels will be saved as `.txt` files saved in the `.\test_images\` folder.
+1. Running the Python script now will give predictions on images in `.\test_images\` based on weights and config given by the repo, located at [`..\..\lambda_backend\predict_microservice\weights`](https://github.com/nandium/RouteMaker/tree/main/lambda_backend/predict_microservice/weights). Images will appear with the predicted bounding boxes, and the labels will be saved as `.txt` files saved in the `.\test_images\` folder.
    ```bash
    $ python yolo_object_detection.py
    ```

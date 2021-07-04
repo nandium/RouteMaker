@@ -5,8 +5,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^2.48.0",
+    "serverless": "^2.50.0",
     "serverless-api-gateway-throttling": "^1.1.0",
+    "serverless-newrelic-lambda-layers": "^1.1.7",
     "serverless-plugin-typescript": "^1.1.9",
     "serverless-python-requirements": "^5.1.1",
     "typescript": "^4.2.4"

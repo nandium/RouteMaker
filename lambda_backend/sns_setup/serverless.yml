@@ -11,7 +11,7 @@ provider:
   environment:
     BOT_TOKEN: ${file(./serverless-config.${self:custom.stage}.json):BOT_TOKEN, ''}
     BOT_CHAT_ID: ${file(./serverless-config.${self:custom.stage}.json):BOT_CHAT_ID, ''}
-  logRetentionInDays: 30
+  logRetentionInDays: 14
   lambdaHashingVersion: 20201221
 
 plugins:

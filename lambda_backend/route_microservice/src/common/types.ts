@@ -4,6 +4,12 @@ interface AuthHeader {
   };
 }
 
+interface OptionalAuthHeader {
+  headers: {
+    Authorization?: string;
+  };
+}
+
 export interface GetGymsByCountryEvent {
   queryStringParameters: {
     countryCode: string;
@@ -32,22 +38,19 @@ export interface DeleteRouteEvent extends AuthHeader {
   };
 }
 
-export interface GetRoutesByGymEvent {
+export interface GetRoutesByGymEvent extends OptionalAuthHeader {
   queryStringParameters: {
     gymLocation: string;
   };
 }
 
-export interface GetRoutesByUserEvent {
+export interface GetRoutesByUserEvent extends OptionalAuthHeader {
   queryStringParameters: {
     username: string;
   };
 }
 
-export interface GetRouteDetailsEvent {
-  headers: {
-    Authorization?: string;
-  };
+export interface GetRouteDetailsEvent extends OptionalAuthHeader {
   body: {
     username: string;
     createdAt: string;
@@ -113,15 +116,18 @@ export interface Comment {
   comment: string;
 }
 
-export interface UserRoutesIndexItem {
+export interface GymLocationIndexItem {
   username: string;
   createdAt: string;
   routeName: string;
   gymLocation: string;
-  countryCode: string;
   publicGrade: number;
-  voteCount: number;
   commentCount: number;
+  upvotes: Array<string>;
+}
+
+export interface UserRoutesIndexItem extends GymLocationIndexItem {
+  countryCode: string;
 }
 
 export interface RouteItem extends UserRoutesIndexItem {
@@ -129,7 +135,6 @@ export interface RouteItem extends UserRoutesIndexItem {
   routeURL: string;
   ownerGrade: number;
   publicGradeSubmissions: Array<GradeSubmission>;
-  upvotes: Array<string>;
   reports: Array<string>;
   comments: Array<Comment>;
 }

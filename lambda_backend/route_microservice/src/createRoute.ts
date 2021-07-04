@@ -10,6 +10,7 @@ import { CreateRouteEvent, RouteItem, JwtPayload } from './common/types';
 import { cleanBadWords } from './common/badwords';
 import { uploadRouteImageContent } from './common/s3';
 import { trimRouteURL } from './common/s3/utils';
+import { logger } from './common/logger';
 import { MAX_PHOTO_SIZE } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -26,15 +27,24 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     headers: { Authorization },
     body: { countryCode, routeName, expiredTime, gymLocation, ownerGrade, routePhoto },
   } = event;
+  const accessToken = Authorization.split(' ')[1];
+  const { username } = (await jwt_decode(accessToken)) as JwtPayload;
+  logger.info('createRoute initiated', {
+    data: { username, countryCode, routeName, expiredTime, gymLocation, ownerGrade },
+  });
 
   const { content, mimetype } = routePhoto;
   if (mimetype !== 'image/jpeg') {
+    logger.error('createRoute InvalidFileType', { data: { username, mimetype } });
     return {
       statusCode: 400,
       body: JSON.stringify({ Message: 'Invalid file type' }),
     };
   }
   if (content.byteLength > MAX_PHOTO_SIZE) {
+    logger.error('createRoute InvalidFileSize', {
+      data: { username, fileByte: content.byteLength },
+    });
     return {
       statusCode: 400,
       body: JSON.stringify({ Message: 'Invalid file size' }),
@@ -42,17 +52,16 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   }
   const gymIsRegistered = await getGymIsRegistered(countryCode, gymLocation);
   if (!gymIsRegistered) {
+    logger.error('createRoute UnregisteredGym', { data: { username, countryCode, gymLocation } });
     return {
       statusCode: 400,
       body: JSON.stringify({ Message: 'Unregistered gym' }),
     };
   }
-
-  const accessToken = Authorization.split(' ')[1];
-  const { username } = (await jwt_decode(accessToken)) as JwtPayload;
   const createdAt = new Date().toISOString();
   const routeURL = await uploadRouteImageContent(username, createdAt, mimetype, content);
   const trimedRouteURL = trimRouteURL(routeURL);
+  logger.info('createRoute UploadImageSuccess', { data: { username, routeURL } });
 
   const routeItem: RouteItem = {
     username,
@@ -65,7 +74,6 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     ownerGrade,
     publicGrade: ownerGrade,
     publicGradeSubmissions: [{ username, grade: ownerGrade }],
-    voteCount: 0,
     upvotes: [],
     reports: [],
     commentCount: 0,
@@ -75,14 +83,17 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     TableName: process.env['ROUTE_TABLE_NAME'] || '',
     Item: routeItem as unknown as AttributeMap,
   };
+  logger.info('createRoute putItemInput', { data: { username } });
   try {
     await dynamoDb.put(putItemInput).promise();
   } catch (error) {
+    logger.error('createRoute error', { data: { username, error: error.stack } });
     throw createError(500, 'DB put operation failed', error);
   }
 
   const Item = Object.assign({}, routeItem);
   Item.routeURL = routeURL;
+  logger.info('createRoute success', { data: { username } });
   return {
     statusCode: 201,
     body: JSON.stringify({ Message: 'Create route success', Item }),

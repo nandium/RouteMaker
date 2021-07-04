@@ -8,6 +8,7 @@ import { getMiddlewareAddedHandler } from './common/middleware';
 import { getItemFromRouteTable } from './common/db';
 import { reportRouteSchema } from './common/schema';
 import { ReportRouteEvent, JwtPayload } from './common/types';
+import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 const SNSInstance = new SNS();
@@ -20,10 +21,10 @@ const reportRoute: Handler = async (event: ReportRouteEvent) => {
     headers: { Authorization },
     body: { username: routeOwnerUsername, createdAt },
   } = event;
+  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+  logger.info('reportRoute initiated', { data: { username, routeOwnerUsername, createdAt } });
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
-
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
   const { reports } = Item;
 
   // Only if the user has not reported the route before
@@ -40,9 +41,11 @@ const reportRoute: Handler = async (event: ReportRouteEvent) => {
         ':reports': reports as AttributeValue,
       },
     };
+    logger.info('reportRoute updateItem', { data: { username } });
     try {
       await dynamoDb.update(updateItemInput).promise();
     } catch (error) {
+      logger.error('reportRoute updateItem error', { data: { username, error: error.stack } });
       throw createError(500, 'Error updating item', error);
     }
 
@@ -50,12 +53,15 @@ const reportRoute: Handler = async (event: ReportRouteEvent) => {
       Message: `Report\nBy: ${username}\nOwner: ${routeOwnerUsername}\nAt: ${createdAt}\nTally: ${reports.length}`,
       TopicArn: process.env['TELEGRAM_SNS_ARN'],
     };
+    logger.info('reportRoute publishSNS', { data: { username } });
     try {
       await SNSInstance.publish(publishInput).promise();
     } catch (error) {
+      logger.error('reportRoute SNS error', { data: { username, error: error.stack } });
       throw createError(500, 'Error publishing SNS', error);
     }
 
+    logger.info('reportRoute success', { data: { username } });
     return {
       statusCode: 200,
       body: JSON.stringify({ Message: 'Report route success' }),

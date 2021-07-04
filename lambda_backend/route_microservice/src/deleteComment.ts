@@ -8,6 +8,7 @@ import { getItemFromRouteTable } from './common/db';
 import { deleteCommentSchema } from './common/schema';
 import { DeleteCommentEvent, JwtPayload } from './common/types';
 import { getCognitoUserDetails } from './common/cognito';
+import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -19,15 +20,19 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
     headers: { Authorization },
     queryStringParameters: { username: routeOwnerUsername, createdAt, commentUsername, timestamp },
   } = event;
-
-  const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
   const accessToken = Authorization.split(' ')[1];
   const { username: requestUsername } = (await jwt_decode(accessToken)) as JwtPayload;
+  logger.info('deleteComment initiated', {
+    data: { username: requestUsername, routeOwnerUsername, createdAt, commentUsername, timestamp },
+  });
+
+  const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
   // Delete only if requester is route owner or comment writer or admin
   if (requestUsername !== commentUsername && requestUsername !== routeOwnerUsername) {
     const { userRole } = await getCognitoUserDetails(accessToken);
     if (userRole !== 'admin') {
+      logger.error('deleteComment Unauthorized', { data: { username: requestUsername, userRole } });
       return {
         statusCode: 403,
         body: JSON.stringify({
@@ -60,12 +65,17 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
       ':commentCount': comments.length as AttributeValue,
     },
   };
+  logger.info('deleteComment updateItem', { data: { username: requestUsername } });
   try {
     await dynamoDb.update(updateItemInput).promise();
   } catch (error) {
+    logger.error('deleteComment error', {
+      data: { username: requestUsername, error: error.stack },
+    });
     throw createError(500, 'Error updating item', error);
   }
 
+  logger.info('deleteComment success', { data: { username: requestUsername } });
   return {
     statusCode: 200,
     body: JSON.stringify({

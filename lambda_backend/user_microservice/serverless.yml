@@ -14,7 +14,7 @@ provider:
     COGNITO_CLIENT_ID: ${self:custom.cognitoClientId}
     COGNITO_USERPOOL_ID: ${self:custom.cognitoUserpoolId}
     TELEGRAM_SNS_ARN: ${self:custom.telegramSNSArn}
-  logRetentionInDays: 30
+  logRetentionInDays: 14
   lambdaHashingVersion: 20201221
   iam:
     role:
@@ -37,6 +37,7 @@ provider:
 plugins:
   - serverless-plugin-typescript
   - serverless-api-gateway-throttling
+  - serverless-newrelic-lambda-layers
 
 functions:
   signup:
@@ -166,6 +167,15 @@ custom:
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
+
+  newRelic:
+    accountId: ${file(./serverless-config.${self:custom.stage}.json):NEW_RELIC_ACCOUNT_ID, ''}
+    apiKey: ${file(./serverless-config.${self:custom.stage}.json):NEW_RELIC_API_KEY, ''}
+    enableExtension: true
+    enableIntegration: true
+    logEnabled: true
+    enableFunctionLogs: true
+    cloudWatchFilter: '*'
 
   _maxRequestsPerSecond:
     dev: 1
