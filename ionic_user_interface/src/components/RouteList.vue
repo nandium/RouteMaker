@@ -1,16 +1,24 @@
 <template>
   <ion-list>
     <ion-card
-      v-for="({ routeName, username, createdAt }, index) in routes"
+      v-for="({ routeName, username, createdAt, publicGrade, voteCount }, index) in routes"
       :key="index"
       class="ion-text-left route-card"
       @click="() => handleRouteCardClick(username, createdAt)"
     >
       <ion-card-header>
         <ion-card-title>{{ routeName }}</ion-card-title>
+        <div class="center-right">
+          <ion-icon :icon="heart"></ion-icon>
+          <p>{{ voteCount }}</p>
+        </div>
       </ion-card-header>
       <ion-card-content>
+        <b>Creator:</b>
         {{ username }}
+        <br />
+        <b>Grade:</b>
+        V{{ publicGrade }}
       </ion-card-content>
     </ion-card>
   </ion-list>
@@ -18,7 +26,9 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonList } from '@ionic/vue';
+import { heart } from 'ionicons/icons';
+import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonIcon, IonList } from '@ionic/vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 interface Route {
@@ -38,9 +48,11 @@ export default defineComponent({
     IonCardContent,
     IonCardHeader,
     IonCardTitle,
+    IonIcon,
     IonList,
   },
   setup() {
+    const router = useRouter();
     const routes = ref<Array<Route>>([]);
 
     const setGymLocation = (gymLocation: string) => {
@@ -65,13 +77,20 @@ export default defineComponent({
     };
 
     const handleRouteCardClick = (username: string, createdAt: string) => {
-      console.log(username + '  ' + createdAt);
+      router.push({
+        name: 'ViewRoute',
+        params: {
+          username,
+          createdAt,
+        },
+      });
     };
 
     return {
       routes,
       setGymLocation,
       handleRouteCardClick,
+      heart,
     };
   },
 });
@@ -81,5 +100,29 @@ export default defineComponent({
 .route-card:hover {
   cursor: pointer;
   filter: brightness(120%);
+}
+
+ion-card-header {
+  position: relative;
+}
+
+.center-right {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 2px solid grey;
+  padding: 0 7px;
+}
+
+p {
+  padding: 0;
+  line-height: 22px;
+  margin: 0;
 }
 </style>

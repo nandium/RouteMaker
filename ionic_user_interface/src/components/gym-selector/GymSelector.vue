@@ -30,35 +30,42 @@
               </ion-select>
             </ion-item>
             <ion-row
-              v-if="userHasSelectedCountry"
+              v-if="userHasSelectedGym"
               class="ion-align-items-center ion-justify-content-center"
             >
-              <ion-col class="ion-align-self-center" size-xs="6">
-                <ion-button expand="full" fill="clear" color="dark" @click="onClickSearchRoutes">
-                  Search Routes
+              <ion-col class="ion-align-self-center">
+                <ion-button expand="full" fill="clear" color="dark" @click="onClickViewMap">
+                  {{ viewMap ? 'Hide Map' : 'View Map' }}
+                  <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
                 </ion-button>
               </ion-col>
-              <ion-col class="ion-align-self-center" size-xs="6">
+              <ion-col class="ion-align-self-center">
                 <router-link style="text-decoration: none" to="/gyms/request">
-                  <ion-button expand="full" fill="clear" color="dark">Can't Find Gym?</ion-button>
+                  <ion-button expand="full" fill="clear" color="dark">
+                    Can't Find Gym?
+                    <ion-icon slot="end" :icon="warning"></ion-icon>
+                  </ion-button>
                 </router-link>
               </ion-col>
             </ion-row>
           </ion-list>
-          <RouteList v-show="viewRoutes" ref="routeList" />
+        </ion-col>
+      </ion-row>
+      <iframe
+        v-if="viewMap"
+        :width="width + 'px'"
+        :height="width + 'px'"
+        class="google-embed-map"
+        loading="lazy"
+        allowfullscreen
+        :src="embedMapSrcStart + embedMapPointerLocation"
+      ></iframe>
+      <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+          <RouteList v-show="userHasSelectedGym" ref="routeList" />
         </ion-col>
       </ion-row>
     </ion-grid>
-
-    <iframe
-      v-if="userHasSelectedGym && !viewRoutes"
-      :width="width + 'px'"
-      :height="width + 'px'"
-      class="google-embed-map"
-      loading="lazy"
-      allowfullscreen
-      :src="embedMapSrcStart + embedMapPointerLocation"
-    ></iframe>
   </div>
 </template>
 
@@ -67,6 +74,7 @@ import { ref, onMounted, defineComponent, computed, Ref } from 'vue';
 import {
   IonGrid,
   IonList,
+  IonIcon,
   IonItem,
   IonLabel,
   IonSelect,
@@ -76,6 +84,8 @@ import {
   IonButton,
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
+import { map, mapOutline, warning } from 'ionicons/icons';
+
 import MessageBox from '@/components/MessageBox.vue';
 import RouteList from '@/components/RouteList.vue';
 import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
@@ -87,6 +97,7 @@ export default defineComponent({
     IonGrid,
     IonLabel,
     IonList,
+    IonIcon,
     IonItem,
     IonSelect,
     IonSelectOption,
@@ -116,7 +127,7 @@ export default defineComponent({
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
 
     const routeList = ref<typeof RouteList | null>(null);
-    const viewRoutes = ref(false);
+    const viewMap = ref(false);
 
     onMounted(() => {
       countryNameList.value = [...Lookup.countries.sort()];
@@ -134,7 +145,6 @@ export default defineComponent({
         selectedCountryIso3.value = country.iso3;
         const countryGymLocations = await getGymsByCountry(country.iso3);
         gymLocationList.value = countryGymLocations;
-        viewRoutes.value = false;
       } else {
         reset();
       }
@@ -147,18 +157,12 @@ export default defineComponent({
       }
       errorMsg.value?.close();
       selectedGym.value = gymLocation;
-      viewRoutes.value = false;
-      embedMapPointerLocation.value = gymLocation;
+      routeList.value?.setGymLocation(selectedGym.value);
     };
 
-    const onClickSearchRoutes = () => {
-      if (!userHasSelectedGym.value) {
-        errorMsg.value?.showMsg('Please select a gym');
-      } else {
-        // TODO: Display routes
-        viewRoutes.value = true;
-        routeList.value?.setGymLocation(selectedGym.value);
-      }
+    const onClickViewMap = () => {
+      embedMapPointerLocation.value = selectedGym.value;
+      viewMap.value = !viewMap.value;
     };
 
     return {
@@ -172,9 +176,12 @@ export default defineComponent({
       userHasSelectedGym,
       userHasSelectedCountry,
       errorMsg,
-      onClickSearchRoutes,
-      viewRoutes,
+      viewMap,
       routeList,
+      onClickViewMap,
+      map,
+      mapOutline,
+      warning,
     };
   },
 });

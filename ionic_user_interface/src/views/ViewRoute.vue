@@ -1,32 +1,229 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-      <div id="container">
-        <strong>Routes</strong>
+      <div id="container" class="ion-text-left">
+        <strong>{{ routeDetails.routeName }}</strong>
+        <ion-img :src="routeDetails.routeURL"></ion-img>
+        <div class="ion-justify-content-around" v-if="!hasAlreadyCommented">
+          <ion-textarea
+            placeholder="Type your comment here..."
+            maxlength="150"
+            v-model="commentText"
+            @keyup.enter="postCommentHandler"
+          ></ion-textarea>
+          <ion-button @click="postCommentHandler" expand="block" fill="outline" color="dark">
+            Post comment
+          </ion-button>
+        </div>
+        <ion-card
+          v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
+          :key="index"
+        >
+          <ion-card-header>
+            <ion-card-title>{{ comment }}</ion-card-title>
+            <div
+              v-if="username === myUsername.value"
+              class="center-right"
+              @click="() => deleteCommentHandler(username, timestamp)"
+            >
+              <ion-icon :icon="trashOutline"></ion-icon>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item class="ion-no-padding">
+              <ion-icon class="margin-right" slot="start" :icon="personCircleOutline"></ion-icon>
+              <ion-label>{{ username }}</ion-label>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import {
+  IonButton,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonContent,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonPage,
+  IonTextarea,
+} from '@ionic/vue';
+import { trashOutline, personCircleOutline } from 'ionicons/icons';
+import { computed, defineComponent, inject, Ref, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
+
+interface Comment {
+  username: string;
+  timestamp: number;
+  comment: string;
+}
+
+interface RouteDetails {
+  comments?: Array<Comment>;
+  countryCode?: string;
+  createdAt?: string;
+  expiredTime?: string;
+  graded?: number;
+  gymLocation?: string;
+  hasGraded?: boolean;
+  hasReported?: boolean;
+  hasVoted?: boolean;
+  ownerGrade?: number;
+  publicGrade?: number;
+  routeName?: string;
+  routeURL?: string;
+  username?: string;
+  voteCount?: number;
+}
 
 export default defineComponent({
   name: 'ViewRoute',
   components: {
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
     IonContent,
+    IonIcon,
+    IonImg,
+    IonItem,
+    IonLabel,
     IonPage,
+    IonTextarea,
   },
   setup() {
-    console.log('this');
+    const route = useRoute();
+    const router = useRouter();
+    const { username, createdAt } = route.params;
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
+    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const commentText = ref('');
+
+    const myUsername = computed(getUsername);
+
+    const hasAlreadyCommented = ref(false);
+
+    let routeDetails: Ref<RouteDetails> = ref({});
+
+    const updateRouteDetails = () =>
+      axios
+        .post(
+          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details',
+          {
+            username,
+            createdAt,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getAccessToken().value}`,
+            },
+          },
+        )
+        .then((response) => {
+          console.log(response);
+          if (response.data.Message === 'Get route details success') {
+            routeDetails.value = response.data.Item;
+            hasAlreadyCommented.value = false;
+            if (routeDetails.value.comments) {
+              for (const comment of routeDetails.value.comments) {
+                if (comment.username === getUsername().value) {
+                  hasAlreadyCommented.value = true;
+                  break;
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          router.back();
+        });
+
+    updateRouteDetails();
+
+    const postCommentHandler = () => {
+      commentText.value = commentText.value.trim();
+      if (commentText.value.length === 0) {
+        console.log('Comment cannot be empty');
+        return false;
+      }
+      if (commentText.value.length > 150) {
+        console.log('Comment is too long, please keep it within 150 characters');
+        return false;
+      }
+
+      axios
+        .post(
+          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment',
+          {
+            username,
+            createdAt,
+            comment: commentText.value,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getAccessToken().value}`,
+            },
+          },
+        )
+        .then((response) => {
+          console.log(response);
+          updateRouteDetails();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      return true;
+    };
+
+    const deleteCommentHandler = (commentUsername: string, timestamp: number) => {
+      axios
+        .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
+          headers: {
+            Authorization: `Bearer ${getAccessToken().value}`,
+          },
+          params: {
+            username,
+            createdAt,
+            commentUsername,
+            timestamp: timestamp.toString(),
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          updateRouteDetails();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    return {
+      routeDetails,
+      commentText,
+      hasAlreadyCommented,
+      postCommentHandler,
+      trashOutline,
+      personCircleOutline,
+      myUsername,
+      deleteCommentHandler,
+    };
   },
 });
 </script>
 
 <style scoped>
 #container {
-  text-align: center;
   position: absolute;
   left: 0;
   right: 0;
@@ -46,5 +243,33 @@ export default defineComponent({
 
 #container a {
   text-decoration: none;
+}
+
+.center-right {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 25px;
+  border-radius: 4px;
+  padding: 2px;
+  margin: 0;
+}
+
+.center-right:hover {
+  background-color: #444444;
+  cursor: pointer;
+}
+
+ion-textarea {
+  border: 1px solid grey;
+}
+
+.margin-right {
+  margin: 0 10px 0 0;
 }
 </style>
