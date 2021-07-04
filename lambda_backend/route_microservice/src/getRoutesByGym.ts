@@ -46,13 +46,8 @@ const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
     logger.info('getRoutesByGym user identifier included', { data: { username } });
   }
   const Items = gymLocationIndexItems.map((queryItem) => {
-    let hasVoted = false;
     const { upvotes, ...returnItem } = queryItem;
-    upvotes.forEach((name) => {
-      if (name === username) {
-        hasVoted = true;
-      }
-    });
+    const hasVoted = upvotes.find((name) => name === username) ? true : false;
     return { ...returnItem, hasVoted, voteCount: upvotes.length };
   });
 

@@ -76,14 +76,8 @@ const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
     logger.info('getRoutesByUser user identifier included', { data: { username } });
   }
   const Items = userRouteIndexItems.map((item) => {
-    let hasVoted = false;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { upvotes, ...returnItem } = item;
-    upvotes.forEach((name) => {
-      if (name === username) {
-        hasVoted = true;
-      }
-    });
+    const hasVoted = upvotes.find((name) => name === username) ? true : false;
     return {
       ...returnItem,
       gymName: gymLocationToNameMapping[item.gymLocation],
