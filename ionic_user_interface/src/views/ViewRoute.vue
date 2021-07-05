@@ -1,20 +1,24 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" v-if="hasLoaded">
       <div id="container" class="ion-text-left">
-        <strong>{{ routeDetails.routeName }}</strong>
         <ion-img :src="routeDetails.routeURL"></ion-img>
-        <div class="ion-justify-content-around" v-if="!hasAlreadyCommented">
+        <strong>{{ routeDetails.routeName }}</strong>
+        <ion-row
+          v-if="!hasAlreadyCommented"
+          class="ion-align-items-start ion-justify-content-start"
+        >
           <ion-textarea
-            placeholder="Type your comment here..."
+            placeholder="Write a comment..."
+            class="ion-no-margin"
             maxlength="150"
             v-model="commentText"
-            @keyup.enter="postCommentHandler"
+            autoGrow
           ></ion-textarea>
-          <ion-button @click="postCommentHandler" expand="block" fill="outline" color="dark">
-            Post comment
+          <ion-button @click="postCommentHandler" fill="clear" color="dark">
+            <ion-icon :icon="sendSharp"></ion-icon>
           </ion-button>
-        </div>
+        </ion-row>
         <ion-card
           v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
           :key="index"
@@ -54,8 +58,10 @@ import {
   IonItem,
   IonLabel,
   IonPage,
+  IonRow,
   IonTextarea,
 } from '@ionic/vue';
+import { sendSharp } from 'ionicons/icons';
 import { trashOutline, personCircleOutline } from 'ionicons/icons';
 import { computed, defineComponent, inject, Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -99,11 +105,13 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonPage,
+    IonRow,
     IonTextarea,
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
+    const hasLoaded = ref(false);
     const { username, createdAt } = route.params;
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
@@ -142,6 +150,7 @@ export default defineComponent({
                 }
               }
             }
+            hasLoaded.value = true;
           }
         })
         .catch((error) => {
@@ -217,6 +226,8 @@ export default defineComponent({
       personCircleOutline,
       myUsername,
       deleteCommentHandler,
+      sendSharp,
+      hasLoaded,
     };
   },
 });

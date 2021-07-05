@@ -151,10 +151,6 @@ export default defineComponent({
     };
 
     const onGymSelect = (gymLocation: string) => {
-      // Do nothing if the selected gym has not changed
-      if (selectedGym.value === gymLocation) {
-        return;
-      }
       errorMsg.value?.close();
       selectedGym.value = gymLocation;
       routeList.value?.setGymLocation(selectedGym.value);

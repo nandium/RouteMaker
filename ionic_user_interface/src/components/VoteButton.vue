@@ -1,0 +1,114 @@
+<template>
+  <div
+    class="vote-button-component"
+    @click.stop.prevent="() => handleVoteClick(username, createdAt)"
+  >
+    <ion-icon :icon="hasVotedRef ? heart : heartOutline"></ion-icon>
+    <p>{{ voteCountRef }}</p>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, inject, Ref, ref } from 'vue';
+import { heart, heartOutline } from 'ionicons/icons';
+import { IonIcon } from '@ionic/vue';
+import axios from 'axios';
+import { throttle } from 'lodash';
+
+export default defineComponent({
+  name: 'VoteButton',
+  components: {
+    IonIcon,
+  },
+  props: {
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: String,
+      required: true,
+    },
+    voteCount: {
+      type: Number,
+      required: true,
+    },
+    hasVoted: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup(props) {
+    const voteCountRef = ref(props.voteCount);
+    const hasVotedRef = ref(props.hasVoted);
+
+    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
+
+    let waitingForResponse = false;
+
+    // Display hover feedback only if logged in
+    if (getLoggedIn().value) {
+      const css = '.vote-button-component:hover { background-color: #000000 }';
+      const style = document.createElement('style') as HTMLStyleElement;
+      style.appendChild(document.createTextNode(css));
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    const handleVoteClick = throttle((username: string, createdAt: string) => {
+      if (!getLoggedIn().value || waitingForResponse) {
+        return;
+      }
+      // Toggle voteCount and hasVoted
+      voteCountRef.value += hasVotedRef.value ? -1 : 1;
+      hasVotedRef.value = !hasVotedRef.value;
+
+      waitingForResponse = true;
+      axios
+        .post(
+          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/toggleUpvote',
+          {
+            username,
+            createdAt,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getAccessToken().value}`,
+            },
+          },
+        )
+        .then((response) => {
+          // If different message received, throw error to jump to catch block
+          if (response.data.Message !== 'Toggle upvote route success') {
+            throw Error(response.data.Message);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          // Toggle back voteCount and hasVoted if voting failed
+          voteCountRef.value += hasVotedRef.value ? -1 : 1;
+          hasVotedRef.value = !hasVotedRef.value;
+        })
+        .finally(() => {
+          waitingForResponse = false;
+        });
+    }, 600);
+
+    return {
+      heart,
+      heartOutline,
+      handleVoteClick,
+      voteCountRef,
+      hasVotedRef,
+    };
+  },
+});
+</script>
+
+<style scoped>
+p {
+  padding: 0;
+  line-height: 30px;
+  margin: 0;
+}
+</style>

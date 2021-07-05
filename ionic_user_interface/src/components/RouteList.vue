@@ -1,17 +1,22 @@
 <template>
   <ion-list>
     <ion-card
-      v-for="({ routeName, username, createdAt, publicGrade, voteCount }, index) in routes"
+      v-for="(
+        { routeName, username, createdAt, publicGrade, voteCount, hasVoted }, index
+      ) in routes"
       :key="index"
       class="ion-text-left route-card"
       @click="() => handleRouteCardClick(username, createdAt)"
     >
       <ion-card-header>
         <ion-card-title>{{ routeName }}</ion-card-title>
-        <div class="center-right">
-          <ion-icon :icon="heart"></ion-icon>
-          <p>{{ voteCount }}</p>
-        </div>
+        <VoteButton
+          class="vote-button"
+          :username="username"
+          :createdAt="createdAt"
+          :voteCount="voteCount"
+          :hasVoted="hasVoted"
+        ></VoteButton>
       </ion-card-header>
       <ion-card-content>
         <b>Creator:</b>
@@ -25,11 +30,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { heart } from 'ionicons/icons';
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonIcon, IonList } from '@ionic/vue';
+import { defineComponent, inject, Ref, ref } from 'vue';
+import { heart, heartOutline } from 'ionicons/icons';
+import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonList } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+
+import VoteButton from '@/components/VoteButton.vue';
 
 interface Route {
   commentCount: number;
@@ -39,6 +46,7 @@ interface Route {
   routeName: string;
   username: string;
   voteCount: number;
+  hasVoted: boolean;
 }
 
 export default defineComponent({
@@ -48,16 +56,22 @@ export default defineComponent({
     IonCardContent,
     IonCardHeader,
     IonCardTitle,
-    IonIcon,
+    VoteButton,
     IonList,
   },
   setup() {
     const router = useRouter();
     const routes = ref<Array<Route>>([]);
+    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
 
-    const setGymLocation = (gymLocation: string) => {
+    let gymLocation = '';
+
+    const updateRoutes = () => {
       axios
         .get(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/all', {
+          headers: {
+            Authorization: `Bearer ${getAccessToken().value}`,
+          },
           params: {
             gymLocation,
           },
@@ -76,6 +90,11 @@ export default defineComponent({
         });
     };
 
+    const setGymLocation = (location: string) => {
+      gymLocation = location;
+      updateRoutes();
+    };
+
     const handleRouteCardClick = (username: string, createdAt: string) => {
       router.push({
         name: 'ViewRoute',
@@ -91,6 +110,7 @@ export default defineComponent({
       setGymLocation,
       handleRouteCardClick,
       heart,
+      heartOutline,
     };
   },
 });
@@ -106,7 +126,7 @@ ion-card-header {
   position: relative;
 }
 
-.center-right {
+.vote-button {
   position: absolute;
   top: 50%;
   right: 10px;
@@ -118,11 +138,5 @@ ion-card-header {
   border-radius: 10px;
   border: 2px solid grey;
   padding: 0 7px;
-}
-
-p {
-  padding: 0;
-  line-height: 22px;
-  margin: 0;
 }
 </style>
