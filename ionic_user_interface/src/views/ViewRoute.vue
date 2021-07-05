@@ -3,7 +3,30 @@
     <ion-content :fullscreen="true" v-if="hasLoaded">
       <div id="container" class="ion-text-left">
         <ion-img :src="routeDetails.routeURL"></ion-img>
-        <strong>{{ routeDetails.routeName }}</strong>
+        <ion-row class="ion-justify-content-between">
+          <strong>{{ routeDetails.routeName }}</strong>
+          <VoteButton
+            :username="routeDetails.username"
+            :createdAt="routeDetails.createdAt"
+            v-model:voteCount="routeDetails.voteCount"
+            v-model:hasVoted="routeDetails.hasVoted"
+          ></VoteButton>
+        </ion-row>
+        <div>
+          <b>Route setter's grading:</b>
+          V{{ routeDetails.ownerGrade }}
+        </div>
+        <div>
+          <b>Public's grading:</b>
+          V{{ routeDetails.publicGrade }}
+        </div>
+        <div>
+          <b>Your grading:</b>
+          {{
+            routeDetails.graded == -1 ? 'You have not graded this route' : 'V' + routeDetails.graded
+          }}
+        </div>
+        <br />
         <ion-row
           v-if="!hasAlreadyCommented"
           class="ion-align-items-start ion-justify-content-start"
@@ -65,7 +88,9 @@ import { sendSharp } from 'ionicons/icons';
 import { trashOutline, personCircleOutline } from 'ionicons/icons';
 import { computed, defineComponent, inject, Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { throttle } from 'lodash';
 import axios from 'axios';
+import VoteButton from '@/components/VoteButton.vue';
 
 interface Comment {
   username: string;
@@ -107,6 +132,7 @@ export default defineComponent({
     IonPage,
     IonRow,
     IonTextarea,
+    VoteButton,
   },
   setup() {
     const route = useRoute();
@@ -123,7 +149,7 @@ export default defineComponent({
 
     let routeDetails: Ref<RouteDetails> = ref({});
 
-    const updateRouteDetails = () =>
+    const updateRouteDetails = throttle(() => {
       axios
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details',
@@ -157,10 +183,11 @@ export default defineComponent({
           console.log(error);
           router.back();
         });
+    }, 1000);
 
     updateRouteDetails();
 
-    const postCommentHandler = () => {
+    const postCommentHandler = throttle(() => {
       commentText.value = commentText.value.trim();
       if (commentText.value.length === 0) {
         console.log('Comment cannot be empty');
@@ -192,10 +219,11 @@ export default defineComponent({
         .catch((error) => {
           console.log(error);
         });
-      return true;
-    };
 
-    const deleteCommentHandler = (commentUsername: string, timestamp: number) => {
+      return true;
+    }, 1000);
+
+    const deleteCommentHandler = throttle((commentUsername: string, timestamp: number) => {
       axios
         .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
           headers: {
@@ -215,7 +243,7 @@ export default defineComponent({
         .catch((error) => {
           console.log(error);
         });
-    };
+    }, 1000);
 
     return {
       routeDetails,
@@ -238,6 +266,8 @@ export default defineComponent({
   position: absolute;
   left: 0;
   right: 0;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 #container strong {

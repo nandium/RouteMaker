@@ -1,42 +1,41 @@
 <template>
   <ion-list>
     <ion-card
-      v-for="(
-        { routeName, username, createdAt, publicGrade, voteCount, hasVoted }, index
-      ) in routes"
+      v-for="(route, index) of routes"
       :key="index"
       class="ion-text-left route-card"
-      @click="() => handleRouteCardClick(username, createdAt)"
+      @click="() => handleRouteCardClick(route.username, route.createdAt)"
     >
       <ion-card-header>
-        <ion-card-title>{{ routeName }}</ion-card-title>
+        <ion-card-title>{{ route.routeName }}</ion-card-title>
         <VoteButton
           class="vote-button"
-          :username="username"
-          :createdAt="createdAt"
-          :voteCount="voteCount"
-          :hasVoted="hasVoted"
+          :username="route.username"
+          :createdAt="route.createdAt"
+          v-model:voteCount="route.voteCount"
+          v-model:hasVoted="route.hasVoted"
         ></VoteButton>
       </ion-card-header>
       <ion-card-content>
         <b>Creator:</b>
-        {{ username }}
+        {{ route.username }}
         <br />
         <b>Grade:</b>
-        V{{ publicGrade }}
+        V{{ route.publicGrade }}
       </ion-card-content>
     </ion-card>
   </ion-list>
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, Ref, ref } from 'vue';
+import { defineComponent, inject, Ref, ref, watch } from 'vue';
 import { heart, heartOutline } from 'ionicons/icons';
 import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonList } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 import VoteButton from '@/components/VoteButton.vue';
+import { throttle } from 'lodash';
 
 interface Route {
   commentCount: number;
@@ -66,7 +65,10 @@ export default defineComponent({
 
     let gymLocation = '';
 
-    const updateRoutes = () => {
+    const updateRoutes = throttle(() => {
+      if (gymLocation === '') {
+        return;
+      }
       axios
         .get(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/all', {
           headers: {
@@ -88,12 +90,19 @@ export default defineComponent({
           console.error(error);
           throw new Error('Failed to get routes');
         });
-    };
+    }, 50);
 
     const setGymLocation = (location: string) => {
       gymLocation = location;
       updateRoutes();
     };
+
+    // Small hack to ensure that the likes always stay in sync
+    watch(router.currentRoute, () => {
+      if (router.currentRoute.value.path === '/gyms') {
+        updateRoutes();
+      }
+    });
 
     const handleRouteCardClick = (username: string, createdAt: string) => {
       router.push({
@@ -131,12 +140,5 @@ ion-card-header {
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 2px solid grey;
-  padding: 0 7px;
 }
 </style>

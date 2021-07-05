@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, Ref, ref } from 'vue';
+import { computed, defineComponent, inject, Ref, ref } from 'vue';
 import { heart, heartOutline } from 'ionicons/icons';
 import { IonIcon } from '@ionic/vue';
 import axios from 'axios';
@@ -38,18 +38,23 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
-    const voteCountRef = ref(props.voteCount);
-    const hasVotedRef = ref(props.hasVoted);
-
+  setup(props, { emit }) {
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
+    const voteCountRef = computed({
+      get: () => props.voteCount,
+      set: (value) => emit('update:voteCount', value),
+    });
+    const hasVotedRef = computed({
+      get: () => props.hasVoted,
+      set: (value) => emit('update:hasVoted', value),
+    });
 
     let waitingForResponse = false;
 
     // Display hover feedback only if logged in
     if (getLoggedIn().value) {
-      const css = '.vote-button-component:hover { background-color: #000000 }';
+      const css = '.vote-button-component:hover { background-color: #333333; cursor: pointer; }';
       const style = document.createElement('style') as HTMLStyleElement;
       style.appendChild(document.createTextNode(css));
       document.getElementsByTagName('head')[0].appendChild(style);
@@ -106,9 +111,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.vote-button-component {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 2px solid grey;
+  padding: 5px 7px;
+  align-self: center;
+}
+
 p {
-  padding: 0;
-  line-height: 30px;
-  margin: 0;
+  align-self: center;
+  margin: 0 auto;
 }
 </style>
