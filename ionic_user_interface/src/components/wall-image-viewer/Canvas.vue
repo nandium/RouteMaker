@@ -73,8 +73,8 @@
 
 <script lang="ts">
 import Konva from 'konva';
-import { IonButton, IonLabel, IonSegment, IonSegmentButton } from '@ionic/vue';
-import { defineComponent, inject, onMounted, ref, watch } from 'vue';
+import { IonButton, IonLabel, IonSegment, IonSegmentButton, IonContent } from '@ionic/vue';
+import { defineComponent, inject, onMounted, ref, watch, PropType } from 'vue';
 import { useRouter } from 'vue-router';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
@@ -109,6 +109,10 @@ export default defineComponent({
     },
     width: {
       type: Number,
+      required: true,
+    },
+    ionContent: {
+      type: Object as PropType<typeof IonContent>,
       required: true,
     },
   },
@@ -172,7 +176,7 @@ export default defineComponent({
 
         // Listeners must be added after image is loaded
         addKonvaListenerPinchZoom(stage);
-        addKonvaListenerTouchMove(stage);
+        addKonvaListenerTouchMove(stage, props.ionContent);
       };
       image.src = props.imgSrc;
     };
@@ -205,7 +209,7 @@ export default defineComponent({
       } else if (+oldSelectedMode === SelectMode.DRAWBOX) {
         const newBoundingBoxes = DrawLayer.getKonvaDrawLayerBoundingBoxes(stage);
         DrawLayer.removeKonvaDrawLayer(stage);
-        addKonvaListenerTouchMove(stage);
+        addKonvaListenerTouchMove(stage, props.ionContent);
         addBoxLayerBoundingBoxes(newBoundingBoxes);
         imageLayer.batchDraw();
       }
