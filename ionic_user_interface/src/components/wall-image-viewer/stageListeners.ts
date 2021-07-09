@@ -168,7 +168,7 @@ const addKonvaListenerTouchMove = (stageNode: Konva.Stage, ionContent: typeof Io
       // https://ionicframework.com/docs/api/content
       if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
         newPos.y = stageNode.y();
-        ionContent.$el.scrollByPoint(0, dy, 0);
+        ionContent.$el.scrollByPoint(0, -1 * dy, 0);
       }
 
       stageNode.position(newPos);
