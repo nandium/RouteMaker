@@ -1,8 +1,8 @@
 <template>
-  <ion-header :translucent="true">
+  <ion-header :translucent="true" :style="cssVars">
     <ion-toolbar>
       <ion-title>
-        <ion-img class="logo" :src="`${publicPath}assets/icons/favicon.ico`" router-link="/home" />
+        <ion-img class="logo" router-link="/home" />
       </ion-title>
       <ion-buttons slot="end">
         <ion-button router-link="/home">Home</ion-button>
@@ -30,21 +30,27 @@ export default defineComponent({
     IonToolbar,
     LoginButton,
   },
-  setup() {
-    const publicPath = process.env.BASE_URL;
-    return {
-      publicPath,
-    };
-  },
 });
 </script>
 
 <style scoped>
 .logo {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
 }
 .logo:hover {
   cursor: pointer;
+}
+
+/* 
+TODO: Accomodate for various BASE_URL '/' vs '/RouteMaker/' etc
+https://stackoverflow.com/questions/66127664/why-does-the-browser-try-to-use-an-otherwise-invalid-property-declaration-when-i
+*/
+body.dark .logo {
+  content: url('/assets/icons/favicon-darkmode-name.svg');
+}
+
+body .logo {
+  content: url('/assets/icons/favicon-lightmode-name.svg');
 }
 </style>
