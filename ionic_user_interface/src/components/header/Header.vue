@@ -1,5 +1,5 @@
 <template>
-  <ion-header :translucent="true" :style="cssVars">
+  <ion-header :translucent="true">
     <ion-toolbar>
       <ion-title>
         <ion-img class="logo" router-link="/home" />
