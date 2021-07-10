@@ -166,6 +166,7 @@ const addKonvaListenerTouchMove = (stageNode: Konva.Stage, ionContent: typeof Io
       }
       // if the user tries to drag out of y-bound, scroll the window instead
       // https://ionicframework.com/docs/api/content
+      // BUG: https://github.com/ionic-team/ionic-framework/issues/22304
       if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
         newPos.y = stageNode.y();
         ionContent.$el.scrollByPoint(0, -1 * dy, 0);
