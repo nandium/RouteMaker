@@ -2,7 +2,7 @@
   <ion-header :translucent="true">
     <ion-toolbar>
       <ion-title>
-        <ion-img class="logo" router-link="/home" />
+        <ion-img class="logo" :src="logoImageSrc" router-link="/home" />
       </ion-title>
       <ion-buttons slot="end">
         <ion-button router-link="/home">Home</ion-button>
@@ -17,7 +17,7 @@
 <script lang="ts">
 import { IonButton, IonButtons, IonHeader, IonImg, IonTitle, IonToolbar } from '@ionic/vue';
 import LoginButton from './LoginButton.vue';
-import { defineComponent } from 'vue';
+import { defineComponent, watch, Ref, ref, inject } from 'vue';
 
 export default defineComponent({
   name: 'Header',
@@ -30,6 +30,19 @@ export default defineComponent({
     IonToolbar,
     LoginButton,
   },
+  setup() {
+    const getPrefersDarkMode: () => Ref<boolean> = inject('getPrefersDarkMode', () => ref(false));
+    const prefersDarkMode = getPrefersDarkMode();
+    const logoImageSrc = ref(process.env.BASE_URL + 'assets/icons/favicon-lightmode-name.svg');
+    watch(prefersDarkMode, () => {
+      if (prefersDarkMode.value) {
+        logoImageSrc.value = process.env.BASE_URL + 'assets/icons/favicon-darkmode-name.svg';
+      } else {
+        logoImageSrc.value = process.env.BASE_URL + 'assets/icons/favicon-lightmode-name.svg';
+      }
+    });
+    return { logoImageSrc };
+  },
 });
 </script>
 
@@ -40,17 +53,5 @@ export default defineComponent({
 }
 .logo:hover {
   cursor: pointer;
-}
-
-/* 
-TODO: Accomodate for various BASE_URL '/' vs '/RouteMaker/' etc
-https://stackoverflow.com/questions/66127664/why-does-the-browser-try-to-use-an-otherwise-invalid-property-declaration-when-i
-*/
-body.dark .logo {
-  content: url('/assets/icons/favicon-darkmode-name.svg');
-}
-
-body .logo {
-  content: url('/assets/icons/favicon-lightmode-name.svg');
 }
 </style>
