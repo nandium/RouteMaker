@@ -32,8 +32,7 @@
             color="danger"
             @click="() => reportRouteHandler(routeDetails.username, routeDetails.createdAt)"
           >
-            <ion-label>Report this route</ion-label>
-            <pre></pre>
+            <ion-label>Report this route&nbsp;</ion-label>
             <ion-icon :icon="flag"></ion-icon>
           </ion-button>
         </div>
@@ -61,11 +60,13 @@
             <ion-card-title>{{ comment }}</ion-card-title>
             <div v-if="isLoggedIn" class="center-right">
               <ion-icon
+                class="icon-button"
                 v-if="username !== myUsername"
                 @click="() => reportCommentHandler(username)"
                 :icon="flagOutline"
               ></ion-icon>
               <ion-icon
+                class="icon-button"
                 v-if="username === myUsername || isAdmin"
                 @click="() => deleteCommentHandler(username, timestamp)"
                 :icon="trashOutline"
@@ -340,7 +341,7 @@ export default defineComponent({
                 .post(
                   process.env.VUE_APP_USER_ENDPOINT_URL + '/user/report',
                   {
-                    name: username,
+                    name: commentUsername,
                     reason,
                   },
                   {
@@ -523,12 +524,16 @@ export default defineComponent({
   justify-content: center;
   text-align: center;
   font-size: 25px;
-  border-radius: 4px;
-  padding: 2px;
   margin: 0;
 }
 
-.center-right:hover {
+.icon-button {
+  border-radius: 4px;
+  padding: 2px;
+  margin: 2px;
+}
+
+.icon-button:hover {
   background-color: #444444;
   cursor: pointer;
 }
