@@ -61,6 +61,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const routes = ref<Array<Route>>([]);
+    const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
 
     let gymLocation = '';
@@ -69,11 +70,12 @@ export default defineComponent({
       if (gymLocation === '') {
         return;
       }
+      const headers = getLoggedIn().value
+        ? { Authorization: `Bearer ${getAccessToken().value}` }
+        : {};
       axios
         .get(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/all', {
-          headers: {
-            Authorization: `Bearer ${getAccessToken().value}`,
-          },
+          headers,
           params: {
             gymLocation,
           },

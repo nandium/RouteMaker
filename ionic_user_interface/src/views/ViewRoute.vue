@@ -26,6 +26,17 @@
             routeDetails.graded == -1 ? 'You have not graded this route' : 'V' + routeDetails.graded
           }}
         </div>
+        <div v-if="isLoggedIn">
+          <br />
+          <ion-button
+            color="danger"
+            @click="() => reportRouteHandler(routeDetails.username, routeDetails.createdAt)"
+          >
+            <ion-label>Report this route</ion-label>
+            <pre></pre>
+            <ion-icon :icon="flag"></ion-icon>
+          </ion-button>
+        </div>
         <br />
         <ion-row
           v-if="!hasAlreadyCommented"
@@ -48,12 +59,17 @@
         >
           <ion-card-header>
             <ion-card-title>{{ comment }}</ion-card-title>
-            <div
-              v-if="username === myUsername.value"
-              class="center-right"
-              @click="() => deleteCommentHandler(username, timestamp)"
-            >
-              <ion-icon :icon="trashOutline"></ion-icon>
+            <div v-if="isLoggedIn" class="center-right">
+              <ion-icon
+                v-if="username !== myUsername"
+                @click="() => reportCommentHandler(username)"
+                :icon="flagOutline"
+              ></ion-icon>
+              <ion-icon
+                v-if="username === myUsername || isAdmin"
+                @click="() => deleteCommentHandler(username, timestamp)"
+                :icon="trashOutline"
+              ></ion-icon>
             </div>
           </ion-card-header>
           <ion-card-content>
@@ -83,13 +99,15 @@ import {
   IonPage,
   IonRow,
   IonTextarea,
+  alertController,
+  toastController,
 } from '@ionic/vue';
-import { sendSharp } from 'ionicons/icons';
-import { trashOutline, personCircleOutline } from 'ionicons/icons';
+import { sendSharp, trashOutline, personCircleOutline, flagOutline, flag } from 'ionicons/icons';
 import { computed, defineComponent, inject, Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 import VoteButton from '@/components/VoteButton.vue';
 
 interface Comment {
@@ -139,17 +157,32 @@ export default defineComponent({
     const router = useRouter();
     const hasLoaded = ref(false);
     const { username, createdAt } = route.params;
+    const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
     const commentText = ref('');
 
-    const myUsername = computed(getUsername);
+    const myUsername = getUsername();
+    const isLoggedIn = getLoggedIn();
+    const isAdmin = computed(() => {
+      try {
+        const idObject: { 'custom:role': string } = jwt_decode(getIdToken().value);
+        return idObject['custom:role'] === 'admin';
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    });
 
     const hasAlreadyCommented = ref(false);
 
     let routeDetails: Ref<RouteDetails> = ref({});
 
     const updateRouteDetails = throttle(() => {
+      const headers = getLoggedIn().value
+        ? { Authorization: `Bearer ${getAccessToken().value}` }
+        : {};
       axios
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details',
@@ -158,24 +191,17 @@ export default defineComponent({
             createdAt,
           },
           {
-            headers: {
-              Authorization: `Bearer ${getAccessToken().value}`,
-            },
+            headers,
           },
         )
         .then((response) => {
           console.log(response);
           if (response.data.Message === 'Get route details success') {
             routeDetails.value = response.data.Item;
-            hasAlreadyCommented.value = false;
-            if (routeDetails.value.comments) {
-              for (const comment of routeDetails.value.comments) {
-                if (comment.username === getUsername().value) {
-                  hasAlreadyCommented.value = true;
-                  break;
-                }
-              }
-            }
+            hasAlreadyCommented.value =
+              routeDetails.value.comments?.some(
+                (comment) => comment.username == myUsername.value,
+              ) ?? false;
             hasLoaded.value = true;
           }
         })
@@ -245,6 +271,201 @@ export default defineComponent({
         });
     }, 1000);
 
+    const reportCommentHandler = throttle(async (commentUsername: string) => {
+      const allowedReasons = [
+        '',
+        'abusive',
+        'inappropriate',
+        'spam',
+        'racist',
+        'beliefs',
+        'notlike',
+      ];
+      let reason = '';
+      const alert = await alertController.create({
+        cssClass: 'wide',
+        header: `Report ${commentUsername}?`,
+        message: 'Select your reason for reporting below',
+        inputs: [
+          {
+            type: 'radio',
+            label: 'Abusive content',
+            value: 'abusive',
+            handler: (data) => (reason = data.value),
+          },
+          {
+            type: 'radio',
+            label: 'Inappropriate content',
+            value: 'inappropriate',
+            handler: (data) => (reason = data.value),
+          },
+          {
+            type: 'radio',
+            label: "It's spam",
+            value: 'spam',
+            handler: (data) => (reason = data.value),
+          },
+          {
+            type: 'radio',
+            label: 'Racist content',
+            value: 'racist',
+            handler: (data) => (reason = data.value),
+          },
+          {
+            type: 'radio',
+            label: 'It goes against my beliefs',
+            value: 'beliefs',
+            handler: (data) => (reason = data.value),
+          },
+          {
+            type: 'radio',
+            label: "I don't like it",
+            value: 'notlike',
+            handler: (data) => (reason = data.value),
+          },
+        ],
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'secondary',
+          },
+          {
+            text: 'Ok',
+            handler: () => {
+              if (reason === '' || !allowedReasons.includes(reason)) {
+                return false;
+              }
+              axios
+                .post(
+                  process.env.VUE_APP_USER_ENDPOINT_URL + '/user/report',
+                  {
+                    name: username,
+                    reason,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getAccessToken().value}`,
+                    },
+                  },
+                )
+                .then((response) => {
+                  console.log(response);
+                  toastController
+                    .create({
+                      header: 'Your report has been successfully sent',
+                      position: 'bottom',
+                      color: 'success',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                })
+                .catch((error) => {
+                  console.log(error);
+                  toastController
+                    .create({
+                      header: 'Failed to report user, please try again',
+                      position: 'bottom',
+                      color: 'danger',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                });
+            },
+          },
+        ],
+      });
+      return alert.present();
+    }, 1000);
+
+    const reportRouteHandler = throttle(async (routeUsername: string, createdAt: string) => {
+      const alert = await alertController.create({
+        cssClass: 'wide',
+        header: `Report this route?`,
+        message: 'Are you sure?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'secondary',
+          },
+          {
+            text: 'Yes',
+            handler: () => {
+              axios
+                .post(
+                  process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/report',
+                  {
+                    username: routeUsername,
+                    createdAt,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getAccessToken().value}`,
+                    },
+                  },
+                )
+                .then((response) => {
+                  console.log(response);
+                  toastController
+                    .create({
+                      header: 'Your report has been successfully sent',
+                      position: 'bottom',
+                      color: 'success',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                })
+                .catch((error) => {
+                  console.log(error);
+                  toastController
+                    .create({
+                      header: 'Failed to report route, please try again',
+                      position: 'bottom',
+                      color: 'danger',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                });
+            },
+          },
+        ],
+      });
+      return alert.present();
+    }, 1000);
+
     return {
       routeDetails,
       commentText,
@@ -254,8 +475,14 @@ export default defineComponent({
       personCircleOutline,
       myUsername,
       deleteCommentHandler,
+      reportCommentHandler,
       sendSharp,
       hasLoaded,
+      isLoggedIn,
+      isAdmin,
+      flag,
+      flagOutline,
+      reportRouteHandler,
     };
   },
 });

@@ -6,7 +6,7 @@
         <p>Quickly make custom climbing routes</p>
         <br />
         <br />
-        <ion-button @click="takePhoto()" color="tertiary">
+        <ion-button @click="takePhoto" color="tertiary">
           <ion-icon class="camera-icon" :icon="camera"></ion-icon>
           Upload wall image
         </ion-button>
