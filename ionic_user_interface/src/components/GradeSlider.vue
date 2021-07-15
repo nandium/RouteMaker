@@ -4,17 +4,17 @@
       class="slider"
       type="range"
       min="0"
-      max="15"
+      max="14"
       step="1"
-      :value="15 - value"
+      :value="14 - value"
       :disabled="disabled"
       snaps
       :ticks="false"
       debounce="600"
-      @ionChange="(changeEvent) => changeHandler(15 - changeEvent.detail.value)"
+      @ionChange="(changeEvent) => changeHandler(14 - changeEvent.detail.value)"
     ></ion-range>
     <div class="sliderticks">
-      <p v-for="index of range(0, 15).reverse()" :key="index">V{{ index }}</p>
+      <p v-for="index of range(0, 14).reverse()" :key="index">V{{ index }}</p>
     </div>
   </div>
 </template>
@@ -35,11 +35,13 @@ export default defineComponent({
     },
     disabled: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
     changeHandler: {
       type: Function,
       required: false,
+      default: () => undefined,
     },
   },
   setup() {

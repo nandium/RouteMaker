@@ -38,11 +38,11 @@
           {{ routeDetails.graded == -1 ? 'You have not graded this route' : '' }}
           <GradeSlider
             :value="routeDetails.graded == -1 ? 0 : routeDetails.graded"
-            :disabled="false"
             :changeHandler="gradeChangeHandler"
           ></GradeSlider>
         </div>
         <br />
+        <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <ion-row
           v-if="!hasAlreadyCommented"
           class="ion-align-items-start ion-justify-content-start"
@@ -118,6 +118,7 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import VoteButton from '@/components/VoteButton.vue';
 import GradeSlider from '@/components/GradeSlider.vue';
+import MessageBox from '@/components/MessageBox.vue';
 
 interface Comment {
   username: string;
@@ -159,8 +160,9 @@ export default defineComponent({
     IonPage,
     IonRow,
     IonTextarea,
-    VoteButton,
     GradeSlider,
+    MessageBox,
+    VoteButton,
   },
   setup() {
     const route = useRoute();
@@ -172,6 +174,9 @@ export default defineComponent({
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
     const commentText = ref('');
+
+    const asciiPattern = /^[ -~]+$/;
+    const msgBox: Ref<typeof MessageBox | null> = ref(null);
 
     const myUsername = getUsername();
     const isLoggedIn = getLoggedIn();
@@ -215,7 +220,6 @@ export default defineComponent({
               ) ?? false;
             hasReported.value = routeDetails.value.hasReported ?? false;
             hasLoaded.value = true;
-            console.log(response.data.Item);
           }
         })
         .catch((error) => {
@@ -227,13 +231,18 @@ export default defineComponent({
     updateRouteDetails();
 
     const postCommentHandler = throttle(() => {
+      msgBox.value?.close();
       commentText.value = commentText.value.trim();
       if (commentText.value.length === 0) {
-        console.log('Comment cannot be empty');
+        msgBox.value?.showMsg('Comment cannot be empty');
         return false;
       }
       if (commentText.value.length > 150) {
-        console.log('Comment is too long, please keep it within 150 characters');
+        msgBox.value?.showMsg('Comment is too long, please keep it within 150 characters');
+        return false;
+      }
+      if (!asciiPattern.test(commentText.value)) {
+        msgBox.value?.showMsg('Comment cannot contain non-ASCII characters');
         return false;
       }
 
@@ -494,9 +503,8 @@ export default defineComponent({
             },
           },
         )
-        .then((response) => {
-          console.log(response);
-          routeDetails.value.graded = grade;
+        .then(() => {
+          updateRouteDetails();
         })
         .catch((error) => {
           console.error(error);
@@ -521,6 +529,7 @@ export default defineComponent({
       flagOutline,
       reportRouteHandler,
       hasReported,
+      msgBox,
       gradeChangeHandler,
     };
   },
@@ -579,6 +588,7 @@ export default defineComponent({
 
 ion-textarea {
   border: 1px solid grey;
+  border-radius: 5px;
 }
 
 .margin-right {
@@ -587,5 +597,13 @@ ion-textarea {
 
 ion-card {
   margin: 0px 0 20px 0;
+}
+
+.rounded {
+  border-radius: 5px;
+}
+
+.margin {
+  margin-bottom: 1.4em;
 }
 </style>
