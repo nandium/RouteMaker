@@ -8,6 +8,7 @@
             <ion-item>
               <ion-label class="absolute-position">Country</ion-label>
               <auto-complete
+                ref="autoComplete"
                 :options="countryNameList"
                 optionsKey="country"
                 @matchedItem="onCountrySelect"
@@ -70,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent, computed, Ref } from 'vue';
+import { ref, onMounted, defineComponent, computed, Ref, inject } from 'vue';
 import {
   IonGrid,
   IonList,
@@ -123,14 +124,27 @@ export default defineComponent({
     const selectedGym = ref('');
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
 
+    const getUserCountry: () => Ref<Country | null> = inject('getUserCountry', () => ref(null));
+    const setUserCountry: (country: Country) => void = inject('setUserCountry', () => undefined);
+    const userCountry = getUserCountry();
+    const autoComplete: Ref<typeof AutoComplete | null> = ref(null);
+
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
 
     const gymRouteList = ref<typeof GymRouteList | null>(null);
     const viewMap = ref(false);
 
-    onMounted(() => {
+    onMounted(async () => {
       countryNameList.value = [...Lookup.countries.sort()];
+      if (userCountry.value !== null) {
+        selectedCountryIso3.value = userCountry.value.iso3;
+        const countryGymLocations = await getGymsByCountry(userCountry.value.iso3);
+        gymLocationList.value = countryGymLocations;
+        autoComplete.value?.setValue(userCountry.value.country);
+      } else {
+        reset();
+      }
     });
 
     const reset = () => {
@@ -145,6 +159,7 @@ export default defineComponent({
         selectedCountryIso3.value = country.iso3;
         const countryGymLocations = await getGymsByCountry(country.iso3);
         gymLocationList.value = countryGymLocations;
+        setUserCountry(country);
       } else {
         reset();
       }
@@ -178,6 +193,7 @@ export default defineComponent({
       map,
       mapOutline,
       warning,
+      autoComplete,
     };
   },
 });

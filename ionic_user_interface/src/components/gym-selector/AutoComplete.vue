@@ -47,6 +47,10 @@ export default defineComponent({
       state.filteredSuggestions = [];
     };
 
+    const setValue = (value: string) => {
+      state.userInput = value;
+    };
+
     // Make user input the same as the top suggestion
     const onEnter = () => {
       if (state.filteredSuggestions.length > 0) {
@@ -96,6 +100,7 @@ export default defineComponent({
       ...toRefs(state),
       onSelected,
       onEnter,
+      setValue,
     };
   },
 });
