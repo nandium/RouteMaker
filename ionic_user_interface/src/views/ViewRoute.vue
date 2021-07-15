@@ -12,31 +12,37 @@
             v-model:hasVoted="routeDetails.hasVoted"
           ></VoteButton>
         </ion-row>
-        <div>
-          <b>Route setter's grading:</b>
-          V{{ routeDetails.ownerGrade }}
-        </div>
-        <div>
-          <b>Public's grading:</b>
-          V{{ routeDetails.publicGrade }}
-        </div>
-        <div>
-          <b>Your grading:</b>
-          {{
-            routeDetails.graded == -1 ? 'You have not graded this route' : 'V' + routeDetails.graded
-          }}
-        </div>
         <div v-if="isLoggedIn">
-          <br />
           <ion-button
+            v-if="!hasReported"
             color="danger"
             @click="() => reportRouteHandler(routeDetails.username, routeDetails.createdAt)"
           >
             <ion-label>Report this route&nbsp;</ion-label>
             <ion-icon :icon="flag"></ion-icon>
           </ion-button>
+          <ion-button disabled v-if="hasReported" color="medium">
+            <ion-label>Reported</ion-label>
+          </ion-button>
+        </div>
+        <div class="ion-padding">
+          <b>Route setter's grading:</b>
+          <GradeSlider :value="routeDetails.ownerGrade" :disabled="true"></GradeSlider>
+        </div>
+        <div class="ion-padding">
+          <b>Public's grading:</b>
+          <GradeSlider :value="routeDetails.publicGrade" :disabled="true"></GradeSlider>
+        </div>
+        <div class="ion-padding" v-if="isLoggedIn">
+          <b>Your grading:</b>
+          {{ routeDetails.graded == -1 ? 'You have not graded this route' : '' }}
+          <GradeSlider
+            :value="routeDetails.graded == -1 ? 0 : routeDetails.graded"
+            :changeHandler="gradeChangeHandler"
+          ></GradeSlider>
         </div>
         <br />
+        <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <ion-row
           v-if="!hasAlreadyCommented"
           class="ion-align-items-start ion-justify-content-start"
@@ -52,6 +58,7 @@
             <ion-icon :icon="sendSharp"></ion-icon>
           </ion-button>
         </ion-row>
+        <br />
         <ion-card
           v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
           :key="index"
@@ -110,6 +117,8 @@ import { throttle } from 'lodash';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import VoteButton from '@/components/VoteButton.vue';
+import GradeSlider from '@/components/GradeSlider.vue';
+import MessageBox from '@/components/MessageBox.vue';
 
 interface Comment {
   username: string;
@@ -151,6 +160,8 @@ export default defineComponent({
     IonPage,
     IonRow,
     IonTextarea,
+    GradeSlider,
+    MessageBox,
     VoteButton,
   },
   setup() {
@@ -163,6 +174,9 @@ export default defineComponent({
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
     const commentText = ref('');
+
+    const asciiPattern = /^[ -~]+$/;
+    const msgBox: Ref<typeof MessageBox | null> = ref(null);
 
     const myUsername = getUsername();
     const isLoggedIn = getLoggedIn();
@@ -177,6 +191,8 @@ export default defineComponent({
     });
 
     const hasAlreadyCommented = ref(false);
+
+    const hasReported = ref(false);
 
     let routeDetails: Ref<RouteDetails> = ref({});
 
@@ -196,18 +212,18 @@ export default defineComponent({
           },
         )
         .then((response) => {
-          console.log(response);
           if (response.data.Message === 'Get route details success') {
             routeDetails.value = response.data.Item;
             hasAlreadyCommented.value =
               routeDetails.value.comments?.some(
                 (comment) => comment.username == myUsername.value,
               ) ?? false;
+            hasReported.value = routeDetails.value.hasReported ?? false;
             hasLoaded.value = true;
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           router.back();
         });
     }, 1000);
@@ -215,13 +231,18 @@ export default defineComponent({
     updateRouteDetails();
 
     const postCommentHandler = throttle(() => {
+      msgBox.value?.close();
       commentText.value = commentText.value.trim();
       if (commentText.value.length === 0) {
-        console.log('Comment cannot be empty');
+        msgBox.value?.showMsg('Comment cannot be empty');
         return false;
       }
       if (commentText.value.length > 150) {
-        console.log('Comment is too long, please keep it within 150 characters');
+        msgBox.value?.showMsg('Comment is too long, please keep it within 150 characters');
+        return false;
+      }
+      if (!asciiPattern.test(commentText.value)) {
+        msgBox.value?.showMsg('Comment cannot contain non-ASCII characters');
         return false;
       }
 
@@ -239,12 +260,11 @@ export default defineComponent({
             },
           },
         )
-        .then((response) => {
-          console.log(response);
+        .then(() => {
           updateRouteDetails();
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
 
       return true;
@@ -263,12 +283,11 @@ export default defineComponent({
             timestamp: timestamp.toString(),
           },
         })
-        .then((response) => {
-          console.log(response);
+        .then(() => {
           updateRouteDetails();
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     }, 1000);
 
@@ -350,8 +369,7 @@ export default defineComponent({
                     },
                   },
                 )
-                .then((response) => {
-                  console.log(response);
+                .then(() => {
                   toastController
                     .create({
                       header: 'Your report has been successfully sent',
@@ -370,7 +388,7 @@ export default defineComponent({
                     });
                 })
                 .catch((error) => {
-                  console.log(error);
+                  console.error(error);
                   toastController
                     .create({
                       header: 'Failed to report user, please try again',
@@ -422,8 +440,8 @@ export default defineComponent({
                     },
                   },
                 )
-                .then((response) => {
-                  console.log(response);
+                .then(() => {
+                  hasReported.value = true;
                   toastController
                     .create({
                       header: 'Your report has been successfully sent',
@@ -442,7 +460,7 @@ export default defineComponent({
                     });
                 })
                 .catch((error) => {
-                  console.log(error);
+                  console.error(error);
                   toastController
                     .create({
                       header: 'Failed to report route, please try again',
@@ -467,6 +485,32 @@ export default defineComponent({
       return alert.present();
     }, 1000);
 
+    const gradeChangeHandler = (grade: number) => {
+      if (!isLoggedIn.value) {
+        return;
+      }
+      axios
+        .post(
+          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/grade',
+          {
+            username,
+            createdAt,
+            grade,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getAccessToken().value}`,
+            },
+          },
+        )
+        .then(() => {
+          updateRouteDetails();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    };
+
     return {
       routeDetails,
       commentText,
@@ -484,6 +528,9 @@ export default defineComponent({
       flag,
       flagOutline,
       reportRouteHandler,
+      hasReported,
+      msgBox,
+      gradeChangeHandler,
     };
   },
 });
@@ -494,8 +541,9 @@ export default defineComponent({
   position: absolute;
   left: 0;
   right: 0;
-  max-width: 1000px;
+  max-width: 900px;
   margin: 0 auto;
+  padding: 0;
 }
 
 #container strong {
@@ -540,9 +588,22 @@ export default defineComponent({
 
 ion-textarea {
   border: 1px solid grey;
+  border-radius: 5px;
 }
 
 .margin-right {
   margin: 0 10px 0 0;
+}
+
+ion-card {
+  margin: 0px 0 20px 0;
+}
+
+.rounded {
+  border-radius: 5px;
+}
+
+.margin {
+  margin-bottom: 1.4em;
 }
 </style>
