@@ -5,17 +5,19 @@
     <div class="sticky-button-rows">
       <ion-item class="instruction-steps">
         <ion-icon
+          class="instruction-arrow"
           v-if="routeMakingStep > 0"
           slot="start"
           :icon="chevronBackOutline"
           @click="changeRouteMakingStep(false)"
         ></ion-icon>
-        <ion-text v-if="routeMakingStep === 0">Draw unmarked rocks. Pinch to zoom</ion-text>
+        <ion-text v-if="routeMakingStep === 0">Draw to mark rocks. Pinch to zoom</ion-text>
         <ion-text v-if="routeMakingStep === 1">Select handholds &#38; footholds</ion-text>
         <ion-text v-if="routeMakingStep === 2">Do handhold orders matter?</ion-text>
         <ion-text v-if="routeMakingStep === 3">One hand or two hand start?</ion-text>
         <ion-text v-if="routeMakingStep === 4">Export locally or post on wall?</ion-text>
         <ion-icon
+          class="instruction-arrow"
           v-if="routeMakingStep < 4"
           slot="end"
           :icon="chevronForwardOutline"
@@ -358,6 +360,10 @@ export default defineComponent({
   border: 2px solid var(--ion-color-tertiary);
   filter: hue-rotate(90deg);
   background-color: var(--ion-background-color);
+}
+
+.instruction-arrow:hover {
+  cursor: pointer;
 }
 
 .hold-picker {
