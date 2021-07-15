@@ -11,11 +11,11 @@
           :icon="chevronBackOutline"
           @click="changeRouteMakingStep(false)"
         ></ion-icon>
-        <ion-text v-if="routeMakingStep === 0">Draw to mark rocks. Pinch to zoom</ion-text>
-        <ion-text v-if="routeMakingStep === 1">Select handholds &#38; footholds</ion-text>
-        <ion-text v-if="routeMakingStep === 2">Do handhold orders matter?</ion-text>
-        <ion-text v-if="routeMakingStep === 3">One hand or two hand start?</ion-text>
-        <ion-text v-if="routeMakingStep === 4">Export locally or post on wall?</ion-text>
+        <ion-text v-if="routeMakingStep === 0">1. Draw to mark rocks. Pinch to zoom</ion-text>
+        <ion-text v-if="routeMakingStep === 1">2. Select handholds &#38; footholds</ion-text>
+        <ion-text v-if="routeMakingStep === 2">3. Do handhold orders matter?</ion-text>
+        <ion-text v-if="routeMakingStep === 3">4. One hand or two hand start?</ion-text>
+        <ion-text v-if="routeMakingStep === 4">5. Export locally or post to share?</ion-text>
         <ion-icon
           class="instruction-arrow"
           v-if="routeMakingStep < 4"

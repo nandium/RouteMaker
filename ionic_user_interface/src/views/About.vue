@@ -4,19 +4,34 @@
       <div id="container">
         <strong>Hello Climbers! &#129495;</strong>
         <p class="lead">
-          Personally, when people make routes for me at the gym,
-          <br />
-          I tend to forget half of the moves due to my poor memory.
+          This is a free open source project between two friends who happen to code and climb.
         </p>
 
         <p class="lead">
-          One way is to draw them out on a handphone,
+          It aims to accomplish two things:
           <br />
-          but it is difficult to do so with fat fingers, and labeling
-          <br />
-          the exact order of moves can be troublesome too.
         </p>
-        <p class="lead">This application aims to solve this issue.</p>
+        <p class="lead">
+          1. Provide a drawing board to label custom climbing routes easier
+          <br />
+          2. Route sharing system where climbers can search routes by gym, grade and vote
+        </p>
+
+        <p class="lead">Please star our repository!</p>
+
+        <ion-button
+          target="_blank"
+          href="https://github.com/nandium/RouteMaker"
+          color="light"
+          size="large"
+        >
+          <ion-icon class="github-logo" :icon="logoGithub" size="medium"></ion-icon>
+          Github
+        </ion-button>
+
+        <br />
+        <br />
+        <strong>How To Use</strong>
 
         <hr class="my-4" id="section2" />
         <p class="lead my-4">1. Upload the photo of a climbing wall</p>
@@ -27,34 +42,16 @@
         <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_2.jpg`" />
         <br />
         <br />
-        <p class="lead my-4">3. Select your handholds</p>
+        <p class="lead my-4">3. Create a custom route by following the prompts</p>
         <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_3.jpg`" />
         <br />
         <br />
-        <p class="lead my-4">4. Select your footholds</p>
+        <p class="lead my-4">4. Post to share with other gym goers</p>
         <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_4.jpg`" />
         <br />
         <br />
-        <p class="lead my-4">5. Select number of start holds</p>
+        <p class="lead my-4">5. Vote, grade and comment on other's routes</p>
         <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_5.jpg`" />
-        <br />
-        <br />
-        <p class="lead my-4">6. Export as an image to share with friends</p>
-        <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_6.jpg`" />
-        <br />
-        <br />
-
-        <hr class="my-4" />
-        <p class="lead my-4">Pull requests are welcomed!</p>
-        <ion-button
-          target="_blank"
-          href="https://github.com/nandium/RouteMaker"
-          color="light"
-          size="large"
-        >
-          <ion-icon class="github-logo" :icon="logoGithub" size="large"></ion-icon>
-          GitHub
-        </ion-button>
         <br />
         <br />
       </div>
@@ -112,6 +109,7 @@ export default defineComponent({
 .screenshot {
   border-radius: 15px;
   border: 2px solid grey;
+  max-width: 200px;
 }
 
 .github-logo {
