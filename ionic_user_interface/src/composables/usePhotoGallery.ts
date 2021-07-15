@@ -1,5 +1,5 @@
 import { Ref, ref } from 'vue';
-import { CameraResultType, Photo, Camera } from '@capacitor/camera';
+import { CameraResultType, CameraSource, Photo, Camera } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { isPlatform } from '@ionic/vue';
@@ -72,6 +72,7 @@ export function usePhotoGallery(): {
   const takePhoto = async () => {
     const cameraPhoto = await Camera.getPhoto({
       resultType: CameraResultType.Uri,
+      source: CameraSource.Photos,
       quality: 100,
     });
     const fileName = new Date().getTime() + '.jpeg';
