@@ -12,7 +12,7 @@
           <br />
         </p>
         <p class="lead">
-          1. Provide a drawing board to label custom climbing routes easier
+          1. Provide a drawing board for custom climbing routes
           <br />
           2. Route sharing system where climbers can search routes by gym, grade and vote
         </p>
