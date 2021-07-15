@@ -32,10 +32,4 @@ enum SelectMode {
   MARKDONE,
 }
 
-interface ModeChangedEvent {
-  detail: {
-    value: SelectMode;
-  };
-}
-
-export { BoxClass, BoxState, SelectMode, TapeMode, NumberMode, ModeChangedEvent };
+export { BoxClass, BoxState, SelectMode, TapeMode, NumberMode };

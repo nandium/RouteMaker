@@ -16,32 +16,6 @@ A route sharing system where users can view, grade, vote, comment on each other 
 
 Application: https://routemaker.rocks
 
-## Usage
-
-#### 1. Upload the photo of a climbing wall
-
-<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/Screenshot_1.jpg" width="200" />
-
-#### 2. The holds will be marked automatically
-
-<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/Screenshot_2.jpg" width="200" />
-
-#### 3. Select your handholds
-
-<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/Screenshot_3.jpg" width="200" />
-
-#### 4. Select your footholds
-
-<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/Screenshot_4.jpg" width="200" />
-
-#### 5. Select number of start holds
-
-<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/Screenshot_5.jpg" width="200" />
-
-#### 6. Export as an image to share with friends
-
-<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/Screenshot_6.jpg" width="200" />
-
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Refer to `CONTRIBUTING.md` for PR and local setup instructions.
