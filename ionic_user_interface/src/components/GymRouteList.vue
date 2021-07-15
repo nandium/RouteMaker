@@ -49,7 +49,7 @@ interface Route {
 }
 
 export default defineComponent({
-  name: 'RouteList',
+  name: 'GymRouteList',
   components: {
     IonCard,
     IonCardContent,

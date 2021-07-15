@@ -62,7 +62,7 @@
       ></iframe>
       <ion-row class="ion-align-items-center ion-justify-content-center">
         <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-          <RouteList v-show="userHasSelectedGym" ref="routeList" />
+          <GymRouteList v-show="userHasSelectedGym" ref="gymRouteList" />
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -87,7 +87,7 @@ import Lookup, { Country } from 'country-code-lookup';
 import { map, mapOutline, warning } from 'ionicons/icons';
 
 import MessageBox from '@/components/MessageBox.vue';
-import RouteList from '@/components/RouteList.vue';
+import GymRouteList from '@/components/GymRouteList.vue';
 import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
 
@@ -106,7 +106,7 @@ export default defineComponent({
     IonButton,
     AutoComplete,
     MessageBox,
-    RouteList,
+    GymRouteList,
   },
   props: {
     width: {
@@ -126,7 +126,7 @@ export default defineComponent({
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
 
-    const routeList = ref<typeof RouteList | null>(null);
+    const gymRouteList = ref<typeof GymRouteList | null>(null);
     const viewMap = ref(false);
 
     onMounted(() => {
@@ -153,7 +153,7 @@ export default defineComponent({
     const onGymSelect = (gymLocation: string) => {
       errorMsg.value?.close();
       selectedGym.value = gymLocation;
-      routeList.value?.setGymLocation(selectedGym.value);
+      gymRouteList.value?.setGymLocation(selectedGym.value);
     };
 
     const onClickViewMap = () => {
@@ -173,7 +173,7 @@ export default defineComponent({
       userHasSelectedCountry,
       errorMsg,
       viewMap,
-      routeList,
+      gymRouteList,
       onClickViewMap,
       map,
       mapOutline,
