@@ -4,15 +4,18 @@
       <div id="container" class="ion-text-left">
         <ion-img :src="routeDetails.routeURL"></ion-img>
         <ion-row class="ion-justify-content-between">
-          <strong>{{ routeDetails.routeName }}</strong>
+          <div class="route-title">
+            <b>{{ routeDetails.routeName }}</b>
+          </div>
           <VoteButton
+            class="margin-right"
             :username="routeDetails.username"
             :createdAt="routeDetails.createdAt"
             v-model:voteCount="routeDetails.voteCount"
             v-model:hasVoted="routeDetails.hasVoted"
           ></VoteButton>
         </ion-row>
-        <div v-if="isLoggedIn">
+        <div v-if="isLoggedIn" class="margin-left">
           <ion-button
             v-if="!hasReported"
             color="danger"
@@ -57,8 +60,8 @@
           <ion-button @click="postCommentHandler" fill="clear" color="dark">
             <ion-icon :icon="sendSharp"></ion-icon>
           </ion-button>
+          <br />
         </ion-row>
-        <br />
         <ion-card
           v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
           :key="index"
@@ -575,6 +578,13 @@ export default defineComponent({
   margin: 0;
 }
 
+.route-title {
+  flex: 1;
+  vertical-align: middle;
+  font-size: 3em;
+  margin: 20px 30px 20px 10px;
+}
+
 .icon-button {
   border-radius: 4px;
   padding: 2px;
@@ -591,8 +601,12 @@ ion-textarea {
   border-radius: 5px;
 }
 
+.margin-left {
+  margin-left: 10px;
+}
+
 .margin-right {
-  margin: 0 10px 0 0;
+  margin-right: 10px;
 }
 
 ion-card {
