@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" ref="ionContent">
       <div id="container">
         <strong>Route Maker</strong>
         <p>Quickly make custom climbing routes</p>
@@ -10,7 +10,12 @@
           <ion-icon class="camera-icon" :icon="camera"></ion-icon>
           Upload wall image
         </ion-button>
-        <Canvas v-if="photoUploaded" :imgSrc="photoData" :width="canvasWidth" />
+        <Canvas
+          v-if="photoUploaded"
+          :imgSrc="photoData"
+          :width="canvasWidth"
+          :ionContent="ionContent"
+        />
       </div>
     </ion-content>
   </ion-page>
@@ -40,6 +45,8 @@ export default defineComponent({
     const { photo, takePhoto } = usePhotoGallery();
     const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
 
+    const ionContent = ref<typeof IonContent | null>(null);
+
     watch(photo, (oldPhoto, newPhoto) => {
       if (newPhoto !== oldPhoto && oldPhoto !== null) {
         photoUploaded.value = true;
@@ -49,6 +56,7 @@ export default defineComponent({
         updateCanvasWidth();
       }
     });
+
     window.addEventListener('resize', updateCanvasWidth);
 
     onMounted(() => {
@@ -66,6 +74,7 @@ export default defineComponent({
       photo,
       takePhoto,
       camera,
+      ionContent,
     };
   },
 });

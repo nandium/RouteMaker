@@ -25,16 +25,23 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
   let { publicGradeSubmissions, ownerGrade } = Item;
   let publicGradeTotal = 0;
+  let userHasGradedBefore = false;
+  // If user has graded before, replace the original entry
   publicGradeSubmissions = publicGradeSubmissions.map((gradeSubmission) => {
     const { username: submittedName, grade: submittedGrade } = gradeSubmission;
     if (submittedName === username) {
       publicGradeTotal += grade;
+      userHasGradedBefore = true;
       return { username, grade };
     } else {
       publicGradeTotal += submittedGrade;
       return gradeSubmission;
     }
   });
+  if (!userHasGradedBefore) {
+    publicGradeTotal += grade;
+    publicGradeSubmissions = [...publicGradeSubmissions, { username, grade }];
+  }
 
   if (username === routeOwnerUsername) {
     ownerGrade = grade;

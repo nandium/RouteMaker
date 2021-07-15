@@ -1,4 +1,6 @@
-# RouteMaker :boom:
+<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/favicon-lightmode-name.svg" width="200" />
+
+<hr />
 
 ![GitHub](https://img.shields.io/github/license/nandium/RouteMaker?style=flat-square) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) ![Website](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Froutemaker.rocks) ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/nandium/RouteMaker?style=flat-square)
 
