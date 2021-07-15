@@ -141,6 +141,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/ViewRoute.vue'),
   },
   {
+    path: '/userRoutes/:username',
+    name: 'userRoutes',
+    component: () => import('@/views/UserRoutes.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/home',
     beforeEnter: (_, __, next) => {
