@@ -13,7 +13,7 @@
         ></ion-icon>
         <ion-text v-if="routeMakingStep === 0">1. Draw to mark rocks. Pinch to zoom</ion-text>
         <ion-text v-if="routeMakingStep === 1">2. Select handholds &#38; footholds</ion-text>
-        <ion-text v-if="routeMakingStep === 2">3. Do handhold orders matter?</ion-text>
+        <ion-text v-if="routeMakingStep === 2">3. Does handhold order matter?</ion-text>
         <ion-text v-if="routeMakingStep === 3">4. One hand or two hand start?</ion-text>
         <ion-text v-if="routeMakingStep === 4">5. Export locally or post to share?</ion-text>
         <ion-icon
