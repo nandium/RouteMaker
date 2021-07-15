@@ -3,24 +3,33 @@
     <br />
     <br />
     <div class="button-rows">
+      <ion-item>
+        <ion-icon
+          slot="start"
+          :icon="chevronBackOutline"
+          @click="routeMakingStepNumber--"
+        ></ion-icon>
+        <ion-text v-if="routeMakingStepNumber === 0">Drag to draw unmarked holds</ion-text>
+        <ion-text v-if="routeMakingStepNumber === 1">Select handholds &#38; footholds</ion-text>
+        <ion-icon
+          slot="end"
+          :icon="chevronForwardOutline"
+          @click="routeMakingStepNumber++"
+        ></ion-icon>
+      </ion-item>
       <ion-segment
         class="mode-switcher"
         @ionChange="selectModeChanged($event)"
         color="tertiary"
         mode="ios"
         :value="selectedMode"
+        v-if="false"
       >
         <ion-segment-button :value="SelectMode.HANDHOLD">
           <ion-label>HandHold</ion-label>
         </ion-segment-button>
         <ion-segment-button :value="SelectMode.FOOTHOLD">
           <ion-label>FootHold</ion-label>
-        </ion-segment-button>
-        <ion-segment-button :value="SelectMode.DRAWBOX">
-          <ion-label>DrawBox</ion-label>
-        </ion-segment-button>
-        <ion-segment-button :value="SelectMode.MARKDONE">
-          <ion-label>MarkDone</ion-label>
         </ion-segment-button>
       </ion-segment>
       <div v-if="+selectedMode === SelectMode.MARKDONE">
@@ -73,9 +82,10 @@
 
 <script lang="ts">
 import Konva from 'konva';
-import { IonButton, IonLabel, IonSegment, IonSegmentButton, IonContent } from '@ionic/vue';
+import { IonButton, IonLabel, IonSegment, IonSegmentButton, IonContent, IonIcon } from '@ionic/vue';
 import { defineComponent, inject, onMounted, ref, watch, PropType } from 'vue';
 import { useRouter } from 'vue-router';
+import { chevronForwardOutline, chevronBackOutline } from 'ionicons/icons';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
 import { useBoxLayer, DrawLayer } from '@/components/wall-image-viewer/box-layer';
@@ -101,6 +111,7 @@ export default defineComponent({
     IonLabel,
     IonSegment,
     IonSegmentButton,
+    IonIcon,
   },
   props: {
     imgSrc: {
@@ -118,7 +129,7 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const selectedMode = ref<SelectMode>(SelectMode.HANDHOLD);
+    const selectedMode = ref<SelectMode>(SelectMode.DRAWBOX);
     const tapeMode = ref<TapeMode>(TapeMode.NONE);
     const numberMode = ref<NumberMode>(NumberMode.ON);
     const hideNumbersFill = ref<string>('outline');
@@ -126,6 +137,7 @@ export default defineComponent({
     const tapeFill = ref<string>('outline');
     const tapeText = ref<string>('No Tape');
     const loadingSpinner = inject('$loading') as Record<string, any>;
+    const routeMakingStepNumber = ref(0);
 
     const setRouteImageUri: (imageUri: string) => void = inject(
       'setRouteImageUri',
@@ -300,12 +312,24 @@ export default defineComponent({
       handlePostClick,
       handleUndoDraw,
       handleReset,
+      routeMakingStepNumber,
+      chevronForwardOutline,
+      chevronBackOutline,
     };
   },
 });
 </script>
 
 <style scoped>
+ion-item {
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 5px;
+  border: 2px solid var(--ion-color-tertiary);
+  filter: hue-rotate(90deg);
+  background: transparent;
+}
+
 ion-segment {
   max-width: 500px;
   margin: 0 auto;
@@ -359,7 +383,7 @@ ion-button::part(native) {
 }
 
 .button-rows {
-  background-color: var(--ion-background-color);
+  /* background-color: var(--ion-background-color); */
   position: sticky;
   position: -webkit-sticky; /* Safari */
   top: 0px;
