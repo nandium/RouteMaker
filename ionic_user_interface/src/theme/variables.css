@@ -25,6 +25,14 @@ http://ionicframework.com/docs/theming/ */
   --min-width: 400px;
 }
 
+.slider {
+  --bar-background: linear-gradient(to right, red, red, orange, yellow, green, blue);
+  --bar-background-active: grey;
+  --knob-size: 25px;
+  --knob-background: white;
+  --bar-height: 10px;
+}
+
 /** Ionic CSS Variables **/
 :root {
   --ion-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Oxygen, Ubuntu,
