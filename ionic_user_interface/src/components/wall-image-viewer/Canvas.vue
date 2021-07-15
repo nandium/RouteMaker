@@ -3,15 +3,17 @@
     <br />
     <br />
     <div class="sticky-button-rows">
-      <ion-item class="instruction-steps">
+      <ion-item class="instruction-steps ion-text-center">
         <ion-icon
           class="instruction-arrow"
           v-if="routeMakingStep > 0"
           slot="start"
-          :icon="chevronBackOutline"
+          :icon="caretBackOutline"
           @click="changeRouteMakingStep(false)"
         ></ion-icon>
-        <ion-text v-if="routeMakingStep === 0">1. Draw to mark rocks. Pinch to zoom</ion-text>
+        <ion-text v-if="routeMakingStep === 0">
+          1. Drag to draw the undetected holds. Pinch to zoom
+        </ion-text>
         <ion-text v-if="routeMakingStep === 1">2. Select handholds &#38; footholds</ion-text>
         <ion-text v-if="routeMakingStep === 2">3. Does handhold order matter?</ion-text>
         <ion-text v-if="routeMakingStep === 3">4. One hand or two hand start?</ion-text>
@@ -20,7 +22,7 @@
           class="instruction-arrow"
           v-if="routeMakingStep < 4"
           slot="end"
-          :icon="chevronForwardOutline"
+          :icon="caretForwardOutline"
           @click="changeRouteMakingStep(true)"
         ></ion-icon>
       </ion-item>
@@ -95,7 +97,7 @@ import {
 } from '@ionic/vue';
 import { defineComponent, inject, onMounted, ref, watch, PropType } from 'vue';
 import { useRouter } from 'vue-router';
-import { chevronForwardOutline, chevronBackOutline } from 'ionicons/icons';
+import { caretForwardOutline, caretBackOutline } from 'ionicons/icons';
 
 import getBoundingBoxes from '@/components/wall-image-viewer/getBoundingBoxes';
 import { useBoxLayer, DrawLayer } from '@/components/wall-image-viewer/box-layer';
@@ -343,8 +345,8 @@ export default defineComponent({
       handleUndoDraw,
       handleReset,
       routeMakingStep,
-      chevronForwardOutline,
-      chevronBackOutline,
+      caretForwardOutline,
+      caretBackOutline,
       changeRouteMakingStep,
       changeSelectMode,
     };
@@ -364,6 +366,7 @@ export default defineComponent({
 
 .instruction-arrow:hover {
   cursor: pointer;
+  color: black;
 }
 
 .hold-picker {
