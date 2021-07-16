@@ -4,6 +4,9 @@
       <ion-grid>
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+            <div class="page-title">
+              <b>Routes By User</b>
+            </div>
             <ion-item class="rounded">
               <ion-icon slot="start" :icon="personCircleOutline"></ion-icon>
               <ion-text>{{ usernameText }}</ion-text>
@@ -84,30 +87,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
-  position: absolute;
-  left: 2%;
-  right: 2%;
-  z-index: -1;
-  padding-top: 30px;
-}
-
-#container strong {
-  font-size: 2em;
-  line-height: 2em;
-}
-
-#container p {
-  font-size: 1.3em;
-  line-height: 1.5em;
-}
-
-#container a {
-  text-decoration: none;
-}
-
 .report-icon:hover {
   cursor: pointer;
+}
+
+.page-title {
+  text-align: center;
+  font-size: clamp(2rem, 7vw, 2.5rem);
+  margin: 10px 10px 30px 10px;
 }
 </style>
