@@ -15,28 +15,41 @@
             v-model:hasVoted="routeDetails.hasVoted"
           ></VoteButton>
         </ion-row>
-        <div v-if="isLoggedIn" class="margin-left">
-          <ion-button
-            v-if="!hasReported"
-            color="danger"
-            @click="() => reportRouteHandler(routeDetails.username, routeDetails.createdAt)"
+        <ion-row class="ion-justify-content-between display-flex">
+          <ion-item
+            class="ion-no-padding margin-left rounded"
+            :href="'/userRoutes/' + routeDetails.username"
           >
-            <ion-label>Report this route&nbsp;</ion-label>
-            <ion-icon :icon="flag"></ion-icon>
-          </ion-button>
-          <ion-button disabled v-if="hasReported" color="medium">
-            <ion-label>Reported</ion-label>
-          </ion-button>
-        </div>
+            <ion-icon
+              class="margin-right margin-left"
+              slot="start"
+              :icon="personCircleOutline"
+            ></ion-icon>
+            <ion-label class="align-middle">{{ routeDetails.username }}</ion-label>
+          </ion-item>
+          <div v-if="isLoggedIn" class="margin-right">
+            <ion-button
+              v-if="!hasReported"
+              color="danger"
+              @click="() => reportRouteHandler(routeDetails.username, routeDetails.createdAt)"
+            >
+              <ion-label>Report this route&nbsp;</ion-label>
+              <ion-icon :icon="flag"></ion-icon>
+            </ion-button>
+            <ion-button disabled v-if="hasReported" color="medium">
+              <ion-label>Reported</ion-label>
+            </ion-button>
+          </div>
+        </ion-row>
         <div class="ion-padding">
-          <b>Route setter's grading:</b>
-          <GradeSlider :value="routeDetails.ownerGrade" :disabled="true"></GradeSlider>
+          <b>Route setter's {{ isRouteSetter ? '(you)' : '' }} grading:</b>
+          <GradeSlider :value="routeDetails.ownerGrade" :disabled="!isRouteSetter"></GradeSlider>
         </div>
         <div class="ion-padding">
           <b>Public's grading:</b>
           <GradeSlider :value="routeDetails.publicGrade" :disabled="true"></GradeSlider>
         </div>
-        <div class="ion-padding" v-if="isLoggedIn">
+        <div class="ion-padding" v-if="isLoggedIn && !isRouteSetter">
           <b>Your grading:</b>
           {{ routeDetails.graded == -1 ? 'You have not graded this route' : '' }}
           <GradeSlider
@@ -46,57 +59,59 @@
         </div>
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
-        <ion-row
-          v-if="!hasAlreadyCommented"
-          class="ion-align-items-start ion-justify-content-start"
-        >
-          <ion-textarea
-            placeholder="Write a comment..."
-            class="ion-no-margin"
-            maxlength="150"
-            v-model="commentText"
-            autoGrow
-          ></ion-textarea>
-          <ion-button @click="postCommentHandler" fill="clear" color="dark">
-            <ion-icon :icon="sendSharp"></ion-icon>
-          </ion-button>
-          <br />
-        </ion-row>
-        <ion-card
-          v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
-          :key="index"
-        >
-          <ion-card-header>
-            <ion-card-title>{{ comment }}</ion-card-title>
-            <div v-if="isLoggedIn" class="center-right">
-              <ion-icon
-                class="icon-button"
-                v-if="username !== myUsername"
-                @click="() => reportCommentHandler(username)"
-                :icon="flagOutline"
-              ></ion-icon>
-              <ion-icon
-                class="icon-button"
-                v-if="username === myUsername || isAdmin"
-                @click="() => deleteCommentHandler(username, timestamp)"
-                :icon="trashOutline"
-              ></ion-icon>
-            </div>
-          </ion-card-header>
-          <ion-card-content class="ion-no-padding ion-no-margin display-flex">
-            <ion-item
-              class="ion-no-padding margin-left-large rounded"
-              :href="'/userRoutes/' + username"
-            >
-              <ion-icon
-                class="margin-right margin-left"
-                slot="start"
-                :icon="personCircleOutline"
-              ></ion-icon>
-              <ion-label class="align-middle">{{ username }}</ion-label>
-            </ion-item>
-          </ion-card-content>
-        </ion-card>
+        <div class="margin-left margin-right">
+          <ion-row
+            v-if="!hasAlreadyCommented"
+            class="ion-align-items-start ion-justify-content-start margin"
+          >
+            <ion-textarea
+              placeholder="Write a comment..."
+              class="ion-no-margin"
+              maxlength="150"
+              v-model="commentText"
+              autoGrow
+            ></ion-textarea>
+            <ion-button @click="postCommentHandler" fill="clear" color="dark">
+              <ion-icon :icon="sendSharp"></ion-icon>
+            </ion-button>
+            <br />
+          </ion-row>
+          <ion-card
+            v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
+            :key="index"
+          >
+            <ion-card-header>
+              <ion-card-title>{{ comment }}</ion-card-title>
+              <div v-if="isLoggedIn" class="center-right">
+                <ion-icon
+                  class="icon-button"
+                  v-if="username !== myUsername"
+                  @click="() => reportCommentHandler(username)"
+                  :icon="flagOutline"
+                ></ion-icon>
+                <ion-icon
+                  class="icon-button"
+                  v-if="username === myUsername || isAdmin"
+                  @click="() => deleteCommentHandler(username, timestamp)"
+                  :icon="trashOutline"
+                ></ion-icon>
+              </div>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding ion-no-margin display-flex">
+              <ion-item
+                class="ion-no-padding margin-left-large rounded"
+                :href="'/userRoutes/' + username"
+              >
+                <ion-icon
+                  class="margin-right margin-left"
+                  slot="start"
+                  :icon="personCircleOutline"
+                ></ion-icon>
+                <ion-label class="align-middle">{{ username }}</ion-label>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -199,6 +214,7 @@ export default defineComponent({
         return false;
       }
     });
+    const isRouteSetter = computed(() => username === myUsername.value);
 
     const hasAlreadyCommented = ref(false);
 
@@ -541,6 +557,7 @@ export default defineComponent({
       hasReported,
       msgBox,
       gradeChangeHandler,
+      isRouteSetter,
     };
   },
 });
@@ -588,7 +605,7 @@ export default defineComponent({
 .route-title {
   flex: 1;
   vertical-align: middle;
-  font-size: 3em;
+  font-size: 7vmin;
   margin: 20px 30px 20px 10px;
 }
 

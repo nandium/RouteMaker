@@ -108,10 +108,18 @@
         </ion-card-header>
         <ion-card-content>
           <b>Creator:&nbsp;</b>
-          <router-link :to="'/userRoutes/' + route.username">{{ route.username }}</router-link>
+          <router-link
+            :to="'/userRoutes/' + route.username"
+            @click.capture.prevent.stop="undefined"
+          >
+            {{ route.username }}
+          </router-link>
           <br />
           <b>Grade:</b>
           V{{ route.publicGrade }}
+          <br />
+          <b>Created:</b>
+          {{ route.createdAt.split('T')[0] }}
         </ion-card-content>
       </ion-card>
     </ion-list>
@@ -250,7 +258,7 @@ export default defineComponent({
               } else {
                 searchMap.set(vGrade, [route.routeId]);
               }
-              const createdAt = route.createdAt.toLowerCase().substring(0, 10);
+              const createdAt = route.createdAt.toLowerCase().split('T')[0];
               if (searchMap.has(createdAt)) {
                 searchMap.get(createdAt).push(route.routeId);
               } else {
