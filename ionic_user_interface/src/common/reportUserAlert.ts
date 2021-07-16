@@ -4,7 +4,7 @@ import { toastController, alertController } from '@ionic/vue';
 const getAlertController = async (username: string, accessToken: string) => {
   const allowedReasons = ['', 'abusive', 'inappropriate', 'spam', 'racist', 'beliefs', 'notlike'];
   let reason = '';
-  return await alertController.create({
+  return alertController.create({
     cssClass: 'wide',
     header: `Report ${username}?`,
     message: 'Select your reason for reporting below',
