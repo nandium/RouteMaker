@@ -5,17 +5,27 @@
         <strong>Route Maker</strong>
         <p>Find climbing routes by gym</p>
         <br />
-        <gym-selector v-if="canvasWidth > 0" :width="canvasWidth" />
+        <gym-selector
+          v-if="canvasWidth > 0"
+          :width="canvasWidth"
+          @onGymSelect="handleOnGymSelect"
+        />
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+          <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+            <gym-route-list v-show="userHasSelectedGym" ref="gymRouteList" />
+          </ion-col>
+        </ion-row>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage } from '@ionic/vue';
-import { defineComponent, onMounted, onUnmounted } from 'vue';
+import { IonContent, IonPage, IonRow, IonCol } from '@ionic/vue';
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 
 import GymSelector from '@/components/gym-selector/GymSelector.vue';
+import GymRouteList from '@/components/GymRouteList.vue';
 import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
 export default defineComponent({
@@ -23,7 +33,10 @@ export default defineComponent({
   components: {
     IonContent,
     IonPage,
+    IonRow,
+    IonCol,
     GymSelector,
+    GymRouteList,
   },
   setup() {
     const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
@@ -34,8 +47,20 @@ export default defineComponent({
     onUnmounted(() => {
       window.removeEventListener('resize', updateCanvasWidth);
     });
+
+    const gymRouteList = ref<typeof GymRouteList | null>(null);
+    const userHasSelectedGym = ref(false);
+
+    const handleOnGymSelect = (gymLocation: string) => {
+      userHasSelectedGym.value = true;
+      gymRouteList.value?.setGymLocation(gymLocation);
+    };
+
     return {
       canvasWidth,
+      gymRouteList,
+      userHasSelectedGym,
+      handleOnGymSelect,
     };
   },
 });

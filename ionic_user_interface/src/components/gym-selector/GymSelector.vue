@@ -61,11 +61,6 @@
         allowfullscreen
         :src="embedMapSrcStart + embedMapPointerLocation"
       ></iframe>
-      <ion-row class="ion-align-items-center ion-justify-content-center">
-        <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-          <GymRouteList v-show="userHasSelectedGym" ref="gymRouteList" />
-        </ion-col>
-      </ion-row>
     </ion-grid>
   </div>
 </template>
@@ -88,7 +83,6 @@ import Lookup, { Country } from 'country-code-lookup';
 import { map, mapOutline, warning } from 'ionicons/icons';
 
 import MessageBox from '@/components/MessageBox.vue';
-import GymRouteList from '@/components/GymRouteList.vue';
 import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
 
@@ -107,7 +101,6 @@ export default defineComponent({
     IonButton,
     AutoComplete,
     MessageBox,
-    GymRouteList,
   },
   props: {
     width: {
@@ -115,7 +108,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(_, { emit }) {
     const embedMapSrcStart = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_MAP_EMBED_API}&q=`;
     const embedMapPointerLocation = ref('');
     const countryNameList = ref<Array<Country>>([]);
@@ -132,7 +125,6 @@ export default defineComponent({
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
 
-    const gymRouteList = ref<typeof GymRouteList | null>(null);
     const viewMap = ref(false);
 
     onMounted(async () => {
@@ -165,10 +157,13 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Whenever a gym is selected, emit the location of selected gym
+     */
     const onGymSelect = (gymLocation: string) => {
       errorMsg.value?.close();
       selectedGym.value = gymLocation;
-      gymRouteList.value?.setGymLocation(selectedGym.value);
+      emit('onGymSelect', gymLocation);
     };
 
     const onClickViewMap = () => {
@@ -188,7 +183,6 @@ export default defineComponent({
       userHasSelectedCountry,
       errorMsg,
       viewMap,
-      gymRouteList,
       onClickViewMap,
       map,
       mapOutline,
