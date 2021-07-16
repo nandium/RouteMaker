@@ -27,7 +27,7 @@
             ></ion-icon>
             <ion-label class="align-middle">{{ routeDetails.username }}</ion-label>
           </ion-item>
-          <div v-if="isLoggedIn" class="margin-right">
+          <div v-if="isLoggedIn" class="margin-right margin-left">
             <ion-button
               v-if="!hasReported"
               color="danger"
@@ -61,7 +61,7 @@
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <div class="margin-left margin-right">
           <ion-row
-            v-if="!hasAlreadyCommented"
+            v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"
           >
             <ion-textarea
@@ -605,7 +605,7 @@ export default defineComponent({
 .route-title {
   flex: 1;
   vertical-align: middle;
-  font-size: 7vmin;
+  font-size: clamp(2rem, 7vw, 2.5rem);
   margin: 20px 30px 20px 10px;
 }
 
