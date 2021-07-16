@@ -1,5 +1,15 @@
 <template>
   <div>
+    <ion-item>
+      <ion-input
+        type="text"
+        placeholder="Search for a route"
+        v-model="searchText"
+        maxlength="70"
+        clear-input
+      ></ion-input>
+      <ion-icon :icon="searchOutline" slot="end"></ion-icon>
+    </ion-item>
     <ion-item class="button-row">
       <div class="range">
         <ion-range
@@ -111,7 +121,13 @@
 <script lang="ts">
 import { defineComponent, inject, Ref, ref, watch } from 'vue';
 import { RangeChangeEventDetail } from '@ionic/core/dist/types/interface';
-import { heart, heartOutline, filterOutline, checkmarkOutline } from 'ionicons/icons';
+import {
+  heart,
+  heartOutline,
+  filterOutline,
+  checkmarkOutline,
+  searchOutline,
+} from 'ionicons/icons';
 import {
   IonButton,
   IonCard,
@@ -119,6 +135,7 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonIcon,
+  IonInput,
   IonItem,
   IonLabel,
   IonList,
@@ -140,6 +157,7 @@ interface Route {
   username: string;
   voteCount: number;
   hasVoted: boolean;
+  routeId: number;
 }
 
 enum SortMode {
@@ -159,6 +177,7 @@ export default defineComponent({
     IonCardHeader,
     IonCardTitle,
     IonIcon,
+    IonInput,
     IonItem,
     IonLabel,
     IonList,
@@ -172,6 +191,11 @@ export default defineComponent({
     const filteredSortedRoutes = ref<Array<Route>>([]);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+
+    const searchText = ref('');
+    const searchMap = new Map();
+    let freqMap = new Map();
+    let gradeBounds = { lower: 0, upper: 14 };
 
     const sortMode = ref(SortMode.NEWEST);
 
@@ -200,9 +224,39 @@ export default defineComponent({
         })
         .then((response) => {
           if (response.data.Message === 'Query routes by gym success') {
+            // Add a unique index to each route
+            response.data.Items.forEach((element: Route, index: number) => {
+              element.routeId = index;
+            });
             routes = response.data.Items;
-            console.log(routes);
             filteredSortedRoutes.value = response.data.Items;
+            // Map search queries to route ID
+            for (const route of routes) {
+              const routeName = route.routeName.toLowerCase();
+              if (searchMap.has(routeName)) {
+                searchMap.get(routeName).push(route.routeId);
+              } else {
+                searchMap.set(routeName, [route.routeId]);
+              }
+              const username = route.username.toLowerCase();
+              if (searchMap.has(username)) {
+                searchMap.get(username).push(route.routeId);
+              } else {
+                searchMap.set(username, [route.routeId]);
+              }
+              const vGrade = 'v' + route.publicGrade.toString();
+              if (searchMap.has(vGrade)) {
+                searchMap.get(vGrade).push(route.routeId);
+              } else {
+                searchMap.set(vGrade, [route.routeId]);
+              }
+              const createdAt = route.createdAt.toLowerCase().substring(0, 10);
+              if (searchMap.has(createdAt)) {
+                searchMap.get(createdAt).push(route.routeId);
+              } else {
+                searchMap.set(createdAt, [route.routeId]);
+              }
+            }
           } else {
             throw new Error('Failed to get routes');
           }
@@ -229,6 +283,44 @@ export default defineComponent({
         updateRoutes();
       }
     });
+
+    watch(
+      searchText,
+      throttle(() => {
+        const queryString = searchText.value.trim().toLowerCase();
+        if (queryString.length === 0) {
+          // Query has been cleared, set back to normal filtering and sorting
+          filteredSortedRoutes.value = routes;
+          filterRoutes(routes);
+          sortRoutes();
+          return;
+        }
+        if (queryString.length > 70) {
+          return;
+        }
+        const queryArray = queryString.split(' ');
+        // Create a frequency map based on the queryArray
+        freqMap = new Map();
+        for (const [key, ids] of searchMap) {
+          for (const queryString of queryArray) {
+            if (key.includes(queryString)) {
+              for (const id of ids) {
+                if (freqMap.has(id)) {
+                  freqMap.set(id, freqMap.get(id) + 1);
+                } else {
+                  freqMap.set(id, 1);
+                }
+              }
+            }
+          }
+        }
+        // Sort array by entries (highest frequency first)
+        freqMap[Symbol.iterator] = function* () {
+          yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
+        };
+        searchRoutes();
+      }, 700),
+    );
 
     const handleRouteCardClick = (username: string, createdAt: string) => {
       router.push({
@@ -286,14 +378,28 @@ export default defineComponent({
       }
     };
 
+    const filterRoutes = (routesToFilter: Array<Route>) => {
+      filteredSortedRoutes.value = routesToFilter.filter(
+        (route) => route.publicGrade >= gradeBounds.lower && route.publicGrade <= gradeBounds.upper,
+      );
+    };
+
+    const searchRoutes = () => {
+      const newFilteredSortedRoutes: Array<Route> = [];
+      // eslint-disable-next-line
+      for (const [id, _] of freqMap) {
+        newFilteredSortedRoutes.push(routes[id]);
+      }
+      filteredSortedRoutes.value = newFilteredSortedRoutes;
+      filterRoutes(filteredSortedRoutes.value);
+    };
+
     const filterGradeHandler = (event: CustomEvent<RangeChangeEventDetail>) => {
-      const { lower: gradeLowerBound, upper: gradeUpperBound } = event.detail.value as {
+      gradeBounds = event.detail.value as {
         lower: number;
         upper: number;
       };
-      filteredSortedRoutes.value = routes.filter(
-        (route) => route.publicGrade >= gradeLowerBound && route.publicGrade <= gradeUpperBound,
-      );
+      filterRoutes(routes);
       sortRoutes();
     };
 
@@ -319,6 +425,8 @@ export default defineComponent({
       SortMode,
       filterGradeHandler,
       filteredSortedRoutes,
+      searchOutline,
+      searchText,
     };
   },
 });
