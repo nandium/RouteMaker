@@ -132,6 +132,7 @@ export default defineComponent({
     const content: Ref<typeof IonContent | null> = ref(null);
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const msgBoxColor = ref('danger');
     const routeNameText = ref('');
     const gradeNumber = ref(0);
@@ -234,7 +235,6 @@ export default defineComponent({
           },
         })
         .then((response) => {
-          console.log(response);
           if (response.data.Message === 'Create route success') {
             toastController
               .create({
@@ -253,7 +253,7 @@ export default defineComponent({
                 toast.present();
               });
 
-            router.push('/home');
+            router.push('/userRoutes/' + getUsername().value);
           } else {
             showErrorMsg('Unable to create route, please try again');
           }
