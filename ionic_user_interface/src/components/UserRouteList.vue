@@ -1,5 +1,5 @@
 <template>
-  <ion-list>
+  <ion-list class="ion-no-margin ion-no-padding">
     <ion-card
       v-for="(route, index) of routes"
       :key="index"
@@ -17,11 +17,11 @@
         ></VoteButton>
       </ion-card-header>
       <ion-card-content>
-        <b>Grade:</b>
-        V{{ route.publicGrade }}
-        <br />
         <b>Gym:</b>
         {{ route.gymName }}
+        <br />
+        <b>Grade:</b>
+        V{{ route.publicGrade }}
         <br />
         <b>Created:</b>
         {{ route.createdAt.split('T')[0] }}
@@ -83,7 +83,6 @@ export default defineComponent({
           },
         })
         .then((response) => {
-          console.log(response);
           if (response.data.Message === 'Query routes by user success') {
             routes.value = response.data.Items;
           } else {
