@@ -97,7 +97,7 @@ export default defineComponent({
 }
 
 .sliderticks p {
-  font-size: 15px;
+  font-size: 2.4vmin;
   position: relative;
   display: flex;
   justify-content: center;
