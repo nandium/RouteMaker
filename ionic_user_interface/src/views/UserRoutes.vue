@@ -8,7 +8,7 @@
               <ion-icon slot="start" :icon="personCircleOutline"></ion-icon>
               <ion-text>{{ usernameText }}</ion-text>
               <ion-icon
-                v-if="isLoggedIn"
+                v-if="isLoggedIn && !isOwnself"
                 class="report-icon"
                 slot="end"
                 color="danger"
@@ -38,7 +38,8 @@ import {
 import { defineComponent, Ref, ref, inject } from 'vue';
 import { personCircleOutline, flagOutline } from 'ionicons/icons';
 import { useRoute } from 'vue-router';
-
+import { throttle } from 'lodash';
+import { getAlertController } from '@/common/reportUserAlert';
 import UserRouteList from '@/components/UserRouteList.vue';
 
 export default defineComponent({
@@ -56,18 +57,27 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
-    const usernameText = route.params.username;
+    const usernameText = route.params.username as string;
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
+    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const isLoggedIn = getLoggedIn();
+    const isOwnself = getUsername().value === usernameText;
 
     // TODO: reportUserHandler
+    const reportUserHandler = throttle(async () => {
+      const alert = await getAlertController(usernameText, getAccessToken().value);
+      return alert.present();
+    }, 1000);
 
     // TODO: disableUserHandler
     return {
       usernameText,
       personCircleOutline,
       isLoggedIn,
+      isOwnself,
       flagOutline,
+      reportUserHandler,
     };
   },
 });
