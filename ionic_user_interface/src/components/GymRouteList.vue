@@ -107,8 +107,8 @@
           ></VoteButton>
         </ion-card-header>
         <ion-card-content>
-          <b>Creator:</b>
-          {{ route.username }}
+          <b>Creator:&nbsp;</b>
+          <router-link :to="'/userRoutes/' + route.username">{{ route.username }}</router-link>
           <br />
           <b>Grade:</b>
           V{{ route.publicGrade }}

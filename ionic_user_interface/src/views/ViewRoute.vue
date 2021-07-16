@@ -83,10 +83,17 @@
               ></ion-icon>
             </div>
           </ion-card-header>
-          <ion-card-content>
-            <ion-item class="ion-no-padding">
-              <ion-icon class="margin-right" slot="start" :icon="personCircleOutline"></ion-icon>
-              <ion-label>{{ username }}</ion-label>
+          <ion-card-content class="ion-no-padding ion-no-margin display-flex">
+            <ion-item
+              class="ion-no-padding margin-left-large rounded"
+              :href="'/userRoutes/' + username"
+            >
+              <ion-icon
+                class="margin-right margin-left"
+                slot="start"
+                :icon="personCircleOutline"
+              ></ion-icon>
+              <ion-label class="align-middle">{{ username }}</ion-label>
             </ion-item>
           </ion-card-content>
         </ion-card>
@@ -601,8 +608,19 @@ ion-textarea {
   border-radius: 5px;
 }
 
+.align-middle {
+  margin: 0;
+  padding: 0;
+  align-self: center;
+  vertical-align: middle;
+}
+
 .margin-left {
   margin-left: 10px;
+}
+
+.margin-left-large {
+  margin-left: 1em;
 }
 
 .margin-right {
@@ -611,6 +629,7 @@ ion-textarea {
 
 ion-card {
   margin: 0px 0 20px 0;
+  padding-bottom: 10px;
 }
 
 .rounded {
@@ -619,5 +638,13 @@ ion-card {
 
 .margin {
   margin-bottom: 1.4em;
+}
+
+.comment-card-item {
+  display: inline;
+}
+
+.display-flex {
+  display: flex;
 }
 </style>
