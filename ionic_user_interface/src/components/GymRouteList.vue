@@ -47,6 +47,14 @@
       @didDismiss="setPopoverOpen(false)"
     >
       <ion-list class="no-padding no-margin">
+        <ion-item button @click="setSortMode(SortMode.VOTES)">
+          Most votes
+          <ion-icon
+            slot="end"
+            :icon="checkmarkOutline"
+            v-if="sortMode === SortMode.VOTES"
+          ></ion-icon>
+        </ion-item>
         <ion-item button @click="setSortMode(SortMode.NEWEST)">
           Newest
           <ion-icon
@@ -61,14 +69,6 @@
             slot="end"
             :icon="checkmarkOutline"
             v-if="sortMode === SortMode.OLDEST"
-          ></ion-icon>
-        </ion-item>
-        <ion-item button @click="setSortMode(SortMode.VOTES)">
-          Most votes
-          <ion-icon
-            slot="end"
-            :icon="checkmarkOutline"
-            v-if="sortMode === SortMode.VOTES"
           ></ion-icon>
         </ion-item>
         <ion-item button @click="setSortMode(SortMode.EASIEST)">
@@ -197,7 +197,7 @@ export default defineComponent({
     let freqMap = new Map();
     let gradeBounds = { lower: 0, upper: 14 };
 
-    const sortMode = ref(SortMode.NEWEST);
+    const sortMode = ref(SortMode.VOTES);
 
     const popoverEvent = ref();
     const isPopoverOpen = ref(false);
@@ -257,6 +257,8 @@ export default defineComponent({
                 searchMap.set(createdAt, [route.routeId]);
               }
             }
+            filterRoutes(routes);
+            sortRoutes();
           } else {
             throw new Error('Failed to get routes');
           }
