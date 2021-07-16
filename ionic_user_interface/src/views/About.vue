@@ -105,7 +105,7 @@ export default defineComponent({
 }
 
 .screenshot {
-  border-radius: 15px;
+  border-radius: 6px;
   border: 1.5px solid grey;
   max-width: 200px;
 }
