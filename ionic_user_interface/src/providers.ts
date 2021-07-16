@@ -3,6 +3,7 @@ import axios from 'axios';
 import router from '@/router';
 import jwt_decode from 'jwt-decode';
 import { toastController } from '@ionic/vue';
+import { Country } from 'country-code-lookup';
 
 const isLoggedIn = ref(false);
 const username = ref('');
@@ -13,6 +14,7 @@ const idToken = ref('');
 const isConfirmationNeeded = ref(false);
 const prefersDarkMode = ref(false);
 const routeImageUri = ref('');
+const userCountry: Ref<Country | null> = ref(null);
 
 const forceLogout = async (): Promise<void> => {
   const config = {
@@ -186,6 +188,18 @@ const providers = {
   setRouteImageUri: (imageUri: string): void => {
     localStorage.setItem('routeImageUri', imageUri);
     routeImageUri.value = imageUri;
+  },
+  getUserCountry: (): Ref<Country | null> => {
+    try {
+      userCountry.value = JSON.parse(localStorage.getItem('userCountry') ?? 'null');
+      return userCountry;
+    } catch {
+      return ref(null);
+    }
+  },
+  setUserCountry: (country: Country): void => {
+    localStorage.setItem('userCountry', JSON.stringify(country));
+    userCountry.value = country;
   },
 };
 
