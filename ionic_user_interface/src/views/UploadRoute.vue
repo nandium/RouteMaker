@@ -264,6 +264,12 @@ export default defineComponent({
               showErrorMsg(
                 'Unregistered gym, please go to https://routemaker.rocks/gyms/request to register',
               );
+            } else if (error.response.data.Message === 'Upload Limit Reached') {
+              showErrorMsg(
+                'Daily upload limit of ' +
+                  error.response.data.Limit +
+                  ' reached, please wait till tomorrow or delete some routes from today',
+              );
             } else {
               showErrorMsg('Error: ' + error.response.data.Message);
             }
