@@ -1,5 +1,10 @@
 import { Handler } from 'aws-lambda';
-import DynamoDB, { PutItemInput, AttributeMap } from 'aws-sdk/clients/dynamodb';
+import DynamoDB, {
+  PutItemInput,
+  AttributeMap,
+  QueryInput,
+  AttributeValue,
+} from 'aws-sdk/clients/dynamodb';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
@@ -11,7 +16,7 @@ import { cleanBadWords } from './common/badwords';
 import { uploadRouteImageContent } from './common/s3';
 import { trimRouteURL } from './common/s3/utils';
 import { logger } from './common/logger';
-import { MAX_PHOTO_SIZE } from './config';
+import { MAX_PHOTO_SIZE, DAILY_POST_LIMIT } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -59,6 +64,17 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     };
   }
   const createdAt = new Date().toISOString();
+  if (await userHasReachedUploadLimit(username, createdAt)) {
+    logger.error('createRoute UserHasReachedUploadLimit', {
+      data: { username, countryCode, gymLocation },
+    });
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ Message: 'Upload Limit Reached', Limit: DAILY_POST_LIMIT }),
+    };
+  }
+
+  /* -- Begin to create route -- */
   const routeURL = await uploadRouteImageContent(username, createdAt, mimetype, content);
   const trimedRouteURL = trimRouteURL(routeURL);
   logger.info('createRoute UploadImageSuccess', { data: { username, routeURL } });
@@ -70,7 +86,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     routeName: cleanBadWords(routeName),
     gymLocation,
     countryCode,
-    routeURL: trimedRouteURL,
+    routeURL: trimedRouteURL, // To save storage
     ownerGrade,
     publicGrade: ownerGrade,
     publicGradeSubmissions: [{ username, grade: ownerGrade }],
@@ -91,6 +107,7 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     throw createError(500, 'DB put operation failed', error);
   }
 
+  // Return untrimmed routeURL as response
   const Item = Object.assign({}, routeItem);
   Item.routeURL = routeURL;
   logger.info('createRoute success', { data: { username } });
@@ -98,6 +115,31 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
     statusCode: 201,
     body: JSON.stringify({ Message: 'Create route success', Item }),
   };
+};
+
+const userHasReachedUploadLimit = async (username: string, createdAt: string): Promise<boolean> => {
+  const dateString = createdAt.split('T')[0];
+  const queryInput: QueryInput = {
+    TableName: process.env['ROUTE_TABLE_NAME'] || '',
+    ConsistentRead: false,
+    IndexName: 'userRoutesIndex',
+    KeyConditionExpression: 'username = :username AND begins_with (createdAt, :dateString)',
+    ExpressionAttributeValues: {
+      ':username': username as AttributeValue,
+      ':dateString': dateString as AttributeValue,
+    },
+  };
+  let Items;
+  try {
+    ({ Items } = await dynamoDb.query(queryInput).promise());
+  } catch (error) {
+    logger.error('createRoute userHasReachedUploadLimit error', {
+      data: { username, createdAt, error: error.stack },
+    });
+    throw createError(500, 'Error querying table', error);
+  }
+  logger.info('createRoute userHasUploaded', { data: { count: Items.length } });
+  return Items.length >= DAILY_POST_LIMIT;
 };
 
 export const handler = getMiddlewareAddedHandler(createRoute, createRouteSchema);
