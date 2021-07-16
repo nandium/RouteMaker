@@ -241,7 +241,6 @@ export default defineComponent({
         .then((response) => {
           if (response.data.Message === 'Get route details success') {
             routeDetails.value = response.data.Item;
-            console.log(routeDetails.value);
             hasAlreadyCommented.value =
               routeDetails.value.comments?.some(
                 (comment) => comment.username == myUsername.value,

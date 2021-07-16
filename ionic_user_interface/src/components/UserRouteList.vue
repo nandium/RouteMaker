@@ -17,8 +17,13 @@
         ></VoteButton>
       </ion-card-header>
       <ion-card-content>
-        <b>Gym:</b>
-        {{ route.gymName }}
+        <b>Gym:&nbsp;</b>
+        <router-link
+          :to="'/gym/' + route.gymLocation + '/' + route.gymName"
+          @click.capture.stop="undefined"
+        >
+          {{ route.gymName }}
+        </router-link>
         <br />
         <b>Grade:</b>
         V{{ route.publicGrade }}

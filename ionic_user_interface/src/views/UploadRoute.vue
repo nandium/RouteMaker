@@ -260,7 +260,6 @@ export default defineComponent({
         })
         .catch((error) => {
           if (error.response) {
-            console.log(error.response.data.Message);
             if (error.response.data.Message === 'Unregistered gym') {
               showErrorMsg(
                 'Unregistered gym, please go to https://routemaker.rocks/gyms/request to register',

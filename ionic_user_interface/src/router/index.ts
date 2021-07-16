@@ -34,6 +34,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Gyms.vue'),
   },
   {
+    path: '/gym/:gymLocation/:gymName',
+    name: 'Gym',
+    component: () => import('@/views/Gyms.vue'),
+  },
+  {
     path: '/gyms/request',
     name: 'RequestGym',
     component: () => import('@/views/RequestGym.vue'),

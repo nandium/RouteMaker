@@ -2,17 +2,22 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div id="container">
-        <strong>Route Maker</strong>
-        <p>Find climbing routes by gym</p>
+        <div v-if="gymNameString === ''">
+          <strong>Route Maker</strong>
+          <p>Find climbing routes by gym</p>
+        </div>
+        <div v-else class="gym-name">
+          <b>-- {{ gymNameString }} --</b>
+        </div>
         <br />
         <gym-selector
-          v-if="canvasWidth > 0"
+          v-if="showGymSelector"
           :width="canvasWidth"
           @onGymSelect="handleOnGymSelect"
         />
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <gym-route-list v-show="userHasSelectedGym" ref="gymRouteList" />
+            <gym-route-list v-show="showGymRouteList" ref="gymRouteList" />
           </ion-col>
         </ion-row>
       </div>
@@ -22,7 +27,8 @@
 
 <script lang="ts">
 import { IonContent, IonPage, IonRow, IonCol } from '@ionic/vue';
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 import GymSelector from '@/components/gym-selector/GymSelector.vue';
 import GymRouteList from '@/components/GymRouteList.vue';
@@ -48,19 +54,36 @@ export default defineComponent({
       window.removeEventListener('resize', updateCanvasWidth);
     });
 
+    /**
+     * If gymLocation exists in path parameters, use a different page layout
+     */
+    const route = useRoute();
     const gymRouteList = ref<typeof GymRouteList | null>(null);
-    const userHasSelectedGym = ref(false);
+    const showGymRouteList = ref(false);
+    const { gymLocation, gymName } = route.params;
+    const showGymSelector = computed(
+      () => canvasWidth.value > 0 && gymLocation === undefined && gymName === undefined,
+    );
+    const gymNameString = ref('');
 
     const handleOnGymSelect = (gymLocation: string) => {
-      userHasSelectedGym.value = true;
+      showGymRouteList.value = true;
       gymRouteList.value?.setGymLocation(gymLocation);
     };
+    onMounted(() => {
+      if (gymLocation && gymName) {
+        handleOnGymSelect(gymLocation as string);
+        gymNameString.value = gymName as string;
+      }
+    });
 
     return {
       canvasWidth,
       gymRouteList,
-      userHasSelectedGym,
+      showGymRouteList,
       handleOnGymSelect,
+      showGymSelector,
+      gymNameString,
     };
   },
 });
@@ -88,5 +111,10 @@ export default defineComponent({
 
 #container a {
   text-decoration: none;
+}
+
+.gym-name {
+  font-size: clamp(2rem, 7vw, 2.5rem);
+  margin: 20px;
 }
 </style>
