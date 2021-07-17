@@ -8,20 +8,24 @@
               <b>Routes By User</b>
             </div>
             <ion-item class="rounded">
-              <ion-icon slot="start" :icon="personCircleOutline"></ion-icon>
+              <ion-icon
+                slot="start"
+                class="ion-no-margin margin-right"
+                :icon="personCircleOutline"
+              ></ion-icon>
               <ion-text>{{ profileUsername }}</ion-text>
+              <ion-button slot="end" class="margin-left" color="danger" @click="reportUserHandler">
+                <ion-label>Report&nbsp;</ion-label>
+                <ion-icon :icon="flag"></ion-icon>
+              </ion-button>
             </ion-item>
           </ion-col>
         </ion-row>
         <ion-row
           class="ion-align-items-center ion-justify-content-center"
-          v-if="isLoggedIn && !isOwnself"
+          v-if="isLoggedIn && !isOwnself && isAdmin"
         >
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <ion-button class="margin-left" color="danger" @click="reportUserHandler">
-              <ion-label>Report user&nbsp;</ion-label>
-              <ion-icon :icon="flag"></ion-icon>
-            </ion-button>
             <ion-button
               v-if="isAdmin"
               class="margin-left"
@@ -203,5 +207,9 @@ export default defineComponent({
 
 .margin-left {
   margin-left: 10px;
+}
+
+.margin-right {
+  margin-right: 10px;
 }
 </style>
