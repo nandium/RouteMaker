@@ -32,7 +32,7 @@
         expand="full"
         color="light"
         slot="end"
-        class="ion-no-margin"
+        class="ion-no-margin margin-left-tiny"
         @click="setPopoverOpen(true, $event)"
       >
         <ion-label>Sort</ion-label>
@@ -494,5 +494,9 @@ ion-card-header {
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
+}
+
+.margin-left-tiny {
+  margin-left: 5px;
 }
 </style>
