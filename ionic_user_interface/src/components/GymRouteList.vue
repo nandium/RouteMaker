@@ -108,7 +108,7 @@
         </ion-card-header>
         <ion-card-content>
           <b>Creator:&nbsp;</b>
-          <router-link :to="'/userRoutes/' + route.username" @click.capture.stop="undefined">
+          <router-link :to="'/userRoutes/' + route.username" @click.capture.stop="() => undefined">
             {{ route.username }}
           </router-link>
           <br />

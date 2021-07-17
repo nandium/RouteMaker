@@ -20,7 +20,7 @@
         <b>Gym:&nbsp;</b>
         <router-link
           :to="'/gym/' + route.gymLocation + '/' + route.gymName"
-          @click.capture.stop="undefined"
+          @click.capture.stop="() => undefined"
         >
           {{ route.gymName }}
         </router-link>
