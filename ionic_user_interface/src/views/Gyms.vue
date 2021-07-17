@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonRow, IonCol } from '@ionic/vue';
+import { IonContent, IonPage, IonRow, IonCol, IonButton, IonIcon } from '@ionic/vue';
 import { defineComponent, onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { map, mapOutline } from 'ionicons/icons';
@@ -61,6 +61,8 @@ export default defineComponent({
     IonPage,
     IonRow,
     IonCol,
+    IonButton,
+    IonIcon,
     GymSelector,
     GymRouteList,
     GymMap,
