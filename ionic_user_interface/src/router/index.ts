@@ -147,7 +147,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/userRoutes/:username',
-    name: 'userRoutes',
+    name: 'UserRoutes',
     component: () => import('@/views/UserRoutes.vue'),
   },
   {

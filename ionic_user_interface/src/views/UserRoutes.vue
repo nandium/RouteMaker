@@ -67,7 +67,6 @@ export default defineComponent({
     const isLoggedIn = getLoggedIn();
     const isOwnself = getUsername().value === usernameText;
 
-    // TODO: reportUserHandler
     const reportUserHandler = throttle(async () => {
       const alert = await getAlertController(usernameText, getAccessToken().value);
       return alert.present();

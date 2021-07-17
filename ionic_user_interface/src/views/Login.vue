@@ -185,7 +185,7 @@ export default defineComponent({
               toast.present();
             });
 
-          router.push('/home');
+          router.push({ name: 'Home' });
         })
         .catch((error) => {
           if (error.response) {
@@ -198,7 +198,7 @@ export default defineComponent({
             } else if (error.response.data.Message === 'UserNotConfirmedException') {
               setConfirmationNeeded(true);
               setUserEmail(error.response.data.Email);
-              router.push('/confirm');
+              router.push({ name: 'Confirm' });
             } else {
               console.error(error.response.data);
             }

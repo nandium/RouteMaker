@@ -185,7 +185,7 @@ export default defineComponent({
                 toast.present();
               });
 
-            router.push('/login');
+            router.push({ name: 'Login' });
           } else {
             msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
           }

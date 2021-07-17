@@ -71,12 +71,12 @@ export default defineComponent({
 
     const clickProfileButton = () => {
       setPopoverOpen(false);
-      router.push('/profile');
+      router.push({ name: 'Profile' });
     };
 
     const clickMyRoutesButton = () => {
       setPopoverOpen(false);
-      router.push('/userRoutes/' + getUsername().value);
+      router.push({ name: 'UserRoutes', params: { username: getUsername().value } });
     };
 
     return {
