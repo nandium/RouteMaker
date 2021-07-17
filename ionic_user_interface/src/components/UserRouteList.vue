@@ -45,7 +45,7 @@ import axios from 'axios';
 import VoteButton from '@/components/VoteButton.vue';
 import { throttle } from 'lodash';
 
-interface Route {
+interface UserRoute {
   commentCount: number;
   createdAt: string;
   gymLocation: string;
@@ -72,7 +72,7 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const { username } = route.params;
-    const routes = ref<Array<Route>>([]);
+    const routes = ref<Array<UserRoute>>([]);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
 

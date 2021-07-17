@@ -153,7 +153,7 @@ import axios from 'axios';
 import VoteButton from '@/components/VoteButton.vue';
 import { throttle } from 'lodash';
 
-interface Route {
+interface GymRoute {
   commentCount: number;
   createdAt: string;
   gymLocation: string;
@@ -192,8 +192,8 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    let routes: Array<Route> = [];
-    const filteredSortedRoutes = ref<Array<Route>>([]);
+    let routes: Array<GymRoute> = [];
+    const filteredSortedRoutes = ref<Array<GymRoute>>([]);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
 
@@ -230,7 +230,7 @@ export default defineComponent({
         .then((response) => {
           if (response.data.Message === 'Query routes by gym success') {
             // Add a unique index to each route
-            response.data.Items.forEach((element: Route, index: number) => {
+            response.data.Items.forEach((element: GymRoute, index: number) => {
               element.routeId = index;
             });
             routes = response.data.Items;
@@ -385,14 +385,14 @@ export default defineComponent({
       }
     };
 
-    const filterRoutes = (routesToFilter: Array<Route>) => {
+    const filterRoutes = (routesToFilter: Array<GymRoute>) => {
       filteredSortedRoutes.value = routesToFilter.filter(
         (route) => route.publicGrade >= gradeBounds.lower && route.publicGrade <= gradeBounds.upper,
       );
     };
 
     const searchRoutes = () => {
-      const newFilteredSortedRoutes: Array<Route> = [];
+      const newFilteredSortedRoutes: Array<GymRoute> = [];
       // eslint-disable-next-line
       for (const [id, _] of freqMap) {
         newFilteredSortedRoutes.push(routes[id]);
