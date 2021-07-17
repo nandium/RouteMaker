@@ -119,7 +119,7 @@
           {{ route.createdAt.split('T')[0] }}
         </ion-card-content>
       </ion-card>
-      <ion-card v-if="filteredSortedRoutes.length === 0" class="ion-text-center route-card">
+      <ion-card v-if="filteredSortedRoutes.length === 0" class="ion-text-center">
         <ion-card-header>
           <ion-card-title>No Routes Found</ion-card-title>
         </ion-card-header>

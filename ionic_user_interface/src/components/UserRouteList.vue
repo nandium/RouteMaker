@@ -32,7 +32,7 @@
         {{ route.createdAt.split('T')[0] }}
       </ion-card-content>
     </ion-card>
-    <ion-card v-if="routes.length === 0" class="ion-text-center route-card">
+    <ion-card v-if="routes.length === 0" class="ion-text-center">
       <ion-card-header>
         <ion-card-title>No Routes Found</ion-card-title>
       </ion-card-header>
@@ -82,6 +82,7 @@ export default defineComponent({
     const profileUsername = computed(() => route.params.username as string);
 
     const updateRoutes = throttle(() => {
+      routes.value = [];
       const headers = getLoggedIn().value
         ? { Authorization: `Bearer ${getAccessToken().value}` }
         : {};
