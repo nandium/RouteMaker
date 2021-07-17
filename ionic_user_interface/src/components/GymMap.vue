@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { map, mapOutline, warning } from 'ionicons/icons';
+import { map, mapOutline } from 'ionicons/icons';
 
 export default defineComponent({
   name: 'GymMap',
@@ -26,7 +26,6 @@ export default defineComponent({
       embedMapSrcStart,
       map,
       mapOutline,
-      warning,
     };
   },
 });
