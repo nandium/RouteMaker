@@ -194,7 +194,7 @@ export default defineComponent({
             if (error.response.data.Message === 'UserNotFoundException') {
               errorMsg.value?.showMsg('Account not found, please sign up!');
             } else if (error.response.data.Message === 'NotAuthorizedException') {
-              errorMsg.value?.showMsg('Wrong email or password');
+              errorMsg.value?.showMsg('Unauthorized email or password');
             } else if (error.response.data.Message === 'UserNotConfirmedException') {
               setConfirmationNeeded(true);
               setUserEmail(error.response.data.Email);

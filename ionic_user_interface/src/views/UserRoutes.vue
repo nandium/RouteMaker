@@ -13,14 +13,23 @@
             </ion-item>
           </ion-col>
         </ion-row>
-        <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-row
+          class="ion-align-items-center ion-justify-content-center"
+          v-if="isLoggedIn && !isOwnself"
+        >
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <div class="margin-left">
-              <ion-button v-if="isLoggedIn && !isOwnself" color="danger" @click="reportUserHandler">
-                <ion-label>Report user&nbsp;</ion-label>
-                <ion-icon :icon="flag"></ion-icon>
-              </ion-button>
-            </div>
+            <ion-button class="margin-left" color="danger" @click="reportUserHandler">
+              <ion-label>Report user&nbsp;</ion-label>
+              <ion-icon :icon="flag"></ion-icon>
+            </ion-button>
+            <ion-button
+              v-if="isAdmin"
+              class="margin-left"
+              color="danger"
+              @click="disableUserHandler"
+            >
+              <ion-label>Admin Disable</ion-label>
+            </ion-button>
           </ion-col>
         </ion-row>
         <ion-row class="ion-align-items-center ion-justify-content-center">
@@ -43,7 +52,13 @@ import {
   IonItem,
   IonText,
   IonIcon,
+  IonLabel,
+  IonButton,
+  alertController,
+  toastController,
 } from '@ionic/vue';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 import { defineComponent, Ref, ref, inject, computed } from 'vue';
 import { personCircleOutline, flag } from 'ionicons/icons';
 import { useRoute } from 'vue-router';
@@ -61,24 +76,110 @@ export default defineComponent({
     IonCol,
     IonItem,
     IonText,
-    UserRouteList,
     IonIcon,
+    IonLabel,
+    IonButton,
+    UserRouteList,
   },
   setup() {
     const route = useRoute();
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const isLoggedIn = getLoggedIn();
     const profileUsername = computed(() => route.params.username as string);
     const isOwnself = computed(() => getUsername().value === profileUsername.value);
+
+    // TODO: Refactor to getUserRole
+    const isAdmin = computed(() => {
+      try {
+        const idObject: { 'custom:role': string } = jwt_decode(getIdToken().value);
+        return idObject['custom:role'] === 'admin';
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    });
 
     const reportUserHandler = throttle(async () => {
       const alert = await getAlertController(profileUsername.value, getAccessToken().value);
       return alert.present();
     }, 1000);
 
-    // TODO: disableUserHandler
+    /**
+     * Only admins can see this
+     */
+    const disableUserHandler = throttle(async () => {
+      const alert = await alertController.create({
+        cssClass: 'wide',
+        header: `Disable this user?`,
+        message: 'Are you sure?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'secondary',
+          },
+          {
+            text: 'Yes',
+            handler: () => {
+              axios
+                .post(
+                  process.env.VUE_APP_USER_ENDPOINT_URL + '/user/disable',
+                  {
+                    name: profileUsername.value,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getAccessToken().value}`,
+                    },
+                  },
+                )
+                .then(() => {
+                  toastController
+                    .create({
+                      header: 'User has been successfully disabled',
+                      position: 'bottom',
+                      color: 'success',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                })
+                .catch((error) => {
+                  console.error(error);
+                  toastController
+                    .create({
+                      header: 'Failed to disable user, please try again',
+                      position: 'bottom',
+                      color: 'danger',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                });
+            },
+          },
+        ],
+      });
+      return alert.present();
+    }, 1000);
+
     return {
       profileUsername,
       personCircleOutline,
@@ -86,6 +187,8 @@ export default defineComponent({
       isOwnself,
       flag,
       reportUserHandler,
+      disableUserHandler,
+      isAdmin,
     };
   },
 });
