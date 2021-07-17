@@ -1,4 +1,4 @@
-import { ref, Ref } from 'vue';
+import { computed, ComputedRef, ref, Ref } from 'vue';
 import axios from 'axios';
 import router from '@/router';
 import jwt_decode from 'jwt-decode';
@@ -15,6 +15,14 @@ const isConfirmationNeeded = ref(false);
 const prefersDarkMode = ref(false);
 const routeImageUri = ref('');
 const userCountry: Ref<Country | null> = ref(null);
+const userRole = computed(() => {
+  try {
+    const idObject: { 'custom:role': string } = jwt_decode(providers.getIdToken().value);
+    return idObject['custom:role'];
+  } catch (error) {
+    return 'undefined';
+  }
+});
 
 const forceLogout = async (): Promise<void> => {
   const config = {
@@ -200,6 +208,9 @@ const providers = {
   setUserCountry: (country: Country): void => {
     localStorage.setItem('userCountry', JSON.stringify(country));
     userCountry.value = country;
+  },
+  getUserRole: (): ComputedRef<string> => {
+    return userRole;
   },
 };
 

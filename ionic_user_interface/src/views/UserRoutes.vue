@@ -14,7 +14,13 @@
                 :icon="personCircleOutline"
               ></ion-icon>
               <ion-text>{{ profileUsername }}</ion-text>
-              <ion-button slot="end" class="margin-left" color="danger" @click="reportUserHandler">
+              <ion-button
+                v-if="!isOwnself"
+                slot="end"
+                class="margin-left"
+                color="danger"
+                @click="reportUserHandler"
+              >
                 <ion-label>Report&nbsp;</ion-label>
                 <ion-icon :icon="flag"></ion-icon>
               </ion-button>
@@ -62,8 +68,7 @@ import {
   toastController,
 } from '@ionic/vue';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
-import { defineComponent, Ref, ref, inject, computed } from 'vue';
+import { defineComponent, Ref, ref, inject, computed, ComputedRef } from 'vue';
 import { personCircleOutline, flag } from 'ionicons/icons';
 import { useRoute } from 'vue-router';
 import { throttle } from 'lodash';
@@ -89,22 +94,12 @@ export default defineComponent({
     const route = useRoute();
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
-    const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
+    const getUserRole: () => ComputedRef<string> = inject('getUserRole', () => computed(() => ''));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const isLoggedIn = getLoggedIn();
     const profileUsername = computed(() => route.params.username as string);
     const isOwnself = computed(() => getUsername().value === profileUsername.value);
-
-    // TODO: Refactor to getUserRole
-    const isAdmin = computed(() => {
-      try {
-        const idObject: { 'custom:role': string } = jwt_decode(getIdToken().value);
-        return idObject['custom:role'] === 'admin';
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
-    });
+    const isAdmin = getUserRole().value === 'admin';
 
     const reportUserHandler = throttle(async () => {
       const alert = await getAlertController(profileUsername.value, getAccessToken().value);
