@@ -132,6 +132,7 @@ export default defineComponent({
     const content: Ref<typeof IonContent | null> = ref(null);
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const msgBoxColor = ref('danger');
     const routeNameText = ref('');
     const gradeNumber = ref(0);
@@ -234,7 +235,6 @@ export default defineComponent({
           },
         })
         .then((response) => {
-          console.log(response);
           if (response.data.Message === 'Create route success') {
             toastController
               .create({
@@ -253,17 +253,20 @@ export default defineComponent({
                 toast.present();
               });
 
-            router.push('/home');
+            router.push({ name: 'UserRoutes', params: { username: getUsername().value } });
           } else {
             showErrorMsg('Unable to create route, please try again');
           }
         })
         .catch((error) => {
           if (error.response) {
-            console.log(error.response.data.Message);
             if (error.response.data.Message === 'Unregistered gym') {
               showErrorMsg(
                 'Unregistered gym, please go to https://routemaker.rocks/gyms/request to register',
+              );
+            } else if (error.response.data.Message === 'Upload Limit Reached') {
+              showErrorMsg(
+                `Daily upload limit of ${error.response.data.Limit} reached, please wait till tomorrow or delete some routes from today`,
               );
             } else {
               showErrorMsg('Error: ' + error.response.data.Message);

@@ -34,6 +34,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Gyms.vue'),
   },
   {
+    path: '/gym/:gymLocation/:gymName',
+    name: 'Gym',
+    component: () => import('@/views/Gyms.vue'),
+  },
+  {
     path: '/gyms/request',
     name: 'RequestGym',
     component: () => import('@/views/RequestGym.vue'),
@@ -139,6 +144,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/viewRoute/:username/:createdAt',
     name: 'ViewRoute',
     component: () => import('@/views/ViewRoute.vue'),
+  },
+  {
+    path: '/userRoutes/:username',
+    name: 'UserRoutes',
+    component: () => import('@/views/UserRoutes.vue'),
   },
   {
     path: '/:pathMatch(.*)*',

@@ -32,7 +32,7 @@
         expand="full"
         color="light"
         slot="end"
-        class="ion-no-margin"
+        class="ion-no-margin margin-left-tiny"
         @click="setPopoverOpen(true, $event)"
       >
         <ion-label>Sort</ion-label>
@@ -108,10 +108,7 @@
         </ion-card-header>
         <ion-card-content>
           <b>Creator:&nbsp;</b>
-          <router-link
-            :to="'/userRoutes/' + route.username"
-            @click.capture.prevent.stop="undefined"
-          >
+          <router-link :to="'/userRoutes/' + route.username" @click.capture.stop="() => undefined">
             {{ route.username }}
           </router-link>
           <br />
@@ -121,6 +118,11 @@
           <b>Created:</b>
           {{ route.createdAt.split('T')[0] }}
         </ion-card-content>
+      </ion-card>
+      <ion-card v-if="filteredSortedRoutes.length === 0" class="ion-text-center">
+        <ion-card-header>
+          <ion-card-title>No Routes Found</ion-card-title>
+        </ion-card-header>
       </ion-card>
     </ion-list>
   </div>
@@ -156,7 +158,7 @@ import axios from 'axios';
 import VoteButton from '@/components/VoteButton.vue';
 import { throttle } from 'lodash';
 
-interface Route {
+interface GymRoute {
   commentCount: number;
   createdAt: string;
   gymLocation: string;
@@ -195,8 +197,8 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    let routes: Array<Route> = [];
-    const filteredSortedRoutes = ref<Array<Route>>([]);
+    let routes: Array<GymRoute> = [];
+    const filteredSortedRoutes = ref<Array<GymRoute>>([]);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
 
@@ -233,7 +235,7 @@ export default defineComponent({
         .then((response) => {
           if (response.data.Message === 'Query routes by gym success') {
             // Add a unique index to each route
-            response.data.Items.forEach((element: Route, index: number) => {
+            response.data.Items.forEach((element: GymRoute, index: number) => {
               element.routeId = index;
             });
             routes = response.data.Items;
@@ -388,14 +390,14 @@ export default defineComponent({
       }
     };
 
-    const filterRoutes = (routesToFilter: Array<Route>) => {
+    const filterRoutes = (routesToFilter: Array<GymRoute>) => {
       filteredSortedRoutes.value = routesToFilter.filter(
         (route) => route.publicGrade >= gradeBounds.lower && route.publicGrade <= gradeBounds.upper,
       );
     };
 
     const searchRoutes = () => {
-      const newFilteredSortedRoutes: Array<Route> = [];
+      const newFilteredSortedRoutes: Array<GymRoute> = [];
       // eslint-disable-next-line
       for (const [id, _] of freqMap) {
         newFilteredSortedRoutes.push(routes[id]);
@@ -492,5 +494,9 @@ ion-card-header {
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
+}
+
+.margin-left-tiny {
+  margin-left: 5px;
 }
 </style>

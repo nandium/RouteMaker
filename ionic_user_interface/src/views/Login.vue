@@ -185,7 +185,7 @@ export default defineComponent({
               toast.present();
             });
 
-          router.push('/home');
+          router.push({ name: 'Home' });
         })
         .catch((error) => {
           if (error.response) {
@@ -194,11 +194,11 @@ export default defineComponent({
             if (error.response.data.Message === 'UserNotFoundException') {
               errorMsg.value?.showMsg('Account not found, please sign up!');
             } else if (error.response.data.Message === 'NotAuthorizedException') {
-              errorMsg.value?.showMsg('Wrong email or password');
+              errorMsg.value?.showMsg('Incorrect email or password');
             } else if (error.response.data.Message === 'UserNotConfirmedException') {
               setConfirmationNeeded(true);
               setUserEmail(error.response.data.Email);
-              router.push('/confirm');
+              router.push({ name: 'Confirm' });
             } else {
               console.error(error.response.data);
             }

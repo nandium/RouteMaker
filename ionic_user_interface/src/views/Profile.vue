@@ -177,7 +177,7 @@ export default defineComponent({
                         toast.present();
                       });
 
-                    router.push('/home');
+                    router.push({ name: 'Home' });
                   } else {
                     showFailedToDeleteAccountToast();
                   }

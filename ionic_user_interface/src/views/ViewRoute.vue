@@ -27,7 +27,7 @@
             ></ion-icon>
             <ion-label class="align-middle">{{ routeDetails.username }}</ion-label>
           </ion-item>
-          <div v-if="isLoggedIn" class="margin-right margin-left">
+          <div v-if="isLoggedIn && !isRouteSetter" class="margin-right margin-left">
             <ion-button
               v-if="!hasReported"
               color="danger"
@@ -141,6 +141,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+import { getAlertController } from '@/common/reportUserAlert';
 import VoteButton from '@/components/VoteButton.vue';
 import GradeSlider from '@/components/GradeSlider.vue';
 import MessageBox from '@/components/MessageBox.vue';
@@ -318,124 +319,7 @@ export default defineComponent({
     }, 1000);
 
     const reportCommentHandler = throttle(async (commentUsername: string) => {
-      const allowedReasons = [
-        '',
-        'abusive',
-        'inappropriate',
-        'spam',
-        'racist',
-        'beliefs',
-        'notlike',
-      ];
-      let reason = '';
-      const alert = await alertController.create({
-        cssClass: 'wide',
-        header: `Report ${commentUsername}?`,
-        message: 'Select your reason for reporting below',
-        inputs: [
-          {
-            type: 'radio',
-            label: 'Abusive content',
-            value: 'abusive',
-            handler: (data) => (reason = data.value),
-          },
-          {
-            type: 'radio',
-            label: 'Inappropriate content',
-            value: 'inappropriate',
-            handler: (data) => (reason = data.value),
-          },
-          {
-            type: 'radio',
-            label: "It's spam",
-            value: 'spam',
-            handler: (data) => (reason = data.value),
-          },
-          {
-            type: 'radio',
-            label: 'Racist content',
-            value: 'racist',
-            handler: (data) => (reason = data.value),
-          },
-          {
-            type: 'radio',
-            label: 'It goes against my beliefs',
-            value: 'beliefs',
-            handler: (data) => (reason = data.value),
-          },
-          {
-            type: 'radio',
-            label: "I don't like it",
-            value: 'notlike',
-            handler: (data) => (reason = data.value),
-          },
-        ],
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            cssClass: 'secondary',
-          },
-          {
-            text: 'Ok',
-            handler: () => {
-              if (reason === '' || !allowedReasons.includes(reason)) {
-                return false;
-              }
-              axios
-                .post(
-                  process.env.VUE_APP_USER_ENDPOINT_URL + '/user/report',
-                  {
-                    name: commentUsername,
-                    reason,
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${getAccessToken().value}`,
-                    },
-                  },
-                )
-                .then(() => {
-                  toastController
-                    .create({
-                      header: 'Your report has been successfully sent',
-                      position: 'bottom',
-                      color: 'success',
-                      duration: 3000,
-                      buttons: [
-                        {
-                          text: 'Close',
-                          role: 'cancel',
-                        },
-                      ],
-                    })
-                    .then((toast) => {
-                      toast.present();
-                    });
-                })
-                .catch((error) => {
-                  console.error(error);
-                  toastController
-                    .create({
-                      header: 'Failed to report user, please try again',
-                      position: 'bottom',
-                      color: 'danger',
-                      duration: 3000,
-                      buttons: [
-                        {
-                          text: 'Close',
-                          role: 'cancel',
-                        },
-                      ],
-                    })
-                    .then((toast) => {
-                      toast.present();
-                    });
-                });
-            },
-          },
-        ],
-      });
+      const alert = await getAlertController(commentUsername, getAccessToken().value);
       return alert.present();
     }, 1000);
 

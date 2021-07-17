@@ -189,7 +189,7 @@ export default defineComponent({
           if (response.data.Message === 'Sign up success') {
             errorMsg.value?.close();
             setConfirmationNeeded(true);
-            router.push('/confirm');
+            router.push({ name: 'Confirm' });
           } else {
             errorMsg.value?.showMsg('Unable to sign up: ' + response.data.Message);
           }

@@ -1,0 +1,215 @@
+<template>
+  <ion-page>
+    <ion-content :fullscreen="true">
+      <ion-grid>
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+          <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+            <div class="page-title">
+              <b>Routes By User</b>
+            </div>
+            <ion-item class="rounded">
+              <ion-icon
+                slot="start"
+                class="ion-no-margin margin-right"
+                :icon="personCircleOutline"
+              ></ion-icon>
+              <ion-text>{{ profileUsername }}</ion-text>
+              <ion-button slot="end" class="margin-left" color="danger" @click="reportUserHandler">
+                <ion-label>Report&nbsp;</ion-label>
+                <ion-icon :icon="flag"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row
+          class="ion-align-items-center ion-justify-content-center"
+          v-if="isLoggedIn && !isOwnself && isAdmin"
+        >
+          <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+            <ion-button
+              v-if="isAdmin"
+              class="margin-left"
+              color="danger"
+              @click="disableUserHandler"
+            >
+              <ion-label>Admin Disable</ion-label>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+          <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+            <user-route-list />
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-content>
+  </ion-page>
+</template>
+
+<script lang="ts">
+import {
+  IonContent,
+  IonPage,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonItem,
+  IonText,
+  IonIcon,
+  IonLabel,
+  IonButton,
+  alertController,
+  toastController,
+} from '@ionic/vue';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+import { defineComponent, Ref, ref, inject, computed } from 'vue';
+import { personCircleOutline, flag } from 'ionicons/icons';
+import { useRoute } from 'vue-router';
+import { throttle } from 'lodash';
+import { getAlertController } from '@/common/reportUserAlert';
+import UserRouteList from '@/components/UserRouteList.vue';
+
+export default defineComponent({
+  name: 'UserRoutes',
+  components: {
+    IonContent,
+    IonPage,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonItem,
+    IonText,
+    IonIcon,
+    IonLabel,
+    IonButton,
+    UserRouteList,
+  },
+  setup() {
+    const route = useRoute();
+    const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
+    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
+    const isLoggedIn = getLoggedIn();
+    const profileUsername = computed(() => route.params.username as string);
+    const isOwnself = computed(() => getUsername().value === profileUsername.value);
+
+    // TODO: Refactor to getUserRole
+    const isAdmin = computed(() => {
+      try {
+        const idObject: { 'custom:role': string } = jwt_decode(getIdToken().value);
+        return idObject['custom:role'] === 'admin';
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    });
+
+    const reportUserHandler = throttle(async () => {
+      const alert = await getAlertController(profileUsername.value, getAccessToken().value);
+      return alert.present();
+    }, 1000);
+
+    /**
+     * Only admins can see this
+     */
+    const disableUserHandler = throttle(async () => {
+      const alert = await alertController.create({
+        cssClass: 'wide',
+        header: `Disable this user?`,
+        message: 'Are you sure?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'secondary',
+          },
+          {
+            text: 'Yes',
+            handler: () => {
+              axios
+                .post(
+                  process.env.VUE_APP_USER_ENDPOINT_URL + '/user/disable',
+                  {
+                    name: profileUsername.value,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getAccessToken().value}`,
+                    },
+                  },
+                )
+                .then(() => {
+                  toastController
+                    .create({
+                      header: 'User has been successfully disabled',
+                      position: 'bottom',
+                      color: 'success',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                })
+                .catch((error) => {
+                  console.error(error);
+                  toastController
+                    .create({
+                      header: 'Failed to disable user, please try again',
+                      position: 'bottom',
+                      color: 'danger',
+                      duration: 3000,
+                      buttons: [
+                        {
+                          text: 'Close',
+                          role: 'cancel',
+                        },
+                      ],
+                    })
+                    .then((toast) => {
+                      toast.present();
+                    });
+                });
+            },
+          },
+        ],
+      });
+      return alert.present();
+    }, 1000);
+
+    return {
+      profileUsername,
+      personCircleOutline,
+      isLoggedIn,
+      isOwnself,
+      flag,
+      reportUserHandler,
+      disableUserHandler,
+      isAdmin,
+    };
+  },
+});
+</script>
+
+<style scoped>
+.page-title {
+  text-align: center;
+  font-size: clamp(2rem, 7vw, 2.5rem);
+  margin: 10px 10px 30px 10px;
+}
+
+.margin-left {
+  margin-left: 10px;
+}
+
+.margin-right {
+  margin-right: 10px;
+}
+</style>

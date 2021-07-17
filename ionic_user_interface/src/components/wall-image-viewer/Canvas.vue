@@ -273,7 +273,7 @@ export default defineComponent({
     const handlePostClick = () => {
       const imageUri = stage.toDataURL({ mimeType: 'image/jpeg', pixelRatio: 4 });
       setRouteImageUri(imageUri);
-      router.push('/uploadRoute');
+      router.push({ name: 'UploadRoute' });
     };
 
     const handleTapeClick = () => {

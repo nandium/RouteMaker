@@ -10,6 +10,7 @@
     @didDismiss="setPopoverOpen(false)"
   >
     <ion-list class="no-padding no-margin">
+      <ion-item button @click="clickMyRoutesButton">My Routes</ion-item>
       <ion-item button @click="clickProfileButton">Profile</ion-item>
       <ion-item button color="danger" @click="clickLogoutButton">Logout</ion-item>
     </ion-list>
@@ -35,6 +36,7 @@ export default defineComponent({
     const router = useRouter();
     const forceLogout: () => Promise<void> = inject('forceLogout', () => Promise.resolve());
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const isLoggedIn = getLoggedIn();
 
     const popoverEvent = ref();
@@ -69,7 +71,12 @@ export default defineComponent({
 
     const clickProfileButton = () => {
       setPopoverOpen(false);
-      router.push('/profile');
+      router.push({ name: 'Profile' });
+    };
+
+    const clickMyRoutesButton = () => {
+      setPopoverOpen(false);
+      router.push({ name: 'UserRoutes', params: { username: getUsername().value } });
     };
 
     return {
@@ -80,6 +87,7 @@ export default defineComponent({
       setPopoverOpen,
       clickLogoutButton,
       clickProfileButton,
+      clickMyRoutesButton,
     };
   },
 });

@@ -59,7 +59,7 @@ const forceLogout = async (): Promise<void> => {
       localStorage.removeItem('idToken');
       localStorage.removeItem('isConfirmationNeeded');
       localStorage.removeItem('routeImageUri');
-      router.push('/home');
+      router.push({ name: 'Home' });
     });
 };
 

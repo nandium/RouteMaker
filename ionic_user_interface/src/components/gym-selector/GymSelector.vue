@@ -52,20 +52,7 @@
           </ion-list>
         </ion-col>
       </ion-row>
-      <iframe
-        v-if="viewMap"
-        :width="width + 'px'"
-        :height="width + 'px'"
-        class="google-embed-map"
-        loading="lazy"
-        allowfullscreen
-        :src="embedMapSrcStart + embedMapPointerLocation"
-      ></iframe>
-      <ion-row class="ion-align-items-center ion-justify-content-center">
-        <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-          <GymRouteList v-show="userHasSelectedGym" ref="gymRouteList" />
-        </ion-col>
-      </ion-row>
+      <gym-map v-if="viewMap" :gymLocation="selectedGym"></gym-map>
     </ion-grid>
   </div>
 </template>
@@ -88,7 +75,7 @@ import Lookup, { Country } from 'country-code-lookup';
 import { map, mapOutline, warning } from 'ionicons/icons';
 
 import MessageBox from '@/components/MessageBox.vue';
-import GymRouteList from '@/components/GymRouteList.vue';
+import GymMap from '@/components/GymMap.vue';
 import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
 
@@ -107,17 +94,9 @@ export default defineComponent({
     IonButton,
     AutoComplete,
     MessageBox,
-    GymRouteList,
+    GymMap,
   },
-  props: {
-    width: {
-      type: Number,
-      required: true,
-    },
-  },
-  setup() {
-    const embedMapSrcStart = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_MAP_EMBED_API}&q=`;
-    const embedMapPointerLocation = ref('');
+  setup(_, { emit }) {
     const countryNameList = ref<Array<Country>>([]);
     const gymLocationList = ref<Array<GymLocation>>([]);
     const selectedCountryIso3 = ref('');
@@ -132,7 +111,6 @@ export default defineComponent({
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
 
-    const gymRouteList = ref<typeof GymRouteList | null>(null);
     const viewMap = ref(false);
 
     onMounted(async () => {
@@ -165,20 +143,20 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Whenever a gym is selected, emit the location of selected gym
+     */
     const onGymSelect = (gymLocation: string) => {
       errorMsg.value?.close();
       selectedGym.value = gymLocation;
-      gymRouteList.value?.setGymLocation(selectedGym.value);
+      emit('onGymSelect', gymLocation);
     };
 
     const onClickViewMap = () => {
-      embedMapPointerLocation.value = selectedGym.value;
       viewMap.value = !viewMap.value;
     };
 
     return {
-      embedMapSrcStart,
-      embedMapPointerLocation,
       countryNameList,
       onCountrySelect,
       selectedGym,
@@ -188,7 +166,6 @@ export default defineComponent({
       userHasSelectedCountry,
       errorMsg,
       viewMap,
-      gymRouteList,
       onClickViewMap,
       map,
       mapOutline,
@@ -198,14 +175,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-body.dark .google-embed-map {
-  border: 0;
-  filter: invert(90%);
-}
-
-body .google-embed-map {
-  border: 0;
-}
-</style>
