@@ -10,15 +10,21 @@
             <ion-item class="rounded">
               <ion-icon slot="start" :icon="personCircleOutline"></ion-icon>
               <ion-text>{{ profileUsername }}</ion-text>
-              <ion-icon
-                v-if="isLoggedIn && !isOwnself"
-                class="report-icon"
-                slot="end"
-                color="danger"
-                :icon="flagOutline"
-                @click="reportUserHandler"
-              ></ion-icon>
             </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+          <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+            <div class="margin-left">
+              <ion-button v-if="isLoggedIn && !isOwnself" color="danger" @click="reportUserHandler">
+                <ion-label>Report user&nbsp;</ion-label>
+                <ion-icon :icon="flag"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+          <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <user-route-list />
           </ion-col>
         </ion-row>
@@ -39,7 +45,7 @@ import {
   IonIcon,
 } from '@ionic/vue';
 import { defineComponent, Ref, ref, inject, computed } from 'vue';
-import { personCircleOutline, flagOutline } from 'ionicons/icons';
+import { personCircleOutline, flag } from 'ionicons/icons';
 import { useRoute } from 'vue-router';
 import { throttle } from 'lodash';
 import { getAlertController } from '@/common/reportUserAlert';
@@ -78,7 +84,7 @@ export default defineComponent({
       personCircleOutline,
       isLoggedIn,
       isOwnself,
-      flagOutline,
+      flag,
       reportUserHandler,
     };
   },
@@ -86,13 +92,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.report-icon:hover {
-  cursor: pointer;
-}
-
 .page-title {
   text-align: center;
   font-size: clamp(2rem, 7vw, 2.5rem);
   margin: 10px 10px 30px 10px;
+}
+
+.margin-left {
+  margin-left: 10px;
 }
 </style>
