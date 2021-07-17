@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, Ref, ref, onMounted } from 'vue';
+import { defineComponent, inject, Ref, ref, onMounted, computed, watch } from 'vue';
 import { heart, heartOutline } from 'ionicons/icons';
 import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonList } from '@ionic/vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -76,10 +76,10 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const { username } = route.params;
     const routes = ref<Array<UserRoute>>([]);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const profileUsername = computed(() => route.params.username as string);
 
     const updateRoutes = throttle(() => {
       const headers = getLoggedIn().value
@@ -89,7 +89,7 @@ export default defineComponent({
         .get(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/user', {
           headers,
           params: {
-            username,
+            username: profileUsername.value,
           },
         })
         .then((response) => {
@@ -103,9 +103,11 @@ export default defineComponent({
           console.error(error);
           throw new Error('Failed to get routes');
         });
-    }, 50);
+    }, 1000);
 
     onMounted(updateRoutes);
+
+    watch(profileUsername, updateRoutes);
 
     const handleRouteCardClick = (username: string, createdAt: string) => {
       router.push({

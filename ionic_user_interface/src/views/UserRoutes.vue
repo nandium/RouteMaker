@@ -38,7 +38,7 @@ import {
   IonText,
   IonIcon,
 } from '@ionic/vue';
-import { defineComponent, Ref, ref, inject } from 'vue';
+import { defineComponent, Ref, ref, inject, computed } from 'vue';
 import { personCircleOutline, flagOutline } from 'ionicons/icons';
 import { useRoute } from 'vue-router';
 import { throttle } from 'lodash';
@@ -60,15 +60,15 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
-    const { username: profileUsername } = route.params;
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const isLoggedIn = getLoggedIn();
-    const isOwnself = getUsername().value === profileUsername;
+    const profileUsername = computed(() => route.params.username as string);
+    const isOwnself = computed(() => getUsername().value === profileUsername.value);
 
     const reportUserHandler = throttle(async () => {
-      const alert = await getAlertController(profileUsername as string, getAccessToken().value);
+      const alert = await getAlertController(profileUsername.value, getAccessToken().value);
       return alert.present();
     }, 1000);
 
