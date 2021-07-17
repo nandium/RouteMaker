@@ -9,7 +9,7 @@
             </div>
             <ion-item class="rounded">
               <ion-icon slot="start" :icon="personCircleOutline"></ion-icon>
-              <ion-text>{{ usernameText }}</ion-text>
+              <ion-text>{{ profileUsername }}</ion-text>
               <ion-icon
                 v-if="isLoggedIn && !isOwnself"
                 class="report-icon"
@@ -60,21 +60,21 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
-    const usernameText = route.params.username as string;
+    const { username: profileUsername } = route.params;
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const isLoggedIn = getLoggedIn();
-    const isOwnself = getUsername().value === usernameText;
+    const isOwnself = getUsername().value === profileUsername;
 
     const reportUserHandler = throttle(async () => {
-      const alert = await getAlertController(usernameText, getAccessToken().value);
+      const alert = await getAlertController(profileUsername as string, getAccessToken().value);
       return alert.present();
     }, 1000);
 
     // TODO: disableUserHandler
     return {
-      usernameText,
+      profileUsername,
       personCircleOutline,
       isLoggedIn,
       isOwnself,

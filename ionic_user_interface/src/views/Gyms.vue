@@ -47,9 +47,11 @@ export default defineComponent({
   setup() {
     const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
     window.addEventListener('resize', updateCanvasWidth);
+
     onMounted(() => {
       updateCanvasWidth();
     });
+
     onUnmounted(() => {
       window.removeEventListener('resize', updateCanvasWidth);
     });
@@ -71,6 +73,7 @@ export default defineComponent({
       showGymRouteList.value = true;
       gymRouteList.value?.setGymLocation(gymLocation);
     };
+
     onMounted(() => {
       if (gymLocation && gymName) {
         handleOnGymSelect(gymLocation as string);
