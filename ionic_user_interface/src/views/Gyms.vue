@@ -18,10 +18,18 @@
         <gym-selector v-if="showGymSelector" @onGymSelect="handleOnGymSelect" />
         <ion-row v-else class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <ion-button expand="full" fill="clear" color="dark" @click="onClickViewMap">
+            <ion-button
+              class="ion-align-self-center ion-no-margin"
+              expand="full"
+              fill="clear"
+              color="dark"
+              @click="onClickViewMap"
+            >
               {{ viewMap ? 'Hide Map' : 'View Map' }}
               <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
             </ion-button>
+          </ion-col>
+          <ion-col class="ion-align-self-center ion-no-padding" size-xs="12">
             <gym-map v-if="viewMap" :gymLocation="gymLocation"></gym-map>
           </ion-col>
         </ion-row>
