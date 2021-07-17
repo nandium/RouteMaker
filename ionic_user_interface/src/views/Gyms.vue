@@ -10,11 +10,7 @@
           <b>-- {{ gymNameString }} --</b>
         </div>
         <br />
-        <gym-selector
-          v-if="showGymSelector"
-          :width="canvasWidth"
-          @onGymSelect="handleOnGymSelect"
-        />
+        <gym-selector v-if="showGymSelector" @onGymSelect="handleOnGymSelect" />
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <gym-route-list v-show="showGymRouteList" ref="gymRouteList" />
@@ -27,12 +23,11 @@
 
 <script lang="ts">
 import { IonContent, IonPage, IonRow, IonCol } from '@ionic/vue';
-import { defineComponent, onMounted, onUnmounted, ref, computed } from 'vue';
+import { defineComponent, onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 import GymSelector from '@/components/gym-selector/GymSelector.vue';
 import GymRouteList from '@/components/GymRouteList.vue';
-import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
 export default defineComponent({
   name: 'Gyms',
@@ -45,17 +40,6 @@ export default defineComponent({
     GymRouteList,
   },
   setup() {
-    const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
-    window.addEventListener('resize', updateCanvasWidth);
-
-    onMounted(() => {
-      updateCanvasWidth();
-    });
-
-    onUnmounted(() => {
-      window.removeEventListener('resize', updateCanvasWidth);
-    });
-
     /**
      * `/gyms` and `/gym/:gymLocation/:gymName` points to this component
      * If gymLocation exists in path parameters, use a different page layout
@@ -64,9 +48,7 @@ export default defineComponent({
     const gymRouteList = ref<typeof GymRouteList | null>(null);
     const showGymRouteList = ref(false);
     const { gymLocation, gymName } = route.params;
-    const showGymSelector = computed(
-      () => canvasWidth.value > 0 && gymLocation === undefined && gymName === undefined,
-    );
+    const showGymSelector = computed(() => gymLocation === undefined && gymName === undefined);
     const gymNameString = ref('');
 
     const handleOnGymSelect = (gymLocation: string) => {
@@ -82,7 +64,6 @@ export default defineComponent({
     });
 
     return {
-      canvasWidth,
       gymRouteList,
       showGymRouteList,
       handleOnGymSelect,
