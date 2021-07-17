@@ -1,8 +1,6 @@
 <template>
   <iframe
     class="google-embed-map"
-    :width="canvasWidth + 'px'"
-    :height="canvasWidth + 'px'"
     loading="lazy"
     allowfullscreen
     :src="embedMapSrcStart + gymLocation"
@@ -10,9 +8,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, onMounted } from 'vue';
+import { defineComponent } from 'vue';
 import { map, mapOutline, warning } from 'ionicons/icons';
-import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
 export default defineComponent({
   name: 'GymMap',
@@ -24,23 +21,12 @@ export default defineComponent({
   },
   setup() {
     const embedMapSrcStart = `https://www.google.com/maps/embed/v1/place?key=${process.env.VUE_APP_MAP_EMBED_API}&q=`;
-    const { canvasWidth, updateCanvasWidth } = useCanvasWidth();
-    window.addEventListener('resize', updateCanvasWidth);
-
-    onMounted(() => {
-      updateCanvasWidth();
-    });
-
-    onUnmounted(() => {
-      window.removeEventListener('resize', updateCanvasWidth);
-    });
 
     return {
       embedMapSrcStart,
       map,
       mapOutline,
       warning,
-      canvasWidth,
     };
   },
 });
@@ -54,5 +40,10 @@ body.dark .google-embed-map {
 
 body .google-embed-map {
   border: 0;
+}
+
+.google-embed-map {
+  width: min(100vw, 800px);
+  height: min(100vw, 800px);
 }
 </style>
