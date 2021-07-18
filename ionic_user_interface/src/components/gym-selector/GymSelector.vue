@@ -121,8 +121,10 @@ export default defineComponent({
         gymLocationList.value = countryGymLocations;
         if (userGym.value !== '') {
           selectedGym.value = userGym.value;
-        } else {
+        } else if (userCountry.value.iso3 === 'SGP') {
           selectedGym.value = '1.343014966025054, 103.77590653585952'; // Z-Vertigo's gym location
+        } else {
+          selectedGym.value = '';
         }
         // Simulate being selected in ion-select
         onGymSelect(selectedGym.value);
