@@ -117,6 +117,8 @@ export default defineComponent({
         const countryGymLocations = await getGymsByCountry(userCountry.value.iso3);
         gymLocationList.value = countryGymLocations;
         selectedGym.value = '1.343014966025054, 103.77590653585952'; // Z-Vertigo's gym location
+        // Simulate being selected in ion-select
+        onGymSelect(selectedGym.value);
         autoComplete.value?.setValue(userCountry.value.country);
       } else {
         reset();

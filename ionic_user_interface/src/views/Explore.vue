@@ -4,12 +4,12 @@
       <div id="container">
         <ion-row class="ion-align-items-center ion-justify-content-center margin-bottom">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <div v-if="gymNameString === ''">
+            <div v-if="showGymSelector">
               <strong>Route Maker</strong>
               <p>Find climbing routes by gym</p>
             </div>
-            <div v-else class="gym-name">
-              <b>-- {{ gymNameString }} --</b>
+            <div v-else>
+              <b>-- {{ gymName }} --</b>
             </div>
           </ion-col>
         </ion-row>
@@ -79,9 +79,11 @@ export default defineComponent({
     const route = useRoute();
     const gymRouteList = ref<typeof GymRouteList | null>(null);
     const showGymRouteList = ref(false);
-    const { gymLocation, gymName } = route.params;
-    const showGymSelector = computed(() => gymLocation === undefined && gymName === undefined);
-    const gymNameString = ref('');
+    const gymLocation = computed(() => route.params.gymLocation as string);
+    const gymName = computed(() => route.params.gymName as string);
+    const showGymSelector = computed(
+      () => gymLocation.value === undefined && gymName.value === undefined,
+    );
     const viewMap = ref(false);
 
     const handleOnGymSelect = (gymLocation: string) => {
@@ -94,9 +96,8 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      if (gymLocation && gymName) {
-        handleOnGymSelect(gymLocation as string);
-        gymNameString.value = gymName as string;
+      if (gymLocation.value && gymName.value) {
+        handleOnGymSelect(gymLocation.value as string);
       }
     });
 
@@ -110,7 +111,6 @@ export default defineComponent({
       handleOnGymSelect,
       handleOnCountryReset,
       showGymSelector,
-      gymNameString,
       gymLocation,
       onClickViewMap,
       viewMap,
