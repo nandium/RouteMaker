@@ -1,70 +1,67 @@
 <template>
-  <div>
-    <ion-grid>
-      <ion-row class="ion-align-items-center ion-justify-content-center">
-        <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-          <MessageBox ref="errorMsg" color="danger" />
-          <ion-list>
-            <ion-item>
-              <ion-label class="absolute-position">Country</ion-label>
-              <auto-complete
-                ref="autoComplete"
-                :options="countryNameList"
-                optionsKey="country"
-                @matchedItem="onCountrySelect"
-              />
-            </ion-item>
-            <ion-item v-if="userHasSelectedCountry">
-              <ion-label>Gym</ion-label>
-              <ion-select
-                :value="selectedGym"
-                @ionChange="onGymSelect($event.detail.value)"
-                interface="action-sheet"
-              >
-                <ion-select-option
-                  v-for="(item, index) in gymLocationList"
-                  :key="index"
-                  :value="item.gymLocation"
-                >
-                  {{ item.gymName }}
-                </ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-row
-              v-if="userHasSelectedGym"
-              class="ion-align-items-center ion-justify-content-center"
+  <ion-row class="ion-align-items-center ion-justify-content-center">
+    <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
+      <MessageBox ref="errorMsg" color="danger" />
+      <ion-list class="ion-list">
+        <ion-item>
+          <ion-label class="absolute-position">Country</ion-label>
+          <auto-complete
+            ref="autoComplete"
+            :options="countryNameList"
+            optionsKey="country"
+            @matchedItem="onCountrySelect"
+          />
+        </ion-item>
+        <ion-item v-if="userHasSelectedCountry">
+          <ion-label>Gym</ion-label>
+          <ion-select
+            :value="selectedGym"
+            @ionChange="onGymSelect($event.detail.value)"
+            interface="action-sheet"
+          >
+            <ion-select-option
+              v-for="(item, index) in gymLocationList"
+              :key="index"
+              :value="item.gymLocation"
             >
-              <ion-col class="ion-align-self-center">
-                <ion-button expand="full" fill="clear" color="dark" @click="onClickViewMap">
-                  {{ viewMap ? 'Hide Map' : 'View Map' }}
-                  <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
-                </ion-button>
-              </ion-col>
-              <ion-col class="ion-align-self-center">
-                <router-link style="text-decoration: none" to="/gyms/request">
-                  <ion-button expand="full" fill="clear" color="dark">
-                    Can't Find Gym?
-                    <ion-icon slot="end" :icon="warning"></ion-icon>
-                  </ion-button>
-                </router-link>
-              </ion-col>
-            </ion-row>
-          </ion-list>
-        </ion-col>
-      </ion-row>
-      <gym-map v-if="viewMap" :gymLocation="selectedGym"></gym-map>
-    </ion-grid>
+              {{ item.gymName }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-row
+          v-if="userHasSelectedGym"
+          class="ion-align-items-center ion-justify-content-center ion-no-margin"
+        >
+          <ion-col class="ion-align-self-center">
+            <ion-button expand="full" fill="clear" color="dark" @click="onClickViewMap">
+              {{ viewMap ? 'Hide Map' : 'View Map' }}
+              <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
+            </ion-button>
+          </ion-col>
+          <ion-col class="ion-align-self-center">
+            <router-link style="text-decoration: none" to="/gyms/request">
+              <ion-button expand="full" fill="clear" color="dark">
+                Can't Find Gym?
+                <ion-icon slot="end" :icon="warning"></ion-icon>
+              </ion-button>
+            </router-link>
+          </ion-col>
+        </ion-row>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+  <div v-if="viewMap" class="margin-top center-inner">
+    <gym-map :gymLocation="selectedGym"></gym-map>
   </div>
 </template>
 
 <script lang="ts">
 import { ref, onMounted, defineComponent, computed, Ref, inject } from 'vue';
 import {
-  IonGrid,
-  IonList,
   IonIcon,
   IonItem,
   IonLabel,
+  IonList,
   IonSelect,
   IonSelectOption,
   IonRow,
@@ -82,11 +79,10 @@ import AutoComplete from './AutoComplete.vue';
 export default defineComponent({
   name: 'GymSelector',
   components: {
-    IonGrid,
-    IonLabel,
-    IonList,
     IonIcon,
     IonItem,
+    IonLabel,
+    IonList,
     IonSelect,
     IonSelectOption,
     IonRow,
@@ -175,3 +171,14 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.ion-list {
+  padding-top: 3px;
+  padding-bottom: 0;
+}
+
+.margin-top {
+  margin-top: 3px;
+}
+</style>

@@ -18,8 +18,8 @@
         </ion-row>
         <ion-row class="ion-justify-content-between display-flex">
           <ion-item
-            class="ion-no-padding margin-left rounded"
-            :href="'/userRoutes/' + routeDetails.username"
+            class="ion-no-padding margin-left rounded profile-item"
+            @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
           >
             <ion-icon
               class="margin-right margin-left"
@@ -44,7 +44,11 @@
         </ion-row>
         <div class="ion-padding">
           <b>Route setter's {{ isRouteSetter ? '(you)' : '' }} grading:</b>
-          <GradeSlider :value="routeDetails.ownerGrade" :disabled="!isRouteSetter"></GradeSlider>
+          <GradeSlider
+            :value="routeDetails.ownerGrade"
+            :disabled="!isRouteSetter"
+            :changeHandler="isRouteSetter ? gradeChangeHandler : () => undefined"
+          ></GradeSlider>
         </div>
         <div class="ion-padding">
           <b>Public's grading:</b>
@@ -55,7 +59,7 @@
           {{ routeDetails.graded == -1 ? 'You have not graded this route' : '' }}
           <GradeSlider
             :value="routeDetails.graded == -1 ? 0 : routeDetails.graded"
-            :changeHandler="gradeChangeHandler"
+            :changeHandler="isRouteSetter ? () => undefined : gradeChangeHandler"
           ></GradeSlider>
         </div>
         <br />
@@ -100,8 +104,8 @@
             </ion-card-header>
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
               <ion-item
-                class="ion-no-padding margin-left-large rounded"
-                :href="'/userRoutes/' + username"
+                class="ion-no-padding margin-left-large rounded profile-item"
+                @click="() => router.push({ name: 'UserRoutes', params: username })"
               >
                 <ion-icon
                   class="margin-right margin-left"
@@ -196,7 +200,8 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const { username, createdAt } = route.params;
+    const username = computed(() => route.params.username);
+    const createdAt = computed(() => route.params.createdAt);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
@@ -217,10 +222,8 @@ export default defineComponent({
         return false;
       }
     });
-    const isRouteSetter = computed(() => username === myUsername.value);
-
+    const isRouteSetter = computed(() => username.value === myUsername.value);
     const hasAlreadyCommented = ref(false);
-
     const hasReported = ref(false);
 
     const isLoading = ref(false);
@@ -228,6 +231,9 @@ export default defineComponent({
     let routeDetails: Ref<RouteDetails> = ref({});
 
     const updateRouteDetails = throttle(() => {
+      if (isLoading.value) {
+        return;
+      }
       isLoading.value = true;
       const headers = getLoggedIn().value
         ? { Authorization: `Bearer ${getAccessToken().value}` }
@@ -236,8 +242,8 @@ export default defineComponent({
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details',
           {
-            username,
-            createdAt,
+            username: username.value,
+            createdAt: createdAt.value,
           },
           {
             headers,
@@ -284,8 +290,8 @@ export default defineComponent({
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment',
           {
-            username,
-            createdAt,
+            username: username.value,
+            createdAt: createdAt.value,
             comment: commentText.value,
           },
           {
@@ -311,8 +317,8 @@ export default defineComponent({
             Authorization: `Bearer ${getAccessToken().value}`,
           },
           params: {
-            username,
-            createdAt,
+            username: username.value,
+            createdAt: createdAt.value,
             commentUsername,
             timestamp: timestamp.toString(),
           },
@@ -410,8 +416,8 @@ export default defineComponent({
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/grade',
           {
-            username,
-            createdAt,
+            username: username.value,
+            createdAt: createdAt.value,
             grade,
           },
           {
@@ -429,6 +435,7 @@ export default defineComponent({
     };
 
     return {
+      router,
       routeDetails,
       commentText,
       hasAlreadyCommented,
@@ -554,6 +561,11 @@ ion-card {
 
 .display-flex {
   display: flex;
+}
+
+.profile-item:hover {
+  cursor: pointer;
+  --background: #333333;
 }
 
 ion-spinner {

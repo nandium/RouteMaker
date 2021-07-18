@@ -30,7 +30,7 @@
             </ion-button>
           </ion-col>
           <ion-col class="ion-align-self-center ion-no-padding" size-xs="12">
-            <gym-map v-if="viewMap" :gymLocation="gymLocation"></gym-map>
+            <gym-map v-if="viewMap" :gymLocation="gymLocation" class="margin-top"></gym-map>
           </ion-col>
         </ion-row>
 
@@ -139,5 +139,9 @@ export default defineComponent({
 .gym-name {
   font-size: clamp(2rem, 7vw, 2.5rem);
   margin: 20px;
+}
+
+.margin-top {
+  margin-top: 3px;
 }
 </style>

@@ -46,7 +46,7 @@
       keyboard-close
       @didDismiss="setPopoverOpen(false)"
     >
-      <ion-list class="no-padding no-margin">
+      <ion-list class="ion-no-padding ion-no-margin">
         <ion-item button @click="setSortMode(SortMode.VOTES)">
           Most votes
           <ion-icon
