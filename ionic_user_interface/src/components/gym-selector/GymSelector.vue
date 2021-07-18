@@ -131,7 +131,6 @@ export default defineComponent({
 
     const onCountrySelect = async (country: Country) => {
       errorMsg.value?.close();
-      console.log(country);
       if (country) {
         selectedCountryIso3.value = country.iso3;
         const countryGymLocations = await getGymsByCountry(country.iso3);
