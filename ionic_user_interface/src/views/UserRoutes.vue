@@ -15,7 +15,7 @@
               ></ion-icon>
               <ion-text>{{ profileUsername }}</ion-text>
               <ion-button
-                v-if="!isOwnself"
+                v-if="!isOwnself && isLoggedIn"
                 slot="end"
                 class="margin-left"
                 color="danger"

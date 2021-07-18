@@ -8,14 +8,16 @@
     >
       <ion-card-header>
         <ion-card-title>{{ route.routeName }}</ion-card-title>
-        <div v-if="isOwnself || isAdmin" class="center-right">
-          <ion-icon
+        <div class="center-right">
+          <div
+            v-if="isOwnself || isAdmin"
             class="delete-button"
             @click.stop.prevent="
               () => deleteRouteHandler(route.routeName, route.username, route.createdAt)
             "
-            :icon="trashOutline"
-          ></ion-icon>
+          >
+            <ion-icon :icon="trashOutline"></ion-icon>
+          </div>
           <VoteButton
             :username="route.username"
             :createdAt="route.createdAt"
@@ -230,10 +232,12 @@ ion-card-header {
 .delete-button {
   border: 2px solid grey;
   border-radius: 10px;
-  padding: 3px;
-  margin: 2px;
   margin-right: 5px;
-  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
 }
 
 .delete-button:hover {

@@ -11,7 +11,6 @@
 
 <script lang="ts">
 import { IonButtons, IonHeader, IonImg, IonToolbar } from '@ionic/vue';
-import { chevronBackCircleOutline } from 'ionicons/icons';
 import LoginButton from './LoginButton.vue';
 import { defineComponent, Ref, ref, inject, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -43,7 +42,6 @@ export default defineComponent({
 
     return {
       logoImageSrc,
-      chevronBackCircleOutline,
       handleLogoClick,
     };
   },

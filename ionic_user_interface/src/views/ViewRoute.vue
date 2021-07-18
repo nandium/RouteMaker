@@ -65,6 +65,7 @@
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <div class="margin-left margin-right">
+          <h1 class="ion-text-center ion-margin">-- Comments --</h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"
@@ -88,18 +89,20 @@
             <ion-card-header>
               <ion-card-title>{{ comment }}</ion-card-title>
               <div v-if="isLoggedIn" class="center-right">
-                <ion-icon
+                <div
                   class="icon-button"
                   v-if="username !== myUsername"
                   @click="() => reportCommentHandler(username)"
-                  :icon="flagOutline"
-                ></ion-icon>
-                <ion-icon
-                  class="icon-button"
+                >
+                  <ion-icon :icon="flagOutline"></ion-icon>
+                </div>
+                <div
                   v-if="username === myUsername || isAdmin"
+                  class="icon-button"
                   @click="() => deleteCommentHandler(username, timestamp)"
-                  :icon="trashOutline"
-                ></ion-icon>
+                >
+                  <ion-icon :icon="trashOutline"></ion-icon>
+                </div>
               </div>
             </ion-card-header>
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
@@ -272,16 +275,17 @@ export default defineComponent({
 
     const postCommentHandler = throttle(() => {
       msgBox.value?.close();
-      commentText.value = commentText.value.trim();
-      if (commentText.value.length === 0) {
+      const comment = commentText.value.trim();
+      commentText.value = '';
+      if (comment.length === 0) {
         msgBox.value?.showMsg('Comment cannot be empty');
         return false;
       }
-      if (commentText.value.length > 150) {
+      if (comment.length > 150) {
         msgBox.value?.showMsg('Comment is too long, please keep it within 150 characters');
         return false;
       }
-      if (!asciiPattern.test(commentText.value)) {
+      if (!asciiPattern.test(comment)) {
         msgBox.value?.showMsg('Comment cannot contain non-ASCII characters');
         return false;
       }
@@ -292,7 +296,7 @@ export default defineComponent({
           {
             username: username.value,
             createdAt: createdAt.value,
-            comment: commentText.value,
+            comment,
           },
           {
             headers: {
@@ -509,8 +513,12 @@ export default defineComponent({
 
 .icon-button {
   border-radius: 4px;
+  width: 30px;
+  height: 30px;
   padding: 2px;
-  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon-button:hover {
