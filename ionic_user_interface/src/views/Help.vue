@@ -38,19 +38,19 @@
 
         <hr class="my-4" id="section2" />
         <p class="lead my-4">1. Upload the photo of a climbing wall</p>
-        <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_1.jpg`" />
+        <ion-img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_1.jpg`" />
         <br />
         <p class="lead my-4">2. The holds will be marked automatically</p>
-        <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_2.jpg`" />
+        <ion-img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_2.jpg`" />
         <br />
         <p class="lead my-4">3. Create a custom route by following the prompts</p>
-        <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_3.jpg`" />
+        <ion-img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_3.jpg`" />
         <br />
         <p class="lead my-4">4. Post to share with other gym goers</p>
-        <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_4.jpg`" />
+        <ion-img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_4.jpg`" />
         <br />
         <p class="lead my-4">5. Vote, grade and comment on other's routes</p>
-        <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_5.jpg`" />
+        <ion-img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_5.jpg`" />
         <br />
       </div>
     </ion-content>
@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { logoGithub } from 'ionicons/icons';
-import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
+import { IonButton, IonContent, IonIcon, IonImg, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -68,6 +68,7 @@ export default defineComponent({
     IonButton,
     IonContent,
     IonIcon,
+    IonImg,
     IonPage,
   },
   setup() {
@@ -105,9 +106,9 @@ export default defineComponent({
 }
 
 .screenshot {
-  border-radius: 6px;
   border: 1.5px solid grey;
   max-width: 200px;
+  margin: 0 auto;
 }
 
 .features-div {
