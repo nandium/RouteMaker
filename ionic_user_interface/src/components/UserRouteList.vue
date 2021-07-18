@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, Ref, ref, onMounted, computed, ComputedRef } from 'vue';
+import { defineComponent, inject, Ref, ref, onMounted, computed, ComputedRef, watch } from 'vue';
 import { heart, heartOutline, trashOutline } from 'ionicons/icons';
 import {
   alertController,
@@ -140,6 +140,8 @@ export default defineComponent({
     }, 1000);
 
     onMounted(updateRoutes);
+
+    watch(profileUsername, updateRoutes);
 
     const handleRouteCardClick = (username: string, createdAt: string) => {
       router.push({

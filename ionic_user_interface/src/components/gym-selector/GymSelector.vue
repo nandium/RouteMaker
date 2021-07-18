@@ -119,6 +119,8 @@ export default defineComponent({
         selectedCountryIso3.value = userCountry.value.iso3;
         const countryGymLocations = await getGymsByCountry(userCountry.value.iso3);
         gymLocationList.value = countryGymLocations;
+        // For new user, default is SGP and Zvertigo
+        // After usage, the app remembers the new country and gym
         if (userGym.value !== '') {
           selectedGym.value = userGym.value;
         } else if (userCountry.value.iso3 === 'SGP') {
