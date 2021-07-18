@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div id="container">
-        <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-row class="ion-align-items-center ion-justify-content-center margin-bottom">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <div v-if="gymNameString === ''">
               <strong>Route Maker</strong>
@@ -143,5 +143,9 @@ export default defineComponent({
 
 .margin-top {
   margin-top: 3px;
+}
+
+.margin-bottom {
+  margin-bottom: 25px;
 }
 </style>
