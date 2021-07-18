@@ -1,20 +1,8 @@
 <template>
   <ion-header :translucent="true">
-    <ion-toolbar>
+    <ion-toolbar class="smaller-height">
       <ion-img class="logo" @click="handleLogoClick" :src="logoImageSrc" />
       <ion-buttons slot="end">
-        <ion-button router-link="/explore">
-          Explore
-          <ion-icon slot="end" :icon="searchOutline"></ion-icon>
-        </ion-button>
-        <ion-button router-link="/new">
-          New
-          <ion-icon slot="end" :icon="cameraOutline"></ion-icon>
-        </ion-button>
-        <ion-button router-link="/help">
-          Help
-          <ion-icon slot="end" :icon="helpCircleOutline"></ion-icon>
-        </ion-button>
         <LoginButton />
       </ion-buttons>
     </ion-toolbar>
@@ -22,13 +10,8 @@
 </template>
 
 <script lang="ts">
-import { IonButton, IonButtons, IonHeader, IonIcon, IonImg, IonToolbar } from '@ionic/vue';
-import {
-  chevronBackCircleOutline,
-  cameraOutline,
-  searchOutline,
-  helpCircleOutline,
-} from 'ionicons/icons';
+import { IonButtons, IonHeader, IonImg, IonToolbar } from '@ionic/vue';
+import { chevronBackCircleOutline } from 'ionicons/icons';
 import LoginButton from './LoginButton.vue';
 import { defineComponent, Ref, ref, inject, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -36,10 +19,8 @@ import { useRouter } from 'vue-router';
 export default defineComponent({
   name: 'Header',
   components: {
-    IonButton,
     IonButtons,
     IonHeader,
-    IonIcon,
     IonImg,
     IonToolbar,
     LoginButton,
@@ -64,9 +45,6 @@ export default defineComponent({
       logoImageSrc,
       chevronBackCircleOutline,
       handleLogoClick,
-      cameraOutline,
-      searchOutline,
-      helpCircleOutline,
     };
   },
 });
@@ -75,12 +53,18 @@ export default defineComponent({
 <style scoped>
 .logo {
   margin-left: min(17px, 4vw);
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
 }
 
 .logo:hover {
   cursor: pointer;
+}
+
+.smaller-height {
+  height: 50px;
+  display: flex;
+  align-items: center;
 }
 
 ion-buttons > ion-button {

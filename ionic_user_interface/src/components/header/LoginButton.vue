@@ -116,7 +116,8 @@ ion-item > ion-button {
 }
 
 .person-icon-button {
-  height: 100%;
+  height: 40px;
+  width: 40px;
   --padding-bottom: 6px;
   --padding-top: 6px;
   --padding-start: 6px;
