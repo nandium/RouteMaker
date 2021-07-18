@@ -3,7 +3,7 @@ import axios from 'axios';
 import router from '@/router';
 import jwt_decode from 'jwt-decode';
 import { toastController } from '@ionic/vue';
-import { Country } from 'country-code-lookup';
+import Lookup, { Country } from 'country-code-lookup';
 
 const isLoggedIn = ref(false);
 const username = ref('');
@@ -14,7 +14,7 @@ const idToken = ref('');
 const isConfirmationNeeded = ref(false);
 const prefersDarkMode = ref(false);
 const routeImageUri = ref('');
-const userCountry: Ref<Country | null> = ref(null);
+const userCountry: Ref<Country | null> = ref(Lookup.byIso('SGP'));
 const userRole = computed(() => {
   try {
     const idObject: { 'custom:role': string } = jwt_decode(providers.getIdToken().value);
@@ -199,10 +199,12 @@ const providers = {
   },
   getUserCountry: (): Ref<Country | null> => {
     try {
-      userCountry.value = JSON.parse(localStorage.getItem('userCountry') ?? 'null');
+      userCountry.value = JSON.parse(
+        localStorage.getItem('userCountry') ?? JSON.stringify(Lookup.byIso('SGP')),
+      );
       return userCountry;
     } catch {
-      return ref(null);
+      return ref(Lookup.byIso('SGP'));
     }
   },
   setUserCountry: (country: Country): void => {
