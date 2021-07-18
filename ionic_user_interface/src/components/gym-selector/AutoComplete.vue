@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, reactive, watch } from 'vue';
+import { defineComponent, watch, computed, ref, Ref } from 'vue';
 import { IonInput, IonCard, IonText } from '@ionic/vue';
 
 export default defineComponent({
@@ -35,69 +35,63 @@ export default defineComponent({
     optionsKey: String,
   },
   setup(props, { emit }) {
-    const state = reactive({
-      userInput: '',
-      filteredSuggestions: [] as Array<Record<string, any>>,
-      suggestions: [] as Array<Record<string, any>>,
-      showCard: true,
-    });
+    const userInput = ref('');
+    const filteredSuggestions: Ref<Array<Record<string, any>>> = ref([]);
+    const showCard = ref(true);
+    const suggestions = computed(() => props.options as Array<Record<string, any>>);
 
     const onSelected = (_item: Record<string, any>) => {
-      state.userInput = _item[props.optionsKey as string];
-      state.filteredSuggestions = [];
+      userInput.value = _item[props.optionsKey as string];
+      filteredSuggestions.value = [];
     };
 
     const setValue = (value: string) => {
-      state.userInput = value;
+      userInput.value = value;
     };
 
     // Make user input the same as the top suggestion
     const onEnter = () => {
-      if (state.filteredSuggestions.length > 0) {
-        state.userInput = state.filteredSuggestions[0][props.optionsKey as string];
+      if (filteredSuggestions.value.length > 0) {
+        userInput.value = filteredSuggestions.value[0][props.optionsKey as string];
       }
     };
 
-    watch(
-      () => props.options,
-      () => {
-        state.suggestions = props.options as Array<Record<string, any>>;
-      },
-    );
-
     // Emits null if no match-
     const emitItemIfMatchFound = () => {
-      state.showCard = true;
-      if (state.userInput.length === 0) {
-        state.filteredSuggestions = [];
+      showCard.value = true;
+      if (userInput.value.length === 0) {
+        filteredSuggestions.value = [];
         return;
       }
       // The number of suggestions can be edited here
-      state.filteredSuggestions = state.suggestions
+      filteredSuggestions.value = suggestions.value
         .filter(
           (suggestion) =>
             suggestion[props.optionsKey as string]
               .toLowerCase()
-              .indexOf(state.userInput.toLowerCase()) === 0,
+              .indexOf(userInput.value.toLowerCase()) === 0,
         )
         .slice(0, 1);
       // Don't show anymore if the user input is the same as suggestion
       if (
-        state.filteredSuggestions.length === 1 &&
-        state.filteredSuggestions[0][props.optionsKey as string] === state.userInput
+        filteredSuggestions.value.length === 1 &&
+        filteredSuggestions.value[0][props.optionsKey as string] === userInput.value
       ) {
-        state.showCard = false;
+        showCard.value = false;
         // Returns completed input
-        emit('matchedItem', state.filteredSuggestions[0]);
+        emit('matchedItem', filteredSuggestions.value[0]);
       } else {
         emit('matchedItem', null);
       }
     };
 
-    watch(() => state.userInput, emitItemIfMatchFound);
+    watch(userInput, emitItemIfMatchFound);
 
     return {
-      ...toRefs(state),
+      userInput,
+      filteredSuggestions,
+      showCard,
+      suggestions,
       onSelected,
       onEnter,
       setValue,

@@ -266,7 +266,7 @@ export default defineComponent({
               } else {
                 searchMap.set(vGrade, [route.routeId]);
               }
-              const createdAt = route.createdAt.toLowerCase().split('T')[0];
+              const createdAt = route.createdAt.split('T')[0].toLowerCase();
               if (searchMap.has(createdAt)) {
                 searchMap.get(createdAt).push(route.routeId);
               } else {
