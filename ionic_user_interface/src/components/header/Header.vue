@@ -1,9 +1,11 @@
 <template>
   <ion-header :translucent="true">
     <ion-toolbar>
-      <ion-title>
-        <ion-img class="logo" :src="logoImageSrc" router-link="/home" />
-      </ion-title>
+      <ion-back-button style="display: none" ref="backButton"></ion-back-button>
+      <div class="logo-wrapper" @click="handleLogoClick" title="Back">
+        <ion-icon class="back-arrow" :icon="chevronBackCircleOutline" />
+        <ion-img class="logo" :src="logoImageSrc" />
+      </div>
       <ion-buttons slot="end">
         <ion-button router-link="/home">Home</ion-button>
         <ion-button router-link="/gyms">Gyms</ion-button>
@@ -15,33 +17,54 @@
 </template>
 
 <script lang="ts">
-import { IonButton, IonButtons, IonHeader, IonImg, IonTitle, IonToolbar } from '@ionic/vue';
+import {
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonToolbar,
+} from '@ionic/vue';
+import { chevronBackCircleOutline } from 'ionicons/icons';
 import LoginButton from './LoginButton.vue';
-import { defineComponent, watch, Ref, ref, inject } from 'vue';
+import { defineComponent, Ref, ref, inject, computed } from 'vue';
 
 export default defineComponent({
   name: 'Header',
   components: {
+    IonBackButton,
     IonButton,
     IonButtons,
     IonHeader,
+    IonIcon,
     IonImg,
-    IonTitle,
     IonToolbar,
     LoginButton,
   },
   setup() {
     const getPrefersDarkMode: () => Ref<boolean> = inject('getPrefersDarkMode', () => ref(false));
     const prefersDarkMode = getPrefersDarkMode();
-    const logoImageSrc = ref(process.env.BASE_URL + 'assets/icons/favicon-lightmode-name.svg');
-    watch(prefersDarkMode, () => {
+    const logoImageSrc = computed(() => {
       if (prefersDarkMode.value) {
-        logoImageSrc.value = process.env.BASE_URL + 'assets/icons/favicon-darkmode-name.svg';
+        return process.env.BASE_URL + 'assets/icons/favicon-darkmode-name.svg';
       } else {
-        logoImageSrc.value = process.env.BASE_URL + 'assets/icons/favicon-lightmode-name.svg';
+        return process.env.BASE_URL + 'assets/icons/favicon-lightmode-name.svg';
       }
     });
-    return { logoImageSrc };
+
+    const backButton: Ref<typeof IonBackButton | null> = ref(null);
+
+    const handleLogoClick = () => {
+      backButton.value?.$el.click();
+    };
+
+    return {
+      logoImageSrc,
+      chevronBackCircleOutline,
+      backButton,
+      handleLogoClick,
+    };
   },
 });
 </script>
@@ -51,7 +74,29 @@ export default defineComponent({
   width: 60px;
   height: 60px;
 }
-.logo:hover {
+
+.logo-wrapper {
+  display: inline-flex;
+  justify-items: center;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.logo-wrapper:hover {
   cursor: pointer;
+}
+
+.logo-wrapper:hover > .back-arrow {
+  color: white;
+}
+
+.back-arrow {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+  margin-top: 1px; /* For fixing alignment, may need to adjust when logo changes */
+  color: #999999;
+  --background-hover: transparent;
+  --background-focused: transparent;
 }
 </style>

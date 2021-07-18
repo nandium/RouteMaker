@@ -42,7 +42,8 @@
     </ion-card>
     <ion-card v-if="routes.length === 0" class="ion-text-center">
       <ion-card-header>
-        <ion-card-title>No Routes Found</ion-card-title>
+        <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+        <ion-card-title v-if="!isLoading">No Routes Found</ion-card-title>
       </ion-card-header>
     </ion-card>
   </ion-list>
@@ -59,6 +60,7 @@ import {
   IonCardTitle,
   IonIcon,
   IonList,
+  IonSpinner,
 } from '@ionic/vue';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
@@ -88,6 +90,7 @@ export default defineComponent({
     IonCardTitle,
     IonIcon,
     IonList,
+    IonSpinner,
     VoteButton,
   },
   setup() {
@@ -102,8 +105,12 @@ export default defineComponent({
     const isOwnself = computed(() => profileUsername.value === getUsername().value);
     const isAdmin = computed(() => getUserRole().value === 'admin');
 
+    const isLoading = ref(false);
+
     const updateRoutes = throttle(() => {
       routes.value = [];
+      isLoading.value = true;
+
       const headers = getLoggedIn().value
         ? { Authorization: `Bearer ${getAccessToken().value}` }
         : {};
@@ -124,6 +131,9 @@ export default defineComponent({
         .catch((error) => {
           console.error(error);
           throw new Error('Failed to get routes');
+        })
+        .finally(() => {
+          isLoading.value = false;
         });
     }, 1000);
 
@@ -191,6 +201,7 @@ export default defineComponent({
       isAdmin,
       trashOutline,
       isOwnself,
+      isLoading,
     };
   },
 });
@@ -231,5 +242,10 @@ ion-card-header {
 .delete-button:hover {
   background-color: #333333;
   cursor: pointer;
+}
+
+ion-spinner {
+  height: 60px;
+  width: 60px;
 }
 </style>

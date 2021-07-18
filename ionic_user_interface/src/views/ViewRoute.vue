@@ -1,7 +1,8 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true" v-if="hasLoaded">
-      <div id="container" class="ion-text-left">
+    <ion-content :fullscreen="true">
+      <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+      <div v-if="!isLoading" id="container" class="ion-text-left">
         <ion-img :src="routeDetails.routeURL"></ion-img>
         <ion-row class="ion-justify-content-between">
           <div class="route-title">
@@ -131,6 +132,7 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  IonSpinner,
   IonTextarea,
   alertController,
   toastController,
@@ -185,6 +187,7 @@ export default defineComponent({
     IonLabel,
     IonPage,
     IonRow,
+    IonSpinner,
     IonTextarea,
     GradeSlider,
     MessageBox,
@@ -193,7 +196,6 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const hasLoaded = ref(false);
     const { username, createdAt } = route.params;
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
@@ -221,9 +223,12 @@ export default defineComponent({
 
     const hasReported = ref(false);
 
+    const isLoading = ref(false);
+
     let routeDetails: Ref<RouteDetails> = ref({});
 
     const updateRouteDetails = throttle(() => {
+      isLoading.value = true;
       const headers = getLoggedIn().value
         ? { Authorization: `Bearer ${getAccessToken().value}` }
         : {};
@@ -246,12 +251,14 @@ export default defineComponent({
                 (comment) => comment.username == myUsername.value,
               ) ?? false;
             hasReported.value = routeDetails.value.hasReported ?? false;
-            hasLoaded.value = true;
           }
         })
         .catch((error) => {
           console.error(error);
           router.back();
+        })
+        .finally(() => {
+          isLoading.value = false;
         });
     }, 1000);
 
@@ -432,7 +439,6 @@ export default defineComponent({
       deleteCommentHandler,
       reportCommentHandler,
       sendSharp,
-      hasLoaded,
       isLoggedIn,
       isAdmin,
       flag,
@@ -442,6 +448,7 @@ export default defineComponent({
       msgBox,
       gradeChangeHandler,
       isRouteSetter,
+      isLoading,
     };
   },
 });
@@ -547,5 +554,15 @@ ion-card {
 
 .display-flex {
   display: flex;
+}
+
+ion-spinner {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -50px;
 }
 </style>
