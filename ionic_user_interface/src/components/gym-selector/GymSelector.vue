@@ -103,7 +103,10 @@ export default defineComponent({
 
     const getUserCountry: () => Ref<Country | null> = inject('getUserCountry', () => ref(null));
     const setUserCountry: (country: Country) => void = inject('setUserCountry', () => undefined);
+    const getUserGym: () => Ref<string> = inject('getUserGym', () => ref(''));
+    const setUserGym: (gym: string) => void = inject('setUserGym', () => undefined);
     const userCountry = getUserCountry();
+    const userGym = getUserGym();
     const autoComplete: Ref<typeof AutoComplete | null> = ref(null);
 
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
@@ -116,7 +119,11 @@ export default defineComponent({
         selectedCountryIso3.value = userCountry.value.iso3;
         const countryGymLocations = await getGymsByCountry(userCountry.value.iso3);
         gymLocationList.value = countryGymLocations;
-        selectedGym.value = '1.343014966025054, 103.77590653585952'; // Z-Vertigo's gym location
+        if (userGym.value !== '') {
+          selectedGym.value = userGym.value;
+        } else {
+          selectedGym.value = '1.343014966025054, 103.77590653585952'; // Z-Vertigo's gym location
+        }
         // Simulate being selected in ion-select
         onGymSelect(selectedGym.value);
         autoComplete.value?.setValue(userCountry.value.country);
@@ -149,6 +156,7 @@ export default defineComponent({
      */
     const onGymSelect = (gymLocation: string) => {
       errorMsg.value?.close();
+      setUserGym(gymLocation);
       emit('onGymSelect', gymLocation);
     };
 

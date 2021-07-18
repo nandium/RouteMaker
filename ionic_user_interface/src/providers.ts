@@ -15,6 +15,7 @@ const isConfirmationNeeded = ref(false);
 const prefersDarkMode = ref(false);
 const routeImageUri = ref('');
 const userCountry: Ref<Country | null> = ref(Lookup.byIso('SGP'));
+const userGym: Ref<string> = ref('');
 const userRole = computed(() => {
   try {
     const idObject: { 'custom:role': string } = jwt_decode(providers.getIdToken().value);
@@ -210,6 +211,14 @@ const providers = {
   setUserCountry: (country: Country): void => {
     localStorage.setItem('userCountry', JSON.stringify(country));
     userCountry.value = country;
+  },
+  getUserGym: (): Ref<string> => {
+    userGym.value = localStorage.getItem('userGym') ?? '';
+    return userGym;
+  },
+  setUserGym: (gym: string): void => {
+    localStorage.setItem('userGym', gym);
+    userGym.value = gym;
   },
   getUserRole: (): ComputedRef<string> => {
     return userRole;
