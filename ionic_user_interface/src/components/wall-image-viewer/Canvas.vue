@@ -4,13 +4,14 @@
     <br />
     <div class="sticky-button-rows">
       <ion-item class="instruction-steps ion-text-center">
-        <ion-icon
-          class="instruction-arrow"
+        <div
+          class="instruction-arrow shift-down"
           v-if="routeMakingStep > 0"
           slot="start"
-          :icon="caretBackOutline"
           @click="changeRouteMakingStep(false)"
-        ></ion-icon>
+        >
+          <ion-icon :icon="caretBackOutline"></ion-icon>
+        </div>
         <ion-text v-if="routeMakingStep === 0">
           1. Drag to draw the undetected holds. Pinch to zoom
         </ion-text>
@@ -18,13 +19,14 @@
         <ion-text v-if="routeMakingStep === 2">3. Does handhold order matter?</ion-text>
         <ion-text v-if="routeMakingStep === 3">4. One hand or two hand start?</ion-text>
         <ion-text v-if="routeMakingStep === 4">5. Export locally or post to share?</ion-text>
-        <ion-icon
+        <div
           class="instruction-arrow"
           v-if="routeMakingStep < 4"
           slot="end"
-          :icon="caretForwardOutline"
           @click="changeRouteMakingStep(true)"
-        ></ion-icon>
+        >
+          <ion-icon :icon="caretForwardOutline"></ion-icon>
+        </div>
       </ion-item>
 
       <ion-button
@@ -362,11 +364,32 @@ export default defineComponent({
   border: 2px solid var(--ion-color-tertiary);
   filter: hue-rotate(90deg);
   background-color: var(--ion-background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instruction-arrow {
+  height: 25px;
+  width: 25px;
 }
 
 .instruction-arrow:hover {
   cursor: pointer;
+}
+
+.instruction-arrow > ion-icon {
+  height: 25px;
+  width: 25px;
+  color: gray;
+}
+
+.instruction-arrow:hover > ion-icon {
   color: black;
+}
+
+.shift-down {
+  margin-top: 1px;
 }
 
 .hold-picker {
