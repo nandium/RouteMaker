@@ -2,12 +2,15 @@ app: yolo-bouldering
 
 service: yolo-bouldering-bucket
 
+configValidationMode: warn
+
 provider:
   name: aws
   stage: dev
   region: ap-southeast-1
   lambdaHashingVersion: 20201221
   variableSyntax: '\${{([\s\S]+?)}}'
+
   # https://forum.serverless.com/t/getting-handle-accountid-in-serverless-config/946/8
 
 resources:
