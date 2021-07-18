@@ -31,7 +31,7 @@ import { usePhotoGallery } from '@/composables/usePhotoGallery';
 import { useCanvasWidth } from '@/composables/useCanvasWidth';
 
 export default defineComponent({
-  name: 'Home',
+  name: 'New',
   components: {
     IonButton,
     IonContent,

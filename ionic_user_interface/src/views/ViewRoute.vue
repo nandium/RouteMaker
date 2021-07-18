@@ -1,7 +1,8 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true" v-if="hasLoaded">
-      <div id="container" class="ion-text-left">
+    <ion-content :fullscreen="true">
+      <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+      <div v-if="!isLoading" id="container" class="ion-text-left">
         <ion-img :src="routeDetails.routeURL"></ion-img>
         <ion-row class="ion-justify-content-between">
           <div class="route-title">
@@ -17,8 +18,8 @@
         </ion-row>
         <ion-row class="ion-justify-content-between display-flex">
           <ion-item
-            class="ion-no-padding margin-left rounded"
-            :href="'/userRoutes/' + routeDetails.username"
+            class="ion-no-padding margin-left rounded profile-item"
+            @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
           >
             <ion-icon
               class="margin-right margin-left"
@@ -43,7 +44,11 @@
         </ion-row>
         <div class="ion-padding">
           <b>Route setter's {{ isRouteSetter ? '(you)' : '' }} grading:</b>
-          <GradeSlider :value="routeDetails.ownerGrade" :disabled="!isRouteSetter"></GradeSlider>
+          <GradeSlider
+            :value="routeDetails.ownerGrade"
+            :disabled="!isRouteSetter"
+            :changeHandler="isRouteSetter ? gradeChangeHandler : () => undefined"
+          ></GradeSlider>
         </div>
         <div class="ion-padding">
           <b>Public's grading:</b>
@@ -54,12 +59,13 @@
           {{ routeDetails.graded == -1 ? 'You have not graded this route' : '' }}
           <GradeSlider
             :value="routeDetails.graded == -1 ? 0 : routeDetails.graded"
-            :changeHandler="gradeChangeHandler"
+            :changeHandler="isRouteSetter ? () => undefined : gradeChangeHandler"
           ></GradeSlider>
         </div>
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <div class="margin-left margin-right">
+          <h1 class="ion-text-center ion-margin">-- Comments --</h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"
@@ -83,24 +89,26 @@
             <ion-card-header>
               <ion-card-title>{{ comment }}</ion-card-title>
               <div v-if="isLoggedIn" class="center-right">
-                <ion-icon
+                <div
                   class="icon-button"
                   v-if="username !== myUsername"
                   @click="() => reportCommentHandler(username)"
-                  :icon="flagOutline"
-                ></ion-icon>
-                <ion-icon
-                  class="icon-button"
+                >
+                  <ion-icon :icon="flagOutline"></ion-icon>
+                </div>
+                <div
                   v-if="username === myUsername || isAdmin"
+                  class="icon-button"
                   @click="() => deleteCommentHandler(username, timestamp)"
-                  :icon="trashOutline"
-                ></ion-icon>
+                >
+                  <ion-icon :icon="trashOutline"></ion-icon>
+                </div>
               </div>
             </ion-card-header>
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
               <ion-item
-                class="ion-no-padding margin-left-large rounded"
-                :href="'/userRoutes/' + username"
+                class="ion-no-padding margin-left-large rounded profile-item"
+                @click="() => router.push({ name: 'UserRoutes', params: username })"
               >
                 <ion-icon
                   class="margin-right margin-left"
@@ -131,6 +139,7 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  IonSpinner,
   IonTextarea,
   alertController,
   toastController,
@@ -185,6 +194,7 @@ export default defineComponent({
     IonLabel,
     IonPage,
     IonRow,
+    IonSpinner,
     IonTextarea,
     GradeSlider,
     MessageBox,
@@ -193,8 +203,8 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const hasLoaded = ref(false);
-    const { username, createdAt } = route.params;
+    const username = computed(() => route.params.username);
+    const createdAt = computed(() => route.params.createdAt);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
@@ -215,15 +225,19 @@ export default defineComponent({
         return false;
       }
     });
-    const isRouteSetter = computed(() => username === myUsername.value);
-
+    const isRouteSetter = computed(() => username.value === myUsername.value);
     const hasAlreadyCommented = ref(false);
-
     const hasReported = ref(false);
+
+    const isLoading = ref(false);
 
     let routeDetails: Ref<RouteDetails> = ref({});
 
     const updateRouteDetails = throttle(() => {
+      if (isLoading.value) {
+        return;
+      }
+      isLoading.value = true;
       const headers = getLoggedIn().value
         ? { Authorization: `Bearer ${getAccessToken().value}` }
         : {};
@@ -231,8 +245,8 @@ export default defineComponent({
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details',
           {
-            username,
-            createdAt,
+            username: username.value,
+            createdAt: createdAt.value,
           },
           {
             headers,
@@ -246,12 +260,14 @@ export default defineComponent({
                 (comment) => comment.username == myUsername.value,
               ) ?? false;
             hasReported.value = routeDetails.value.hasReported ?? false;
-            hasLoaded.value = true;
           }
         })
         .catch((error) => {
           console.error(error);
           router.back();
+        })
+        .finally(() => {
+          isLoading.value = false;
         });
     }, 1000);
 
@@ -259,16 +275,17 @@ export default defineComponent({
 
     const postCommentHandler = throttle(() => {
       msgBox.value?.close();
-      commentText.value = commentText.value.trim();
-      if (commentText.value.length === 0) {
+      const comment = commentText.value.trim();
+      commentText.value = '';
+      if (comment.length === 0) {
         msgBox.value?.showMsg('Comment cannot be empty');
         return false;
       }
-      if (commentText.value.length > 150) {
+      if (comment.length > 150) {
         msgBox.value?.showMsg('Comment is too long, please keep it within 150 characters');
         return false;
       }
-      if (!asciiPattern.test(commentText.value)) {
+      if (!asciiPattern.test(comment)) {
         msgBox.value?.showMsg('Comment cannot contain non-ASCII characters');
         return false;
       }
@@ -277,9 +294,9 @@ export default defineComponent({
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment',
           {
-            username,
-            createdAt,
-            comment: commentText.value,
+            username: username.value,
+            createdAt: createdAt.value,
+            comment,
           },
           {
             headers: {
@@ -304,8 +321,8 @@ export default defineComponent({
             Authorization: `Bearer ${getAccessToken().value}`,
           },
           params: {
-            username,
-            createdAt,
+            username: username.value,
+            createdAt: createdAt.value,
             commentUsername,
             timestamp: timestamp.toString(),
           },
@@ -403,8 +420,8 @@ export default defineComponent({
         .post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/grade',
           {
-            username,
-            createdAt,
+            username: username.value,
+            createdAt: createdAt.value,
             grade,
           },
           {
@@ -422,6 +439,7 @@ export default defineComponent({
     };
 
     return {
+      router,
       routeDetails,
       commentText,
       hasAlreadyCommented,
@@ -432,7 +450,6 @@ export default defineComponent({
       deleteCommentHandler,
       reportCommentHandler,
       sendSharp,
-      hasLoaded,
       isLoggedIn,
       isAdmin,
       flag,
@@ -442,6 +459,7 @@ export default defineComponent({
       msgBox,
       gradeChangeHandler,
       isRouteSetter,
+      isLoading,
     };
   },
 });
@@ -495,8 +513,12 @@ export default defineComponent({
 
 .icon-button {
   border-radius: 4px;
+  width: 30px;
+  height: 30px;
   padding: 2px;
-  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon-button:hover {
@@ -547,5 +569,20 @@ ion-card {
 
 .display-flex {
   display: flex;
+}
+
+.profile-item:hover {
+  cursor: pointer;
+  --background: #333333;
+}
+
+ion-spinner {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -50px;
 }
 </style>

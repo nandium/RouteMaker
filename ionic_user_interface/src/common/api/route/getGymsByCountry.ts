@@ -3,11 +3,6 @@ import { routeBaseUrl } from './config';
 
 const getGymsByCountryUrl = routeBaseUrl + '/route/gym/country';
 
-/**
- *
- * @param {string} countryCode
- * @returns {Array} array of gyms
- */
 const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => {
   try {
     const {

@@ -3,7 +3,7 @@
     <ion-item>
       <ion-input
         type="text"
-        placeholder="Search for a route"
+        placeholder="Search routes, creators, grades, etc."
         v-model="searchText"
         maxlength="70"
         clear-input
@@ -46,7 +46,7 @@
       keyboard-close
       @didDismiss="setPopoverOpen(false)"
     >
-      <ion-list class="no-padding no-margin">
+      <ion-list class="ion-no-padding ion-no-margin">
         <ion-item button @click="setSortMode(SortMode.VOTES)">
           Most votes
           <ion-icon
@@ -121,7 +121,8 @@
       </ion-card>
       <ion-card v-if="filteredSortedRoutes.length === 0" class="ion-text-center">
         <ion-card-header>
-          <ion-card-title>No Routes Found</ion-card-title>
+          <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+          <ion-card-title v-if="!isLoading">No Routes Found</ion-card-title>
         </ion-card-header>
       </ion-card>
     </ion-list>
@@ -151,6 +152,7 @@ import {
   IonList,
   IonPopover,
   IonRange,
+  IonSpinner,
 } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -193,6 +195,7 @@ export default defineComponent({
     IonList,
     IonPopover,
     IonRange,
+    IonSpinner,
     VoteButton,
   },
   setup() {
@@ -214,6 +217,8 @@ export default defineComponent({
 
     let gymLocation = '';
 
+    const isLoading = ref(false);
+
     const range = (start: number, end: number) => {
       return Array.from({ length: end - start + 1 }, (_, i) => i);
     };
@@ -222,6 +227,7 @@ export default defineComponent({
       if (gymLocation === '') {
         return;
       }
+      isLoading.value = true;
       const headers = getLoggedIn().value
         ? { Authorization: `Bearer ${getAccessToken().value}` }
         : {};
@@ -260,7 +266,7 @@ export default defineComponent({
               } else {
                 searchMap.set(vGrade, [route.routeId]);
               }
-              const createdAt = route.createdAt.toLowerCase().split('T')[0];
+              const createdAt = route.createdAt.split('T')[0].toLowerCase();
               if (searchMap.has(createdAt)) {
                 searchMap.get(createdAt).push(route.routeId);
               } else {
@@ -276,6 +282,9 @@ export default defineComponent({
         .catch((error) => {
           console.error(error);
           throw new Error('Failed to get routes');
+        })
+        .finally(() => {
+          isLoading.value = false;
         });
     }, 50);
 
@@ -291,7 +300,7 @@ export default defineComponent({
 
     // Small hack to ensure that the likes always stay in sync
     watch(router.currentRoute, () => {
-      if (router.currentRoute.value.path === '/gyms') {
+      if (router.currentRoute.value.path === '/explore') {
         updateRoutes();
       }
     });
@@ -439,6 +448,7 @@ export default defineComponent({
       filteredSortedRoutes,
       searchOutline,
       searchText,
+      isLoading,
     };
   },
 });
@@ -498,5 +508,10 @@ ion-card-header {
 
 .margin-left-tiny {
   margin-left: 5px;
+}
+
+ion-spinner {
+  height: 60px;
+  width: 60px;
 }
 </style>

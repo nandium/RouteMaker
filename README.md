@@ -20,7 +20,7 @@ Users can upload the routes that they created so that other climbers in the same
 
 Application: https://routemaker.rocks
 
-Quick Guide: https://routemaker.rocks/about
+Quick Guide: https://routemaker.rocks/help
 
 ## Contributing
 

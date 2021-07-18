@@ -2,20 +2,24 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div id="container">
-        <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-row class="ion-align-items-center ion-justify-content-center margin-bottom">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <div v-if="gymNameString === ''">
+            <div v-if="showGymSelector">
               <strong>Route Maker</strong>
               <p>Find climbing routes by gym</p>
             </div>
-            <div v-else class="gym-name">
-              <b>-- {{ gymNameString }} --</b>
+            <div class="gym-name" v-else>
+              <b>-- {{ gymName }} --</b>
             </div>
           </ion-col>
         </ion-row>
 
         <!-- Show Gym Selector if browsing gyms, show only gym-map if individual gym -->
-        <gym-selector v-if="showGymSelector" @onGymSelect="handleOnGymSelect" />
+        <gym-selector
+          v-if="showGymSelector"
+          @onGymSelect="handleOnGymSelect"
+          @onCountryReset="handleOnCountryReset"
+        />
         <ion-row v-else class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <ion-button
@@ -30,7 +34,7 @@
             </ion-button>
           </ion-col>
           <ion-col class="ion-align-self-center ion-no-padding" size-xs="12">
-            <gym-map v-if="viewMap" :gymLocation="gymLocation"></gym-map>
+            <gym-map v-if="viewMap" :gymLocation="gymLocation" class="margin-top"></gym-map>
           </ion-col>
         </ion-row>
 
@@ -55,7 +59,7 @@ import GymMap from '@/components/GymMap.vue';
 import GymRouteList from '@/components/GymRouteList.vue';
 
 export default defineComponent({
-  name: 'Gyms',
+  name: 'Explore',
   components: {
     IonContent,
     IonPage,
@@ -69,15 +73,17 @@ export default defineComponent({
   },
   setup() {
     /**
-     * `/gyms` and `/gym/:gymLocation/:gymName` points to this component
+     * `/explore` and `/gym/:gymLocation/:gymName` points to this component
      * If gymLocation exists in path parameters, use a different page layout
      */
     const route = useRoute();
     const gymRouteList = ref<typeof GymRouteList | null>(null);
     const showGymRouteList = ref(false);
-    const { gymLocation, gymName } = route.params;
-    const showGymSelector = computed(() => gymLocation === undefined && gymName === undefined);
-    const gymNameString = ref('');
+    const gymLocation = computed(() => route.params.gymLocation as string);
+    const gymName = computed(() => route.params.gymName as string);
+    const showGymSelector = computed(
+      () => gymLocation.value === undefined && gymName.value === undefined,
+    );
     const viewMap = ref(false);
 
     const handleOnGymSelect = (gymLocation: string) => {
@@ -85,10 +91,13 @@ export default defineComponent({
       gymRouteList.value?.setGymLocation(gymLocation);
     };
 
+    const handleOnCountryReset = () => {
+      showGymRouteList.value = false;
+    };
+
     onMounted(() => {
-      if (gymLocation && gymName) {
-        handleOnGymSelect(gymLocation as string);
-        gymNameString.value = gymName as string;
+      if (gymLocation.value && gymName.value) {
+        handleOnGymSelect(gymLocation.value as string);
       }
     });
 
@@ -100,13 +109,14 @@ export default defineComponent({
       gymRouteList,
       showGymRouteList,
       handleOnGymSelect,
+      handleOnCountryReset,
       showGymSelector,
-      gymNameString,
       gymLocation,
       onClickViewMap,
       viewMap,
       map,
       mapOutline,
+      gymName,
     };
   },
 });
@@ -139,5 +149,13 @@ export default defineComponent({
 .gym-name {
   font-size: clamp(2rem, 7vw, 2.5rem);
   margin: 20px;
+}
+
+.margin-top {
+  margin-top: 3px;
+}
+
+.margin-bottom {
+  margin-bottom: 25px;
 }
 </style>

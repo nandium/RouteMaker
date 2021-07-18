@@ -8,13 +8,23 @@
     >
       <ion-card-header>
         <ion-card-title>{{ route.routeName }}</ion-card-title>
-        <VoteButton
-          class="vote-button"
-          :username="route.username"
-          :createdAt="route.createdAt"
-          v-model:voteCount="route.voteCount"
-          v-model:hasVoted="route.hasVoted"
-        ></VoteButton>
+        <div class="center-right">
+          <div
+            v-if="isOwnself || isAdmin"
+            class="delete-button"
+            @click.stop.prevent="
+              () => deleteRouteHandler(route.routeName, route.username, route.createdAt)
+            "
+          >
+            <ion-icon :icon="trashOutline"></ion-icon>
+          </div>
+          <VoteButton
+            :username="route.username"
+            :createdAt="route.createdAt"
+            v-model:voteCount="route.voteCount"
+            v-model:hasVoted="route.hasVoted"
+          ></VoteButton>
+        </div>
       </ion-card-header>
       <ion-card-content>
         <b>Gym:&nbsp;</b>
@@ -34,16 +44,26 @@
     </ion-card>
     <ion-card v-if="routes.length === 0" class="ion-text-center">
       <ion-card-header>
-        <ion-card-title>No Routes Found</ion-card-title>
+        <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+        <ion-card-title v-if="!isLoading">No Routes Found</ion-card-title>
       </ion-card-header>
     </ion-card>
   </ion-list>
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, Ref, ref, onMounted, computed, watch } from 'vue';
-import { heart, heartOutline } from 'ionicons/icons';
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonList } from '@ionic/vue';
+import { defineComponent, inject, Ref, ref, onMounted, computed, ComputedRef, watch } from 'vue';
+import { heart, heartOutline, trashOutline } from 'ionicons/icons';
+import {
+  alertController,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonIcon,
+  IonList,
+  IonSpinner,
+} from '@ionic/vue';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 
@@ -70,8 +90,10 @@ export default defineComponent({
     IonCardContent,
     IonCardHeader,
     IonCardTitle,
-    VoteButton,
+    IonIcon,
     IonList,
+    IonSpinner,
+    VoteButton,
   },
   setup() {
     const route = useRoute();
@@ -79,10 +101,18 @@ export default defineComponent({
     const routes = ref<Array<UserRoute>>([]);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
+    const getUserRole: () => ComputedRef<string> = inject('getUserRole', () => computed(() => ''));
+    const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const profileUsername = computed(() => route.params.username as string);
+    const isOwnself = computed(() => profileUsername.value === getUsername().value);
+    const isAdmin = computed(() => getUserRole().value === 'admin');
+
+    const isLoading = ref(false);
 
     const updateRoutes = throttle(() => {
       routes.value = [];
+      isLoading.value = true;
+
       const headers = getLoggedIn().value
         ? { Authorization: `Bearer ${getAccessToken().value}` }
         : {};
@@ -103,6 +133,9 @@ export default defineComponent({
         .catch((error) => {
           console.error(error);
           throw new Error('Failed to get routes');
+        })
+        .finally(() => {
+          isLoading.value = false;
         });
     }, 1000);
 
@@ -120,11 +153,56 @@ export default defineComponent({
       });
     };
 
+    const deleteRouteHandler = throttle(
+      async (routeName: string, username: string, createdAt: string) => {
+        const alert = await alertController.create({
+          header: `Delete route '${routeName}'?`,
+          message:
+            'This action cannot be undone. <br/><br/> Once the route is deleted, you will not be able to restore it.',
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+            },
+            {
+              text: 'Delete',
+              cssClass: 'danger-text',
+              handler: throttle(async () => {
+                await axios
+                  .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route', {
+                    headers: {
+                      Authorization: `Bearer ${getAccessToken().value}`,
+                    },
+                    params: {
+                      username,
+                      createdAt,
+                    },
+                  })
+                  .then(() => {
+                    updateRoutes();
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }, 1000),
+            },
+          ],
+        });
+        return alert.present();
+      },
+      1000,
+    );
+
     return {
       routes,
       handleRouteCardClick,
+      deleteRouteHandler,
       heart,
       heartOutline,
+      isAdmin,
+      trashOutline,
+      isOwnself,
+      isLoading,
     };
   },
 });
@@ -140,10 +218,37 @@ ion-card-header {
   position: relative;
 }
 
-.vote-button {
+.center-right {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 8px;
   transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 25px;
+  margin: 0;
+}
+
+.delete-button {
+  border: 2px solid grey;
+  border-radius: 10px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+}
+
+.delete-button:hover {
+  background-color: #333333;
+  cursor: pointer;
+}
+
+ion-spinner {
+  height: 60px;
+  width: 60px;
 }
 </style>

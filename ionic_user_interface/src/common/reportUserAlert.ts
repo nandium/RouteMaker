@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { toastController, alertController } from '@ionic/vue';
 
-const getAlertController = async (username: string, accessToken: string) => {
+const getAlertController = async (
+  username: string,
+  accessToken: string,
+): Promise<HTMLIonAlertElement> => {
   const allowedReasons = ['', 'abusive', 'inappropriate', 'spam', 'racist', 'beliefs', 'notlike'];
   let reason = '';
   return alertController.create({

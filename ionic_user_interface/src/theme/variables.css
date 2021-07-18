@@ -6,6 +6,11 @@ http://ionicframework.com/docs/theming/ */
   src: url('/assets/fonts/Roboto-Light.ttf');
 }
 
+/* Prevent tooltips on mouseover */
+ion-icon {
+  pointer-events: none;
+}
+
 .danger-text {
   color: #ff4961 !important;
   --ion-text-color: #ff4961 !important;

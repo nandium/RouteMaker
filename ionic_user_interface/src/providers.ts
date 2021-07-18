@@ -1,9 +1,9 @@
-import { ref, Ref } from 'vue';
+import { computed, ComputedRef, ref, Ref } from 'vue';
 import axios from 'axios';
 import router from '@/router';
 import jwt_decode from 'jwt-decode';
 import { toastController } from '@ionic/vue';
-import { Country } from 'country-code-lookup';
+import Lookup, { Country } from 'country-code-lookup';
 
 const isLoggedIn = ref(false);
 const username = ref('');
@@ -14,7 +14,16 @@ const idToken = ref('');
 const isConfirmationNeeded = ref(false);
 const prefersDarkMode = ref(false);
 const routeImageUri = ref('');
-const userCountry: Ref<Country | null> = ref(null);
+const userCountry: Ref<Country | null> = ref(Lookup.byIso('SGP'));
+const userGym: Ref<string> = ref('');
+const userRole = computed(() => {
+  try {
+    const idObject: { 'custom:role': string } = jwt_decode(providers.getIdToken().value);
+    return idObject['custom:role'];
+  } catch (error) {
+    return 'undefined';
+  }
+});
 
 const forceLogout = async (): Promise<void> => {
   const config = {
@@ -59,7 +68,7 @@ const forceLogout = async (): Promise<void> => {
       localStorage.removeItem('idToken');
       localStorage.removeItem('isConfirmationNeeded');
       localStorage.removeItem('routeImageUri');
-      router.push({ name: 'Home' });
+      router.push({ name: 'Explore' });
     });
 };
 
@@ -191,15 +200,28 @@ const providers = {
   },
   getUserCountry: (): Ref<Country | null> => {
     try {
-      userCountry.value = JSON.parse(localStorage.getItem('userCountry') ?? 'null');
+      userCountry.value = JSON.parse(
+        localStorage.getItem('userCountry') ?? JSON.stringify(Lookup.byIso('SGP')),
+      );
       return userCountry;
     } catch {
-      return ref(null);
+      return ref(Lookup.byIso('SGP'));
     }
   },
   setUserCountry: (country: Country): void => {
     localStorage.setItem('userCountry', JSON.stringify(country));
     userCountry.value = country;
+  },
+  getUserGym: (): Ref<string> => {
+    userGym.value = localStorage.getItem('userGym') ?? '';
+    return userGym;
+  },
+  setUserGym: (gym: string): void => {
+    localStorage.setItem('userGym', gym);
+    userGym.value = gym;
+  },
+  getUserRole: (): ComputedRef<string> => {
+    return userRole;
   },
 };
 

@@ -185,7 +185,7 @@ export default defineComponent({
               toast.present();
             });
 
-          router.push({ name: 'Home' });
+          router.push({ name: 'Explore' });
         })
         .catch((error) => {
           if (error.response) {
