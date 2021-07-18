@@ -1,15 +1,20 @@
 <template>
   <ion-header :translucent="true">
     <ion-toolbar>
-      <ion-back-button style="display: none" ref="backButton"></ion-back-button>
-      <div class="logo-wrapper" @click="handleLogoClick" title="Back">
-        <ion-icon class="back-arrow" :icon="chevronBackCircleOutline" />
-        <ion-img class="logo" :src="logoImageSrc" />
-      </div>
+      <ion-img class="logo" @click="handleLogoClick" :src="logoImageSrc" />
       <ion-buttons slot="end">
-        <ion-button router-link="/home">Home</ion-button>
-        <ion-button router-link="/gyms">Gyms</ion-button>
-        <ion-button router-link="/about">About</ion-button>
+        <ion-button router-link="/explore">
+          Explore
+          <ion-icon slot="end" :icon="searchOutline"></ion-icon>
+        </ion-button>
+        <ion-button router-link="/new">
+          New
+          <ion-icon slot="end" :icon="cameraOutline"></ion-icon>
+        </ion-button>
+        <ion-button router-link="/help">
+          Help
+          <ion-icon slot="end" :icon="helpCircleOutline"></ion-icon>
+        </ion-button>
         <LoginButton />
       </ion-buttons>
     </ion-toolbar>
@@ -17,23 +22,20 @@
 </template>
 
 <script lang="ts">
+import { IonButton, IonButtons, IonHeader, IonIcon, IonImg, IonToolbar } from '@ionic/vue';
 import {
-  IonBackButton,
-  IonButton,
-  IonButtons,
-  IonHeader,
-  IonIcon,
-  IonImg,
-  IonToolbar,
-} from '@ionic/vue';
-import { chevronBackCircleOutline } from 'ionicons/icons';
+  chevronBackCircleOutline,
+  cameraOutline,
+  searchOutline,
+  helpCircleOutline,
+} from 'ionicons/icons';
 import LoginButton from './LoginButton.vue';
 import { defineComponent, Ref, ref, inject, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Header',
   components: {
-    IonBackButton,
     IonButton,
     IonButtons,
     IonHeader,
@@ -43,6 +45,7 @@ export default defineComponent({
     LoginButton,
   },
   setup() {
+    const router = useRouter();
     const getPrefersDarkMode: () => Ref<boolean> = inject('getPrefersDarkMode', () => ref(false));
     const prefersDarkMode = getPrefersDarkMode();
     const logoImageSrc = computed(() => {
@@ -53,17 +56,17 @@ export default defineComponent({
       }
     });
 
-    const backButton: Ref<typeof IonBackButton | null> = ref(null);
-
     const handleLogoClick = () => {
-      backButton.value?.$el.click();
+      router.push({ name: 'Explore' });
     };
 
     return {
       logoImageSrc,
       chevronBackCircleOutline,
-      backButton,
       handleLogoClick,
+      cameraOutline,
+      searchOutline,
+      helpCircleOutline,
     };
   },
 });
@@ -71,38 +74,18 @@ export default defineComponent({
 
 <style scoped>
 .logo {
+  margin-left: min(17px, 4vw);
   width: 60px;
   height: 60px;
 }
 
-.logo-wrapper {
-  display: inline-flex;
-  justify-items: center;
-  align-items: center;
-  margin-left: 10px;
-}
-
-.logo-wrapper:hover {
+.logo:hover {
   cursor: pointer;
-}
-
-.logo-wrapper:hover > .back-arrow {
-  color: white;
-}
-
-.back-arrow {
-  width: 25px;
-  height: 25px;
-  margin-right: 5px;
-  margin-top: 1px; /* For fixing alignment, may need to adjust when logo changes */
-  color: #999999;
-  --background-hover: transparent;
-  --background-focused: transparent;
 }
 
 ion-buttons > ion-button {
   --border-radius: 5px !important;
-  --padding-start: 7px;
-  --padding-end: 7px;
+  --padding-start: min(7px, 1.5vw);
+  --padding-end: min(7px, 1.5vw);
 }
 </style>

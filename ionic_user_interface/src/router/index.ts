@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import Home from '@/views/Home.vue';
+import Explore from '@/views/Explore.vue';
 import providers from '@/providers';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/explore',
     beforeEnter: (_, __, next) => {
       // Refer to /public/404.html
       if (sessionStorage.getItem('redirect') !== null) {
@@ -19,24 +19,24 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/home',
-    name: 'Home',
-    component: Home,
+    path: '/explore',
+    name: 'Explore',
+    component: Explore,
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import('@/views/About.vue'),
+    path: '/new',
+    name: 'New',
+    component: () => import('@/views/New.vue'),
   },
   {
-    path: '/gyms',
-    name: 'Gyms',
-    component: () => import('@/views/Gyms.vue'),
+    path: '/help',
+    name: 'Help',
+    component: () => import('@/views/Help.vue'),
   },
   {
     path: '/gym/:gymLocation/:gymName',
     name: 'Gym',
-    component: () => import('@/views/Gyms.vue'),
+    component: () => import('@/views/Explore.vue'),
   },
   {
     path: '/gyms/request',
@@ -56,7 +56,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Login.vue'),
     beforeEnter: (_, __, next) => {
       if (providers.getLoggedIn().value) {
-        next('/home');
+        next('/explore');
       } else {
         next();
       }
@@ -68,7 +68,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/ForgotPassword.vue'),
     beforeEnter: (_, __, next) => {
       if (providers.getLoggedIn().value) {
-        next('/home');
+        next('/explore');
       } else {
         next();
       }
@@ -80,7 +80,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/ResetPassword.vue'),
     beforeEnter: (_, __, next) => {
       if (providers.getLoggedIn().value) {
-        next('/home');
+        next('/explore');
       } else if (providers.getUsername().value === '') {
         next('/forgotPassword');
       } else {
@@ -94,7 +94,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Signup.vue'),
     beforeEnter: (_, __, next) => {
       if (providers.getLoggedIn().value) {
-        next('/home');
+        next('/explore');
       } else {
         next();
       }
@@ -106,7 +106,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Confirm.vue'),
     beforeEnter: (_, __, next) => {
       if (providers.getLoggedIn().value || !providers.getConfirmationNeeded().value) {
-        next('/home');
+        next('/explore');
       } else {
         next();
       }
@@ -133,7 +133,7 @@ const routes: Array<RouteRecordRaw> = [
         if (providers.getRouteImageUri().value !== '') {
           next();
         } else {
-          next('/home');
+          next('/explore');
         }
       } else {
         next('/login');
@@ -152,7 +152,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/home',
+    redirect: '/explore',
     beforeEnter: (_, __, next) => {
       // Refer to /public/404.html
       if (sessionStorage.getItem('redirect') !== null) {

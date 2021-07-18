@@ -55,7 +55,7 @@ import GymMap from '@/components/GymMap.vue';
 import GymRouteList from '@/components/GymRouteList.vue';
 
 export default defineComponent({
-  name: 'Gyms',
+  name: 'Explore',
   components: {
     IonContent,
     IonPage,

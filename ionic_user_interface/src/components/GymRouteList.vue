@@ -300,7 +300,7 @@ export default defineComponent({
 
     // Small hack to ensure that the likes always stay in sync
     watch(router.currentRoute, () => {
-      if (router.currentRoute.value.path === '/gyms') {
+      if (router.currentRoute.value.path === '/explore') {
         updateRoutes();
       }
     });

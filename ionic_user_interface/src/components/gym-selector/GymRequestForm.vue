@@ -102,7 +102,7 @@ export default defineComponent({
           {
             text: 'Okay',
             handler: () => {
-              router.push({ name: 'Home' });
+              router.push({ name: 'Explore' });
             },
           },
         ],
