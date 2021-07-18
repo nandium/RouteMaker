@@ -99,4 +99,10 @@ export default defineComponent({
   --background-hover: transparent;
   --background-focused: transparent;
 }
+
+ion-buttons > ion-button {
+  --border-radius: 5px !important;
+  --padding-start: 7px;
+  --padding-end: 7px;
+}
 </style>

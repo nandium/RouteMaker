@@ -1,6 +1,12 @@
 <template>
   <ion-button v-if="!isLoggedIn" router-link="/login" color="secondary">Login</ion-button>
-  <ion-button v-if="isLoggedIn" fill="clear" shape="round" @click="setPopoverOpen(true, $event)">
+  <ion-button
+    v-if="isLoggedIn"
+    fill="clear"
+    shape="round"
+    @click="setPopoverOpen(true, $event)"
+    class="person-icon-button"
+  >
     <ion-icon :icon="personCircleOutline" size="large"></ion-icon>
   </ion-button>
   <ion-popover
@@ -98,6 +104,7 @@ ion-list {
   margin: 0;
   padding: 0;
 }
+
 ion-item {
   margin: 0;
   padding: 0;
@@ -106,5 +113,14 @@ ion-item {
 ion-item > ion-button {
   margin: 0;
   width: 100%;
+}
+
+.person-icon-button {
+  height: 100%;
+  --padding-bottom: 6px;
+  --padding-top: 6px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  border-radius: 100%;
 }
 </style>
