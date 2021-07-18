@@ -69,7 +69,7 @@ export default defineComponent({
   },
   setup() {
     /**
-     * `/gyms` and `/gym/:gymLocation/:gymName` points to this component
+     * `/explore` and `/gym/:gymLocation/:gymName` points to this component
      * If gymLocation exists in path parameters, use a different page layout
      */
     const route = useRoute();
