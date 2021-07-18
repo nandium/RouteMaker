@@ -8,7 +8,7 @@
               <strong>Route Maker</strong>
               <p>Find climbing routes by gym</p>
             </div>
-            <div v-else>
+            <div class="gym-name" v-else>
               <b>-- {{ gymName }} --</b>
             </div>
           </ion-col>
@@ -116,6 +116,7 @@ export default defineComponent({
       viewMap,
       map,
       mapOutline,
+      gymName,
     };
   },
 });
