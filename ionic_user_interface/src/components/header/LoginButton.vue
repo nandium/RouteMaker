@@ -7,7 +7,7 @@
     @click="setPopoverOpen(true, $event)"
     class="person-icon-button"
   >
-    <ion-icon :icon="personCircleOutline" size="large"></ion-icon>
+    <ion-icon :icon="personCircleOutline" color="danger" size="large"></ion-icon>
   </ion-button>
   <ion-popover
     :is-open="isPopoverOpen"
