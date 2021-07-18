@@ -138,6 +138,7 @@ export default defineComponent({
         setUserCountry(country);
       } else {
         reset();
+        emit('onCountryReset', true);
       }
     };
 

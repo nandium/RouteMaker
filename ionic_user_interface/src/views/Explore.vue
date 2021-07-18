@@ -15,7 +15,11 @@
         </ion-row>
 
         <!-- Show Gym Selector if browsing gyms, show only gym-map if individual gym -->
-        <gym-selector v-if="showGymSelector" @onGymSelect="handleOnGymSelect" />
+        <gym-selector
+          v-if="showGymSelector"
+          @onGymSelect="handleOnGymSelect"
+          @onCountryReset="handleOnCountryReset"
+        />
         <ion-row v-else class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <ion-button
@@ -85,6 +89,10 @@ export default defineComponent({
       gymRouteList.value?.setGymLocation(gymLocation);
     };
 
+    const handleOnCountryReset = () => {
+      showGymRouteList.value = false;
+    };
+
     onMounted(() => {
       if (gymLocation && gymName) {
         handleOnGymSelect(gymLocation as string);
@@ -100,6 +108,7 @@ export default defineComponent({
       gymRouteList,
       showGymRouteList,
       handleOnGymSelect,
+      handleOnCountryReset,
       showGymSelector,
       gymNameString,
       gymLocation,
