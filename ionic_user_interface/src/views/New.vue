@@ -3,11 +3,11 @@
     <ion-content :fullscreen="true" ref="ionContent">
       <div id="container">
         <strong>Route Maker</strong>
-        <p>Quickly make custom climbing routes</p>
+        <p>Make custom climbing routes</p>
         <br />
         <br />
         <ion-button @click="takePhoto" color="tertiary">
-          <ion-icon class="camera-icon" :icon="camera"></ion-icon>
+          <ion-icon class="margin-right" :icon="camera"></ion-icon>
           Upload wall image
         </ion-button>
         <Canvas
@@ -16,15 +16,24 @@
           :width="canvasWidth"
           :ionContent="ionContent"
         />
+        <div v-if="!photoUploaded">
+          <br />
+          <br />
+          <ion-button @click="handleClickUserGuide" color="medium" fill="clear">
+            <ion-icon class="margin-right" :icon="helpCircleOutline"></ion-icon>
+            User Guide
+          </ion-button>
+        </div>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { camera } from 'ionicons/icons';
+import { camera, helpCircleOutline } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 import Canvas from '@/components/wall-image-viewer/Canvas.vue';
 import { usePhotoGallery } from '@/composables/usePhotoGallery';
@@ -40,6 +49,7 @@ export default defineComponent({
     Canvas,
   },
   setup() {
+    const router = useRouter();
     const photoData = ref('');
     const photoUploaded = ref(false);
     const { photo, takePhoto } = usePhotoGallery();
@@ -67,6 +77,10 @@ export default defineComponent({
       window.removeEventListener('resize', updateCanvasWidth);
     });
 
+    const handleClickUserGuide = () => {
+      router.push({ name: 'Help', hash: '#section2' });
+    };
+
     return {
       canvasWidth,
       photoData,
@@ -74,7 +88,9 @@ export default defineComponent({
       photo,
       takePhoto,
       camera,
+      helpCircleOutline,
       ionContent,
+      handleClickUserGuide,
     };
   },
 });
@@ -104,7 +120,7 @@ export default defineComponent({
   text-decoration: none;
 }
 
-.camera-icon {
+.margin-right {
   margin-right: 10px;
 }
 

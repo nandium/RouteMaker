@@ -36,7 +36,6 @@
         <br />
         <strong>-- How To Use --</strong>
 
-        <hr class="my-4" id="section2" />
         <p class="lead my-4">1. Upload the photo of a climbing wall</p>
         <ion-img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_1.jpg`" />
         <br />
