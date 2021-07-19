@@ -70,6 +70,15 @@
                 >
                   Sign up
                 </ion-button>
+                <div class="privacy-policy">
+                  <ion-checkbox v-model="termsCheckbox" />
+                  <ion-text>
+                    I agree to
+                    <a :href="privacyUrl" target="_blank">Privacy Policy</a>
+                    &#38;
+                    <a :href="termsUrl" target="_blank">Terms and Conditions</a>
+                  </ion-text>
+                </div>
                 <h5>
                   Already have an account?
                   <router-link to="/login">Login</router-link>
@@ -95,6 +104,7 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  IonCheckbox,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import axios from 'axios';
@@ -116,6 +126,7 @@ export default defineComponent({
     IonLabel,
     IonPage,
     IonRow,
+    IonCheckbox,
     PasswordMeter,
   },
   setup() {
@@ -135,7 +146,11 @@ export default defineComponent({
     const passwordText = ref('');
     const passwordStrength = ref('');
     const confirmPasswordText = ref('');
+    const termsCheckbox = ref(false);
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
+
+    const termsUrl = process.env.BASE_URL + 'terms.html';
+    const privacyUrl = process.env.BASE_URL + 'privacy.html';
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -173,6 +188,10 @@ export default defineComponent({
       }
       if (passwordText.value !== confirmPasswordText.value) {
         errorMsg.value?.showMsg('Passwords do not match');
+        return false;
+      }
+      if (!termsCheckbox.value) {
+        errorMsg.value?.showMsg('Please read the terms and conditions');
         return false;
       }
 
@@ -249,6 +268,9 @@ export default defineComponent({
       onPasswordScore,
       passwordStrength,
       errorMsg,
+      termsCheckbox,
+      termsUrl,
+      privacyUrl,
     };
   },
 });
@@ -274,5 +296,23 @@ export default defineComponent({
 .signup-button {
   margin-top: 30px;
   margin-bottom: 40px;
+}
+
+.privacy-policy ion-text {
+  font-size: 0.7em;
+  vertical-align: middle;
+  display: inline-block;
+  margin-left: 0.5em;
+
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.privacy-policy {
+  margin-top: 1em;
+  margin-bottom: 1.4em;
 }
 </style>

@@ -4,7 +4,7 @@
       <div id="container">
         <strong>-- Hello Climbers! --</strong>
         <p class="lead">
-          This is a free open source project between two friends who happen to code and climb.
+          This is a free open source project between friends who happen to code and climb.
         </p>
 
         <p class="lead">
@@ -19,7 +19,11 @@
           </p>
         </div>
 
-        <p class="lead">Please star our repository to support!</p>
+        <p class="lead">
+          We plan to maintain this project for as long as people find it useful.
+          <br />
+          Please star our repository to support. Pull requests are welcomed too!
+        </p>
 
         <ion-button
           target="_blank"
@@ -98,6 +102,8 @@ export default defineComponent({
 #container p {
   font-size: 1.1em;
   line-height: 1.4em;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 #container a {
