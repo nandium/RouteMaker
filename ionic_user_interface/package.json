@@ -25,6 +25,7 @@
     "@types/lodash": "^4.14.168",
     "axios": "^0.21.1",
     "browser-image-compression": "^1.0.14",
+    "cache-manager": "^3.4.4",
     "core-js": "^3.6.5",
     "country-code-lookup": "^0.0.19",
     "jwt-decode": "^3.1.2",
@@ -38,6 +39,7 @@
   "devDependencies": {
     "@capacitor/cli": "^3.0.0",
     "@ionic/cli": "^6.16.1",
+    "@types/cache-manager": "^3.4.2",
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",

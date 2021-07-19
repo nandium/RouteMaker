@@ -116,6 +116,8 @@ export default defineComponent({
 
     onMounted(async () => {
       if (userCountry.value !== null) {
+        // TODO: Fix bug where onMounted is called twice
+
         // On set value, emits @matchedItem which triggers onCountrySelect
         autoComplete.value?.setValue(userCountry.value.country);
 
