@@ -116,9 +116,9 @@ export default defineComponent({
 
     onMounted(async () => {
       if (userCountry.value !== null) {
-        selectedCountryIso3.value = userCountry.value.iso3;
-        const countryGymLocations = await getGymsByCountry(userCountry.value.iso3);
-        gymLocationList.value = countryGymLocations;
+        // On set value, emits @matchedItem which triggers onCountrySelect
+        autoComplete.value?.setValue(userCountry.value.country);
+
         // For new user, default is SGP and Zvertigo
         // After usage, the app remembers the new country and gym
         if (userGym.value !== '') {
@@ -130,7 +130,6 @@ export default defineComponent({
         }
         // Simulate being selected in ion-select
         onGymSelect(selectedGym.value);
-        autoComplete.value?.setValue(userCountry.value.country);
       } else {
         reset();
       }
@@ -145,9 +144,9 @@ export default defineComponent({
     const onCountrySelect = async (country: Country) => {
       errorMsg.value?.close();
       if (country) {
-        selectedCountryIso3.value = country.iso3;
         const countryGymLocations = await getGymsByCountry(country.iso3);
         gymLocationList.value = countryGymLocations;
+        selectedCountryIso3.value = country.iso3;
         setUserCountry(country);
       } else {
         reset();
