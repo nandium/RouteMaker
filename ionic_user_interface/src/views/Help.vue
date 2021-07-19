@@ -25,7 +25,7 @@
           target="_blank"
           href="https://github.com/nandium/RouteMaker"
           color="light"
-          size="large"
+          size="medium"
         >
           <ion-icon class="github-logo" :icon="logoGithub" size="medium"></ion-icon>
           Github
@@ -91,13 +91,13 @@ export default defineComponent({
 }
 
 #container strong {
-  font-size: 2em;
+  font-size: 1.8em;
   line-height: 2em;
 }
 
 #container p {
-  font-size: 1.3em;
-  line-height: 1.5em;
+  font-size: 1.1em;
+  line-height: 1.4em;
 }
 
 #container a {
@@ -106,8 +106,10 @@ export default defineComponent({
 
 .screenshot {
   border: 1.5px solid grey;
-  max-width: 200px;
+  max-width: 250px;
   margin: 0 auto;
+  image-rendering: -webkit-optimize-contrast;
+  /* https://stackoverflow.com/questions/37906602/blurry-downscaled-images-in-chrome */
 }
 
 .features-div {
@@ -115,7 +117,7 @@ export default defineComponent({
   margin: 0 auto;
   border-radius: 15px;
   border: 1px solid grey;
-  padding: 0.5rem 1rem;
+  padding: 0.2rem 1rem;
 }
 
 .github-logo {
