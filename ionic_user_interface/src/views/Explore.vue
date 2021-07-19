@@ -8,8 +8,8 @@
               <strong>Route Maker</strong>
               <p>Find climbing routes by gym</p>
             </div>
-            <div class="gym-name" v-else>
-              <b>-- {{ gymName }} --</b>
+            <div v-else>
+              <strong>-- {{ gymName }} --</strong>
             </div>
           </ion-col>
         </ion-row>
@@ -155,12 +155,12 @@ export default defineComponent({
 }
 
 #container strong {
-  font-size: 3em;
+  font-size: clamp(2rem, 7vw, 2.5rem);
   line-height: 2em;
 }
 
 #container p {
-  font-size: 1.6em;
+  font-size: clamp(1.4rem, 5vw, 1.6rem);
   line-height: 1em;
   color: #8c8c8c;
   margin: 0;
@@ -168,11 +168,6 @@ export default defineComponent({
 
 #container a {
   text-decoration: none;
-}
-
-.gym-name {
-  font-size: clamp(2rem, 7vw, 2.5rem);
-  margin: 20px;
 }
 
 .margin-top {

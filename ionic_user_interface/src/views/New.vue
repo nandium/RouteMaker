@@ -18,7 +18,6 @@
         />
         <div v-if="!photoUploaded">
           <br />
-          <br />
           <ion-button @click="handleClickUserGuide" color="medium" fill="clear">
             <ion-icon class="margin-right" :icon="helpCircleOutline"></ion-icon>
             User Guide
@@ -105,12 +104,12 @@ export default defineComponent({
 }
 
 #container strong {
-  font-size: 3em;
+  font-size: clamp(2rem, 7vw, 2.5rem);
   line-height: 2em;
 }
 
 #container p {
-  font-size: 1.6em;
+  font-size: clamp(1.4rem, 5vw, 1.6rem);
   line-height: 1em;
   color: #8c8c8c;
   margin: 0;
