@@ -5,7 +5,7 @@ import cacheManager from 'cache-manager';
 const memoryCache = cacheManager.caching({
   store: 'memory',
   max: 10, // Number of items in cache
-  ttl: 10, // Seconds
+  ttl: 30, // Seconds
 });
 
 const getGymsByCountryUrl = routeBaseUrl + '/route/gym/country';
@@ -24,8 +24,9 @@ const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => 
   return [];
 };
 
+// Caches in-memory, disappears on page refresh
 const getGymsByCountryCached = async (countryCode: string): Promise<GymLocation[]> => {
-  return memoryCache.wrap(countryCode, function () {
+  return memoryCache.wrap('country_' + countryCode, function () {
     return getGymsByCountry(countryCode);
   });
 };

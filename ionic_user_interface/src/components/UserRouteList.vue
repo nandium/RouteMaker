@@ -76,25 +76,14 @@ import {
   IonIcon,
   IonList,
   IonSpinner,
+  IonText,
 } from '@ionic/vue';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
-
-import VoteButton from '@/components/VoteButton.vue';
 import { throttle } from 'lodash';
 
-interface UserRoute {
-  commentCount: number;
-  createdAt: string;
-  gymLocation: string;
-  publicGrade: number;
-  routeName: string;
-  username: string;
-  voteCount: number;
-  hasVoted: boolean;
-  countryCode: string;
-  gymName: string;
-}
+import VoteButton from '@/components/VoteButton.vue';
+import getRoutesByUser, { UserRoute } from '@/common/api/route/getRoutesByUser';
 
 export default defineComponent({
   name: 'UserRouteList',
@@ -106,13 +95,13 @@ export default defineComponent({
     IonIcon,
     IonList,
     IonSpinner,
+    IonText,
     VoteButton,
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const routes = ref<Array<UserRoute>>([]);
-    const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
+    const routes = ref<UserRoute[]>([]);
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getUserRole: () => ComputedRef<string> = inject('getUserRole', () => computed(() => ''));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
@@ -125,34 +114,23 @@ export default defineComponent({
 
     const isLoading = ref(false);
 
-    const updateRoutes = throttle(() => {
+    const updateRoutes = throttle(async () => {
       routes.value = [];
       isLoading.value = true;
 
-      const headers = getLoggedIn().value
-        ? { Authorization: `Bearer ${getAccessToken().value}` }
-        : {};
-      axios
-        .get(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/user', {
-          headers,
-          params: {
-            username: profileUsername.value,
-          },
-        })
-        .then((response) => {
-          if (response.data.Message === 'Query routes by user success') {
-            routes.value = response.data.Items;
-          } else {
-            throw new Error('Failed to get routes');
-          }
-        })
-        .catch((error) => {
-          console.error(error);
+      try {
+        const data = await getRoutesByUser(profileUsername.value);
+        if (data.Message === 'Query routes by user success') {
+          routes.value = data.Items;
+        } else {
           throw new Error('Failed to get routes');
-        })
-        .finally(() => {
-          isLoading.value = false;
-        });
+        }
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to get routes');
+      } finally {
+        isLoading.value = false;
+      }
     }, 1000);
 
     onMounted(updateRoutes);
