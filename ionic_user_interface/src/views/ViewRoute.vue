@@ -8,6 +8,11 @@
           <div class="route-title">
             <b>{{ routeDetails.routeName }}</b>
           </div>
+          <div class="share-button-div">
+            <ion-button @click="sharePostHandler" fill="clear">
+              <ion-icon :icon="shareSocialOutline"></ion-icon>
+            </ion-button>
+          </div>
           <VoteButton
             class="margin-right"
             :username="routeDetails.username"
@@ -34,7 +39,7 @@
               color="danger"
               @click="() => reportRouteHandler(routeDetails.username, routeDetails.createdAt)"
             >
-              <ion-label>Report this route&nbsp;</ion-label>
+              <ion-label>Report route&nbsp;</ion-label>
               <ion-icon :icon="flag"></ion-icon>
             </ion-button>
             <ion-button disabled v-if="hasReported" color="medium">
@@ -144,16 +149,25 @@ import {
   alertController,
   toastController,
 } from '@ionic/vue';
-import { sendSharp, trashOutline, personCircleOutline, flagOutline, flag } from 'ionicons/icons';
+import {
+  sendSharp,
+  trashOutline,
+  personCircleOutline,
+  flagOutline,
+  flag,
+  shareSocialOutline,
+} from 'ionicons/icons';
 import { computed, defineComponent, inject, Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+
 import { getAlertController } from '@/common/reportUserAlert';
 import VoteButton from '@/components/VoteButton.vue';
 import GradeSlider from '@/components/GradeSlider.vue';
 import MessageBox from '@/components/MessageBox.vue';
+import { shareSocial } from '@/common/shareSocial';
 
 interface Comment {
   username: string;
@@ -438,6 +452,10 @@ export default defineComponent({
         });
     };
 
+    const sharePostHandler = async () => {
+      await shareSocial(route, `Route by ${username.value}`);
+    };
+
     return {
       router,
       routeDetails,
@@ -446,6 +464,7 @@ export default defineComponent({
       postCommentHandler,
       trashOutline,
       personCircleOutline,
+      shareSocialOutline,
       myUsername,
       deleteCommentHandler,
       reportCommentHandler,
@@ -458,6 +477,7 @@ export default defineComponent({
       hasReported,
       msgBox,
       gradeChangeHandler,
+      sharePostHandler,
       isRouteSetter,
       isLoading,
     };
@@ -507,8 +527,8 @@ export default defineComponent({
 .route-title {
   flex: 1;
   vertical-align: middle;
-  font-size: clamp(2rem, 7vw, 2.5rem);
-  margin: 20px 30px 20px 10px;
+  font-size: clamp(1.6rem, 7vw, 2.5rem);
+  margin: 20px 30px 20px 16px;
 }
 
 .icon-button {
@@ -584,5 +604,10 @@ ion-spinner {
   left: 50%;
   margin-left: -50px;
   margin-top: -50px;
+}
+
+.share-button-div {
+  display: flex;
+  align-self: center;
 }
 </style>
