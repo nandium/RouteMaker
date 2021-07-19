@@ -74,9 +74,13 @@
                   <ion-checkbox v-model="termsCheckbox" />
                   <ion-text>
                     I agree to
-                    <a :href="privacyUrl" target="_blank">Privacy Policy</a>
+                    <a href="https://routemaker.rocks/privacy.html" target="_blank">
+                      Privacy Policy
+                    </a>
                     &#38;
-                    <a :href="termsUrl" target="_blank">Terms and Conditions</a>
+                    <a href="https://routemaker.rocks/terms.html" target="_blank">
+                      Terms and Conditions
+                    </a>
                   </ion-text>
                 </div>
                 <h5>
@@ -148,9 +152,6 @@ export default defineComponent({
     const confirmPasswordText = ref('');
     const termsCheckbox = ref(false);
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
-
-    const termsUrl = process.env.BASE_URL + 'terms.html';
-    const privacyUrl = process.env.BASE_URL + 'privacy.html';
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -269,8 +270,6 @@ export default defineComponent({
       passwordStrength,
       errorMsg,
       termsCheckbox,
-      termsUrl,
-      privacyUrl,
     };
   },
 });
