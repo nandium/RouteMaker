@@ -154,41 +154,17 @@ import {
   flag,
   shareSocialOutline,
 } from 'ionicons/icons';
-import { computed, defineComponent, inject, Ref, ref } from 'vue';
+import { computed, ComputedRef, defineComponent, inject, Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
 
 import { getAlertController } from '@/common/reportUserAlert';
 import VoteButton from '@/components/VoteButton.vue';
 import GradeSlider from '@/components/GradeSlider.vue';
 import MessageBox from '@/components/MessageBox.vue';
 import { shareSocial } from '@/common/shareSocial';
-
-interface Comment {
-  username: string;
-  timestamp: number;
-  comment: string;
-}
-
-interface RouteDetails {
-  comments?: Array<Comment>;
-  countryCode?: string;
-  createdAt?: string;
-  expiredTime?: string;
-  graded?: number;
-  gymLocation?: string;
-  hasGraded?: boolean;
-  hasReported?: boolean;
-  hasVoted?: boolean;
-  ownerGrade?: number;
-  publicGrade?: number;
-  routeName?: string;
-  routeURL?: string;
-  username?: string;
-  voteCount?: number;
-}
+import getRouteDetails, { RouteDetails } from '@/common/api/route/getRouteDetails';
 
 export default defineComponent({
   name: 'ViewRoute',
@@ -214,12 +190,12 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const username = computed(() => route.params.username);
-    const createdAt = computed(() => route.params.createdAt);
+    const username = computed(() => route.params.username as string);
+    const createdAt = computed(() => route.params.createdAt as string);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
-    const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
+    const getUserRole: () => ComputedRef<string> = inject('getUserRole', () => computed(() => ''));
     const commentText = ref('');
 
     const asciiPattern = /^[ -~]+$/;
@@ -227,59 +203,37 @@ export default defineComponent({
 
     const myUsername = getUsername();
     const isLoggedIn = getLoggedIn();
-    const isAdmin = computed(() => {
-      try {
-        const idObject: { 'custom:role': string } = jwt_decode(getIdToken().value);
-        return idObject['custom:role'] === 'admin';
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
-    });
+    const isAdmin = computed(() => getUserRole().value === 'admin');
     const isRouteSetter = computed(() => username.value === myUsername.value);
     const hasAlreadyCommented = ref(false);
     const hasReported = ref(false);
 
     const isLoading = ref(false);
 
-    let routeDetails: Ref<RouteDetails> = ref({});
+    let routeDetails: Ref<RouteDetails | null> = ref(null);
 
-    const updateRouteDetails = throttle(() => {
+    const updateRouteDetails = throttle(async () => {
       if (isLoading.value) {
         return;
       }
       isLoading.value = true;
-      const headers = getLoggedIn().value
-        ? { Authorization: `Bearer ${getAccessToken().value}` }
-        : {};
-      axios
-        .post(
-          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details',
-          {
-            username: username.value,
-            createdAt: createdAt.value,
-          },
-          {
-            headers,
-          },
-        )
-        .then((response) => {
-          if (response.data.Message === 'Get route details success') {
-            routeDetails.value = response.data.Item;
-            hasAlreadyCommented.value =
-              routeDetails.value.comments?.some(
-                (comment) => comment.username == myUsername.value,
-              ) ?? false;
-            hasReported.value = routeDetails.value.hasReported ?? false;
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          router.back();
-        })
-        .finally(() => {
-          isLoading.value = false;
-        });
+      try {
+        const data = await getRouteDetails(username.value, createdAt.value);
+        if (data.Message === 'Get route details success') {
+          routeDetails.value = data.Item;
+          hasAlreadyCommented.value =
+            routeDetails.value?.comments.some((comment) => comment.username == myUsername.value) ??
+            false;
+          hasReported.value = routeDetails.value?.hasReported ?? false;
+        } else {
+          throw new Error('Failed to get route details');
+        }
+      } catch (error) {
+        console.error(error);
+        router.back();
+      } finally {
+        isLoading.value = false;
+      }
     }, 1000);
 
     updateRouteDetails();

@@ -14,7 +14,6 @@ const memoryCache = cacheManager.caching({
 const getRoutesByGymUrl = routeBaseUrl + '/route/all';
 
 const getRoutesByGym = async (gymLocation: string): Promise<ResponseData> => {
-  console.log('test');
   const headers = Providers.getLoggedIn().value
     ? { Authorization: `Bearer ${Providers.getAccessToken().value}` }
     : {};
