@@ -2,7 +2,8 @@
   <div>
     <br />
     <br />
-    <div class="sticky-button-rows">
+    <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+    <div v-else class="sticky-button-rows">
       <ion-item class="instruction-steps ion-text-center">
         <div
           class="instruction-arrow shift-down"
@@ -96,6 +97,7 @@ import {
   IonText,
   IonRow,
   IonCol,
+  IonSpinner,
 } from '@ionic/vue';
 import { defineComponent, inject, onMounted, ref, watch, PropType } from 'vue';
 import { useRouter } from 'vue-router';
@@ -125,6 +127,7 @@ export default defineComponent({
     IonText,
     IonRow,
     IonCol,
+    IonSpinner,
   },
   props: {
     imgSrc: {
@@ -147,7 +150,7 @@ export default defineComponent({
     const numberMode = ref<NumberMode>(NumberMode.ON);
     const hideNumbersText = ref<string>('Hide Numbers');
     const tapeText = ref<string>('No Tape');
-    const loadingSpinner = inject('$loading') as Record<string, any>;
+    const isLoading = ref(false);
     const routeMakingStep = ref(0);
 
     const setRouteImageUri: (imageUri: string) => void = inject(
@@ -188,11 +191,11 @@ export default defineComponent({
         formData.append('image', await (await fetch(props.imgSrc)).blob());
         formData.append('width', props.width.toString());
         let rawBoundingBoxes: Array<any>;
-        const loadingSpinnerInstance = loadingSpinner.show({ canCancel: false });
+        isLoading.value = true;
         try {
           rawBoundingBoxes = await getBoundingBoxes(formData);
         } finally {
-          loadingSpinnerInstance.hide();
+          isLoading.value = false;
         }
         addBoxLayerBoundingBoxes(rawBoundingBoxes);
         imageLayer.batchDraw();
@@ -356,6 +359,7 @@ export default defineComponent({
       caretBackOutline,
       changeRouteMakingStep,
       changeSelectMode,
+      isLoading,
     };
   },
 });
@@ -459,5 +463,11 @@ ion-button::part(native) {
   top: 0px;
   padding-top: 10px;
   z-index: 10;
+}
+
+ion-spinner {
+  height: 3rem;
+  width: 3rem;
+  margin: 2rem;
 }
 </style>
