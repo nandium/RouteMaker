@@ -8,10 +8,13 @@
           <div class="route-title">
             <b>{{ routeDetails.routeName }}</b>
           </div>
-          <div class="share-button-div">
+          <!-- <div class="share-button-div">
             <ion-button @click="sharePostHandler" fill="clear">
               <ion-icon :icon="shareSocialOutline"></ion-icon>
             </ion-button>
+          </div> -->
+          <div class="share-button-div icon-button margin-right" @click="sharePostHandler">
+            <ion-icon size="large" :icon="shareSocialOutline"></ion-icon>
           </div>
           <VoteButton
             class="margin-right"
