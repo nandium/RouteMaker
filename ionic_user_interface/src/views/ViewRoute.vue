@@ -78,7 +78,6 @@
               class="ion-no-margin"
               maxlength="150"
               v-model="commentText"
-              autoGrow
             ></ion-textarea>
             <ion-button @click="postCommentHandler" fill="clear" color="dark">
               <ion-icon :icon="sendSharp"></ion-icon>
