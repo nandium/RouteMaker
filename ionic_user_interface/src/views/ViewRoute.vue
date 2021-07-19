@@ -212,11 +212,11 @@ export default defineComponent({
 
     let routeDetails: Ref<RouteDetails | null> = ref(null);
 
-    const updateRouteDetails = throttle(async () => {
+    const updateRouteDetails = throttle(async (showLoadingScreen = true) => {
       if (isLoading.value) {
         return;
       }
-      isLoading.value = true;
+      isLoading.value = showLoadingScreen;
       try {
         const data = await getRouteDetails(username.value, createdAt.value);
         if (data.Message === 'Get route details success') {
@@ -270,7 +270,7 @@ export default defineComponent({
           },
         )
         .then(() => {
-          updateRouteDetails();
+          updateRouteDetails(false);
         })
         .catch((error) => {
           console.error(error);
@@ -293,7 +293,7 @@ export default defineComponent({
           },
         })
         .then(() => {
-          updateRouteDetails();
+          updateRouteDetails(false);
         })
         .catch((error) => {
           console.error(error);
@@ -396,7 +396,7 @@ export default defineComponent({
           },
         )
         .then(() => {
-          updateRouteDetails();
+          updateRouteDetails(false);
         })
         .catch((error) => {
           console.error(error);
