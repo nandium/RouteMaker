@@ -22,16 +22,32 @@
         />
         <ion-row v-else class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <ion-button
-              class="ion-align-self-center ion-no-margin"
-              expand="full"
-              fill="clear"
-              color="dark"
-              @click="onClickViewMap"
-            >
-              {{ viewMap ? 'Hide Map' : 'View Map' }}
-              <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
-            </ion-button>
+            <ion-row>
+              <ion-col size-xs="6">
+                <ion-button
+                  class="ion-align-self-center ion-no-margin"
+                  expand="full"
+                  fill="clear"
+                  color="dark"
+                  @click="onClickViewMap"
+                >
+                  {{ viewMap ? 'Hide Map' : 'View Map' }}
+                  <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col size-xs="6">
+                <ion-button
+                  class="ion-align-self-center ion-no-margin"
+                  expand="full"
+                  fill="clear"
+                  color="dark"
+                  @click="sharePostHandler"
+                >
+                  Share Gym
+                  <ion-icon slot="end" :icon="shareSocialOutline"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
           </ion-col>
           <ion-col class="ion-align-self-center ion-no-padding" size-xs="12">
             <gym-map v-if="viewMap" :gymLocation="gymLocation" class="margin-top"></gym-map>
@@ -52,11 +68,12 @@
 import { IonContent, IonPage, IonRow, IonCol, IonButton, IonIcon } from '@ionic/vue';
 import { defineComponent, onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { map, mapOutline } from 'ionicons/icons';
+import { map, mapOutline, shareSocialOutline } from 'ionicons/icons';
 
 import GymSelector from '@/components/gym-selector/GymSelector.vue';
 import GymMap from '@/components/GymMap.vue';
 import GymRouteList from '@/components/GymRouteList.vue';
+import { shareSocial } from '@/common/shareSocial';
 
 export default defineComponent({
   name: 'Explore',
@@ -105,17 +122,24 @@ export default defineComponent({
       viewMap.value = !viewMap.value;
     };
 
+    const sharePostHandler = async () => {
+      // gymName will be valid as post sharing is only allowed at /gym page
+      await shareSocial(route, `Explore ${gymName.value}`);
+    };
+
     return {
       gymRouteList,
       showGymRouteList,
       handleOnGymSelect,
       handleOnCountryReset,
+      sharePostHandler,
       showGymSelector,
       gymLocation,
       onClickViewMap,
       viewMap,
       map,
       mapOutline,
+      shareSocialOutline,
       gymName,
     };
   },
