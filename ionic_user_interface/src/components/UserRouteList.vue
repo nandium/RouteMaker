@@ -1,54 +1,67 @@
 <template>
-  <ion-list class="ion-no-margin ion-no-padding">
-    <ion-card
-      v-for="(route, index) of routes"
-      :key="index"
-      class="ion-text-left route-card"
-      @click="() => handleRouteCardClick(route.username, route.createdAt)"
-    >
-      <ion-card-header>
-        <ion-card-title>{{ route.routeName }}</ion-card-title>
-        <div class="center-right">
-          <div
-            v-if="isOwnself || isAdmin"
-            class="delete-button"
-            @click.stop.prevent="
-              () => deleteRouteHandler(route.routeName, route.username, route.createdAt)
-            "
-          >
-            <ion-icon :icon="trashOutline"></ion-icon>
+  <div>
+    <div class="ion-margin-start ion-margin-bottom">
+      <ion-text>
+        Posts:
+        <strong>{{ routes.length }}</strong>
+      </ion-text>
+      <br />
+      <ion-text>
+        Upvotes:
+        <strong>{{ totalUserUpvotes }}</strong>
+      </ion-text>
+    </div>
+    <ion-list class="ion-no-margin ion-no-padding">
+      <ion-card
+        v-for="(route, index) of routes"
+        :key="index"
+        class="ion-text-left route-card"
+        @click="() => handleRouteCardClick(route.username, route.createdAt)"
+      >
+        <ion-card-header>
+          <ion-card-title>{{ route.routeName }}</ion-card-title>
+          <div class="center-right">
+            <div
+              v-if="isOwnself || isAdmin"
+              class="delete-button"
+              @click.stop.prevent="
+                () => deleteRouteHandler(route.routeName, route.username, route.createdAt)
+              "
+            >
+              <ion-icon :icon="trashOutline"></ion-icon>
+            </div>
+            <VoteButton
+              :username="route.username"
+              :createdAt="route.createdAt"
+              v-model:voteCount="route.voteCount"
+              v-model:hasVoted="route.hasVoted"
+            ></VoteButton>
           </div>
-          <VoteButton
-            :username="route.username"
-            :createdAt="route.createdAt"
-            v-model:voteCount="route.voteCount"
-            v-model:hasVoted="route.hasVoted"
-          ></VoteButton>
-        </div>
-      </ion-card-header>
-      <ion-card-content>
-        <b>Gym:&nbsp;</b>
-        <router-link
-          :to="'/gym/' + route.gymLocation + '/' + route.gymName"
-          @click.capture.stop="() => undefined"
-        >
-          {{ route.gymName }}
-        </router-link>
-        <br />
-        <b>Grade:</b>
-        V{{ route.publicGrade }}
-        <br />
-        <b>Created:</b>
-        {{ route.createdAt.split('T')[0] }}
-      </ion-card-content>
-    </ion-card>
-    <ion-card v-if="routes.length === 0" class="ion-text-center">
-      <ion-card-header>
-        <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
-        <ion-card-title v-if="!isLoading">No Routes Found</ion-card-title>
-      </ion-card-header>
-    </ion-card>
-  </ion-list>
+        </ion-card-header>
+        <ion-card-content>
+          <b>Gym:&nbsp;</b>
+          <router-link
+            :to="'/gym/' + route.gymLocation + '/' + route.gymName"
+            @click.capture.stop="() => undefined"
+          >
+            {{ route.gymName }}
+          </router-link>
+          <br />
+          <b>Grade:</b>
+          V{{ route.publicGrade }}
+          <br />
+          <b>Created:</b>
+          {{ route.createdAt.split('T')[0] }}
+        </ion-card-content>
+      </ion-card>
+      <ion-card v-if="routes.length === 0" class="ion-text-center">
+        <ion-card-header>
+          <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+          <ion-card-title v-if="!isLoading">No Routes Found</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-list>
+  </div>
 </template>
 
 <script lang="ts">
@@ -106,6 +119,9 @@ export default defineComponent({
     const profileUsername = computed(() => route.params.username as string);
     const isOwnself = computed(() => profileUsername.value === getUsername().value);
     const isAdmin = computed(() => getUserRole().value === 'admin');
+    const totalUserUpvotes = computed(() =>
+      routes.value.reduce((acc, curr) => acc + curr.voteCount, 0),
+    );
 
     const isLoading = ref(false);
 
@@ -195,6 +211,7 @@ export default defineComponent({
 
     return {
       routes,
+      totalUserUpvotes,
       handleRouteCardClick,
       deleteRouteHandler,
       heart,
