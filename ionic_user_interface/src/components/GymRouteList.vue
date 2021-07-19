@@ -130,7 +130,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, Ref, ref, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { RangeChangeEventDetail } from '@ionic/core/dist/types/interface';
 import {
   heart,
@@ -155,22 +155,10 @@ import {
   IonSpinner,
 } from '@ionic/vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
-
-import VoteButton from '@/components/VoteButton.vue';
 import { throttle } from 'lodash';
 
-interface GymRoute {
-  commentCount: number;
-  createdAt: string;
-  gymLocation: string;
-  publicGrade: number;
-  routeName: string;
-  username: string;
-  voteCount: number;
-  hasVoted: boolean;
-  routeId: number;
-}
+import VoteButton from '@/components/VoteButton.vue';
+import getRoutesByGym, { GymRoute } from '@/common/api/route/getRoutesByGym';
 
 enum SortMode {
   VOTES,
@@ -200,10 +188,9 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    let gymLocation = '';
     let routes: Array<GymRoute> = [];
     const filteredSortedRoutes = ref<Array<GymRoute>>([]);
-    const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
-    const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
 
     const searchText = ref('');
     const searchMap = new Map();
@@ -211,11 +198,8 @@ export default defineComponent({
     let gradeBounds = { lower: 0, upper: 14 };
 
     const sortMode = ref(SortMode.VOTES);
-
     const popoverEvent = ref();
     const isPopoverOpen = ref(false);
-
-    let gymLocation = '';
 
     const isLoading = ref(false);
 
@@ -223,70 +207,60 @@ export default defineComponent({
       return Array.from({ length: end - start + 1 }, (_, i) => i);
     };
 
-    const updateRoutes = throttle(() => {
+    const updateRoutes = throttle(async () => {
       if (gymLocation === '') {
         return;
       }
       isLoading.value = true;
-      const headers = getLoggedIn().value
-        ? { Authorization: `Bearer ${getAccessToken().value}` }
-        : {};
-      axios
-        .get(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/all', {
-          headers,
-          params: {
-            gymLocation,
-          },
-        })
-        .then((response) => {
-          if (response.data.Message === 'Query routes by gym success') {
-            // Add a unique index to each route
-            response.data.Items.forEach((element: GymRoute, index: number) => {
-              element.routeId = index;
-            });
-            routes = response.data.Items;
-            filteredSortedRoutes.value = response.data.Items;
-            // Map search queries to route ID
-            for (const route of routes) {
-              const routeName = route.routeName.toLowerCase();
-              if (searchMap.has(routeName)) {
-                searchMap.get(routeName).push(route.routeId);
-              } else {
-                searchMap.set(routeName, [route.routeId]);
-              }
-              const username = route.username.toLowerCase();
-              if (searchMap.has(username)) {
-                searchMap.get(username).push(route.routeId);
-              } else {
-                searchMap.set(username, [route.routeId]);
-              }
-              const vGrade = 'v' + route.publicGrade.toString();
-              if (searchMap.has(vGrade)) {
-                searchMap.get(vGrade).push(route.routeId);
-              } else {
-                searchMap.set(vGrade, [route.routeId]);
-              }
-              const createdAt = route.createdAt.split('T')[0].toLowerCase();
-              if (searchMap.has(createdAt)) {
-                searchMap.get(createdAt).push(route.routeId);
-              } else {
-                searchMap.set(createdAt, [route.routeId]);
-              }
+
+      try {
+        const data = await getRoutesByGym(gymLocation);
+        if (data.Message === 'Query routes by gym success') {
+          // Add a unique index to each route
+          data.Items.forEach((element, index) => {
+            element.routeId = index;
+          });
+          routes = data.Items;
+          filteredSortedRoutes.value = data.Items;
+          // Map search queries to route ID
+          for (const route of routes) {
+            const routeName = route.routeName.toLowerCase();
+            if (searchMap.has(routeName)) {
+              searchMap.get(routeName).push(route.routeId);
+            } else {
+              searchMap.set(routeName, [route.routeId]);
             }
-            filterRoutes(routes);
-            sortRoutes();
-          } else {
-            throw new Error('Failed to get routes');
+            const username = route.username.toLowerCase();
+            if (searchMap.has(username)) {
+              searchMap.get(username).push(route.routeId);
+            } else {
+              searchMap.set(username, [route.routeId]);
+            }
+            const vGrade = 'v' + route.publicGrade.toString();
+            if (searchMap.has(vGrade)) {
+              searchMap.get(vGrade).push(route.routeId);
+            } else {
+              searchMap.set(vGrade, [route.routeId]);
+            }
+            const createdAt = route.createdAt.split('T')[0].toLowerCase();
+            if (searchMap.has(createdAt)) {
+              searchMap.get(createdAt).push(route.routeId);
+            } else {
+              searchMap.set(createdAt, [route.routeId]);
+            }
           }
-        })
-        .catch((error) => {
-          console.error(error);
+          filterRoutes(routes);
+          sortRoutes();
+        } else {
           throw new Error('Failed to get routes');
-        })
-        .finally(() => {
-          isLoading.value = false;
-        });
-    }, 50);
+        }
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to get routes');
+      } finally {
+        isLoading.value = false;
+      }
+    }, 200);
 
     const setPopoverOpen = (state: boolean, event?: Event) => {
       popoverEvent.value = event;

@@ -9,32 +9,33 @@ const memoryCache = cacheManager.caching({
   ttl: 10, // Seconds
 });
 
-const getRoutesByUserUrl = routeBaseUrl + '/route/user';
+const getRoutesByGymUrl = routeBaseUrl + '/route/all';
 
-const getRoutesByUser = async (username: string): Promise<ResponseData> => {
+const getRoutesByGym = async (gymLocation: string): Promise<ResponseData> => {
+  console.log('test');
   const headers = Providers.getLoggedIn().value
     ? { Authorization: `Bearer ${Providers.getAccessToken().value}` }
     : {};
-  const response = await axios.get(getRoutesByUserUrl, {
+  const response = await axios.get(getRoutesByGymUrl, {
     headers,
-    params: { username },
+    params: { gymLocation },
   });
   return response.data as ResponseData;
 };
 
 // Caches in-memory, disappears on page refresh
-const getRoutesByUserCached = async (username: string): Promise<ResponseData> => {
-  return memoryCache.wrap(username, function () {
-    return getRoutesByUser(username);
+const getRoutesByGymCached = async (gymLocation: string): Promise<ResponseData> => {
+  return memoryCache.wrap(gymLocation, function () {
+    return getRoutesByGym(gymLocation);
   });
 };
 
 interface ResponseData {
   Message: string;
-  Items: UserRoute[];
+  Items: GymRoute[];
 }
 
-interface UserRoute {
+interface GymRoute {
   commentCount: number;
   createdAt: string;
   gymLocation: string;
@@ -43,9 +44,8 @@ interface UserRoute {
   username: string;
   voteCount: number;
   hasVoted: boolean;
-  countryCode: string;
-  gymName: string;
+  routeId: number;
 }
 
-export default getRoutesByUserCached;
-export { UserRoute };
+export default getRoutesByGymCached;
+export { GymRoute };
