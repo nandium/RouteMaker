@@ -6,8 +6,10 @@ import cacheManager from 'cache-manager';
 const memoryCache = cacheManager.caching({
   store: 'memory',
   max: 10, // Number of items in cache
-  ttl: 10, // Seconds
+  ttl: 1, // Seconds
 });
+// Set as 1 second to reduce duplicate calls by vue
+// Must be small or will be unresponsive to upvotes
 
 const getRoutesByGymUrl = routeBaseUrl + '/route/all';
 
