@@ -31,17 +31,23 @@
           </ion-item>
           <ion-row
             v-if="userHasSelectedGym"
-            class="ion-align-items-center ion-justify-content-center ion-no-margin"
+            class="ion-align-items-center ion-justify-content-center ion-margin-top"
           >
-            <ion-col class="ion-align-self-center">
-              <ion-button expand="full" fill="clear" color="dark" @click="onClickViewMap">
+            <ion-col class="ion-align-self-center ion-no-padding">
+              <ion-button
+                class="ion-no-margin"
+                expand="full"
+                fill="clear"
+                color="dark"
+                @click="onClickViewMap"
+              >
                 {{ viewMap ? 'Hide Map' : 'View Map' }}
                 <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
               </ion-button>
             </ion-col>
-            <ion-col class="ion-align-self-center">
+            <ion-col class="ion-align-self-center ion-no-padding">
               <router-link style="text-decoration: none" to="/gyms/request">
-                <ion-button expand="full" fill="clear" color="dark">
+                <ion-button class="ion-no-margin" expand="full" fill="clear" color="dark">
                   Can't Find Gym?
                   <ion-icon slot="end" :icon="warning"></ion-icon>
                 </ion-button>

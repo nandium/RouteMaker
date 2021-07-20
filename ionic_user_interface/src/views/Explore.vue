@@ -23,7 +23,7 @@
         <ion-row v-else class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <ion-row>
-              <ion-col size-xs="6">
+              <ion-col size-xs="6" class="ion-no-padding">
                 <ion-button
                   class="ion-align-self-center ion-no-margin"
                   expand="full"
@@ -35,7 +35,7 @@
                   <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
                 </ion-button>
               </ion-col>
-              <ion-col size-xs="6">
+              <ion-col size-xs="6" class="ion-no-padding">
                 <ion-button
                   class="ion-align-self-center ion-no-margin"
                   expand="full"

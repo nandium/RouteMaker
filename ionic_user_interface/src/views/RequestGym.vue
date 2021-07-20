@@ -58,7 +58,7 @@ export default defineComponent({
 #container .description {
   font-size: 1.1em;
   line-height: 1.4em;
-  color: black;
+  color: var(--ion-color-medium-shade);
   margin: 1rem;
 }
 </style>

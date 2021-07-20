@@ -169,7 +169,7 @@ enum SortMode {
 }
 
 interface GymRouteWithId extends GymRoute {
-  routeId?: number;
+  routeId: number;
 }
 
 export default defineComponent({

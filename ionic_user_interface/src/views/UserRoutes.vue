@@ -29,7 +29,7 @@
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <ion-row class="ion-justify-content-center">
-              <ion-col>
+              <ion-col class="ion-no-padding">
                 <ion-button
                   class="ion-align-self-center ion-no-margin"
                   expand="full"
@@ -41,7 +41,7 @@
                   <ion-icon slot="end" :icon="shareSocialOutline"></ion-icon>
                 </ion-button>
               </ion-col>
-              <ion-col v-if="!isOwnself && isLoggedIn">
+              <ion-col v-if="isLoggedIn && !isOwnself" class="ion-no-padding">
                 <ion-button
                   class="ion-align-self-center ion-no-margin"
                   expand="full"

@@ -134,7 +134,7 @@ export default defineComponent({
 }
 
 .vote-button-component:hover {
-  background-color: var(--ion-color-danger-tint);
+  background-color: var(--ion-color-danger-shade);
   cursor: pointer;
 }
 
