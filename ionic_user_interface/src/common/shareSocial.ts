@@ -26,6 +26,7 @@ const shareSocial = async (
           header: 'Copied URL to clipboard!',
           position: 'bottom',
           color: 'medium',
+          duration: 2000,
           buttons: [
             {
               text: 'Close',
