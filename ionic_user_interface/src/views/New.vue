@@ -111,10 +111,6 @@ export default defineComponent({
     color: #8c8c8c;
     margin: 0;
   }
-
-  a {
-    text-decoration: none;
-  }
 }
 
 .upload-button {

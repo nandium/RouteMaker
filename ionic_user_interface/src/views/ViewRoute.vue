@@ -69,7 +69,9 @@
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <div class="global-margin-left-right">
-          <h1 class="ion-text-center ion-margin comment-title">-- Comments --</h1>
+          <h1 class="ion-text-center ion-margin comment-title">
+            -- Comments ({{ routeDetails.comments.length }}) --
+          </h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"

@@ -145,10 +145,6 @@ export default defineComponent({
   li {
     font-size: 1.1em;
   }
-
-  a {
-    text-decoration: none;
-  }
 }
 
 .slides-container {
@@ -170,6 +166,15 @@ export default defineComponent({
       cursor: pointer;
       background: rgba(var(--ion-color-secondary-rgb), 0.05);
     }
+
+    ion-icon {
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  ion-slides {
+    --bullet-background: var(--ion-color-medium);
   }
 }
 
@@ -191,6 +196,7 @@ export default defineComponent({
   border: 1.5px solid grey;
   width: clamp(280px, 60%, 330px);
   margin: 0 auto;
+  margin-bottom: 30px;
   image-rendering: -webkit-optimize-contrast;
   /* https://stackoverflow.com/questions/37906602/blurry-downscaled-images-in-chrome */
 }
