@@ -80,14 +80,14 @@
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <div class="global-margin-left-right">
           <h1 class="ion-text-center ion-margin comment-title">
-            -- Comments ({{ routeDetails.comments.length }}) --
+            -- Reviews ({{ routeDetails.comments.length }}) --
           </h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"
           >
             <ion-textarea
-              placeholder="Write a comment..."
+              placeholder="Write a review..."
               class="ion-no-margin"
               maxlength="150"
               v-model="commentText"
@@ -103,7 +103,7 @@
               <div v-if="isLoggedIn" class="center-right">
                 <div
                   v-if="commentDetails.username !== myUsername"
-                  title="Report comment"
+                  title="Report review"
                   class="icon-button"
                   @click="() => reportCommentHandler(commentDetails.username)"
                 >
@@ -111,7 +111,7 @@
                 </div>
                 <div
                   v-if="commentDetails.username === myUsername || isAdmin"
-                  title="Delete comment"
+                  title="Delete review"
                   class="icon-button"
                   @click="
                     () => deleteCommentHandler(commentDetails.username, commentDetails.timestamp)
@@ -264,15 +264,15 @@ export default defineComponent({
       const comment = commentText.value.trim();
       commentText.value = '';
       if (comment.length === 0) {
-        msgBox.value?.showMsg('Comment cannot be empty');
+        msgBox.value?.showMsg('Review cannot be empty');
         return false;
       }
       if (comment.length > 150) {
-        msgBox.value?.showMsg('Comment is too long, please keep it within 150 characters');
+        msgBox.value?.showMsg('Review is too long, please keep it within 150 characters');
         return false;
       }
       if (!asciiPattern.test(comment)) {
-        msgBox.value?.showMsg('Comment cannot contain non-ASCII characters');
+        msgBox.value?.showMsg('Review cannot contain non-ASCII characters');
         return false;
       }
 
@@ -297,7 +297,7 @@ export default defineComponent({
     const deleteCommentHandler = throttle(async (commentUsername: string, timestamp: number) => {
       msgBox.value?.close();
       const alert = await alertController.create({
-        header: `Delete comment?`,
+        header: `Delete review?`,
         message: 'Are you sure?',
         buttons: [
           {
