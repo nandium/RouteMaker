@@ -124,7 +124,6 @@ ion-button {
     --padding-start: 6px;
     --padding-end: 6px;
     border-radius: 100%;
-    --border-radius: 100% !important;
   }
 }
 </style>
