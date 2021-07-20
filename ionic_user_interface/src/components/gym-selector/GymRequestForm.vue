@@ -97,7 +97,7 @@ export default defineComponent({
     const alertSubmissionSuccess = async () => {
       const alert = await alertController.create({
         header: 'Request Submitted',
-        subHeader: 'Thank you! We will respond to you in 12 hours',
+        subHeader: 'Thank you! A response email will be sent in 2 to 10 hours',
         buttons: [
           {
             text: 'Okay',

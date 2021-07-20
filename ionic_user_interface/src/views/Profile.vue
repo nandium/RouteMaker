@@ -4,8 +4,8 @@
       <ion-grid>
         <ion-row color="primary" class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-md="6" size-lg="5" size-xs="12">
-            <div class="ion-text-center">
-              <h1>Profile</h1>
+            <div class="ion-text-center page-title">
+              <strong>Profile</strong>
             </div>
             <div class="ion-padding ion-text-center">
               <ion-item class="rounded">
@@ -227,5 +227,10 @@ export default defineComponent({
 .login-button {
   margin-top: 30px;
   margin-bottom: 40px;
+}
+
+.page-title {
+  font-size: clamp(2rem, 7vw, 2.5rem);
+  line-height: 2em;
 }
 </style>

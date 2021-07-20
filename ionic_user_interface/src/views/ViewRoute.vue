@@ -8,6 +8,9 @@
           <div class="route-title">
             <b>{{ routeDetails.routeName }}</b>
           </div>
+          <div class="icon-button share-button-div margin-right" @click="sharePostHandler">
+            <ion-icon color="tertiary" size="large" :icon="shareSocialOutline"></ion-icon>
+          </div>
           <VoteButton
             class="margin-right"
             :username="routeDetails.username"
@@ -19,6 +22,7 @@
         <ion-row class="ion-justify-content-between display-flex">
           <ion-item
             class="ion-no-padding margin-left rounded profile-item"
+            lines="none"
             @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
           >
             <ion-icon
@@ -34,7 +38,7 @@
               color="danger"
               @click="() => reportRouteHandler(routeDetails.username, routeDetails.createdAt)"
             >
-              <ion-label>Report this route&nbsp;</ion-label>
+              <ion-label>Report route&nbsp;</ion-label>
               <ion-icon :icon="flag"></ion-icon>
             </ion-button>
             <ion-button disabled v-if="hasReported" color="medium">
@@ -65,7 +69,7 @@
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <div class="margin-left margin-right">
-          <h1 class="ion-text-center ion-margin">-- Comments --</h1>
+          <h1 class="ion-text-center ion-margin comment-title">-- Comments --</h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"
@@ -75,7 +79,6 @@
               class="ion-no-margin"
               maxlength="150"
               v-model="commentText"
-              autoGrow
             ></ion-textarea>
             <ion-button @click="postCommentHandler" fill="clear" color="dark">
               <ion-icon :icon="sendSharp"></ion-icon>
@@ -108,6 +111,7 @@
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
               <ion-item
                 class="ion-no-padding margin-left-large rounded profile-item"
+                lines="none"
                 @click="() => router.push({ name: 'UserRoutes', params: username })"
               >
                 <ion-icon
@@ -144,40 +148,25 @@ import {
   alertController,
   toastController,
 } from '@ionic/vue';
-import { sendSharp, trashOutline, personCircleOutline, flagOutline, flag } from 'ionicons/icons';
-import { computed, defineComponent, inject, Ref, ref } from 'vue';
+import {
+  sendSharp,
+  trashOutline,
+  personCircleOutline,
+  flagOutline,
+  flag,
+  shareSocialOutline,
+} from 'ionicons/icons';
+import { computed, ComputedRef, defineComponent, inject, Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+
 import { getAlertController } from '@/common/reportUserAlert';
 import VoteButton from '@/components/VoteButton.vue';
 import GradeSlider from '@/components/GradeSlider.vue';
 import MessageBox from '@/components/MessageBox.vue';
-
-interface Comment {
-  username: string;
-  timestamp: number;
-  comment: string;
-}
-
-interface RouteDetails {
-  comments?: Array<Comment>;
-  countryCode?: string;
-  createdAt?: string;
-  expiredTime?: string;
-  graded?: number;
-  gymLocation?: string;
-  hasGraded?: boolean;
-  hasReported?: boolean;
-  hasVoted?: boolean;
-  ownerGrade?: number;
-  publicGrade?: number;
-  routeName?: string;
-  routeURL?: string;
-  username?: string;
-  voteCount?: number;
-}
+import { shareSocial } from '@/common/shareSocial';
+import getRouteDetails, { RouteDetails } from '@/common/api/route/getRouteDetails';
 
 export default defineComponent({
   name: 'ViewRoute',
@@ -203,12 +192,12 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const username = computed(() => route.params.username);
-    const createdAt = computed(() => route.params.createdAt);
+    const username = computed(() => route.params.username as string);
+    const createdAt = computed(() => route.params.createdAt as string);
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
-    const getIdToken: () => Ref<string> = inject('getIdToken', () => ref(''));
+    const getUserRole: () => ComputedRef<string> = inject('getUserRole', () => computed(() => ''));
     const commentText = ref('');
 
     const asciiPattern = /^[ -~]+$/;
@@ -216,59 +205,37 @@ export default defineComponent({
 
     const myUsername = getUsername();
     const isLoggedIn = getLoggedIn();
-    const isAdmin = computed(() => {
-      try {
-        const idObject: { 'custom:role': string } = jwt_decode(getIdToken().value);
-        return idObject['custom:role'] === 'admin';
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
-    });
+    const isAdmin = computed(() => getUserRole().value === 'admin');
     const isRouteSetter = computed(() => username.value === myUsername.value);
     const hasAlreadyCommented = ref(false);
     const hasReported = ref(false);
 
     const isLoading = ref(false);
 
-    let routeDetails: Ref<RouteDetails> = ref({});
+    let routeDetails: Ref<RouteDetails | null> = ref(null);
 
-    const updateRouteDetails = throttle(() => {
+    const updateRouteDetails = throttle(async (showLoadingScreen = true) => {
       if (isLoading.value) {
         return;
       }
-      isLoading.value = true;
-      const headers = getLoggedIn().value
-        ? { Authorization: `Bearer ${getAccessToken().value}` }
-        : {};
-      axios
-        .post(
-          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details',
-          {
-            username: username.value,
-            createdAt: createdAt.value,
-          },
-          {
-            headers,
-          },
-        )
-        .then((response) => {
-          if (response.data.Message === 'Get route details success') {
-            routeDetails.value = response.data.Item;
-            hasAlreadyCommented.value =
-              routeDetails.value.comments?.some(
-                (comment) => comment.username == myUsername.value,
-              ) ?? false;
-            hasReported.value = routeDetails.value.hasReported ?? false;
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          router.back();
-        })
-        .finally(() => {
-          isLoading.value = false;
-        });
+      isLoading.value = showLoadingScreen;
+      try {
+        const data = await getRouteDetails(username.value, createdAt.value);
+        if (data.Message === 'Get route details success') {
+          routeDetails.value = data.Item;
+          hasAlreadyCommented.value =
+            routeDetails.value?.comments.some((comment) => comment.username == myUsername.value) ??
+            false;
+          hasReported.value = routeDetails.value?.hasReported ?? false;
+        } else {
+          throw new Error('Failed to get route details');
+        }
+      } catch (error) {
+        console.error(error);
+        router.back();
+      } finally {
+        isLoading.value = false;
+      }
     }, 1000);
 
     updateRouteDetails();
@@ -305,7 +272,7 @@ export default defineComponent({
           },
         )
         .then(() => {
-          updateRouteDetails();
+          updateRouteDetails(false);
         })
         .catch((error) => {
           console.error(error);
@@ -328,7 +295,7 @@ export default defineComponent({
           },
         })
         .then(() => {
-          updateRouteDetails();
+          updateRouteDetails(false);
         })
         .catch((error) => {
           console.error(error);
@@ -431,11 +398,15 @@ export default defineComponent({
           },
         )
         .then(() => {
-          updateRouteDetails();
+          updateRouteDetails(false);
         })
         .catch((error) => {
           console.error(error);
         });
+    };
+
+    const sharePostHandler = async () => {
+      await shareSocial(route, `Route by ${username.value}`);
     };
 
     return {
@@ -446,6 +417,7 @@ export default defineComponent({
       postCommentHandler,
       trashOutline,
       personCircleOutline,
+      shareSocialOutline,
       myUsername,
       deleteCommentHandler,
       reportCommentHandler,
@@ -458,6 +430,7 @@ export default defineComponent({
       hasReported,
       msgBox,
       gradeChangeHandler,
+      sharePostHandler,
       isRouteSetter,
       isLoading,
     };
@@ -473,22 +446,6 @@ export default defineComponent({
   max-width: 900px;
   margin: 0 auto;
   padding: 0;
-}
-
-#container strong {
-  font-size: 3em;
-  line-height: 2em;
-}
-
-#container p {
-  font-size: 1.6em;
-  line-height: 1em;
-  color: #8c8c8c;
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
 }
 
 .center-right {
@@ -507,8 +464,8 @@ export default defineComponent({
 .route-title {
   flex: 1;
   vertical-align: middle;
-  font-size: clamp(2rem, 7vw, 2.5rem);
-  margin: 20px 30px 20px 10px;
+  font-size: clamp(1.6em, 3vw, 2em);
+  margin: 20px 30px 20px 16px;
 }
 
 .icon-button {
@@ -522,7 +479,7 @@ export default defineComponent({
 }
 
 .icon-button:hover {
-  background-color: #444444;
+  background-color: var(--ion-color-medium-tint);
   cursor: pointer;
 }
 
@@ -563,6 +520,10 @@ ion-card {
   margin-bottom: 1.4em;
 }
 
+h1.comment-title {
+  font-size: clamp(1.4em, 3vw, 1.6em);
+}
+
 .comment-card-item {
   display: inline;
 }
@@ -576,6 +537,10 @@ ion-card {
   --background: #333333;
 }
 
+.profile-item ion-label {
+  color: var(--ion-color-medium);
+}
+
 ion-spinner {
   position: absolute;
   height: 100px;
@@ -584,5 +549,21 @@ ion-spinner {
   left: 50%;
   margin-left: -50px;
   margin-top: -50px;
+}
+
+.share-button-div {
+  display: flex;
+  align-self: center;
+}
+
+.share-button-div:hover {
+  background-color: var(--ion-color-tertiary-tint);
+  cursor: pointer;
+}
+
+/* To prevent clash with delete icon on the right */
+ion-card-title {
+  margin-right: 40px;
+  font-size: clamp(1.2em, 3vw, 1.4em);
 }
 </style>

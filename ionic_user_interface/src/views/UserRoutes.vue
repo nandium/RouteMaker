@@ -5,7 +5,7 @@
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <div class="page-title">
-              <b>Routes By User</b>
+              <strong>Routes By User</strong>
             </div>
             <ion-item class="rounded">
               <ion-icon
@@ -13,33 +13,47 @@
                 class="ion-no-margin margin-right"
                 :icon="personCircleOutline"
               ></ion-icon>
-              <ion-text>{{ profileUsername }}</ion-text>
+              <ion-text class="username">{{ profileUsername }}</ion-text>
               <ion-button
-                v-if="!isOwnself && isLoggedIn"
+                v-if="isLoggedIn && !isOwnself && isAdmin"
                 slot="end"
                 class="margin-left"
                 color="danger"
-                @click="reportUserHandler"
+                @click="disableUserHandler"
               >
-                <ion-label>Report&nbsp;</ion-label>
-                <ion-icon :icon="flag"></ion-icon>
+                <ion-label>Disable&nbsp;</ion-label>
               </ion-button>
             </ion-item>
           </ion-col>
         </ion-row>
-        <ion-row
-          class="ion-align-items-center ion-justify-content-center"
-          v-if="isLoggedIn && !isOwnself && isAdmin"
-        >
+        <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-            <ion-button
-              v-if="isAdmin"
-              class="margin-left"
-              color="danger"
-              @click="disableUserHandler"
-            >
-              <ion-label>Admin Disable</ion-label>
-            </ion-button>
+            <ion-row class="ion-justify-content-center">
+              <ion-col class="ion-no-padding">
+                <ion-button
+                  class="ion-align-self-center ion-no-margin"
+                  expand="full"
+                  fill="clear"
+                  color="dark"
+                  @click="sharePostHandler"
+                >
+                  Share User
+                  <ion-icon slot="end" :icon="shareSocialOutline"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col v-if="isLoggedIn && !isOwnself" class="ion-no-padding">
+                <ion-button
+                  class="ion-align-self-center ion-no-margin"
+                  expand="full"
+                  fill="clear"
+                  color="dark"
+                  @click="reportUserHandler"
+                >
+                  Report User
+                  <ion-icon slot="end" :icon="flagOutline"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
           </ion-col>
         </ion-row>
         <ion-row class="ion-align-items-center ion-justify-content-center">
@@ -69,11 +83,12 @@ import {
 } from '@ionic/vue';
 import axios from 'axios';
 import { defineComponent, Ref, ref, inject, computed, ComputedRef } from 'vue';
-import { personCircleOutline, flag } from 'ionicons/icons';
+import { personCircleOutline, flagOutline, shareSocialOutline } from 'ionicons/icons';
 import { useRoute } from 'vue-router';
 import { throttle } from 'lodash';
 import { getAlertController } from '@/common/reportUserAlert';
 import UserRouteList from '@/components/UserRouteList.vue';
+import { shareSocial } from '@/common/shareSocial';
 
 export default defineComponent({
   name: 'UserRoutes',
@@ -95,6 +110,7 @@ export default defineComponent({
     const getLoggedIn: () => Ref<boolean> = inject('getLoggedIn', () => ref(false));
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getUserRole: () => ComputedRef<string> = inject('getUserRole', () => computed(() => ''));
+    // Note: Difference between profileUsername and username
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const isLoggedIn = getLoggedIn();
     const profileUsername = computed(() => route.params.username as string);
@@ -179,15 +195,21 @@ export default defineComponent({
       return alert.present();
     }, 1000);
 
+    const sharePostHandler = async () => {
+      await shareSocial(route, `Route by ${profileUsername.value}`);
+    };
+
     return {
       profileUsername,
       personCircleOutline,
       isLoggedIn,
       isOwnself,
-      flag,
+      flagOutline,
+      shareSocialOutline,
       reportUserHandler,
       disableUserHandler,
       isAdmin,
+      sharePostHandler,
     };
   },
 });
@@ -206,5 +228,9 @@ export default defineComponent({
 
 .margin-right {
   margin-right: 10px;
+}
+
+.username {
+  color: var(--ion-color-medium);
 }
 </style>

@@ -3,11 +3,11 @@
     <ion-content :fullscreen="true" ref="ionContent">
       <div id="container">
         <strong>Route Maker</strong>
-        <p>Quickly make custom climbing routes</p>
+        <p>Make custom climbing routes</p>
         <br />
         <br />
         <ion-button @click="takePhoto" color="tertiary">
-          <ion-icon class="camera-icon" :icon="camera"></ion-icon>
+          <ion-icon class="margin-right" :icon="camera"></ion-icon>
           Upload wall image
         </ion-button>
         <Canvas
@@ -16,6 +16,12 @@
           :width="canvasWidth"
           :ionContent="ionContent"
         />
+        <div v-if="!photoUploaded">
+          <br />
+          <ion-button @click="handleClickUserGuide" color="medium" fill="clear">
+            User Guide
+          </ion-button>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -23,8 +29,9 @@
 
 <script lang="ts">
 import { camera } from 'ionicons/icons';
-import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
+import { IonButton, IonContent, IonPage, IonIcon } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 import Canvas from '@/components/wall-image-viewer/Canvas.vue';
 import { usePhotoGallery } from '@/composables/usePhotoGallery';
@@ -40,6 +47,7 @@ export default defineComponent({
     Canvas,
   },
   setup() {
+    const router = useRouter();
     const photoData = ref('');
     const photoUploaded = ref(false);
     const { photo, takePhoto } = usePhotoGallery();
@@ -67,6 +75,10 @@ export default defineComponent({
       window.removeEventListener('resize', updateCanvasWidth);
     });
 
+    const handleClickUserGuide = () => {
+      router.push({ name: 'Help', hash: '#section2' });
+    };
+
     return {
       canvasWidth,
       photoData,
@@ -75,6 +87,7 @@ export default defineComponent({
       takePhoto,
       camera,
       ionContent,
+      handleClickUserGuide,
     };
   },
 });
@@ -89,12 +102,12 @@ export default defineComponent({
 }
 
 #container strong {
-  font-size: 3em;
+  font-size: clamp(2rem, 7vw, 2.5rem);
   line-height: 2em;
 }
 
 #container p {
-  font-size: 1.6em;
+  font-size: clamp(1.4rem, 5vw, 1.6rem);
   line-height: 1em;
   color: #8c8c8c;
   margin: 0;
@@ -104,7 +117,7 @@ export default defineComponent({
   text-decoration: none;
 }
 
-.camera-icon {
+.margin-right {
   margin-right: 10px;
 }
 

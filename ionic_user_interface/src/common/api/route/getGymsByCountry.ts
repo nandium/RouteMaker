@@ -1,7 +1,13 @@
 import axios from 'axios';
-import { routeBaseUrl } from './config';
+import cacheManager from 'cache-manager';
 
-const getGymsByCountryUrl = routeBaseUrl + '/route/gym/country';
+const memoryCache = cacheManager.caching({
+  store: 'memory',
+  max: 10, // Number of items in cache
+  ttl: 30, // Seconds
+});
+
+const getGymsByCountryUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/gym/country';
 
 const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => {
   try {
@@ -10,11 +16,20 @@ const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => 
     } = await axios.get(getGymsByCountryUrl, {
       params: { countryCode },
     });
+    // Sort alphabetically by gym name
+    (Items as GymLocation[]).sort((a, b) => (a.gymName > b.gymName ? 1 : -1));
     return Items;
   } catch (error) {
     console.error(error.response.data);
   }
   return [];
+};
+
+// Caches in-memory, disappears on page refresh
+const getGymsByCountryCached = async (countryCode: string): Promise<GymLocation[]> => {
+  return memoryCache.wrap('country_' + countryCode, function () {
+    return getGymsByCountry(countryCode);
+  });
 };
 
 interface GymLocation {
@@ -23,5 +38,5 @@ interface GymLocation {
   gymName: string;
 }
 
-export default getGymsByCountry;
+export default getGymsByCountryCached;
 export { GymLocation };

@@ -70,6 +70,25 @@
                 >
                   Sign up
                 </ion-button>
+                <div class="privacy-policy">
+                  <ion-checkbox v-model="termsCheckbox" />
+                  <ion-text>
+                    I agree to the
+                    <a
+                      href="https://s3.ap-southeast-1.amazonaws.com/assets.routemaker.rocks/privacy.html"
+                      target="_blank"
+                    >
+                      <span>Privacy Policy</span>
+                    </a>
+                    &#38;
+                    <a
+                      href="https://s3.ap-southeast-1.amazonaws.com/assets.routemaker.rocks/terms.html"
+                      target="_blank"
+                    >
+                      <span>Terms and Conditions</span>
+                    </a>
+                  </ion-text>
+                </div>
                 <h5>
                   Already have an account?
                   <router-link to="/login">Login</router-link>
@@ -95,6 +114,8 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  IonCheckbox,
+  IonText,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import axios from 'axios';
@@ -116,6 +137,8 @@ export default defineComponent({
     IonLabel,
     IonPage,
     IonRow,
+    IonCheckbox,
+    IonText,
     PasswordMeter,
   },
   setup() {
@@ -135,6 +158,7 @@ export default defineComponent({
     const passwordText = ref('');
     const passwordStrength = ref('');
     const confirmPasswordText = ref('');
+    const termsCheckbox = ref(false);
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
 
     const isValidEmail = (email: string): boolean => {
@@ -173,6 +197,10 @@ export default defineComponent({
       }
       if (passwordText.value !== confirmPasswordText.value) {
         errorMsg.value?.showMsg('Passwords do not match');
+        return false;
+      }
+      if (!termsCheckbox.value) {
+        errorMsg.value?.showMsg('Please read the terms and conditions');
         return false;
       }
 
@@ -249,6 +277,7 @@ export default defineComponent({
       onPasswordScore,
       passwordStrength,
       errorMsg,
+      termsCheckbox,
     };
   },
 });
@@ -274,5 +303,23 @@ export default defineComponent({
 .signup-button {
   margin-top: 30px;
   margin-bottom: 40px;
+}
+
+.privacy-policy ion-text {
+  font-size: 0.7em;
+  display: inline-block;
+  margin-left: 0.5em;
+}
+
+.privacy-policy {
+  margin-top: 1em;
+  margin-bottom: 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.privacy-policy span {
+  white-space: nowrap;
 }
 </style>

@@ -5,6 +5,10 @@
         <strong>Route Maker</strong>
         <p>Climbing Gym Request Form</p>
         <br />
+        <p class="description">
+          Please submit gym requests here. We will respond to you via email in 2 to 10 hours. Thank
+          you for your support.
+        </p>
         <gym-request-form />
       </div>
     </ion-content>
@@ -49,5 +53,12 @@ export default defineComponent({
 
 #container a {
   text-decoration: none;
+}
+
+#container .description {
+  font-size: 1.1em;
+  line-height: 1.4em;
+  color: var(--ion-color-medium-shade);
+  margin: 1rem;
 }
 </style>

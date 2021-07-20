@@ -16,7 +16,7 @@
                     v-model="routeNameText"
                     inputmode="text"
                     type="text"
-                    maxlength="30"
+                    maxlength="20"
                     autofocus
                     required
                   />
@@ -182,7 +182,7 @@ export default defineComponent({
     };
 
     const isValidRouteName = (routeName: string): boolean => {
-      return routeName.length > 0 && routeName.length <= 30 && asciiPattern.test(routeName);
+      return routeName.length > 0 && routeName.length <= 20 && asciiPattern.test(routeName);
     };
 
     const showErrorMsg = (errorMsg: string): void => {
@@ -196,7 +196,7 @@ export default defineComponent({
       msgBox.value?.close();
 
       if (!isValidRouteName(routeNameText.value)) {
-        showErrorMsg('Route name has to be 0-30 ASCII characters');
+        showErrorMsg('Route name has to be 1-20 ASCII characters');
         return false;
       }
 

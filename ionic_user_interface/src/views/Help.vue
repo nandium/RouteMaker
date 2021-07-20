@@ -4,7 +4,7 @@
       <div id="container">
         <strong>-- Hello Climbers! --</strong>
         <p class="lead">
-          This is a free open source project between two friends who happen to code and climb.
+          This is a free open source project between friends who happen to code and climb.
         </p>
 
         <p class="lead">
@@ -19,16 +19,31 @@
           </p>
         </div>
 
-        <p class="lead">Please star our repository to support!</p>
+        <p class="lead">
+          We plan to maintain this project for as long as people find it useful.
+          <br />
+          If you like our work, please star our repository. Pull requests are welcomed too!
+        </p>
 
         <ion-button
           target="_blank"
           href="https://github.com/nandium/RouteMaker"
           color="light"
-          size="large"
+          size="medium"
+          class="logo-button"
         >
-          <ion-icon class="github-logo" :icon="logoGithub" size="medium"></ion-icon>
+          <ion-icon :icon="logoGithub" size="medium"></ion-icon>
           Github
+        </ion-button>
+        <ion-button
+          target="_blank"
+          href="mailto:routemakergithub@gmail.com"
+          color="light"
+          size="medium"
+          class="logo-button"
+        >
+          <ion-icon :icon="mail" size="medium"></ion-icon>
+          Feedback
         </ion-button>
 
         <br />
@@ -36,7 +51,6 @@
         <br />
         <strong>-- How To Use --</strong>
 
-        <hr class="my-4" id="section2" />
         <p class="lead my-4">1. Upload the photo of a climbing wall</p>
         <ion-img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_1.jpg`" />
         <br />
@@ -58,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import { logoGithub } from 'ionicons/icons';
+import { logoGithub, mail } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonImg, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
@@ -76,6 +90,7 @@ export default defineComponent({
     return {
       logoGithub,
       publicPath,
+      mail,
     };
   },
 });
@@ -88,17 +103,19 @@ export default defineComponent({
   left: 2%;
   right: 2%;
   z-index: -1;
-  padding-top: 30px;
+  padding-top: 20px;
 }
 
 #container strong {
-  font-size: 2em;
+  font-size: clamp(1.5rem, 7vw, 1.8rem);
   line-height: 2em;
 }
 
 #container p {
-  font-size: 1.3em;
-  line-height: 1.5em;
+  font-size: 1.1em;
+  line-height: 1.4em;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 #container a {
@@ -107,8 +124,10 @@ export default defineComponent({
 
 .screenshot {
   border: 1.5px solid grey;
-  max-width: 200px;
+  width: clamp(250px, 50%, 300px);
   margin: 0 auto;
+  image-rendering: -webkit-optimize-contrast;
+  /* https://stackoverflow.com/questions/37906602/blurry-downscaled-images-in-chrome */
 }
 
 .features-div {
@@ -116,10 +135,14 @@ export default defineComponent({
   margin: 0 auto;
   border-radius: 15px;
   border: 1px solid grey;
-  padding: 0.5rem 1rem;
+  padding: 0.2rem 1rem;
 }
 
-.github-logo {
+.logo-button ion-icon {
   margin-right: 15px;
+}
+
+.logo-button {
+  margin: 10px;
 }
 </style>

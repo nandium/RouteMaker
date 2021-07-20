@@ -31,17 +31,23 @@
           </ion-item>
           <ion-row
             v-if="userHasSelectedGym"
-            class="ion-align-items-center ion-justify-content-center ion-no-margin"
+            class="ion-align-items-center ion-justify-content-center ion-margin-top"
           >
-            <ion-col class="ion-align-self-center">
-              <ion-button expand="full" fill="clear" color="dark" @click="onClickViewMap">
+            <ion-col class="ion-align-self-center ion-no-padding">
+              <ion-button
+                class="ion-no-margin"
+                expand="full"
+                fill="clear"
+                color="dark"
+                @click="onClickViewMap"
+              >
                 {{ viewMap ? 'Hide Map' : 'View Map' }}
                 <ion-icon slot="end" :icon="viewMap ? map : mapOutline"></ion-icon>
               </ion-button>
             </ion-col>
-            <ion-col class="ion-align-self-center">
+            <ion-col class="ion-align-self-center ion-no-padding">
               <router-link style="text-decoration: none" to="/gyms/request">
-                <ion-button expand="full" fill="clear" color="dark">
+                <ion-button class="ion-no-margin" expand="full" fill="clear" color="dark">
                   Can't Find Gym?
                   <ion-icon slot="end" :icon="warning"></ion-icon>
                 </ion-button>
@@ -116,9 +122,9 @@ export default defineComponent({
 
     onMounted(async () => {
       if (userCountry.value !== null) {
-        selectedCountryIso3.value = userCountry.value.iso3;
-        const countryGymLocations = await getGymsByCountry(userCountry.value.iso3);
-        gymLocationList.value = countryGymLocations;
+        // On set value, emits @matchedItem which triggers onCountrySelect
+        autoComplete.value?.setValue(userCountry.value.country);
+
         // For new user, default is SGP and Zvertigo
         // After usage, the app remembers the new country and gym
         if (userGym.value !== '') {
@@ -130,7 +136,6 @@ export default defineComponent({
         }
         // Simulate being selected in ion-select
         onGymSelect(selectedGym.value);
-        autoComplete.value?.setValue(userCountry.value.country);
       } else {
         reset();
       }
@@ -145,9 +150,9 @@ export default defineComponent({
     const onCountrySelect = async (country: Country) => {
       errorMsg.value?.close();
       if (country) {
-        selectedCountryIso3.value = country.iso3;
         const countryGymLocations = await getGymsByCountry(country.iso3);
         gymLocationList.value = countryGymLocations;
+        selectedCountryIso3.value = country.iso3;
         setUserCountry(country);
       } else {
         reset();
