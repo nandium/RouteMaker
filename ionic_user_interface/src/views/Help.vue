@@ -103,11 +103,11 @@ export default defineComponent({
   left: 2%;
   right: 2%;
   z-index: -1;
-  padding-top: 30px;
+  padding-top: 20px;
 }
 
 #container strong {
-  font-size: 1.8em;
+  font-size: clamp(1.5rem, 7vw, 1.8rem);
   line-height: 2em;
 }
 
