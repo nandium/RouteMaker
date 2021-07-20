@@ -434,10 +434,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.route-card:hover {
-  cursor: pointer;
-  filter: brightness(120%);
+<style scoped lang="scss">
+.route-card {
+  &:hover {
+    cursor: pointer;
+    filter: brightness(120%);
+  }
 }
 
 ion-card-header {
@@ -464,19 +466,18 @@ ion-card-header {
   justify-content: space-between;
   padding: 0 0;
   margin-top: -10px;
-}
-
-.sliderticks p {
-  font-size: 2.3vmin;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  width: 1px;
-  background: #d3d3d3;
-  height: 1vmin;
-  line-height: 5vmin;
-  margin: 0 0 20px 0;
+  p {
+    font-size: 2.3vmin;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 1px;
+    background: #d3d3d3;
+    height: 1vmin;
+    line-height: 5vmin;
+    margin: 0 0 20px 0;
+  }
 }
 
 .vote-button {

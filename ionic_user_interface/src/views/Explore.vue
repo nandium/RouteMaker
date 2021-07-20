@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-      <div id="container">
+      <div class="my-container">
         <ion-row class="ion-align-items-center ion-justify-content-center margin-bottom">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <div v-if="showGymSelector">
@@ -146,28 +146,26 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-#container {
+<style scoped lang="scss">
+.my-container {
   text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-}
+  margin: 0 auto;
 
-#container strong {
-  font-size: clamp(2rem, 7vw, 2.5rem);
-  line-height: 2em;
-}
+  strong {
+    font-size: clamp(2rem, 7vw, 2.5rem);
+    line-height: 2em;
+  }
 
-#container p {
-  font-size: clamp(1.4rem, 5vw, 1.6rem);
-  line-height: 1em;
-  color: #8c8c8c;
-  margin: 0;
-}
+  p {
+    font-size: clamp(1.4rem, 5vw, 1.6rem);
+    line-height: 1em;
+    color: #8c8c8c;
+    margin: 0;
+  }
 
-#container a {
-  text-decoration: none;
+  a {
+    text-decoration: none;
+  }
 }
 
 .margin-top {

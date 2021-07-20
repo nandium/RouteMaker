@@ -55,7 +55,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 * {
   box-sizing: border-box;
 }
@@ -71,41 +71,41 @@ export default defineComponent({
   border-radius: 20px;
   padding: 0;
   margin: 0;
-}
 
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  background: #ff0000;
-  cursor: pointer;
-}
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #ff0000;
+    cursor: pointer;
+  }
 
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  background: #ff0000;
-  cursor: pointer;
-  border-radius: 20px;
+  &::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #ff0000;
+    cursor: pointer;
+    border-radius: 20px;
+  }
 }
 
 .sliderticks {
   display: flex;
   justify-content: space-between;
   padding: 0 0;
-}
 
-.sliderticks p {
-  font-size: 2.4vmin;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  width: 1px;
-  background: #d3d3d3;
-  height: 10px;
-  line-height: 40px;
-  margin: 0 0 20px 0;
+  p {
+    font-size: 2.4vmin;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 1px;
+    background: #d3d3d3;
+    height: 10px;
+    line-height: 40px;
+    margin: 0 0 20px 0;
+  }
 }
 </style>

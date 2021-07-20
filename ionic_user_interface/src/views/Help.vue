@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-      <div id="container">
+      <div class="my-container">
         <strong>-- Hello Climbers! --</strong>
         <p class="lead">
           This is a free open source project between friends who happen to code and climb.
@@ -28,6 +28,7 @@
         <ion-button
           target="_blank"
           href="https://github.com/nandium/RouteMaker"
+          title="Our GitHub repository"
           color="light"
           size="medium"
           class="logo-button"
@@ -38,6 +39,7 @@
         <ion-button
           target="_blank"
           href="mailto:routemakergithub@gmail.com"
+          title="Email us!"
           color="light"
           size="medium"
           class="logo-button"
@@ -96,30 +98,30 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-#container {
+<style scoped lang="scss">
+.my-container {
   text-align: center;
   position: absolute;
   left: 2%;
   right: 2%;
   z-index: -1;
   padding-top: 20px;
-}
 
-#container strong {
-  font-size: clamp(1.5rem, 7vw, 1.8rem);
-  line-height: 2em;
-}
+  strong {
+    font-size: clamp(1.5rem, 7vw, 1.8rem);
+    line-height: 2em;
+  }
 
-#container p {
-  font-size: 1.1em;
-  line-height: 1.4em;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-}
+  p {
+    font-size: 1.1em;
+    line-height: 1.4em;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
 
-#container a {
-  text-decoration: none;
+  a {
+    text-decoration: none;
+  }
 }
 
 .screenshot {
@@ -138,11 +140,11 @@ export default defineComponent({
   padding: 0.2rem 1rem;
 }
 
-.logo-button ion-icon {
-  margin-right: 15px;
-}
-
 .logo-button {
   margin: 10px;
+
+  ion-icon {
+    margin-right: 10px;
+  }
 }
 </style>

@@ -8,9 +8,9 @@
               <h1>Login</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="errorMsg" color="danger" class="rounded" />
+              <MessageBox ref="errorMsg" color="danger" class="global-rounded margin" />
               <form @submit="onSubmit">
-                <ion-item class="rounded">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
                   <ion-input
                     @keyup.enter="clickLoginButton"
@@ -23,7 +23,7 @@
                     required
                   />
                 </ion-item>
-                <ion-item class="rounded">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Password</ion-label>
                   <ion-input
                     @keyup.enter="clickLoginButton"
@@ -226,10 +226,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.rounded {
+<style scoped lang="scss">
+.margin {
   margin-bottom: 1.2em;
-  border-radius: 5px;
 }
 
 .login-button {

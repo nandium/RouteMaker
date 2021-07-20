@@ -99,7 +99,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 ion-list {
   margin: 0;
   padding: 0;
@@ -108,20 +108,23 @@ ion-list {
 ion-item {
   margin: 0;
   padding: 0;
+
+  & > ion-button {
+    margin: 0;
+    width: 100%;
+  }
 }
 
-ion-item > ion-button {
-  margin: 0;
-  width: 100%;
-}
-
-.person-icon-button {
-  height: 40px;
-  width: 40px;
-  --padding-bottom: 6px;
-  --padding-top: 6px;
-  --padding-start: 6px;
-  --padding-end: 6px;
-  border-radius: 100%;
+ion-button {
+  &.person-icon-button {
+    height: 40px;
+    width: 40px;
+    --padding-bottom: 6px;
+    --padding-top: 6px;
+    --padding-start: 6px;
+    --padding-end: 6px;
+    border-radius: 100%;
+    --border-radius: 100% !important;
+  }
 }
 </style>

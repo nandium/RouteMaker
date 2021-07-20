@@ -48,15 +48,15 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .logo {
   margin-left: min(17px, 4vw);
   width: 50px;
   height: 50px;
-}
 
-.logo:hover {
-  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .smaller-height {

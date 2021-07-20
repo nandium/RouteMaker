@@ -2,17 +2,17 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
-      <div v-if="!isLoading" id="container" class="ion-text-left">
+      <div v-if="!isLoading" class="my-container ion-text-left">
         <ion-img :src="routeDetails.routeURL"></ion-img>
         <ion-row class="ion-justify-content-between">
           <div class="route-title">
             <b>{{ routeDetails.routeName }}</b>
           </div>
-          <div class="icon-button share-button-div margin-right" @click="sharePostHandler">
+          <div class="global-margin-right icon-button share-button-div" @click="sharePostHandler">
             <ion-icon color="tertiary" size="large" :icon="shareSocialOutline"></ion-icon>
           </div>
           <VoteButton
-            class="margin-right"
+            class="global-margin-right"
             :username="routeDetails.username"
             :createdAt="routeDetails.createdAt"
             v-model:voteCount="routeDetails.voteCount"
@@ -21,18 +21,18 @@
         </ion-row>
         <ion-row class="ion-justify-content-between display-flex">
           <ion-item
-            class="ion-no-padding margin-left rounded profile-item"
+            class="ion-no-padding global-margin-left global-rounded profile-item"
             lines="none"
             @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
           >
             <ion-icon
-              class="margin-right margin-left"
+              class="global-margin-left-right"
               slot="start"
               :icon="personCircleOutline"
             ></ion-icon>
             <ion-label class="align-middle">{{ routeDetails.username }}</ion-label>
           </ion-item>
-          <div v-if="isLoggedIn && !isRouteSetter" class="margin-right margin-left">
+          <div v-if="isLoggedIn && !isRouteSetter" class="global-margin-left-right">
             <ion-button
               v-if="!hasReported"
               color="danger"
@@ -68,7 +68,7 @@
         </div>
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
-        <div class="margin-left margin-right">
+        <div class="global-margin-left-right">
           <h1 class="ion-text-center ion-margin comment-title">-- Comments --</h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
@@ -115,7 +115,7 @@
                 @click="() => router.push({ name: 'UserRoutes', params: username })"
               >
                 <ion-icon
-                  class="margin-right margin-left"
+                  class="global-margin-left-right"
                   slot="start"
                   :icon="personCircleOutline"
                 ></ion-icon>
@@ -438,14 +438,10 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-#container {
-  position: absolute;
-  left: 0;
-  right: 0;
+<style scoped lang="scss">
+.my-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0;
 }
 
 .center-right {
@@ -476,11 +472,11 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.icon-button:hover {
-  background-color: var(--ion-color-medium-tint);
-  cursor: pointer;
+  &:hover {
+    background-color: var(--ion-color-medium-tint);
+    cursor: pointer;
+  }
 }
 
 ion-textarea {
@@ -495,25 +491,13 @@ ion-textarea {
   vertical-align: middle;
 }
 
-.margin-left {
-  margin-left: 10px;
-}
-
 .margin-left-large {
   margin-left: 1em;
-}
-
-.margin-right {
-  margin-right: 10px;
 }
 
 ion-card {
   margin: 0px 0 20px 0;
   padding-bottom: 10px;
-}
-
-.rounded {
-  border-radius: 5px;
 }
 
 .margin {
@@ -532,13 +516,15 @@ h1.comment-title {
   display: flex;
 }
 
-.profile-item:hover {
-  cursor: pointer;
-  --background: #333333;
-}
+.profile-item {
+  ion-label {
+    color: var(--ion-color-medium);
+  }
 
-.profile-item ion-label {
-  color: var(--ion-color-medium);
+  &:hover {
+    cursor: pointer;
+    --background: #333333;
+  }
 }
 
 ion-spinner {
@@ -554,11 +540,11 @@ ion-spinner {
 .share-button-div {
   display: flex;
   align-self: center;
-}
 
-.share-button-div:hover {
-  background-color: var(--ion-color-tertiary-tint);
-  cursor: pointer;
+  &:hover {
+    background-color: var(--ion-color-tertiary-tint);
+    cursor: pointer;
+  }
 }
 
 /* To prevent clash with delete icon on the right */

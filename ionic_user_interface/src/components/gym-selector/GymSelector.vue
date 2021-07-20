@@ -193,7 +193,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .ion-list {
   padding-top: 3px;
   padding-bottom: 0;

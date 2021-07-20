@@ -11,6 +11,24 @@ ion-icon {
   pointer-events: none;
 }
 
+.global-rounded {
+  border-radius: 5px;
+  --border-radius: 5px;
+}
+
+.global-margin-right {
+  margin-right: 10px;
+}
+
+.global-margin-left {
+  margin-left: 10px;
+}
+
+.global-margin-left-right {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .danger-text {
   color: #ff4961 !important;
   --ion-text-color: #ff4961 !important;

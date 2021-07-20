@@ -203,7 +203,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .route-card:hover {
   cursor: pointer;
   filter: brightness(120%);
@@ -235,11 +235,11 @@ ion-card-header {
   justify-content: center;
   width: 35px;
   height: 35px;
-}
 
-.delete-button:hover {
-  background-color: #333333;
-  cursor: pointer;
+  &:hover {
+    background-color: #333333;
+    cursor: pointer;
+  }
 }
 
 ion-spinner {

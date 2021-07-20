@@ -50,7 +50,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 @keyframes popIn {
   0% {
     opacity: 0;

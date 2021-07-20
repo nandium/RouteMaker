@@ -10,14 +10,14 @@
             <ion-item class="rounded">
               <ion-icon
                 slot="start"
-                class="ion-no-margin margin-right"
+                class="ion-no-margin global-margin-right"
                 :icon="personCircleOutline"
               ></ion-icon>
               <ion-text class="username">{{ profileUsername }}</ion-text>
               <ion-button
                 v-if="isLoggedIn && !isOwnself && isAdmin"
                 slot="end"
-                class="margin-left"
+                class="global-margin-left"
                 color="danger"
                 @click="disableUserHandler"
               >
@@ -215,19 +215,11 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .page-title {
   text-align: center;
   font-size: clamp(2rem, 7vw, 2.5rem);
   margin: 10px 10px 30px 10px;
-}
-
-.margin-left {
-  margin-left: 10px;
-}
-
-.margin-right {
-  margin-right: 10px;
 }
 
 .username {

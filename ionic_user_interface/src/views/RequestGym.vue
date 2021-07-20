@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-      <div id="container">
+      <div class="my-container">
         <strong>Route Maker</strong>
         <p>Climbing Gym Request Form</p>
         <br />
@@ -31,34 +31,32 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-#container {
+<style scoped lang="scss">
+.my-container {
   text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-}
+  margin: 0 auto;
 
-#container strong {
-  font-size: 3em;
-  line-height: 2em;
-}
+  strong {
+    font-size: 3em;
+    line-height: 2em;
+  }
 
-#container p {
-  font-size: 1.6em;
-  line-height: 1em;
-  color: #8c8c8c;
-  margin: 0;
-}
+  p {
+    font-size: 1.6em;
+    line-height: 1em;
+    color: #8c8c8c;
+    margin: 0;
+  }
 
-#container a {
-  text-decoration: none;
-}
+  a {
+    text-decoration: none;
+  }
 
-#container .description {
-  font-size: 1.1em;
-  line-height: 1.4em;
-  color: var(--ion-color-medium-shade);
-  margin: 1rem;
+  .description {
+    font-size: 1.1em;
+    line-height: 1.4em;
+    color: var(--ion-color-medium-shade);
+    margin: 1rem;
+  }
 }
 </style>

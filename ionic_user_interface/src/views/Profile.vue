@@ -8,15 +8,15 @@
               <strong>Profile</strong>
             </div>
             <div class="ion-padding ion-text-center">
-              <ion-item class="rounded">
+              <ion-item class="global-rounded margin">
                 <ion-label position="stacked">Email</ion-label>
                 <ion-input v-model="emailText" type="text" disabled />
               </ion-item>
-              <ion-item class="rounded">
+              <ion-item class="global-rounded margin">
                 <ion-label position="stacked">Username</ion-label>
                 <ion-input v-model="usernameText" type="text" disabled />
               </ion-item>
-              <ion-item class="rounded" lines="full">
+              <ion-item class="global-rounded margin" lines="full">
                 <ion-icon v-if="prefersDarkMode" slot="start" :icon="moon"></ion-icon>
                 <ion-icon v-if="!prefersDarkMode" slot="start" :icon="sunny"></ion-icon>
                 <ion-label>Toggle Dark Theme</ion-label>
@@ -218,10 +218,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.rounded {
+<style scoped lang="scss">
+.margin {
   margin-bottom: 1.2em;
-  border-radius: 5px;
 }
 
 .login-button {
