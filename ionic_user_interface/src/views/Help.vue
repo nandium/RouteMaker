@@ -30,9 +30,20 @@
           href="https://github.com/nandium/RouteMaker"
           color="light"
           size="medium"
+          class="logo-button"
         >
-          <ion-icon class="github-logo" :icon="logoGithub" size="medium"></ion-icon>
+          <ion-icon :icon="logoGithub" size="medium"></ion-icon>
           Github
+        </ion-button>
+        <ion-button
+          target="_blank"
+          href="mailto:routemakergithub@gmail.com"
+          color="light"
+          size="medium"
+          class="logo-button"
+        >
+          <ion-icon :icon="mail" size="medium"></ion-icon>
+          Feedback
         </ion-button>
 
         <br />
@@ -61,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import { logoGithub } from 'ionicons/icons';
+import { logoGithub, mail } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonImg, IonPage } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
@@ -79,6 +90,7 @@ export default defineComponent({
     return {
       logoGithub,
       publicPath,
+      mail,
     };
   },
 });
@@ -126,7 +138,11 @@ export default defineComponent({
   padding: 0.2rem 1rem;
 }
 
-.github-logo {
+.logo-button ion-icon {
   margin-right: 15px;
+}
+
+.logo-button {
+  margin: 10px;
 }
 </style>
