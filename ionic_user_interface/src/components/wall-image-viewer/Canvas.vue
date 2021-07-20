@@ -195,7 +195,6 @@ export default defineComponent({
         formData.append('width', props.width.toString());
         let rawBoundingBoxes: Array<any>;
         isLoading.value = true;
-        await new Promise((r) => setTimeout(r, 10000));
         try {
           rawBoundingBoxes = await getBoundingBoxes(formData);
         } finally {
