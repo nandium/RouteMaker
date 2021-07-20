@@ -287,7 +287,7 @@ export default defineComponent({
           throw new Error('Failed to add comment');
         }
       } catch (error) {
-        msgBox.value?.showMsg('Please try again in a while..');
+        msgBox.value?.showMsg('Please try again in a while');
         console.error(error);
       }
 
@@ -336,7 +336,7 @@ export default defineComponent({
                   }
                 })
                 .catch((error) => {
-                  msgBox.value?.showMsg('Please try again in a while..');
+                  msgBox.value?.showMsg('Please try again in a while');
                   console.error(error);
                 });
             },
@@ -438,7 +438,7 @@ export default defineComponent({
           }
         }
       } catch (error) {
-        msgBox.value?.showMsg('Please try again in a while..');
+        msgBox.value?.showMsg('Please try again in a while');
         console.error(error);
       }
     }, 500);
