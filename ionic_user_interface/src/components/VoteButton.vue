@@ -134,7 +134,7 @@ export default defineComponent({
 
   &:hover {
     cursor: pointer;
-    background-color: rgba(var(--ion-color-danger-rgb), 0.1);
+    background-color: rgba(var(--ion-color-danger-rgb), 0.12);
   }
 
   p {
