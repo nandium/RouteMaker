@@ -5,7 +5,7 @@
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <div class="page-title">
-              <strong>Routes By User</strong>
+              <strong>{{ isLoggedIn && isOwnself ? 'My Routes' : 'Public User' }}</strong>
             </div>
             <ion-item class="global-rounded">
               <ion-icon
