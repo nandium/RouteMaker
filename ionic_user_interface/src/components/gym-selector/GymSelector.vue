@@ -5,7 +5,7 @@
         <MessageBox ref="errorMsg" color="danger" />
         <ion-list class="ion-list">
           <ion-item>
-            <ion-label class="absolute-position">Country</ion-label>
+            <ion-label class="global-absolute-position">Country</ion-label>
             <auto-complete
               ref="autoComplete"
               :options="countryNameList"

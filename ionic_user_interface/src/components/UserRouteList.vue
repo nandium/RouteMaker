@@ -160,7 +160,7 @@ export default defineComponent({
             },
             {
               text: 'Delete',
-              cssClass: 'danger-text',
+              cssClass: 'global-danger-text',
               handler: throttle(async () => {
                 await axios
                   .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route', {

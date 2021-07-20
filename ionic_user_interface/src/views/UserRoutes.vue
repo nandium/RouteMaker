@@ -127,7 +127,7 @@ export default defineComponent({
      */
     const disableUserHandler = throttle(async () => {
       const alert = await alertController.create({
-        cssClass: 'wide',
+        cssClass: 'global-wide',
         header: `Disable this user?`,
         message: 'Are you sure?',
         buttons: [

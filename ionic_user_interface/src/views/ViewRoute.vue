@@ -309,7 +309,7 @@ export default defineComponent({
           },
           {
             text: 'Delete',
-            cssClass: 'danger-text',
+            cssClass: 'global-danger-text',
             handler: () => {
               axios
                 .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
@@ -343,7 +343,7 @@ export default defineComponent({
 
     const reportRouteHandler = throttle(async (routeUsername: string, createdAt: string) => {
       const alert = await alertController.create({
-        cssClass: 'wide',
+        cssClass: 'global-wide',
         header: `Report this route?`,
         message: 'Are you sure?',
         buttons: [

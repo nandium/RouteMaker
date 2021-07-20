@@ -8,7 +8,7 @@ const getAlertController = async (
   const allowedReasons = ['', 'abusive', 'inappropriate', 'spam', 'racist', 'beliefs', 'notlike'];
   let reason = '';
   return alertController.create({
-    cssClass: 'wide',
+    cssClass: 'global-wide',
     header: `Report ${username}?`,
     message: 'Select your reason for reporting below',
     inputs: [

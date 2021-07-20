@@ -29,31 +29,23 @@ ion-icon {
   @extend .global-margin-right;
 }
 
-.danger-text {
+.global-danger-text {
   color: #ff4961 !important;
   --ion-text-color: #ff4961 !important;
   font-weight: bold !important;
 }
 
-.light-color {
+.global-light-color {
   color: white !important;
   --ion-text-color: white !important;
 }
 
-.absolute-position {
+.global-absolute-position {
   position: absolute !important;
 }
 
-.wide {
+.global-wide {
   --min-width: 400px;
-}
-
-.slider {
-  --bar-background: linear-gradient(to right, red, red, orange, yellow, green, blue);
-  --bar-background-active: grey;
-  --knob-size: 25px;
-  --knob-background: white;
-  --bar-height: 10px;
 }
 
 /** Ionic CSS Variables **/

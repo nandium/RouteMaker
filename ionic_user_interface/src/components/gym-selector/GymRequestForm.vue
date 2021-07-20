@@ -6,7 +6,7 @@
         <form @submit="onSubmit">
           <ion-list>
             <ion-item>
-              <ion-label class="absolute-position">Country</ion-label>
+              <ion-label class="global-absolute-position">Country</ion-label>
               <auto-complete
                 :options="countryNameList"
                 optionsKey="country"
@@ -14,11 +14,11 @@
               />
             </ion-item>
             <ion-item>
-              <ion-label class="absolute-position">Gym Name</ion-label>
+              <ion-label class="global-absolute-position">Gym Name</ion-label>
               <ion-input class="ion-text-end" v-model="gymNameInput" />
             </ion-item>
             <ion-item>
-              <ion-label class="absolute-position">Postal</ion-label>
+              <ion-label class="global-absolute-position">Postal</ion-label>
               <ion-input class="ion-text-end" v-model="postalInput" />
             </ion-item>
           </ion-list>

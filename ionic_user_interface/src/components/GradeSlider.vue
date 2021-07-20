@@ -71,7 +71,12 @@ export default defineComponent({
   border-radius: 20px;
   padding: 0;
   margin: 0;
+  --bar-background: linear-gradient(to right, red, red, orange, yellow, green, blue);
+  --bar-background-active: grey;
+  --knob-size: 25px;
+  --knob-background: white;
   --knob-box-shadow: 0px 0px 2px 2px #666666;
+  --bar-height: 10px;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;

@@ -29,7 +29,7 @@
                   </ion-range>
                 </ion-item>
                 <ion-item class="global-rounded margin">
-                  <ion-label class="absolute-position">Country</ion-label>
+                  <ion-label class="global-absolute-position">Country</ion-label>
                   <auto-complete
                     :options="countryNameList"
                     optionsKey="country"
