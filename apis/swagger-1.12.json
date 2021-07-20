@@ -1289,7 +1289,7 @@
           },
           "routeName": {
             "type": "string",
-            "maxLength": 30,
+            "maxLength": 20,
             "pattern": "^[ -~]+$"
           },
           "gymLocation": {
