@@ -6,7 +6,7 @@ const NumericDecimalCommaSpace = '^[0-9., ]+$';
 const AsciiCharacters = '^[ -~]+$';
 
 const countryCode = { type: 'string', maxLength: 3, pattern: CapitalizedAlphabets };
-const routeName = { type: 'string', maxLength: 30, pattern: AsciiCharacters };
+const routeName = { type: 'string', maxLength: 20, pattern: AsciiCharacters };
 const expiredTime = { type: 'string', pattern: ISODateStringPattern };
 const gymLocation = { type: 'string', maxLength: 40, pattern: NumericDecimalCommaSpace };
 const ownerGrade = { type: 'number', minimum: 0, maximum: 14 };
