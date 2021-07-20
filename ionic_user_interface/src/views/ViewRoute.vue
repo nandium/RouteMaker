@@ -8,8 +8,8 @@
           <div class="route-title">
             <b>{{ routeDetails.routeName }}</b>
           </div>
-          <div class="share-button-div icon-button margin-right" @click="sharePostHandler">
-            <ion-icon size="large" :icon="shareSocialOutline"></ion-icon>
+          <div class="icon-button share-button-div margin-right" @click="sharePostHandler">
+            <ion-icon color="tertiary" size="large" :icon="shareSocialOutline"></ion-icon>
           </div>
           <VoteButton
             class="margin-right"
@@ -22,6 +22,7 @@
         <ion-row class="ion-justify-content-between display-flex">
           <ion-item
             class="ion-no-padding margin-left rounded profile-item"
+            lines="none"
             @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
           >
             <ion-icon
@@ -110,6 +111,7 @@
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
               <ion-item
                 class="ion-no-padding margin-left-large rounded profile-item"
+                lines="none"
                 @click="() => router.push({ name: 'UserRoutes', params: username })"
               >
                 <ion-icon
@@ -493,7 +495,7 @@ export default defineComponent({
 }
 
 .icon-button:hover {
-  background-color: #444444;
+  background-color: var(--ion-color-medium-tint);
   cursor: pointer;
 }
 
@@ -547,6 +549,10 @@ ion-card {
   --background: #333333;
 }
 
+.profile-item ion-label {
+  color: var(--ion-color-medium);
+}
+
 ion-spinner {
   position: absolute;
   height: 100px;
@@ -560,5 +566,10 @@ ion-spinner {
 .share-button-div {
   display: flex;
   align-self: center;
+}
+
+.share-button-div:hover {
+  background-color: var(--ion-color-tertiary-tint);
+  cursor: pointer;
 }
 </style>

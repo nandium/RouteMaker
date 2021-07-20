@@ -3,7 +3,7 @@
     class="vote-button-component"
     @click.stop.prevent="() => handleVoteClick(username, createdAt)"
   >
-    <ion-icon :icon="hasVotedRef ? heart : heartOutline"></ion-icon>
+    <ion-icon color="danger" :icon="hasVotedRef ? heart : heartOutline"></ion-icon>
     <p>{{ voteCountRef }}</p>
   </div>
 </template>
@@ -11,7 +11,7 @@
 <script lang="ts">
 import { computed, defineComponent, inject, Ref, ref } from 'vue';
 import { heart, heartOutline } from 'ionicons/icons';
-import { IonIcon } from '@ionic/vue';
+import { IonIcon, toastController } from '@ionic/vue';
 import axios from 'axios';
 import { throttle } from 'lodash';
 
@@ -52,16 +52,27 @@ export default defineComponent({
 
     let waitingForResponse = false;
 
-    // Display hover feedback only if logged in
-    if (getLoggedIn().value) {
-      const css = '.vote-button-component:hover { background-color: #333333; cursor: pointer; }';
-      const style = document.createElement('style') as HTMLStyleElement;
-      style.appendChild(document.createTextNode(css));
-      document.getElementsByTagName('head')[0].appendChild(style);
-    }
-
     const handleVoteClick = throttle((username: string, createdAt: string) => {
-      if (!getLoggedIn().value || waitingForResponse) {
+      if (!getLoggedIn().value) {
+        toastController
+          .create({
+            header: 'Please log in!',
+            position: 'bottom',
+            color: 'danger',
+            duration: 2000,
+            buttons: [
+              {
+                text: 'Close',
+                role: 'cancel',
+              },
+            ],
+          })
+          .then((toast) => {
+            toast.present();
+          });
+        return;
+      }
+      if (waitingForResponse) {
         return;
       }
       // Toggle voteCount and hasVoted
@@ -117,13 +128,19 @@ export default defineComponent({
   justify-content: center;
   font-size: 16px;
   border-radius: 10px;
-  border: 2px solid grey;
+  border: 2px solid var(--ion-color-danger);
   padding: 5px 7px;
   align-self: center;
+}
+
+.vote-button-component:hover {
+  background-color: var(--ion-color-danger-tint);
+  cursor: pointer;
 }
 
 p {
   align-self: center;
   margin: 0 auto;
+  color: var(--ion-color-danger);
 }
 </style>
