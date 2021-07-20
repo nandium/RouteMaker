@@ -17,7 +17,10 @@ const getRouteDetails = async (username: string, createdAt: string): Promise<Res
     ? { Authorization: `Bearer ${Providers.getAccessToken().value}` }
     : {};
   const response = await axios.post(getRouteDetailsUrl, { username, createdAt }, { headers });
-  return response.data as ResponseData;
+  const data = response.data as ResponseData;
+  // Comments with larger timestamps at the start of list
+  data.Item.comments.sort((a, b) => b.timestamp - a.timestamp);
+  return data;
 };
 
 // Caches in-memory, disappears on page refresh

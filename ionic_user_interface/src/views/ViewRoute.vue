@@ -182,6 +182,7 @@ import GradeSlider from '@/components/GradeSlider.vue';
 import MessageBox from '@/components/MessageBox.vue';
 import { shareSocial } from '@/common/shareSocial';
 import getRouteDetails, { RouteDetails } from '@/common/api/route/getRouteDetails';
+import addCommentToRoute from '@/common/api/route/addCommentToRoute';
 
 export default defineComponent({
   name: 'ViewRoute',
@@ -257,7 +258,7 @@ export default defineComponent({
 
     onIonViewWillEnter(updateRouteDetails);
 
-    const postCommentHandler = throttle(() => {
+    const postCommentHandler = throttle(async () => {
       msgBox.value?.close();
       const comment = commentText.value.trim();
       commentText.value = '';
@@ -274,26 +275,18 @@ export default defineComponent({
         return false;
       }
 
-      axios
-        .post(
-          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment',
-          {
-            username: username.value,
-            createdAt: createdAt.value,
-            comment,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getAccessToken().value}`,
-            },
-          },
-        )
-        .then(() => {
-          updateRouteDetails(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      hasAlreadyCommented.value = true;
+      try {
+        const data = await addCommentToRoute(username.value, createdAt.value, comment);
+        if (data.Message === 'Comment route success') {
+          routeDetails.value?.comments.unshift(data.Item);
+        } else {
+          hasAlreadyCommented.value = false;
+          throw new Error('Failed to add comment');
+        }
+      } catch (error) {
+        console.error(error);
+      }
 
       return true;
     }, 1000);
