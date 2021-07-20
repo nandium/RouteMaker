@@ -74,11 +74,17 @@
                   <ion-checkbox v-model="termsCheckbox" />
                   <ion-text>
                     I agree to the
-                    <a href="https://routemaker.rocks/privacy.html" target="_blank">
+                    <a
+                      href="https://s3.ap-southeast-1.amazonaws.com/assets.routemaker.rocks/privacy.html"
+                      target="_blank"
+                    >
                       <span>Privacy Policy</span>
                     </a>
                     &#38;
-                    <a href="https://routemaker.rocks/terms.html" target="_blank">
+                    <a
+                      href="https://s3.ap-southeast-1.amazonaws.com/assets.routemaker.rocks/terms.html"
+                      target="_blank"
+                    >
                       <span>Terms and Conditions</span>
                     </a>
                   </ion-text>
