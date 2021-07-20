@@ -7,7 +7,7 @@
             <div class="page-title">
               <strong>Routes By User</strong>
             </div>
-            <ion-item class="rounded">
+            <ion-item class="global-rounded">
               <ion-icon
                 slot="start"
                 class="ion-no-margin global-margin-right"

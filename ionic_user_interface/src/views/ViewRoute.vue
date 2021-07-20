@@ -87,24 +87,23 @@
             </ion-button>
             <br />
           </ion-row>
-          <ion-card
-            v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
-            :key="index"
-          >
+          <ion-card v-for="(commentDetails, index) of routeDetails.comments" :key="index">
             <ion-card-header>
-              <ion-card-title>{{ comment }}</ion-card-title>
+              <ion-card-title>{{ commentDetails.comment }}</ion-card-title>
               <div v-if="isLoggedIn" class="center-right">
                 <div
                   class="icon-button"
-                  v-if="username !== myUsername"
-                  @click="() => reportCommentHandler(username)"
+                  v-if="commentDetails.username !== myUsername"
+                  @click="() => reportCommentHandler(commentDetails.username)"
                 >
                   <ion-icon :icon="flagOutline"></ion-icon>
                 </div>
                 <div
-                  v-if="username === myUsername || isAdmin"
+                  v-if="commentDetails.username === myUsername || isAdmin"
                   class="icon-button"
-                  @click="() => deleteCommentHandler(username, timestamp)"
+                  @click="
+                    () => deleteCommentHandler(commentDetails.username, commentDetails.timestamp)
+                  "
                 >
                   <ion-icon :icon="trashOutline"></ion-icon>
                 </div>
@@ -112,16 +111,16 @@
             </ion-card-header>
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
               <ion-item
-                class="ion-no-padding margin-left-large rounded profile-item"
+                class="ion-no-padding margin-left-large global-rounded profile-item"
                 lines="none"
-                @click="() => router.push({ name: 'UserRoutes', params: username })"
+                @click="() => router.push({ name: 'UserRoutes', params: commentDetails.username })"
               >
                 <ion-icon
                   class="global-margin-left-right"
                   slot="start"
                   :icon="personCircleOutline"
                 ></ion-icon>
-                <ion-label class="align-middle">{{ username }}</ion-label>
+                <ion-label class="align-middle">{{ commentDetails.username }}</ion-label>
               </ion-item>
             </ion-card-content>
           </ion-card>
@@ -149,6 +148,7 @@ import {
   IonTextarea,
   alertController,
   toastController,
+  onIonViewWillEnter,
 } from '@ionic/vue';
 import {
   sendSharp,
@@ -242,6 +242,8 @@ export default defineComponent({
 
     updateRouteDetails();
 
+    onIonViewWillEnter(updateRouteDetails);
+
     const postCommentHandler = throttle(() => {
       msgBox.value?.close();
       const comment = commentText.value.trim();
@@ -283,25 +285,42 @@ export default defineComponent({
       return true;
     }, 1000);
 
-    const deleteCommentHandler = throttle((commentUsername: string, timestamp: number) => {
-      axios
-        .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
-          headers: {
-            Authorization: `Bearer ${getAccessToken().value}`,
+    const deleteCommentHandler = throttle(async (commentUsername: string, timestamp: number) => {
+      const alert = await alertController.create({
+        header: `Delete comment?`,
+        message: 'Are you sure?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
           },
-          params: {
-            username: username.value,
-            createdAt: createdAt.value,
-            commentUsername,
-            timestamp: timestamp.toString(),
+          {
+            text: 'Delete',
+            cssClass: 'danger-text',
+            handler: () => {
+              axios
+                .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
+                  headers: {
+                    Authorization: `Bearer ${getAccessToken().value}`,
+                  },
+                  params: {
+                    username: username.value,
+                    createdAt: createdAt.value,
+                    commentUsername,
+                    timestamp: timestamp.toString(),
+                  },
+                })
+                .then(() => {
+                  updateRouteDetails(false);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            },
           },
-        })
-        .then(() => {
-          updateRouteDetails(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        ],
+      });
+      return alert.present();
     }, 1000);
 
     const reportCommentHandler = throttle(async (commentUsername: string) => {
@@ -381,7 +400,7 @@ export default defineComponent({
       return alert.present();
     }, 1000);
 
-    const gradeChangeHandler = (grade: number) => {
+    const gradeChangeHandler = throttle((grade: number) => {
       if (!isLoggedIn.value) {
         return;
       }
@@ -405,7 +424,7 @@ export default defineComponent({
         .catch((error) => {
           console.error(error);
         });
-    };
+    }, 500);
 
     const sharePostHandler = async () => {
       await shareSocial(route, `Route by ${username.value}`);
@@ -525,7 +544,7 @@ h1.comment-title {
 
   &:hover {
     cursor: pointer;
-    --background: #333333;
+    --background: rgba(var(--ion-color-medium-rgb), 0.2);
   }
 }
 
