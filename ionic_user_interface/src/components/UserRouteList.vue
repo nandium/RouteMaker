@@ -204,9 +204,11 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.route-card:hover {
-  cursor: pointer;
-  filter: brightness(120%);
+.route-card {
+  &:hover {
+    cursor: pointer;
+    --background: rgba(var(--ion-color-medium-rgb), 0.05);
+  }
 }
 
 ion-card-header {
@@ -237,7 +239,7 @@ ion-card-header {
   height: 35px;
 
   &:hover {
-    background-color: #333333;
+    background-color: rgba(var(--ion-color-medium-rgb), 0.15);
     cursor: pointer;
   }
 }

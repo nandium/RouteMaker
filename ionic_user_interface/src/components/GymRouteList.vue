@@ -93,6 +93,7 @@
       <ion-card
         v-for="(route, index) of filteredSortedRoutes"
         :key="index"
+        title="Go to route page"
         class="ion-text-left route-card"
         @click="() => handleRouteCardClick(route.username, route.createdAt)"
       >
@@ -100,6 +101,7 @@
           <ion-card-title>{{ route.routeName }}</ion-card-title>
           <VoteButton
             class="vote-button"
+            title="Upvote route"
             :username="route.username"
             :createdAt="route.createdAt"
             v-model:voteCount="route.voteCount"
@@ -438,7 +440,7 @@ export default defineComponent({
 .route-card {
   &:hover {
     cursor: pointer;
-    filter: brightness(120%);
+    --background: rgba(var(--ion-color-medium-rgb), 0.05);
   }
 }
 

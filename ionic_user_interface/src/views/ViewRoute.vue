@@ -5,13 +5,18 @@
       <div v-if="!isLoading" class="my-container ion-text-left">
         <ion-img :src="routeDetails.routeURL"></ion-img>
         <ion-row class="ion-justify-content-between">
-          <div class="route-title">
+          <div class="route-title" title="Route name">
             <b>{{ routeDetails.routeName }}</b>
           </div>
-          <div class="global-margin-right icon-button share-button-div" @click="sharePostHandler">
+          <div
+            title="Share route"
+            class="global-margin-right icon-button share-button-div"
+            @click="sharePostHandler"
+          >
             <ion-icon color="tertiary" size="large" :icon="shareSocialOutline"></ion-icon>
           </div>
           <VoteButton
+            title="Upvote route"
             class="global-margin-right"
             :username="routeDetails.username"
             :createdAt="routeDetails.createdAt"
@@ -22,6 +27,7 @@
         <ion-row class="ion-justify-content-between display-flex">
           <ion-item
             class="ion-no-padding global-margin-left global-rounded profile-item"
+            title="Go to profile"
             lines="none"
             @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
           >
@@ -32,7 +38,11 @@
             ></ion-icon>
             <ion-label class="align-middle">{{ routeDetails.username }}</ion-label>
           </ion-item>
-          <div v-if="isLoggedIn && !isRouteSetter" class="global-margin-left-right">
+          <div
+            v-if="isLoggedIn && !isRouteSetter"
+            title="Report route"
+            class="global-margin-left-right"
+          >
             <ion-button
               v-if="!hasReported"
               color="danger"
@@ -92,14 +102,16 @@
               <ion-card-title>{{ commentDetails.comment }}</ion-card-title>
               <div v-if="isLoggedIn" class="center-right">
                 <div
-                  class="icon-button"
                   v-if="commentDetails.username !== myUsername"
+                  title="Report comment"
+                  class="icon-button"
                   @click="() => reportCommentHandler(commentDetails.username)"
                 >
                   <ion-icon :icon="flagOutline"></ion-icon>
                 </div>
                 <div
                   v-if="commentDetails.username === myUsername || isAdmin"
+                  title="Delete comment"
                   class="icon-button"
                   @click="
                     () => deleteCommentHandler(commentDetails.username, commentDetails.timestamp)
@@ -111,6 +123,7 @@
             </ion-card-header>
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
               <ion-item
+                title="Go to user profile"
                 class="ion-no-padding margin-left-large global-rounded profile-item"
                 lines="none"
                 @click="() => router.push({ name: 'UserRoutes', params: commentDetails.username })"

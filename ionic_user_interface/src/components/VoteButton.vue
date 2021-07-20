@@ -108,7 +108,7 @@ export default defineComponent({
         .finally(() => {
           waitingForResponse = false;
         });
-    }, 600);
+    }, 500);
 
     return {
       heart,
@@ -134,7 +134,7 @@ export default defineComponent({
 
   &:hover {
     cursor: pointer;
-    background-color: var(--ion-color-light-tint);
+    background-color: rgba(var(--ion-color-danger-rgb), 0.1);
   }
 
   p {

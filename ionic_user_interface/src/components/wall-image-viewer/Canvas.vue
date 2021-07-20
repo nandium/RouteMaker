@@ -2,7 +2,10 @@
   <div>
     <br />
     <br />
-    <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+    <div v-if="isLoading" class="loading-spinner-div">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Detecting holds...</p>
+    </div>
     <div v-else class="sticky-button-rows">
       <ion-item class="instruction-steps ion-text-center">
         <div
@@ -192,6 +195,7 @@ export default defineComponent({
         formData.append('width', props.width.toString());
         let rawBoundingBoxes: Array<any>;
         isLoading.value = true;
+        await new Promise((r) => setTimeout(r, 10000));
         try {
           rawBoundingBoxes = await getBoundingBoxes(formData);
         } finally {
@@ -465,9 +469,16 @@ ion-button {
   z-index: 10;
 }
 
-ion-spinner {
-  height: 3rem;
-  width: 3rem;
+.loading-spinner-div {
   margin: 2rem;
+
+  p {
+    font-size: 1.2em;
+  }
+
+  ion-spinner {
+    height: 3rem;
+    width: 3rem;
+  }
 }
 </style>
