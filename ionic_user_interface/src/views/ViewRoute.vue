@@ -279,6 +279,7 @@ export default defineComponent({
       try {
         const data = await addCommentToRoute(username.value, createdAt.value, comment);
         if (data.Message === 'Comment route success') {
+          // Add as the first comment in the list
           routeDetails.value?.comments.unshift(data.Item);
         } else {
           hasAlreadyCommented.value = false;
@@ -316,8 +317,20 @@ export default defineComponent({
                     timestamp: timestamp.toString(),
                   },
                 })
-                .then(() => {
-                  updateRouteDetails(false);
+                .then((response) => {
+                  if (response.data.Message === 'Delete comment success') {
+                    if (routeDetails.value) {
+                      // Username may be different from commentUsername when it is an admin delete
+                      routeDetails.value.comments = routeDetails.value?.comments.filter(
+                        (comment) => {
+                          return (
+                            comment.username !== commentUsername && comment.timestamp !== timestamp
+                          );
+                        },
+                      );
+                      hasAlreadyCommented.value = false;
+                    }
+                  }
                 })
                 .catch((error) => {
                   console.error(error);
