@@ -16,6 +16,8 @@ const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => 
     } = await axios.get(getGymsByCountryUrl, {
       params: { countryCode },
     });
+    // Sort alphabetically by gym name
+    (Items as GymLocation[]).sort((a, b) => (a.gymName > b.gymName ? 1 : -1));
     return Items;
   } catch (error) {
     console.error(error.response.data);
