@@ -75,11 +75,11 @@
                   <ion-text>
                     I agree to the
                     <a href="https://routemaker.rocks/privacy.html" target="_blank">
-                      Privacy Policy
+                      <span>Privacy Policy</span>
                     </a>
                     &#38;
                     <a href="https://routemaker.rocks/terms.html" target="_blank">
-                      Terms and Conditions
+                      <span>Terms and Conditions</span>
                     </a>
                   </ion-text>
                 </div>
@@ -311,5 +311,9 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.privacy-policy span {
+  white-space: nowrap;
 }
 </style>
