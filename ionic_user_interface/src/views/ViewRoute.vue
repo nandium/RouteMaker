@@ -69,7 +69,7 @@
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
         <div class="margin-left margin-right">
-          <h1 class="ion-text-center ion-margin">-- Comments --</h1>
+          <h1 class="ion-text-center ion-margin comment-title">-- Comments --</h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"
@@ -448,22 +448,6 @@ export default defineComponent({
   padding: 0;
 }
 
-#container strong {
-  font-size: 3em;
-  line-height: 2em;
-}
-
-#container p {
-  font-size: 1.6em;
-  line-height: 1em;
-  color: #8c8c8c;
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-
 .center-right {
   position: absolute;
   top: 50%;
@@ -480,7 +464,7 @@ export default defineComponent({
 .route-title {
   flex: 1;
   vertical-align: middle;
-  font-size: clamp(1.6rem, 7vw, 2.5rem);
+  font-size: clamp(1.6em, 3vw, 2em);
   margin: 20px 30px 20px 16px;
 }
 
@@ -536,6 +520,10 @@ ion-card {
   margin-bottom: 1.4em;
 }
 
+h1.comment-title {
+  font-size: clamp(1.4em, 3vw, 1.6em);
+}
+
 .comment-card-item {
   display: inline;
 }
@@ -571,5 +559,11 @@ ion-spinner {
 .share-button-div:hover {
   background-color: var(--ion-color-tertiary-tint);
   cursor: pointer;
+}
+
+/* To prevent clash with delete icon on the right */
+ion-card-title {
+  margin-right: 40px;
+  font-size: clamp(1.2em, 3vw, 1.4em);
 }
 </style>
