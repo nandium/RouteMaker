@@ -6,7 +6,7 @@
         <p>Climbing Gym Request Form</p>
         <br />
         <p class="description">
-          Please submit gym requests here. We will respond to you via email in 3 to 6 hours. Thank
+          Please submit gym requests here. We will respond to you via email in 2 to 10 hours. Thank
           you for your support.
         </p>
         <gym-request-form />

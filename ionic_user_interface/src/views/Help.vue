@@ -22,7 +22,7 @@
         <p class="lead">
           We plan to maintain this project for as long as people find it useful.
           <br />
-          Please star our repository to support. Pull requests are welcomed too!
+          If you like our work, please star our repository. Pull requests are welcomed too!
         </p>
 
         <ion-button
@@ -112,7 +112,7 @@ export default defineComponent({
 
 .screenshot {
   border: 1.5px solid grey;
-  max-width: 250px;
+  width: clamp(250px, 50%, 300px);
   margin: 0 auto;
   image-rendering: -webkit-optimize-contrast;
   /* https://stackoverflow.com/questions/37906602/blurry-downscaled-images-in-chrome */

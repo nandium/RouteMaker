@@ -168,6 +168,10 @@ enum SortMode {
   NEWEST,
 }
 
+interface GymRouteWithId extends GymRoute {
+  routeId?: number;
+}
+
 export default defineComponent({
   name: 'GymRouteList',
   components: {
@@ -189,8 +193,8 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     let gymLocation = '';
-    let routes: Array<GymRoute> = [];
-    const filteredSortedRoutes = ref<Array<GymRoute>>([]);
+    let routes: GymRouteWithId[] = [];
+    const filteredSortedRoutes = ref<GymRouteWithId[]>([]);
 
     const searchText = ref('');
     const searchMap = new Map();
@@ -217,11 +221,13 @@ export default defineComponent({
         const data = await getRoutesByGym(gymLocation);
         if (data.Message === 'Query routes by gym success') {
           // Add a unique index to each route
-          data.Items.forEach((element, index) => {
-            element.routeId = index;
+          routes = data.Items.map((element, index) => {
+            return {
+              routeId: index,
+              ...element,
+            };
           });
-          routes = data.Items;
-          filteredSortedRoutes.value = data.Items;
+          filteredSortedRoutes.value = routes;
           // Map search queries to route ID
           for (const route of routes) {
             const routeName = route.routeName.toLowerCase();
@@ -373,14 +379,14 @@ export default defineComponent({
       }
     };
 
-    const filterRoutes = (routesToFilter: Array<GymRoute>) => {
+    const filterRoutes = (routesToFilter: Array<GymRouteWithId>) => {
       filteredSortedRoutes.value = routesToFilter.filter(
         (route) => route.publicGrade >= gradeBounds.lower && route.publicGrade <= gradeBounds.upper,
       );
     };
 
     const searchRoutes = () => {
-      const newFilteredSortedRoutes: Array<GymRoute> = [];
+      const newFilteredSortedRoutes: Array<GymRouteWithId> = [];
       // eslint-disable-next-line
       for (const [id, _] of freqMap) {
         newFilteredSortedRoutes.push(routes[id]);

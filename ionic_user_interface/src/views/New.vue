@@ -19,7 +19,6 @@
         <div v-if="!photoUploaded">
           <br />
           <ion-button @click="handleClickUserGuide" color="medium" fill="clear">
-            <ion-icon class="margin-right" :icon="helpCircleOutline"></ion-icon>
             User Guide
           </ion-button>
         </div>
@@ -29,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import { camera, helpCircleOutline } from 'ionicons/icons';
-import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
+import { camera } from 'ionicons/icons';
+import { IonButton, IonContent, IonPage, IonIcon } from '@ionic/vue';
 import { defineComponent, watch, ref, onUnmounted, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -87,7 +86,6 @@ export default defineComponent({
       photo,
       takePhoto,
       camera,
-      helpCircleOutline,
       ionContent,
       handleClickUserGuide,
     };

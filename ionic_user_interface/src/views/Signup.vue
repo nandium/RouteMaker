@@ -73,7 +73,7 @@
                 <div class="privacy-policy">
                   <ion-checkbox v-model="termsCheckbox" />
                   <ion-text>
-                    I agree to
+                    I agree to the
                     <a href="https://routemaker.rocks/privacy.html" target="_blank">
                       Privacy Policy
                     </a>
@@ -109,6 +109,7 @@ import {
   IonPage,
   IonRow,
   IonCheckbox,
+  IonText,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import axios from 'axios';
@@ -131,6 +132,7 @@ export default defineComponent({
     IonPage,
     IonRow,
     IonCheckbox,
+    IonText,
     PasswordMeter,
   },
   setup() {
@@ -299,19 +301,15 @@ export default defineComponent({
 
 .privacy-policy ion-text {
   font-size: 0.7em;
-  vertical-align: middle;
   display: inline-block;
   margin-left: 0.5em;
-
-  position: relative;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
 }
 
 .privacy-policy {
   margin-top: 1em;
   margin-bottom: 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

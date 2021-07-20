@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { routeBaseUrl } from './config';
 import Providers from '@/providers';
 import cacheManager from 'cache-manager';
 
@@ -11,7 +10,7 @@ const memoryCache = cacheManager.caching({
 // Set as 1 second to reduce duplicate calls by vue
 // Must be small or will be unresponsive to upvotes
 
-const getRouteDetailsUrl = routeBaseUrl + '/route/details';
+const getRouteDetailsUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details';
 
 const getRouteDetails = async (username: string, createdAt: string): Promise<ResponseData> => {
   const headers = Providers.getLoggedIn().value

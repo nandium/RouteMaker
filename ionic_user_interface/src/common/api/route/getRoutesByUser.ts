@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { routeBaseUrl } from './config';
 import Providers from '@/providers';
 import cacheManager from 'cache-manager';
+import { GymRoute } from './getRoutesByGym';
 
 const memoryCache = cacheManager.caching({
   store: 'memory',
@@ -9,7 +9,7 @@ const memoryCache = cacheManager.caching({
   ttl: 1, // Seconds
 });
 
-const getRoutesByUserUrl = routeBaseUrl + '/route/user';
+const getRoutesByUserUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/user';
 
 const getRoutesByUser = async (username: string): Promise<ResponseData> => {
   const headers = Providers.getLoggedIn().value
@@ -34,15 +34,7 @@ interface ResponseData {
   Items: UserRoute[];
 }
 
-interface UserRoute {
-  commentCount: number;
-  createdAt: string;
-  gymLocation: string;
-  publicGrade: number;
-  routeName: string;
-  username: string;
-  voteCount: number;
-  hasVoted: boolean;
+interface UserRoute extends GymRoute {
   countryCode: string;
   gymName: string;
 }

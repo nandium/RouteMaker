@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { routeBaseUrl } from './config';
 import cacheManager from 'cache-manager';
 
 const memoryCache = cacheManager.caching({
@@ -8,7 +7,7 @@ const memoryCache = cacheManager.caching({
   ttl: 30, // Seconds
 });
 
-const getGymsByCountryUrl = routeBaseUrl + '/route/gym/country';
+const getGymsByCountryUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/gym/country';
 
 const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => {
   try {

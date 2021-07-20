@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { routeBaseUrl } from './config';
 import Providers from '@/providers';
 import cacheManager from 'cache-manager';
 
@@ -11,7 +10,7 @@ const memoryCache = cacheManager.caching({
 // Set as 1 second to reduce duplicate calls by vue
 // Must be small or will be unresponsive to upvotes
 
-const getRoutesByGymUrl = routeBaseUrl + '/route/all';
+const getRoutesByGymUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/all';
 
 const getRoutesByGym = async (gymLocation: string): Promise<ResponseData> => {
   const headers = Providers.getLoggedIn().value
@@ -45,7 +44,6 @@ interface GymRoute {
   username: string;
   voteCount: number;
   hasVoted: boolean;
-  routeId: number;
 }
 
 export default getRoutesByGymCached;
