@@ -183,6 +183,7 @@ import MessageBox from '@/components/MessageBox.vue';
 import { shareSocial } from '@/common/shareSocial';
 import getRouteDetails, { RouteDetails } from '@/common/api/route/getRouteDetails';
 import addCommentToRoute from '@/common/api/route/addCommentToRoute';
+import changeRouteGrade from '@/common/api/route/changeRouteGrade';
 
 export default defineComponent({
   name: 'ViewRoute',
@@ -286,6 +287,7 @@ export default defineComponent({
           throw new Error('Failed to add comment');
         }
       } catch (error) {
+        msgBox.value?.showMsg('Please try again in a while..');
         console.error(error);
       }
 
@@ -293,6 +295,7 @@ export default defineComponent({
     }, 1000);
 
     const deleteCommentHandler = throttle(async (commentUsername: string, timestamp: number) => {
+      msgBox.value?.close();
       const alert = await alertController.create({
         header: `Delete comment?`,
         message: 'Are you sure?',
@@ -333,6 +336,7 @@ export default defineComponent({
                   }
                 })
                 .catch((error) => {
+                  msgBox.value?.showMsg('Please try again in a while..');
                   console.error(error);
                 });
             },
@@ -419,30 +423,24 @@ export default defineComponent({
       return alert.present();
     }, 1000);
 
-    const gradeChangeHandler = throttle((grade: number) => {
+    const gradeChangeHandler = throttle(async (grade: number) => {
+      msgBox.value?.close();
       if (!isLoggedIn.value) {
         return;
       }
-      axios
-        .post(
-          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/grade',
-          {
-            username: username.value,
-            createdAt: createdAt.value,
-            grade,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getAccessToken().value}`,
-            },
-          },
-        )
-        .then(() => {
-          updateRouteDetails(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      try {
+        const data = await changeRouteGrade(username.value, createdAt.value, grade);
+        if (data.Message === 'Grade route success') {
+          if (routeDetails.value) {
+            routeDetails.value.graded = grade;
+            routeDetails.value.ownerGrade = data.Item.ownerGrade;
+            routeDetails.value.publicGrade = data.Item.publicGrade;
+          }
+        }
+      } catch (error) {
+        msgBox.value?.showMsg('Please try again in a while..');
+        console.error(error);
+      }
     }, 500);
 
     const sharePostHandler = async () => {

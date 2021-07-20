@@ -9,9 +9,9 @@ const addCommentToRoute = async (
   createdAt: string,
   comment: string,
 ): Promise<ResponseData> => {
-  const headers = Providers.getLoggedIn().value
-    ? { Authorization: `Bearer ${Providers.getAccessToken().value}` }
-    : {};
+  const headers = {
+    Authorization: `Bearer ${Providers.getAccessToken().value}`,
+  };
   const response = await axios.post(addCommentUrl, { username, createdAt, comment }, { headers });
   return response.data as ResponseData;
 };
