@@ -25,8 +25,8 @@ ion-icon {
 }
 
 .global-margin-left-right {
-  margin-left: 10px;
-  margin-right: 10px;
+  @extend .global-margin-left;
+  @extend .global-margin-right;
 }
 
 .danger-text {
