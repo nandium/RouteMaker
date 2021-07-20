@@ -495,7 +495,7 @@ export default defineComponent({
   justify-content: center;
 
   &:hover {
-    background-color: var(--ion-color-medium-tint);
+    background-color: var(--ion-color-light-tint);
     cursor: pointer;
   }
 }
@@ -544,7 +544,7 @@ h1.comment-title {
 
   &:hover {
     cursor: pointer;
-    --background: rgba(var(--ion-color-medium-rgb), 0.2);
+    --background: var(--ion-color-light-tint);
   }
 }
 
@@ -561,11 +561,6 @@ ion-spinner {
 .share-button-div {
   display: flex;
   align-self: center;
-
-  &:hover {
-    background-color: var(--ion-color-tertiary-tint);
-    cursor: pointer;
-  }
 }
 
 /* To prevent clash with delete icon on the right */

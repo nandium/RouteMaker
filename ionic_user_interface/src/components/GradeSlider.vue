@@ -71,6 +71,7 @@ export default defineComponent({
   border-radius: 20px;
   padding: 0;
   margin: 0;
+  --knob-box-shadow: 0px 0px 2px 2px #666666;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
