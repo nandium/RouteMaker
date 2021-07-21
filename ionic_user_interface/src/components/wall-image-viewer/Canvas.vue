@@ -388,7 +388,7 @@ export default defineComponent({
   ion-icon {
     height: 25px;
     width: 25px;
-    color: gray;
+    color: var(--ion-color-medium);
   }
 
   &:hover {
@@ -396,7 +396,7 @@ export default defineComponent({
   }
 
   &:hover > ion-icon {
-    color: #555555;
+    color: var(--ion-color-dark-shade);
   }
 }
 

@@ -108,7 +108,7 @@ export default defineComponent({
   p {
     font-size: clamp(1.4rem, 5vw, 1.6rem);
     line-height: 1em;
-    color: #8c8c8c;
+    color: var(--ion-color-medium-shade);
     margin: 0;
   }
 }
