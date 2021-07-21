@@ -11,39 +11,41 @@ ion-icon {
   pointer-events: none;
 }
 
+/* The go-to border radius for most boxy/rectangular shapes */
 .global-rounded {
   border-radius: 5px;
   --border-radius: 5px;
 }
 
+/* The standard left margin */
 .global-margin-right {
   margin-right: 10px;
 }
 
+/* The standard right margin */
 .global-margin-left {
   margin-left: 10px;
 }
 
+/* The standard horizontal margins for items inside an ion-page */
 .global-margin-left-right {
   @extend .global-margin-left;
   @extend .global-margin-right;
 }
 
+/* To allow ion-alerts confirmation buttons to be styled as red text */
 .global-danger-text {
   color: #ff4961 !important;
   --ion-text-color: #ff4961 !important;
   font-weight: bold !important;
 }
 
-.global-light-color {
-  color: white !important;
-  --ion-text-color: white !important;
-}
-
+/* Convenience class for some ion-labels */
 .global-absolute-position {
   position: absolute !important;
 }
 
+/* For wider ion-alerts, mainly used the ion-alert that appears when reporting a route/comment/user */
 .global-wide {
   --min-width: 400px;
 }

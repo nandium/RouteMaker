@@ -44,7 +44,7 @@ export default defineComponent({
   p {
     font-size: 1.6em;
     line-height: 1em;
-    color: #8c8c8c;
+    color: var(--ion-color-medium-shade);
     margin: 0;
   }
 
@@ -55,7 +55,6 @@ export default defineComponent({
   .description {
     font-size: 1.1em;
     line-height: 1.4em;
-    color: var(--ion-color-medium-shade);
     margin: 1rem;
   }
 }

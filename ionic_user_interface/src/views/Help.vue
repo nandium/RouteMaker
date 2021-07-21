@@ -56,31 +56,31 @@
             <ion-slide>
               <div>
                 <p>1. Upload the photo of a climbing wall</p>
-                <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_1.jpg`" />
+                <img :src="`${publicPath}assets/screenshots/Screenshot_1.jpg`" />
               </div>
             </ion-slide>
             <ion-slide>
               <div>
                 <p>2. The holds will be marked automatically</p>
-                <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_2.jpg`" />
+                <img :src="`${publicPath}assets/screenshots/Screenshot_2.jpg`" />
               </div>
             </ion-slide>
             <ion-slide>
               <div>
                 <p>3. Create a custom route by following the prompts</p>
-                <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_3.jpg`" />
+                <img :src="`${publicPath}assets/screenshots/Screenshot_3.jpg`" />
               </div>
             </ion-slide>
             <ion-slide>
               <div>
                 <p>4. Post to share with other gym goers</p>
-                <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_4.jpg`" />
+                <img :src="`${publicPath}assets/screenshots/Screenshot_4.jpg`" />
               </div>
             </ion-slide>
             <ion-slide>
               <div>
                 <p>5. Vote, grade and comment on other's routes</p>
-                <img class="screenshot" :src="`${publicPath}assets/screenshots/Screenshot_5.jpg`" />
+                <img :src="`${publicPath}assets/screenshots/Screenshot_5.jpg`" />
               </div>
             </ion-slide>
           </ion-slides>
@@ -175,6 +175,15 @@ export default defineComponent({
 
   ion-slides {
     --bullet-background: var(--ion-color-medium);
+
+    img {
+      border: 1.5px solid grey;
+      width: clamp(280px, 60%, 330px);
+      margin: 0 auto;
+      margin-bottom: 30px;
+      image-rendering: -webkit-optimize-contrast;
+      /* https://stackoverflow.com/questions/37906602/blurry-downscaled-images-in-chrome */
+    }
   }
 }
 
@@ -190,15 +199,6 @@ export default defineComponent({
   text-align: right;
   justify-content: flex-end;
   padding-right: 5px;
-}
-
-.screenshot {
-  border: 1.5px solid grey;
-  width: clamp(280px, 60%, 330px);
-  margin: 0 auto;
-  margin-bottom: 30px;
-  image-rendering: -webkit-optimize-contrast;
-  /* https://stackoverflow.com/questions/37906602/blurry-downscaled-images-in-chrome */
 }
 
 .features-div {

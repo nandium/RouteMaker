@@ -4,7 +4,10 @@
       {{ msgText }}
     </ion-label>
     <ion-button fill="clear" color="light" shape="round" @click="close">
-      <ion-icon :icon="closeCircleOutline" class="global-light-color"></ion-icon>
+      <ion-icon
+        :icon="closeCircleOutline"
+        :class="color === 'danger' ? 'light-color' : ''"
+      ></ion-icon>
     </ion-button>
   </ion-item>
 </template>
@@ -64,5 +67,10 @@ export default defineComponent({
 
 .message {
   animation: popIn 0.2s both ease-in;
+}
+
+.light-color {
+  color: white !important;
+  --ion-text-color: white !important;
 }
 </style>
