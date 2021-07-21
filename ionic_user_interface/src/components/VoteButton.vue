@@ -108,7 +108,7 @@ export default defineComponent({
         .finally(() => {
           waitingForResponse = false;
         });
-    }, 600);
+    }, 500);
 
     return {
       heart,
@@ -121,7 +121,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .vote-button-component {
   display: flex;
   align-items: center;
@@ -131,16 +131,16 @@ export default defineComponent({
   border: 2px solid var(--ion-color-danger);
   padding: 5px 7px;
   align-self: center;
-}
 
-.vote-button-component:hover {
-  background-color: var(--ion-color-danger-shade);
-  cursor: pointer;
-}
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(var(--ion-color-danger-rgb), 0.12);
+  }
 
-p {
-  align-self: center;
-  margin: 0 auto;
-  color: var(--ion-color-danger);
+  p {
+    align-self: center;
+    margin: 0 auto;
+    color: var(--ion-color-danger);
+  }
 }
 </style>

@@ -31,7 +31,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 body.dark .google-embed-map {
   border: 0;
   filter: invert(90%);

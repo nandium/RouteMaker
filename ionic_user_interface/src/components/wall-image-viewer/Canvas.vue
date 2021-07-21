@@ -2,7 +2,10 @@
   <div>
     <br />
     <br />
-    <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+    <div v-if="isLoading" class="loading-spinner-div">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Detecting holds...</p>
+    </div>
     <div v-else class="sticky-button-rows">
       <ion-item class="instruction-steps ion-text-center">
         <div
@@ -365,7 +368,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .instruction-steps {
   max-width: 500px;
   margin: 0 auto;
@@ -381,20 +384,20 @@ export default defineComponent({
 .instruction-arrow {
   height: 25px;
   width: 25px;
-}
 
-.instruction-arrow:hover {
-  cursor: pointer;
-}
+  ion-icon {
+    height: 25px;
+    width: 25px;
+    color: var(--ion-color-medium);
+  }
 
-.instruction-arrow > ion-icon {
-  height: 25px;
-  width: 25px;
-  color: gray;
-}
+  &:hover {
+    cursor: pointer;
+  }
 
-.instruction-arrow:hover > ion-icon {
-  color: black;
+  &:hover > ion-icon {
+    color: var(--ion-color-dark-shade);
+  }
 }
 
 .shift-down {
@@ -419,10 +422,10 @@ ion-segment {
 ion-segment-button {
   color: var(--ion-color-dark);
   border-radius: 0px;
-}
 
-ion-segment-button::part(indicator-background) {
-  background: var(--ion-color-tertiary);
+  &::part(indicator-background) {
+    background: var(--ion-color-tertiary);
+  }
 }
 
 .segment-button-checked {
@@ -437,19 +440,19 @@ ion-button {
   border-radius: 4px;
   margin: 10px 3px;
   filter: brightness(90%);
-}
 
-ion-button::part(native) {
-  font-weight: 600;
+  &::part(native) {
+    font-weight: 600;
+  }
 }
 
 .outline-button::part(native) {
   border: 2px solid;
   filter: sepia(35%);
-}
 
-.outline-button::part(native):hover {
-  filter: sepia(10%);
+  &:hover {
+    filter: sepia(10%);
+  }
 }
 
 .konva-container {
@@ -465,9 +468,16 @@ ion-button::part(native) {
   z-index: 10;
 }
 
-ion-spinner {
-  height: 3rem;
-  width: 3rem;
+.loading-spinner-div {
   margin: 2rem;
+
+  p {
+    font-size: 1.2em;
+  }
+
+  ion-spinner {
+    height: 3rem;
+    width: 3rem;
+  }
 }
 </style>

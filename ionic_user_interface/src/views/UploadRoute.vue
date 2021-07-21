@@ -8,9 +8,9 @@
               <h1>Upload Route</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="rounded margin" />
+              <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
               <form @submit="onSubmit">
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="floating">Route name</ion-label>
                   <ion-input
                     v-model="routeNameText"
@@ -23,20 +23,20 @@
                   <!-- Fix to prevent enter submit -->
                   <ion-input class="ion-hide"></ion-input>
                 </ion-item>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-range v-model="gradeNumber" min="0" max="14" step="1" snaps>
                     <ion-label slot="start" class="grade-text">{{ gradeText }}</ion-label>
                   </ion-range>
                 </ion-item>
-                <ion-item class="rounded margin">
-                  <ion-label class="absolute-position">Country</ion-label>
+                <ion-item class="global-rounded margin">
+                  <ion-label class="global-absolute-position">Country</ion-label>
                   <auto-complete
                     :options="countryNameList"
                     optionsKey="country"
                     @matchedItem="onCountrySelect"
                   />
                 </ion-item>
-                <ion-list class="rounded margin" v-if="userHasSelectedCountry">
+                <ion-list class="global-rounded margin" v-if="userHasSelectedCountry">
                   <ion-item>
                     <ion-label>Gym</ion-label>
                     <ion-select v-model="selectedGymLocation" interface="action-sheet">
@@ -55,7 +55,7 @@
                     </ion-button>
                   </router-link>
                 </ion-list>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label>Estimated Teardown Date</ion-label>
                   <ion-datetime
                     display-format="D MMM YYYY"
@@ -302,11 +302,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.rounded {
-  border-radius: 5px;
-}
-
+<style scoped lang="scss">
 .margin {
   margin-bottom: 1.4em;
 }

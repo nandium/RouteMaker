@@ -1,13 +1,13 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true" ref="ionContent">
-      <div id="container">
+      <div class="my-container">
         <strong>Route Maker</strong>
         <p>Make custom climbing routes</p>
         <br />
         <br />
-        <ion-button @click="takePhoto" color="tertiary">
-          <ion-icon class="margin-right" :icon="camera"></ion-icon>
+        <ion-button @click="takePhoto" color="tertiary" class="upload-button">
+          <ion-icon class="global-margin-right-small" :icon="camera"></ion-icon>
           Upload wall image
         </ion-button>
         <Canvas
@@ -93,35 +93,31 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-#container {
+<style scoped lang="scss">
+.my-container {
   text-align: center;
   position: absolute;
   left: 0;
   right: 0;
+
+  strong {
+    font-size: clamp(2rem, 7vw, 2.5rem);
+    line-height: 2em;
+  }
+
+  p {
+    font-size: clamp(1.4rem, 5vw, 1.6rem);
+    line-height: 1em;
+    color: var(--ion-color-medium-shade);
+    margin: 0;
+  }
 }
 
-#container strong {
-  font-size: clamp(2rem, 7vw, 2.5rem);
-  line-height: 2em;
-}
-
-#container p {
-  font-size: clamp(1.4rem, 5vw, 1.6rem);
-  line-height: 1em;
-  color: #8c8c8c;
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-
-.margin-right {
-  margin-right: 10px;
-}
-
-ion-button {
+.upload-button {
   filter: hue-rotate(90deg);
+
+  ion-icon {
+    margin-right: 5px;
+  }
 }
 </style>

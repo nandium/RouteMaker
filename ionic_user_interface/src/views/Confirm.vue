@@ -8,9 +8,9 @@
               <h1>Confirm Signup</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="rounded margin" />
+              <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
               <form @submit="onSubmit">
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Confirmation code</ion-label>
                   <ion-input
                     v-model="confirmationCodeText"
@@ -220,11 +220,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.rounded {
-  border-radius: 5px;
-}
-
+<style scoped lang="scss">
 .margin {
   margin-bottom: 1.4em;
 }

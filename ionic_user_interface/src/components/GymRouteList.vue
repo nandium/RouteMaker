@@ -93,6 +93,7 @@
       <ion-card
         v-for="(route, index) of filteredSortedRoutes"
         :key="index"
+        title="Go to route page"
         class="ion-text-left route-card"
         @click="() => handleRouteCardClick(route.username, route.createdAt)"
       >
@@ -100,6 +101,7 @@
           <ion-card-title>{{ route.routeName }}</ion-card-title>
           <VoteButton
             class="vote-button"
+            title="Upvote route"
             :username="route.username"
             :createdAt="route.createdAt"
             v-model:voteCount="route.voteCount"
@@ -434,10 +436,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.route-card:hover {
-  cursor: pointer;
-  filter: brightness(120%);
+<style scoped lang="scss">
+.route-card {
+  &:hover {
+    cursor: pointer;
+    --background: rgba(var(--ion-color-medium-rgb), 0.05);
+  }
 }
 
 ion-card-header {
@@ -464,19 +468,18 @@ ion-card-header {
   justify-content: space-between;
   padding: 0 0;
   margin-top: -10px;
-}
-
-.sliderticks p {
-  font-size: 2.3vmin;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  width: 1px;
-  background: #d3d3d3;
-  height: 1vmin;
-  line-height: 5vmin;
-  margin: 0 0 20px 0;
+  p {
+    font-size: 2.3vmin;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 1px;
+    background: #d3d3d3;
+    height: 1vmin;
+    line-height: 5vmin;
+    margin: 0 0 20px 0;
+  }
 }
 
 .vote-button {

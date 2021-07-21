@@ -6,7 +6,7 @@
     @keyup.enter="onEnter"
     @keydown.tab="onEnter"
   />
-  <ion-card class="suggestions-card" v-if="filteredSuggestions.length && showCard">
+  <ion-card class="global-margin-left" v-if="filteredSuggestions.length && showCard">
     <ion-text
       class="suggestion-item"
       v-for="(s, i) in filteredSuggestions"
@@ -99,9 +99,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.suggestions-card {
-  margin-left: 10px;
-}
-</style>

@@ -2,17 +2,22 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
-      <div v-if="!isLoading" id="container" class="ion-text-left">
+      <div v-if="!isLoading" class="my-container ion-text-left">
         <ion-img :src="routeDetails.routeURL"></ion-img>
         <ion-row class="ion-justify-content-between">
-          <div class="route-title">
+          <div class="route-title" title="Route name">
             <b>{{ routeDetails.routeName }}</b>
           </div>
-          <div class="icon-button share-button-div margin-right" @click="sharePostHandler">
+          <div
+            title="Share route"
+            class="global-margin-right icon-button share-button-div"
+            @click="sharePostHandler"
+          >
             <ion-icon color="tertiary" size="large" :icon="shareSocialOutline"></ion-icon>
           </div>
           <VoteButton
-            class="margin-right"
+            title="Upvote route"
+            class="global-margin-right"
             :username="routeDetails.username"
             :createdAt="routeDetails.createdAt"
             v-model:voteCount="routeDetails.voteCount"
@@ -21,18 +26,23 @@
         </ion-row>
         <ion-row class="ion-justify-content-between display-flex">
           <ion-item
-            class="ion-no-padding margin-left rounded profile-item"
+            class="ion-no-padding global-margin-left global-rounded profile-item"
+            title="Go to profile"
             lines="none"
             @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
           >
             <ion-icon
-              class="margin-right margin-left"
+              class="global-margin-left-right"
               slot="start"
               :icon="personCircleOutline"
             ></ion-icon>
             <ion-label class="align-middle">{{ routeDetails.username }}</ion-label>
           </ion-item>
-          <div v-if="isLoggedIn && !isRouteSetter" class="margin-right margin-left">
+          <div
+            v-if="isLoggedIn && !isRouteSetter"
+            title="Report route"
+            class="global-margin-left-right"
+          >
             <ion-button
               v-if="!hasReported"
               color="danger"
@@ -68,14 +78,16 @@
         </div>
         <br />
         <MessageBox ref="msgBox" color="danger" class="rounded margin" />
-        <div class="margin-left margin-right">
-          <h1 class="ion-text-center ion-margin comment-title">-- Comments --</h1>
+        <div class="global-margin-left-right">
+          <h1 class="ion-text-center ion-margin comment-title">
+            -- Reviews ({{ routeDetails.comments.length }}) --
+          </h1>
           <ion-row
             v-if="isLoggedIn && !hasAlreadyCommented"
             class="ion-align-items-start ion-justify-content-start margin"
           >
             <ion-textarea
-              placeholder="Write a comment..."
+              placeholder="Write a review..."
               class="ion-no-margin"
               maxlength="150"
               v-model="commentText"
@@ -85,24 +97,25 @@
             </ion-button>
             <br />
           </ion-row>
-          <ion-card
-            v-for="({ username, timestamp, comment }, index) in routeDetails.comments"
-            :key="index"
-          >
+          <ion-card v-for="(commentDetails, index) of routeDetails.comments" :key="index">
             <ion-card-header>
-              <ion-card-title>{{ comment }}</ion-card-title>
+              <ion-card-title>{{ commentDetails.comment }}</ion-card-title>
               <div v-if="isLoggedIn" class="center-right">
                 <div
+                  v-if="commentDetails.username !== myUsername"
+                  title="Report review"
                   class="icon-button"
-                  v-if="username !== myUsername"
-                  @click="() => reportCommentHandler(username)"
+                  @click="() => reportCommentHandler(commentDetails.username)"
                 >
                   <ion-icon :icon="flagOutline"></ion-icon>
                 </div>
                 <div
-                  v-if="username === myUsername || isAdmin"
+                  v-if="commentDetails.username === myUsername || isAdmin"
+                  title="Delete review"
                   class="icon-button"
-                  @click="() => deleteCommentHandler(username, timestamp)"
+                  @click="
+                    () => deleteCommentHandler(commentDetails.username, commentDetails.timestamp)
+                  "
                 >
                   <ion-icon :icon="trashOutline"></ion-icon>
                 </div>
@@ -110,16 +123,17 @@
             </ion-card-header>
             <ion-card-content class="ion-no-padding ion-no-margin display-flex">
               <ion-item
-                class="ion-no-padding margin-left-large rounded profile-item"
+                title="Go to user profile"
+                class="ion-no-padding margin-left-large global-rounded profile-item"
                 lines="none"
-                @click="() => router.push({ name: 'UserRoutes', params: username })"
+                @click="() => router.push({ name: 'UserRoutes', params: commentDetails.username })"
               >
                 <ion-icon
-                  class="margin-right margin-left"
+                  class="global-margin-left-right"
                   slot="start"
                   :icon="personCircleOutline"
                 ></ion-icon>
-                <ion-label class="align-middle">{{ username }}</ion-label>
+                <ion-label class="align-middle">{{ commentDetails.username }}</ion-label>
               </ion-item>
             </ion-card-content>
           </ion-card>
@@ -147,6 +161,7 @@ import {
   IonTextarea,
   alertController,
   toastController,
+  onIonViewWillEnter,
 } from '@ionic/vue';
 import {
   sendSharp,
@@ -240,20 +255,23 @@ export default defineComponent({
 
     updateRouteDetails();
 
+    /** This fixes the issue of the route details not updating when navigating between this view and the explore view */
+    onIonViewWillEnter(updateRouteDetails);
+
     const postCommentHandler = throttle(() => {
       msgBox.value?.close();
       const comment = commentText.value.trim();
       commentText.value = '';
       if (comment.length === 0) {
-        msgBox.value?.showMsg('Comment cannot be empty');
+        msgBox.value?.showMsg('Review cannot be empty');
         return false;
       }
       if (comment.length > 150) {
-        msgBox.value?.showMsg('Comment is too long, please keep it within 150 characters');
+        msgBox.value?.showMsg('Review is too long, please keep it within 150 characters');
         return false;
       }
       if (!asciiPattern.test(comment)) {
-        msgBox.value?.showMsg('Comment cannot contain non-ASCII characters');
+        msgBox.value?.showMsg('Review cannot contain non-ASCII characters');
         return false;
       }
 
@@ -281,25 +299,42 @@ export default defineComponent({
       return true;
     }, 1000);
 
-    const deleteCommentHandler = throttle((commentUsername: string, timestamp: number) => {
-      axios
-        .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
-          headers: {
-            Authorization: `Bearer ${getAccessToken().value}`,
+    const deleteCommentHandler = throttle(async (commentUsername: string, timestamp: number) => {
+      const alert = await alertController.create({
+        header: `Delete review?`,
+        message: 'Are you sure?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
           },
-          params: {
-            username: username.value,
-            createdAt: createdAt.value,
-            commentUsername,
-            timestamp: timestamp.toString(),
+          {
+            text: 'Delete',
+            cssClass: 'global-danger-text',
+            handler: () => {
+              axios
+                .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
+                  headers: {
+                    Authorization: `Bearer ${getAccessToken().value}`,
+                  },
+                  params: {
+                    username: username.value,
+                    createdAt: createdAt.value,
+                    commentUsername,
+                    timestamp: timestamp.toString(),
+                  },
+                })
+                .then(() => {
+                  updateRouteDetails(false);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            },
           },
-        })
-        .then(() => {
-          updateRouteDetails(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        ],
+      });
+      return alert.present();
     }, 1000);
 
     const reportCommentHandler = throttle(async (commentUsername: string) => {
@@ -309,7 +344,7 @@ export default defineComponent({
 
     const reportRouteHandler = throttle(async (routeUsername: string, createdAt: string) => {
       const alert = await alertController.create({
-        cssClass: 'wide',
+        cssClass: 'global-wide',
         header: `Report this route?`,
         message: 'Are you sure?',
         buttons: [
@@ -379,7 +414,7 @@ export default defineComponent({
       return alert.present();
     }, 1000);
 
-    const gradeChangeHandler = (grade: number) => {
+    const gradeChangeHandler = throttle((grade: number) => {
       if (!isLoggedIn.value) {
         return;
       }
@@ -403,7 +438,7 @@ export default defineComponent({
         .catch((error) => {
           console.error(error);
         });
-    };
+    }, 500);
 
     const sharePostHandler = async () => {
       await shareSocial(route, `Route by ${username.value}`);
@@ -438,14 +473,10 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-#container {
-  position: absolute;
-  left: 0;
-  right: 0;
+<style scoped lang="scss">
+.my-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0;
 }
 
 .center-right {
@@ -476,11 +507,11 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.icon-button:hover {
-  background-color: var(--ion-color-medium-tint);
-  cursor: pointer;
+  &:hover {
+    background-color: var(--ion-color-light-tint);
+    cursor: pointer;
+  }
 }
 
 ion-textarea {
@@ -495,25 +526,13 @@ ion-textarea {
   vertical-align: middle;
 }
 
-.margin-left {
-  margin-left: 10px;
-}
-
 .margin-left-large {
   margin-left: 1em;
-}
-
-.margin-right {
-  margin-right: 10px;
 }
 
 ion-card {
   margin: 0px 0 20px 0;
   padding-bottom: 10px;
-}
-
-.rounded {
-  border-radius: 5px;
 }
 
 .margin {
@@ -532,13 +551,15 @@ h1.comment-title {
   display: flex;
 }
 
-.profile-item:hover {
-  cursor: pointer;
-  --background: #333333;
-}
+.profile-item {
+  ion-label {
+    color: var(--ion-color-medium);
+  }
 
-.profile-item ion-label {
-  color: var(--ion-color-medium);
+  &:hover {
+    cursor: pointer;
+    --background: var(--ion-color-light-tint);
+  }
 }
 
 ion-spinner {
@@ -554,11 +575,6 @@ ion-spinner {
 .share-button-div {
   display: flex;
   align-self: center;
-}
-
-.share-button-div:hover {
-  background-color: var(--ion-color-tertiary-tint);
-  cursor: pointer;
 }
 
 /* To prevent clash with delete icon on the right */

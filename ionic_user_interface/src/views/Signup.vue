@@ -8,9 +8,9 @@
               <h1>Sign up</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="errorMsg" color="danger" class="rounded margin" />
+              <MessageBox ref="errorMsg" color="danger" class="global-rounded margin" />
               <form @submit="onSubmit">
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Email</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -21,7 +21,7 @@
                     required
                   />
                 </ion-item>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -32,7 +32,7 @@
                   />
                 </ion-item>
                 <div class="margin-less">
-                  <ion-item class="rounded">
+                  <ion-item class="global-rounded">
                     <ion-label position="stacked">Password</ion-label>
                     <ion-input
                       @keyup.enter="clickSignupButton"
@@ -51,7 +51,7 @@
                     </ion-col>
                   </ion-row>
                 </div>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Retype password</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -200,7 +200,7 @@ export default defineComponent({
         return false;
       }
       if (!termsCheckbox.value) {
-        errorMsg.value?.showMsg('Please read the terms and conditions');
+        errorMsg.value?.showMsg('Please agree to the terms and conditions');
         return false;
       }
 
@@ -283,13 +283,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .password-strength {
   font-size: 0.9em;
-}
-
-.rounded {
-  border-radius: 5px;
 }
 
 .margin {

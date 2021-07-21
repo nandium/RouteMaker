@@ -8,13 +8,13 @@
               <h1>Reset Password</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="rounded margin" />
+              <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
               <form @submit="onSubmit">
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
                   <ion-input v-model="usernameText" type="text" disabled />
                 </ion-item>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Reset code</ion-label>
                   <ion-input
                     @keyup.enter="clickResetPasswordButton"
@@ -28,7 +28,7 @@
                   />
                 </ion-item>
                 <div class="margin-less">
-                  <ion-item class="rounded">
+                  <ion-item class="global-rounded">
                     <ion-label position="stacked">New password</ion-label>
                     <ion-input
                       @keyup.enter="clickResetPasswordButton"
@@ -47,7 +47,7 @@
                     </ion-col>
                   </ion-row>
                 </div>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Retype new password</ion-label>
                   <ion-input
                     @keyup.enter="clickResetPasswordButton"
@@ -293,11 +293,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.rounded {
-  border-radius: 5px;
-}
-
+<style scoped lang="scss">
 .margin {
   margin-bottom: 1.4em;
 }

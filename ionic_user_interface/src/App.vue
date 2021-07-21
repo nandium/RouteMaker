@@ -86,7 +86,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 ion-toolbar {
   height: 50px;
   display: flex;

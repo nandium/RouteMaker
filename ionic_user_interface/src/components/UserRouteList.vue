@@ -160,7 +160,7 @@ export default defineComponent({
             },
             {
               text: 'Delete',
-              cssClass: 'danger-text',
+              cssClass: 'global-danger-text',
               handler: throttle(async () => {
                 await axios
                   .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route', {
@@ -203,10 +203,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.route-card:hover {
-  cursor: pointer;
-  filter: brightness(120%);
+<style scoped lang="scss">
+.route-card {
+  &:hover {
+    cursor: pointer;
+    --background: rgba(var(--ion-color-medium-rgb), 0.05);
+  }
 }
 
 ion-card-header {
@@ -235,11 +237,11 @@ ion-card-header {
   justify-content: center;
   width: 35px;
   height: 35px;
-}
 
-.delete-button:hover {
-  background-color: #333333;
-  cursor: pointer;
+  &:hover {
+    background-color: rgba(var(--ion-color-medium-rgb), 0.15);
+    cursor: pointer;
+  }
 }
 
 ion-spinner {

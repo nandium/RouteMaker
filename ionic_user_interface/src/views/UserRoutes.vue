@@ -5,19 +5,19 @@
         <ion-row class="ion-align-items-center ion-justify-content-center">
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <div class="page-title">
-              <strong>Routes By User</strong>
+              <strong>{{ isLoggedIn && isOwnself ? 'My Routes' : 'Public User' }}</strong>
             </div>
-            <ion-item class="rounded">
+            <ion-item class="global-rounded">
               <ion-icon
                 slot="start"
-                class="ion-no-margin margin-right"
+                class="ion-no-margin global-margin-right"
                 :icon="personCircleOutline"
               ></ion-icon>
               <ion-text class="username">{{ profileUsername }}</ion-text>
               <ion-button
                 v-if="isLoggedIn && !isOwnself && isAdmin"
                 slot="end"
-                class="margin-left"
+                class="global-margin-left"
                 color="danger"
                 @click="disableUserHandler"
               >
@@ -127,7 +127,7 @@ export default defineComponent({
      */
     const disableUserHandler = throttle(async () => {
       const alert = await alertController.create({
-        cssClass: 'wide',
+        cssClass: 'global-wide',
         header: `Disable this user?`,
         message: 'Are you sure?',
         buttons: [
@@ -215,19 +215,11 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .page-title {
   text-align: center;
   font-size: clamp(2rem, 7vw, 2.5rem);
   margin: 10px 10px 30px 10px;
-}
-
-.margin-left {
-  margin-left: 10px;
-}
-
-.margin-right {
-  margin-right: 10px;
 }
 
 .username {
