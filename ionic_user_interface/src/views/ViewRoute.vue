@@ -255,6 +255,7 @@ export default defineComponent({
 
     updateRouteDetails();
 
+    /** This fixes the issue of the route details not updating when navigating between this view and the explore view */
     onIonViewWillEnter(updateRouteDetails);
 
     const postCommentHandler = throttle(() => {
