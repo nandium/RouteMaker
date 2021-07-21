@@ -200,7 +200,7 @@ export default defineComponent({
         return false;
       }
       if (!termsCheckbox.value) {
-        errorMsg.value?.showMsg('Please read the terms and conditions');
+        errorMsg.value?.showMsg('Please agree to the terms and conditions');
         return false;
       }
 
