@@ -136,14 +136,14 @@ custom:
       prod: 8
     WriteCapacityUnits:
       dev: 2
-      prod: 6
+      prod: 8
   _routeDataTableGSI:
     ReadCapacityUnits:
       dev: 2
       prod: 8
     WriteCapacityUnits:
       dev: 2
-      prod: 4
+      prod: 8
   _gymDataTable:
     ReadCapacityUnits:
       dev: 1

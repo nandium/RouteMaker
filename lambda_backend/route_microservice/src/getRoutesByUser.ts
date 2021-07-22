@@ -5,7 +5,8 @@ import jwt_decode from 'jwt-decode';
 
 import { getMiddlewareAddedHandler } from './common/middleware';
 import { getRoutesByUserSchema } from './common/schema';
-import { GetRoutesByUserEvent, GymItem, UserRoutesIndexItem, JwtPayload } from './common/types';
+import { GetRoutesByUserEvent, GymItem, JwtPayload } from './common/types';
+import { getUserRoutesIndexItems } from './common/db';
 import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
@@ -20,26 +21,7 @@ const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
   } = event;
   logger.info('getRoutesByUser initiated', { data: { routeOwnerUsername } });
 
-  const routeQueryInput: QueryInput = {
-    TableName: process.env['ROUTE_TABLE_NAME'],
-    IndexName: 'userRoutesIndex',
-    ConsistentRead: false,
-    ScanIndexForward: false,
-    KeyConditionExpression: 'username = :username',
-    ExpressionAttributeValues: {
-      ':username': routeOwnerUsername as AttributeValue,
-    },
-  };
-  let userRouteIndexItems: UserRoutesIndexItem[];
-  try {
-    const response = await dynamoDb.query(routeQueryInput).promise();
-    userRouteIndexItems = response.Items as UserRoutesIndexItem[];
-  } catch (error) {
-    logger.error('getRoutesByUser query routes error', {
-      data: { routeOwnerUsername, error: error.stack },
-    });
-    throw createError(500, 'Error querying table', error);
-  }
+  const userRouteIndexItems = await getUserRoutesIndexItems(routeOwnerUsername);
 
   // Assumes that one user will not post from too many countries
   const countryCodeSet = new Set(userRouteIndexItems.map((item) => item.countryCode));

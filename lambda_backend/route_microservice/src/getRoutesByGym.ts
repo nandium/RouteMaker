@@ -1,14 +1,12 @@
 import { Handler } from 'aws-lambda';
-import DynamoDB, { AttributeValue, QueryInput } from 'aws-sdk/clients/dynamodb';
 import createError from 'http-errors';
 import jwt_decode from 'jwt-decode';
 
 import { getMiddlewareAddedHandler } from './common/middleware';
 import { getRoutesByGymSchema } from './common/schema';
-import { GetRoutesByGymEvent, GymLocationIndexItem, JwtPayload } from './common/types';
+import { GetRoutesByGymEvent, JwtPayload } from './common/types';
+import { getGymLocationIndexItems } from './common/db';
 import { logger } from './common/logger';
-
-const dynamoDb = new DynamoDB.DocumentClient();
 
 const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
@@ -20,24 +18,7 @@ const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
   } = event;
   logger.info('getRoutesByGym initiated', { data: { gymLocation } });
 
-  const queryInput: QueryInput = {
-    TableName: process.env['ROUTE_TABLE_NAME'],
-    IndexName: 'gymLocationIndex',
-    ConsistentRead: false,
-    ScanIndexForward: false,
-    KeyConditionExpression: 'gymLocation = :gymLocation',
-    ExpressionAttributeValues: {
-      ':gymLocation': gymLocation as AttributeValue,
-    },
-  };
-  let gymLocationIndexItems: GymLocationIndexItem[];
-  try {
-    const response = await dynamoDb.query(queryInput).promise();
-    gymLocationIndexItems = response.Items as GymLocationIndexItem[];
-  } catch (error) {
-    logger.error('getRoutesByGym error', { data: { gymLocation, error: error.stack } });
-    throw createError(500, 'Error querying table', error);
-  }
+  const gymLocationIndexItems = await getGymLocationIndexItems(gymLocation);
 
   let username = '';
   if (Authorization) {

@@ -14,6 +14,7 @@ provider:
     COGNITO_CLIENT_ID: ${self:custom.cognitoClientId}
     COGNITO_USERPOOL_ID: ${self:custom.cognitoUserpoolId}
     TELEGRAM_SNS_ARN: ${self:custom.telegramSNSArn}
+    DELETE_USER_SNS_ARN: ${self:custom.deleteUserSNSArn}
   logRetentionInDays: 14
   lambdaHashingVersion: 20201221
   iam:
@@ -33,6 +34,7 @@ provider:
             - sns:publish
           Resource:
             - '${self:custom.telegramSNSArn}'
+            - ${self:custom.deleteUserSNSArn}
 
 plugins:
   - serverless-plugin-typescript
@@ -164,6 +166,7 @@ custom:
   cognitoClientId: ${ssm:/${self:custom.stage}/cognito/clientId}
   cognitoUserpoolId: ${ssm:/${self:custom.stage}/cognito/poolId}
   telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
+  deleteUserSNSArn: ${ssm:/${self:custom.stage}/sns/deleteUser/arn}
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}

@@ -33,6 +33,11 @@ resources:
       Properties:
         TopicName: '${self:service}-${self:custom.stage}-telegram'
 
+    DeleteUserSNS:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: '${self:service}-${self:custom.stage}-deleteUser'
+
     SSMParameterTelegramSNSArn:
       Type: AWS::SSM::Parameter
       Properties:
@@ -40,6 +45,16 @@ resources:
         Type: String
         Value:
           Ref: TelegramSNS
+        Tags:
+          Environment: ${self:custom.stage}
+
+    SSMParameterDeleteUserSNSArn:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/sns/deleteUser/arn
+        Type: String
+        Value:
+          Ref: DeleteUserSNS
         Tags:
           Environment: ${self:custom.stage}
 

@@ -199,6 +199,12 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  deleteUserDispatcher:
+    handler: src/deleteUserDispatcher.handler
+    events:
+      - sns:
+          arn: ${self:custom.deleteUserSNSArn}
+
 custom:
   stage: ${opt:stage, self:provider.stage}
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
@@ -210,6 +216,7 @@ custom:
   gymTableArn: ${ssm:/${self:custom.stage}/dynamodb/gym/arn}
   gymTableName: ${ssm:/${self:custom.stage}/dynamodb/gym/name}
   telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
+  deleteUserSNSArn: ${ssm:/${self:custom.stage}/sns/deleteUser/arn}
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
