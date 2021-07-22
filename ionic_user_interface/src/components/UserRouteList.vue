@@ -148,6 +148,7 @@ export default defineComponent({
     };
 
     const deleteRouteHandler = throttle(
+      // The username in the params is the owner of the route being deleted
       async (routeName: string, username: string, createdAt: string) => {
         const alert = await alertController.create({
           header: `Delete route '${routeName}'?`,
@@ -172,8 +173,14 @@ export default defineComponent({
                       createdAt,
                     },
                   })
-                  .then(() => {
-                    updateRoutes();
+                  .then((response) => {
+                    if (response.data.Message === 'Delete route success') {
+                      if (routes.value) {
+                        routes.value = routes.value.filter(
+                          (route) => route.username !== username || route.createdAt !== createdAt,
+                        );
+                      }
+                    }
                   })
                   .catch((error) => {
                     console.error(error);

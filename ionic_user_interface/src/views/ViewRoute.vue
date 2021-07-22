@@ -182,6 +182,8 @@ import GradeSlider from '@/components/GradeSlider.vue';
 import MessageBox from '@/components/MessageBox.vue';
 import { shareSocial } from '@/common/shareSocial';
 import getRouteDetails, { RouteDetails } from '@/common/api/route/getRouteDetails';
+import addCommentToRoute from '@/common/api/route/addCommentToRoute';
+import changeRouteGrade from '@/common/api/route/changeRouteGrade';
 
 export default defineComponent({
   name: 'ViewRoute',
@@ -258,7 +260,7 @@ export default defineComponent({
     /** This fixes the issue of the route details not updating when navigating between this view and the explore view */
     onIonViewWillEnter(updateRouteDetails);
 
-    const postCommentHandler = throttle(() => {
+    const postCommentHandler = throttle(async () => {
       msgBox.value?.close();
       const comment = commentText.value.trim();
       commentText.value = '';
@@ -275,31 +277,26 @@ export default defineComponent({
         return false;
       }
 
-      axios
-        .post(
-          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment',
-          {
-            username: username.value,
-            createdAt: createdAt.value,
-            comment,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getAccessToken().value}`,
-            },
-          },
-        )
-        .then(() => {
-          updateRouteDetails(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      hasAlreadyCommented.value = true;
+      try {
+        const data = await addCommentToRoute(username.value, createdAt.value, comment);
+        if (data.Message === 'Comment route success') {
+          // Add as the first comment in the list
+          routeDetails.value?.comments.unshift(data.Item);
+        } else {
+          hasAlreadyCommented.value = false;
+          throw new Error('Failed to add comment');
+        }
+      } catch (error) {
+        msgBox.value?.showMsg('Please try again in a while');
+        console.error(error);
+      }
 
       return true;
     }, 1000);
 
     const deleteCommentHandler = throttle(async (commentUsername: string, timestamp: number) => {
+      msgBox.value?.close();
       const alert = await alertController.create({
         header: `Delete review?`,
         message: 'Are you sure?',
@@ -324,10 +321,23 @@ export default defineComponent({
                     timestamp: timestamp.toString(),
                   },
                 })
-                .then(() => {
-                  updateRouteDetails(false);
+                .then((response) => {
+                  if (response.data.Message === 'Delete comment success') {
+                    if (routeDetails.value) {
+                      // Username may be different from commentUsername when it is an admin delete
+                      routeDetails.value.comments = routeDetails.value?.comments.filter(
+                        (comment) => {
+                          return (
+                            comment.username !== commentUsername && comment.timestamp !== timestamp
+                          );
+                        },
+                      );
+                      hasAlreadyCommented.value = false;
+                    }
+                  }
                 })
                 .catch((error) => {
+                  msgBox.value?.showMsg('Please try again in a while');
                   console.error(error);
                 });
             },
@@ -414,30 +424,24 @@ export default defineComponent({
       return alert.present();
     }, 1000);
 
-    const gradeChangeHandler = throttle((grade: number) => {
+    const gradeChangeHandler = throttle(async (grade: number) => {
+      msgBox.value?.close();
       if (!isLoggedIn.value) {
         return;
       }
-      axios
-        .post(
-          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/grade',
-          {
-            username: username.value,
-            createdAt: createdAt.value,
-            grade,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getAccessToken().value}`,
-            },
-          },
-        )
-        .then(() => {
-          updateRouteDetails(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      try {
+        const data = await changeRouteGrade(username.value, createdAt.value, grade);
+        if (data.Message === 'Grade route success') {
+          if (routeDetails.value) {
+            routeDetails.value.graded = grade;
+            routeDetails.value.ownerGrade = data.Item.ownerGrade;
+            routeDetails.value.publicGrade = data.Item.publicGrade;
+          }
+        }
+      } catch (error) {
+        msgBox.value?.showMsg('Please try again in a while');
+        console.error(error);
+      }
     }, 500);
 
     const sharePostHandler = async () => {
