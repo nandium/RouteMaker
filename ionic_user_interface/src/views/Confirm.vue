@@ -125,7 +125,7 @@ export default defineComponent({
       try {
         const {
           data: { Message },
-        } = await axios.post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/resendCode', {
+        } = await axios.post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/resendCode', {
           name: getUsername().value,
         });
         if (Message === 'Resend code success') {
@@ -160,7 +160,7 @@ export default defineComponent({
       }
 
       axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/confirm', {
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/confirm', {
           name: getUsername().value,
           code: confirmationCodeText.value,
         })

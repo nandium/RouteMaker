@@ -310,7 +310,7 @@ export default defineComponent({
             cssClass: 'global-danger-text',
             handler: () => {
               axios
-                .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment', {
+                .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/comment', {
                   headers: {
                     Authorization: `Bearer ${getAccessToken().value}`,
                   },
@@ -368,7 +368,7 @@ export default defineComponent({
             handler: () => {
               axios
                 .post(
-                  process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/report',
+                  process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/report',
                   {
                     username: routeUsername,
                     createdAt,

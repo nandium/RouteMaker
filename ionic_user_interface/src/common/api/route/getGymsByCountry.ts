@@ -7,7 +7,7 @@ const memoryCache = cacheManager.caching({
   ttl: 30, // Seconds
 });
 
-const getGymsByCountryUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/gym/country';
+const getGymsByCountryUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/gym/country';
 
 const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => {
   try {

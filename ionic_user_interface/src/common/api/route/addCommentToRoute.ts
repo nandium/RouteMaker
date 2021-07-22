@@ -2,7 +2,7 @@ import axios from 'axios';
 import Providers from '@/providers';
 import { Comment } from './getRouteDetails';
 
-const addCommentUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/comment';
+const addCommentUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/comment';
 
 const addCommentToRoute = async (
   username: string,

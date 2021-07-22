@@ -82,7 +82,7 @@ export default defineComponent({
       waitingForResponse = true;
       axios
         .post(
-          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/toggleUpvote',
+          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/toggleUpvote',
           {
             username,
             createdAt,

@@ -44,7 +44,7 @@ functions:
     handler: src/signup.handler
     events:
       - http:
-          path: user/signup
+          path: v1/user/signup
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -53,7 +53,7 @@ functions:
     handler: src/confirmSignup.handler
     events:
       - http:
-          path: user/confirm
+          path: v1/user/confirm
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -62,7 +62,7 @@ functions:
     handler: src/resendCode.handler
     events:
       - http:
-          path: user/resendCode
+          path: v1/user/resendCode
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -71,7 +71,7 @@ functions:
     handler: src/login.handler
     events:
       - http:
-          path: user/login
+          path: v1/user/login
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -80,7 +80,7 @@ functions:
     handler: src/refreshToken.handler
     events:
       - http:
-          path: user/refreshToken
+          path: v1/user/refreshToken
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -89,7 +89,7 @@ functions:
     handler: src/forgotPassword.handler
     events:
       - http:
-          path: user/forgotPassword
+          path: v1/user/forgotPassword
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -98,7 +98,7 @@ functions:
     handler: src/confirmForgotPassword.handler
     events:
       - http:
-          path: user/resetPassword
+          path: v1/user/resetPassword
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -107,7 +107,7 @@ functions:
     handler: src/logout.handler
     events:
       - http:
-          path: user/logout
+          path: v1/user/logout
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -120,7 +120,7 @@ functions:
     handler: src/deleteUser.handler
     events:
       - http:
-          path: user/delete
+          path: v1/user/delete
           method: delete
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -133,7 +133,7 @@ functions:
     handler: src/disableUser.handler
     events:
       - http:
-          path: user/disable
+          path: v1/user/disable
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -146,7 +146,7 @@ functions:
     handler: src/reportUser.handler
     events:
       - http:
-          path: user/report
+          path: v1/user/report
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}

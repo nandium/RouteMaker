@@ -32,7 +32,7 @@ const forceLogout = async (): Promise<void> => {
     },
   };
   return axios
-    .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/logout', {}, config)
+    .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/logout', {}, config)
     .then((response) => {
       console.log(response.data.Message);
     })
@@ -80,7 +80,7 @@ const checkExpiry = async (): Promise<void> => {
       // Expired AccessToken is refreshed
       if (token.exp <= Math.floor(Date.now() / 1000)) {
         const response = await axios.post(
-          process.env.VUE_APP_USER_ENDPOINT_URL + '/user/refreshToken',
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/refreshToken',
           {
             refreshToken: providers.getRefreshToken().value,
           },

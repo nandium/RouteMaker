@@ -181,7 +181,7 @@ export default defineComponent({
       msgBox.value?.close();
       try {
         const response = await axios.post(
-          process.env.VUE_APP_USER_ENDPOINT_URL + '/user/forgotPassword',
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/forgotPassword',
           {
             name: usernameText.value,
           },
@@ -224,7 +224,7 @@ export default defineComponent({
       }
 
       axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/resetPassword', {
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/resetPassword', {
           name: usernameText.value,
           password: passwordText.value,
           code: passwordResetCodeText.value,

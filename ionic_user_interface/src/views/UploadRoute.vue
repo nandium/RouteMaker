@@ -228,7 +228,7 @@ export default defineComponent({
       formData.append('routeName', routeNameText.value);
 
       axios
-        .post(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/new', formData, {
+        .post(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/new', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${getAccessToken().value}`,

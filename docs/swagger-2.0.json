@@ -8,7 +8,7 @@
   ],
   "info": {
     "description": "This is the RouteMaker API",
-    "version": "1.11",
+    "version": "2.0",
     "title": "RouteMaker API",
     "contact": {
       "email": "yarkhinephyo@gmail.com"
@@ -33,7 +33,7 @@
     }
   ],
   "paths": {
-    "/predict": {
+    "/v1/predict": {
       "post": {
         "tags": [
           "predict"
@@ -63,7 +63,7 @@
         }
       }
     },
-    "/user/signup": {
+    "/v1/user/signup": {
       "post": {
         "tags": [
           "user"
@@ -93,7 +93,7 @@
         }
       }
     },
-    "/user/confirm": {
+    "/v1/user/confirm": {
       "post": {
         "tags": [
           "user"
@@ -130,7 +130,7 @@
         }
       }
     },
-    "/user/login": {
+    "/v1/user/login": {
       "post": {
         "tags": [
           "user"
@@ -161,7 +161,7 @@
         }
       }
     },
-    "/user/refreshToken": {
+    "/v1/user/refreshToken": {
       "post": {
         "tags": [
           "user"
@@ -200,7 +200,7 @@
         }
       }
     },
-    "/user/resendCode": {
+    "/v1/user/resendCode": {
       "post": {
         "tags": [
           "user"
@@ -244,7 +244,7 @@
         }
       }
     },
-    "/user/forgotPassword": {
+    "/v1/user/forgotPassword": {
       "post": {
         "tags": [
           "user"
@@ -279,7 +279,7 @@
         }
       }
     },
-    "/user/resetPassword": {
+    "/v1/user/resetPassword": {
       "post": {
         "tags": [
           "user"
@@ -318,7 +318,7 @@
         }
       }
     },
-    "/user/logout": {
+    "/v1/user/logout": {
       "post": {
         "tags": [
           "user"
@@ -352,7 +352,7 @@
         }
       }
     },
-    "/user/disable": {
+    "/v1/user/disable": {
       "post": {
         "tags": [
           "user"
@@ -401,7 +401,7 @@
         }
       }
     },
-    "/user/report": {
+    "/v1/user/report": {
       "post": {
         "tags": [
           "user"
@@ -445,7 +445,7 @@
         }
       }
     },
-    "/user/delete": {
+    "/v1/user/delete": {
       "delete": {
         "tags": [
           "user"
@@ -466,7 +466,7 @@
         }
       }
     },
-    "/route/new": {
+    "/v1/route/new": {
       "post": {
         "tags": [
           "route"
@@ -504,7 +504,7 @@
         }
       }
     },
-    "/route/details": {
+    "/v1/route/details": {
       "post": {
         "tags": [
           "route"
@@ -539,7 +539,7 @@
         }
       }
     },
-    "/route/details/toggleUpvote": {
+    "/v1/route/details/toggleUpvote": {
       "post": {
         "tags": [
           "route"
@@ -576,7 +576,7 @@
         }
       }
     },
-    "/route/details/grade": {
+    "/v1/route/details/grade": {
       "post": {
         "tags": [
           "route"
@@ -614,7 +614,7 @@
         }
       }
     },
-    "/route/details/comment": {
+    "/v1/route/details/comment": {
       "post": {
         "tags": [
           "route"
@@ -728,7 +728,7 @@
         }
       }
     },
-    "/route/details/report": {
+    "/v1/route/details/report": {
       "post": {
         "tags": [
           "route"
@@ -774,7 +774,7 @@
         }
       }
     },
-    "/route/all": {
+    "/v1/route/all": {
       "get": {
         "tags": [
           "route"
@@ -806,7 +806,7 @@
         }
       }
     },
-    "/route/user": {
+    "/v1/route/user": {
       "get": {
         "tags": [
           "route"
@@ -837,7 +837,7 @@
         }
       }
     },
-    "/route/gym/country": {
+    "/v1/route/gym/country": {
       "get": {
         "tags": [
           "route"
@@ -867,7 +867,7 @@
         }
       }
     },
-    "/route/gym/request": {
+    "/v1/route/gym/request": {
       "post": {
         "tags": [
           "route"
@@ -913,7 +913,7 @@
         }
       }
     },
-    "/route": {
+    "/v1/route": {
       "delete": {
         "tags": [
           "route"

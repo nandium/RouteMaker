@@ -9,7 +9,7 @@ const memoryCache = cacheManager.caching({
   ttl: 1, // Seconds
 });
 
-const getRoutesByUserUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/user';
+const getRoutesByUserUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/user';
 
 const getRoutesByUser = async (username: string): Promise<ResponseData> => {
   const headers = Providers.getLoggedIn().value

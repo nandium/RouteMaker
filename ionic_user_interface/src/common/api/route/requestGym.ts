@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Providers from '@/providers';
 
-const requestGymUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/gym/request';
+const requestGymUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/gym/request';
 
 const requestGym = async (countryCode: string, postal: string, gymName: string): Promise<void> => {
   const config = {

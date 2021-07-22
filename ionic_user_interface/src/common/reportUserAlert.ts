@@ -63,7 +63,7 @@ const getAlertController = async (
           }
           axios
             .post(
-              process.env.VUE_APP_USER_ENDPOINT_URL + '/user/report',
+              process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/report',
               {
                 name: username,
                 reason,
