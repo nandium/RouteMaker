@@ -141,7 +141,7 @@ export default defineComponent({
             handler: () => {
               axios
                 .post(
-                  process.env.VUE_APP_USER_ENDPOINT_URL + '/user/disable',
+                  process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/disable',
                   {
                     name: profileUsername.value,
                   },

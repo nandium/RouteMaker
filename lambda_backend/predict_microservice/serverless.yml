@@ -11,7 +11,7 @@ provider:
   apiGateway:
     binaryMediaTypes:
       - 'multipart/form-data'
-  logRetentionInDays: 30
+  logRetentionInDays: 7
   lambdaHashingVersion: 20201221
   environment:
     PYTHON_ENV: ${self:custom.stage}
@@ -23,7 +23,7 @@ functions:
     timeout: 10
     events:
       - http:
-          path: /predict
+          path: /v1/predict
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}

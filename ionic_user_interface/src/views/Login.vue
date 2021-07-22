@@ -157,7 +157,7 @@ export default defineComponent({
       // Valid credentials
       setUsername(usernameText.value);
       axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/login', {
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/login', {
           name: usernameText.value,
           password: passwordText.value,
         })

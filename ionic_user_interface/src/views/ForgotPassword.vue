@@ -102,7 +102,7 @@ export default defineComponent({
       }
 
       axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/forgotPassword', {
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/forgotPassword', {
           name: usernameText.value,
         })
         .then((response) => {

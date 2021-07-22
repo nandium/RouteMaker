@@ -63,7 +63,7 @@ functions:
     handler: src/getGymsByCountry.handler
     events:
       - http:
-          path: route/gym/country
+          path: v1/route/gym/country
           method: get
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -72,7 +72,7 @@ functions:
     handler: src/createRoute.handler
     events:
       - http:
-          path: route/new
+          path: v1/route/new
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -85,7 +85,7 @@ functions:
     handler: src/getRoutesByGym.handler
     events:
       - http:
-          path: route/all
+          path: v1/route/all
           method: get
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -94,7 +94,7 @@ functions:
     handler: src/getRoutesByUser.handler
     events:
       - http:
-          path: route/user
+          path: v1/route/user
           method: get
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -103,7 +103,7 @@ functions:
     handler: src/getRouteDetails.handler
     events:
       - http:
-          path: route/details
+          path: v1/route/details
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -112,7 +112,7 @@ functions:
     handler: src/toggleUpvoteRoute.handler
     events:
       - http:
-          path: route/details/toggleUpvote
+          path: v1/route/details/toggleUpvote
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -125,7 +125,7 @@ functions:
     handler: src/reportRoute.handler
     events:
       - http:
-          path: route/details/report
+          path: v1/route/details/report
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -138,7 +138,7 @@ functions:
     handler: src/gradeRoute.handler
     events:
       - http:
-          path: route/details/grade
+          path: v1/route/details/grade
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -151,7 +151,7 @@ functions:
     handler: src/deleteRoute.handler
     events:
       - http:
-          path: route
+          path: v1/route
           method: delete
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -164,7 +164,7 @@ functions:
     handler: src/addComment.handler
     events:
       - http:
-          path: route/details/comment
+          path: v1/route/details/comment
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -177,7 +177,7 @@ functions:
     handler: src/deleteComment.handler
     events:
       - http:
-          path: route/details/comment
+          path: v1/route/details/comment
           method: delete
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -190,7 +190,7 @@ functions:
     handler: src/requestGym.handler
     events:
       - http:
-          path: route/gym/request
+          path: v1/route/gym/request
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}

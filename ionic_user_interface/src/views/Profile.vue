@@ -151,7 +151,7 @@ export default defineComponent({
             cssClass: 'global-danger-text',
             handler: throttle(async () => {
               await axios
-                .delete(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/delete', {
+                .delete(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/delete', {
                   headers: {
                     Authorization: `Bearer ${getAccessToken().value}`,
                   },

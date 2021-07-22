@@ -10,7 +10,7 @@ const memoryCache = cacheManager.caching({
 // Set as 1 second to reduce duplicate calls by vue
 // Must be small or will be unresponsive to upvotes
 
-const changeGradeUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/route/details/grade';
+const changeGradeUrl = process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/grade';
 
 const changeRouteGrade = async (
   username: string,
