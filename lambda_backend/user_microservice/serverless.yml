@@ -34,7 +34,7 @@ provider:
             - sns:publish
           Resource:
             - '${self:custom.telegramSNSArn}'
-            - ${self:custom.deleteUserSNSArn}
+            - '${self:custom.deleteUserSNSArn}'
 
 plugins:
   - serverless-plugin-typescript
