@@ -20,10 +20,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/signup",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/signup",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "signup"]
+          "path": ["dev", "v1", "user", "signup"]
         }
       },
       "response": []
@@ -43,10 +43,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/confirm",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/confirm",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "confirm"]
+          "path": ["dev", "v1", "user", "confirm"]
         }
       },
       "response": []
@@ -66,10 +66,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/resendCode",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/resendCode",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "resendCode"]
+          "path": ["dev", "v1", "user", "resendCode"]
         }
       },
       "response": []
@@ -89,10 +89,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/forgotPassword",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/forgotPassword",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "forgotPassword"]
+          "path": ["dev", "v1", "user", "forgotPassword"]
         }
       },
       "response": []
@@ -112,10 +112,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/resetPassword",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/resetPassword",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "resetPassword"]
+          "path": ["dev", "v1", "user", "resetPassword"]
         }
       },
       "response": []
@@ -145,10 +145,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/login",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/login",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "login"]
+          "path": ["dev", "v1", "user", "login"]
         }
       },
       "response": []
@@ -178,10 +178,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/disable",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/disable",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "disable"]
+          "path": ["dev", "v1", "user", "disable"]
         }
       },
       "response": []
@@ -201,10 +201,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/refreshToken",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/refreshToken",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "refreshToken"]
+          "path": ["dev", "v1", "user", "refreshToken"]
         }
       },
       "response": []
@@ -229,10 +229,10 @@
           "raw": ""
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/logout",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/logout",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "logout"]
+          "path": ["dev", "v1", "user", "logout"]
         }
       },
       "response": []
@@ -262,10 +262,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/report",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/report",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "report"]
+          "path": ["dev", "v1", "user", "report"]
         }
       },
       "response": []
@@ -286,10 +286,10 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/delete",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/delete",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "delete"]
+          "path": ["dev", "v1", "user", "delete"]
         }
       },
       "response": []
