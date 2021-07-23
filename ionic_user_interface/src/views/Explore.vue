@@ -6,7 +6,7 @@
           <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
             <div v-if="showGymSelector">
               <strong>Route Maker</strong>
-              <p>Find climbing routes by gym</p>
+              <p>User-created climbing routes</p>
             </div>
             <div v-else>
               <strong>-- {{ gymName }} --</strong>

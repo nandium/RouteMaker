@@ -5,11 +5,21 @@
         <strong>-- Hello Climbers! --</strong>
         <p>This is a free open source project between friends who happen to code and climb.</p>
 
-        <p>It aims to provide two features:</p>
+        <p>It aims to provide the following features:</p>
         <div class="features-div">
           <ol class="ion-text-start">
-            <li>Provide a drawing board for custom climbing routes</li>
-            <li>Route sharing system where climbers can search routes by gym, grade and vote</li>
+            <li>
+              <b>AI Drawing Board</b>
+              - Draw custom climbing routes faster with a climbing hold detection model
+            </li>
+            <li>
+              <b>Route Sharing System</b>
+              - Climbers can search, grade and vote for other user-created routes
+            </li>
+            <li>
+              <b>Ease of Access</b>
+              - No signup or installation is necessary for searching and viewing of routes
+            </li>
           </ol>
         </div>
 

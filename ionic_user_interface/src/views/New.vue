@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content :fullscreen="true" ref="ionContent">
       <div class="my-container">
-        <strong>Route Maker</strong>
+        <strong>Drawing Board</strong>
         <p>Make custom climbing routes</p>
         <br />
         <br />
