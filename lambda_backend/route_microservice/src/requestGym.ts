@@ -11,6 +11,11 @@ import { logger } from './common/logger';
 
 const SNSInstance = new SNS();
 
+/**
+ * Allows a user to request for a gym if not found in the database
+ * (Routes can only be uploaded after the gym has been added)
+ * Triggers TelegramSNS to notify the developers
+ */
 const requestGym: Handler = async (event: RequestGymEvent) => {
   if (!process.env['TELEGRAM_SNS_ARN']) {
     throw createError(500, 'Telegram SNS ARN is not set');

@@ -8,6 +8,10 @@ import { logger } from './common/logger';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Allows a user to sign up if username does not exist
+ * Assigns a default userRole of 'user'
+ */
 const signup: Handler = async (event: SignupEvent) => {
   const {
     body: { email, name: username, password },

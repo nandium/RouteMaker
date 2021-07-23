@@ -9,6 +9,9 @@ import { refreshTokenSchema } from './common/schema';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Returns a new accessToken after expiry
+ */
 const refreshToken: Handler = async (event: RefreshTokenEvent) => {
   const {
     body: { refreshToken },

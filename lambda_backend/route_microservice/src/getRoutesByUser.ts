@@ -11,6 +11,10 @@ import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * A public endpoint to return the list of routes by a user
+ * If an authorization token is provided, returns whether the user (requester) has graded the route
+ */
 const getRoutesByUser: Handler = async (event: GetRoutesByUserEvent) => {
   if (!process.env['ROUTE_TABLE_NAME'] || !process.env['GYM_TABLE_NAME']) {
     throw createError(500, 'Route or Gym table name is not set');

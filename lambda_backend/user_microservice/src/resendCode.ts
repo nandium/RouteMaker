@@ -10,6 +10,9 @@ import { logger } from './common/logger';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Resends the code for verifying the email after sign up
+ */
 const resendCode: Handler = async (event: ResendCodeEvent) => {
   const {
     body: { name: username },

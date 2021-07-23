@@ -18,6 +18,8 @@ plugins:
   - serverless-plugin-typescript
 
 functions:
+  # Not a HTTP endpoint
+  # Listens to SNS event from TelegramSNS
   telegramDispatcher:
     handler: src/telegramDispatcher.handler
     events:
@@ -28,11 +30,13 @@ functions:
 
 resources:
   Resources:
+    # SNS that notifies developers via telegram
     TelegramSNS:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: '${self:service}-${self:custom.stage}-telegram'
 
+    # SNS that notifies services of deleteUser event
     DeleteUserSNS:
       Type: AWS::SNS::Topic
       Properties:

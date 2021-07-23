@@ -13,6 +13,9 @@ import { COMMENT_LIMIT } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * Allows a user to add comment to a specific route if COMMENT_LIMIT has not been reached
+ */
 const addComment: Handler = async (event: AddCommentEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');

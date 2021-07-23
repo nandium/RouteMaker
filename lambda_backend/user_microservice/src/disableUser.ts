@@ -7,6 +7,10 @@ import { disableUserSchema } from './common/schema';
 import { DisableUserEvent, JwtPayload } from './common/types';
 import { logger } from './common/logger';
 
+/**
+ * Allows an admin to disable a user
+ * (After disabling, the account is treated as invalid)
+ */
 const disableUser: Handler = async (event: DisableUserEvent) => {
   const {
     headers: { Authorization },

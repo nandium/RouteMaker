@@ -29,9 +29,11 @@ resources:
           ReadCapacityUnits: ${self:custom._routeDataTable.ReadCapacityUnits.${self:custom.stage}}
           WriteCapacityUnits: ${self:custom._routeDataTable.WriteCapacityUnits.${self:custom.stage}}
         TableName: '${self:service}-${self:custom.stage}-route'
+        # The ttl token deletes the expired routes without consuming WCU
         TimeToLiveSpecification:
           AttributeName: ttl
           Enabled: true
+        # Index for the search of routes by the username
         LocalSecondaryIndexes:
           - IndexName: userRoutesIndex
             KeySchema:
@@ -48,6 +50,7 @@ resources:
                 - publicGrade
                 - commentCount
                 - upvotes
+        # Index for the search of routes by the gymLocation
         GlobalSecondaryIndexes:
           - IndexName: gymLocationIndex
             KeySchema:
@@ -129,7 +132,7 @@ resources:
 custom:
   stage: ${opt:stage, self:provider.stage}
 
-  # Free RCU: 25, Free WCU: 25
+  # Free tier RCU: 25, Free tier WCU: 25
   _routeDataTable:
     ReadCapacityUnits:
       dev: 2

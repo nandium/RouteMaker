@@ -11,6 +11,10 @@ import { logger } from './common/logger';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Allows a user to log in
+ * Denies if the email has not been verified yet via "confirmSignup"
+ */
 const login: Handler = async (event: LoginEvent) => {
   const {
     body: { name: username, password },

@@ -9,6 +9,10 @@ import { GetRouteDetailsEvent, JwtPayload } from './common/types';
 import { restoreRouteURL } from './common/s3/utils';
 import { logger } from './common/logger';
 
+/**
+ * A public endpoint to return the details of a particular route from the database
+ * If an authorization token is provided, returns whether the user (requester) has graded the route
+ */
 const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   if (!process.env['ROUTE_TABLE_NAME'] || !process.env['COGNITO_USERPOOL_ID']) {
     throw createError(500, 'Route table name or Cognito userpool is not set');

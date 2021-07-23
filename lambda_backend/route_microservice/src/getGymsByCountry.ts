@@ -9,6 +9,9 @@ import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * A public endpoint to return the list of gyms for a country
+ */
 const getGymsByCountry: Handler = async (event: GetGymsByCountryEvent) => {
   if (!process.env['GYM_TABLE_NAME']) {
     throw createError(500, 'Gym table name is not set');

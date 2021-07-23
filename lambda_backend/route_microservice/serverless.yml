@@ -9,6 +9,7 @@ provider:
   region: ap-southeast-1
   memorySize: 1024
   apiGateway:
+    # Required for binary media such as images to work with api gateway
     binaryMediaTypes:
       - 'multipart/form-data'
   environment:
@@ -56,7 +57,7 @@ provider:
 plugins:
   - serverless-plugin-typescript
   - serverless-api-gateway-throttling
-  - serverless-newrelic-lambda-layers
+  - serverless-newrelic-lambda-layers # Integrates NewRelic logging
 
 functions:
   getGymsByCountry:
@@ -199,6 +200,8 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  # Listens to the SNS event of user deletion
+  # Not a HTTP endpoint
   deleteUserDispatcher:
     handler: src/deleteUserDispatcher.handler
     events:
@@ -207,20 +210,30 @@ functions:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
+
+  # Required for authorizing accessTokens from Cognito
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
+
+  # Required for retrieving user details from Cognito
   cognitoUserpoolId: ${ssm:/${self:custom.stage}/cognito/poolId}
+
+  # Required for storing pictures of routes
   s3BucketArn: ${ssm:/${self:custom.stage}/s3/assets/arn}
   s3BucketName: ${ssm:/${self:custom.stage}/s3/assets/name}
+
   routeTableArn: ${ssm:/${self:custom.stage}/dynamodb/route/arn}
   routeTableName: ${ssm:/${self:custom.stage}/dynamodb/route/name}
   gymTableArn: ${ssm:/${self:custom.stage}/dynamodb/gym/arn}
   gymTableName: ${ssm:/${self:custom.stage}/dynamodb/gym/name}
-  telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
-  deleteUserSNSArn: ${ssm:/${self:custom.stage}/sns/deleteUser/arn}
-  apiGatewayThrottling:
-    maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
-    maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
 
+  # Required for notifying the administrators via telegram
+  telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
+
+  # Required for listening to deleteUser events by user microservice
+  deleteUserSNSArn: ${ssm:/${self:custom.stage}/sns/deleteUser/arn}
+
+  # Read CONTRIBUTING.md for the configuration format
+  # The microservice can still function without this plugin
   newRelic:
     accountId: ${file(./serverless-config.${self:custom.stage}.json):NEW_RELIC_ACCOUNT_ID, ''}
     apiKey: ${file(./serverless-config.${self:custom.stage}.json):NEW_RELIC_API_KEY, ''}
@@ -230,6 +243,9 @@ custom:
     enableFunctionLogs: true
     cloudWatchFilter: '*'
 
+  apiGatewayThrottling:
+    maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
+    maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
   _maxRequestsPerSecond:
     dev: 1
     prod: 5

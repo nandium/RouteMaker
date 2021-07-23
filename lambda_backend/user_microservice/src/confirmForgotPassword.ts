@@ -10,6 +10,9 @@ import { logger } from './common/logger';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Allows a user to reset a password with a code emailed from "forgotPassword.ts"
+ */
 const confirmForgotPassword: Handler = async (event: ConfirmForgotPasswordEvent) => {
   const {
     body: { code, name: username, password },

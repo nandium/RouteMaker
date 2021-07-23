@@ -8,6 +8,10 @@ import { GetRoutesByGymEvent, JwtPayload } from './common/types';
 import { getGymLocationIndexItems } from './common/db';
 import { logger } from './common/logger';
 
+/**
+ * A public endpoint to return the list of routes in a gym
+ * If an authorization token is provided, returns whether the user (requester) has graded the route
+ */
 const getRoutesByGym: Handler = async (event: GetRoutesByGymEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');

@@ -12,6 +12,12 @@ import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * Allows a user to delete a comment if he is:
+ * - The author of the comment OR
+ * - The owner of the post OR
+ * - An admin of the application
+ */
 const deleteComment: Handler = async (event: DeleteCommentEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');
@@ -28,7 +34,7 @@ const deleteComment: Handler = async (event: DeleteCommentEvent) => {
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
-  // Delete only if requester is route owner or comment writer or admin
+  // Delete only if the user (requester) is the route owner or the comment author or an admin
   if (requestUsername !== commentUsername && requestUsername !== routeOwnerUsername) {
     const { userRole } = await getCognitoUserDetails(accessToken);
     if (userRole !== 'admin') {

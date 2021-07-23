@@ -10,6 +10,9 @@ import { logger } from './common/logger';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Invalidates the JWT token
+ */
 const logout: Handler = async (event: LogoutEvent) => {
   const {
     headers: { Authorization },

@@ -8,6 +8,7 @@ const dynamoDb = new DynamoDB.DocumentClient();
 
 /**
  * Listens to SNS deleteUser events and deletes corresponding routes
+ * The S3 image is not deleted, we will let it expire from S3 lifecycle configuration
  */
 export const handler: Handler = async (event: SNSEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {

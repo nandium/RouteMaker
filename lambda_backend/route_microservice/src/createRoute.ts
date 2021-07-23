@@ -20,6 +20,10 @@ import { MAX_PHOTO_SIZE, DAILY_POST_LIMIT } from './config';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * Allows a user to create a route if the gym is registered and daily post limit is not reached
+ * The route image is uploaded to S3 and the route details are put in the database
+ */
 const createRoute: Handler = async (event: CreateRouteEvent) => {
   if (
     !process.env['GYM_TABLE_NAME'] ||
@@ -117,6 +121,10 @@ const createRoute: Handler = async (event: CreateRouteEvent) => {
   };
 };
 
+/**
+ * Returns true if the daily number of posts is reached
+ * Purpose is to prevent spamming
+ */
 const userHasReachedUploadLimit = async (username: string, createdAt: string): Promise<boolean> => {
   const dateString = createdAt.split('T')[0];
   const queryInput: QueryInput = {

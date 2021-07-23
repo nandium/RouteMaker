@@ -13,6 +13,10 @@ import { logger } from './common/logger';
 const dynamoDb = new DynamoDB.DocumentClient();
 const SNSInstance = new SNS();
 
+/**
+ * Allows a user to report a route if inappropriate and has not been reported by the user before
+ * Triggers TelegramSNS to notify the developers accordingly
+ */
 const reportRoute: Handler = async (event: ReportRouteEvent) => {
   if (!process.env['ROUTE_TABLE_NAME'] || !process.env['TELEGRAM_SNS_ARN']) {
     throw createError(500, 'Route table name or Telegram SNS is not set');

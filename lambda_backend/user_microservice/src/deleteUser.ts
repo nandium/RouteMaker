@@ -11,6 +11,10 @@ import { logger } from './common/logger';
 const cognitoIdentity = new CognitoIdentity();
 const SNSInstance = new SNS();
 
+/**
+ * Allows a user to delete the account
+ * Triggers deleteUserSNS which notifies other microservices
+ */
 const deleteUser: Handler = async (event: DeleteEvent) => {
   const {
     headers: { Authorization },

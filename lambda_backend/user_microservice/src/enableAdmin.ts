@@ -3,6 +3,8 @@ import { Handler } from 'aws-lambda';
 import { enableAdminPermission } from './common/identityProvider';
 
 /**
+ * Change the role of a user to admin
+ *
  * sls invoke --function enableAdmin --stage {stage} --region ap-southeast-1 --data {username}
  */
 

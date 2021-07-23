@@ -10,6 +10,9 @@ import { logger } from './common/logger';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Allows a user to confirm email and signup with a code emailed from Cognito
+ */
 const confirmSignup: Handler = async (event: ConfirmSignupEvent) => {
   const {
     body: { name: username, code },

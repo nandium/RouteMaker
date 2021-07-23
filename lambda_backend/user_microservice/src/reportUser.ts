@@ -10,6 +10,10 @@ import { logger } from './common/logger';
 
 const SNSInstance = new SNS();
 
+/**
+ * Allows a user to report another user with a choice of reasons
+ * Triggers TelegramSNS to notify the developers accordingly
+ */
 const reportUser: Handler = async (event: ReportUserEvent) => {
   if (!process.env['TELEGRAM_SNS_ARN']) {
     throw createError(500, 'Telegram SNS ARN is not set');

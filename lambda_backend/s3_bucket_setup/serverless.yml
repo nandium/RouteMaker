@@ -10,8 +10,8 @@ provider:
   region: ap-southeast-1
   lambdaHashingVersion: 20201221
   variableSyntax: '\${{([\s\S]+?)}}'
-
   # https://forum.serverless.com/t/getting-handle-accountid-in-serverless-config/946/8
+  # Undocumented feature by Serverless
 
 resources:
   Resources:
@@ -21,6 +21,7 @@ resources:
         BucketName:
           Fn::Sub: '${{self:service}}-${{self:custom.stage}}-${AWS::AccountId}'
         LifecycleConfiguration:
+          # Deletes the route picture after 90 days, maximum allowable age we permit in frontend
           Rules:
             - ExpirationInDays: 90
               Prefix: '/public/'
@@ -44,6 +45,7 @@ resources:
         Value: ${{self:resources.Resources.S3Assets.Properties.BucketName}}
         Tags:
           Environment: ${{self:custom.stage}}
+    # Bucket policy to allow public read access to items in /public/
     AttachmentsBucketAllowPublicReadPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:

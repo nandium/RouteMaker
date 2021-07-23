@@ -7,6 +7,8 @@ provider:
   stage: dev
   region: ap-southeast-1
   lambdaHashingVersion: 20201221
+  # # If iamRoleStatements and EmailSendingAccount are uncommented,
+  # # that email will be used instead of cognito default email
   # iamRoleStatements:
   # - Effect: "Allow"
   #   Principal:
@@ -31,8 +33,8 @@ resources:
             MinimumLength: 8
         EmailConfiguration:
           EmailSendingAccount: COGNITO_DEFAULT
-          # Ensure SourceArn is in us-east-1
-          # Ensure SES has AWS production access
+          # # Ensure SourceArn is in us-east-1
+          # # Ensure SES has AWS production access
           # EmailSendingAccount: DEVELOPER
           # SourceArn: <arn:email>
         Schema:

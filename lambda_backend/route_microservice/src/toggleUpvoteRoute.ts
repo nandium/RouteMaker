@@ -11,6 +11,10 @@ import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * Allows a user to upvote a route if he has not upvoted before
+ * If he has upvoted before, the upvote will be undone
+ */
 const toggleUpvoteRoute: Handler = async (event: ToggleUpvoteRouteEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');

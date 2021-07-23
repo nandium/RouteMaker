@@ -13,6 +13,10 @@ import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * Allows a user to delete a route if he is the route owner or an admin
+ * The route details are removed from the database and the route image is deleted from S3
+ */
 const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   if (
     !process.env['GYM_TABLE_NAME'] ||

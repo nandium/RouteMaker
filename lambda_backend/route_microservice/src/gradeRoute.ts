@@ -11,6 +11,10 @@ import { logger } from './common/logger';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * Allows a user to grade a route
+ * Updates the database accordingly if he is the owner
+ */
 const gradeRoute: Handler = async (event: GradeRouteEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');
