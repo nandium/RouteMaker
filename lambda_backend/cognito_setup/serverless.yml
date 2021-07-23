@@ -25,7 +25,7 @@ resources:
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
-        UserPoolName: ${self:service}-${self:provider.stage}-user-pool
+        UserPoolName: ${self:service}-${self:custom.stage}-user-pool
         AliasAttributes:
           - email
         AutoVerifiedAttributes:
@@ -46,7 +46,7 @@ resources:
     CognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
-        ClientName: ${self:service}-${self:provider.stage}-client
+        ClientName: ${self:service}-${self:custom.stage}-client
         GenerateSecret: False
         ExplicitAuthFlows:
           - ALLOW_USER_PASSWORD_AUTH
