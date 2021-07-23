@@ -9,14 +9,16 @@ provider:
   lambdaHashingVersion: 20201221
   # # If iamRoleStatements and EmailSendingAccount are uncommented,
   # # that email will be used instead of cognito default email
-  # iamRoleStatements:
-  # - Effect: "Allow"
-  #   Principal:
-  #     Service: cognito-idp.amazonaws.com
-  #   Action:
-  #    - ses:SendEmail
-  #    - ses:SendRawEmail
-  #   Resource: <arn:verified email in us-east-1>
+  # iam:
+  #   role:
+  #     statements:
+  #       - Effect: "Allow"
+  #         Principal:
+  #           Service: cognito-idp.amazonaws.com
+  #         Action:
+  #         - ses:SendEmail
+  #         - ses:SendRawEmail
+  #         Resource: <arn:verified email in us-east-1>
 
 resources:
   Resources:
