@@ -31,6 +31,7 @@ const reportUser: Handler = async (event: ReportUserEvent) => {
     };
   }
 
+  logger.info('reportUser publishing SNS', { data: { username: requestUsername } });
   const publishInput: PublishInput = {
     Message: `Report User\nBy: ${requestUsername}\nOn: ${reportedUsername}\nFor: ${reason}`,
     TopicArn: process.env['TELEGRAM_SNS_ARN'],
