@@ -1,3 +1,6 @@
+// JSON Validation Schemas
+// After modification, change the frontend validation accordingly
+
 const AlphanumericSpace = '^[a-zA-Z0-9 ]+$';
 const Email = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$";
 

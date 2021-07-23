@@ -77,9 +77,15 @@ export interface JwtPayload {
   username: string;
 }
 
+/**
+ * Refer to AWS Cognito User Pool Attributes
+ */
 export interface CognitoUserDetails {
   userEmail: string;
   userRole: UserRole;
 }
 
+/**
+ * Refer to lambda_backend/user/signup.ts and lambda_backend/user/enableAdmin.ts
+ */
 export type UserRole = 'admin' | 'user';

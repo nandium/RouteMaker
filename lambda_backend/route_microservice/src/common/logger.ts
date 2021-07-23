@@ -1,8 +1,8 @@
 import winston from 'winston';
 
 /**
- * Logs to Cloudwatch console
- * If New Relic monitoring is set up, the logs are ingested to its dashboard via Cloudwatch
+ * Logs to Cloudwatch console as usual
+ * If New Relic monitoring is set up, the CloudWatch logs are ingested to New Relic dashboard
  * https://github.com/newrelic/serverless-newrelic-lambda-layers
  */
 export const logger = winston.createLogger({

@@ -116,6 +116,9 @@ export interface Comment {
   comment: string;
 }
 
+/**
+ * Refer to lambda_backend/database_setup/serverless.yml for the attributes
+ */
 export interface GymLocationIndexItem {
   username: string;
   createdAt: string;
@@ -126,10 +129,16 @@ export interface GymLocationIndexItem {
   upvotes: Array<string>;
 }
 
+/**
+ * Refer to lambda_backend/database_setup/serverless.yml for the attributes
+ */
 export interface UserRoutesIndexItem extends GymLocationIndexItem {
   countryCode: string;
 }
 
+/**
+ * Refer to lambda_backend/database_setup/serverless.yml for the attributes
+ */
 export interface RouteItem extends UserRoutesIndexItem {
   ttl: number;
   routeURL: string;
@@ -153,9 +162,15 @@ export interface RequestGymEvent extends AuthHeader {
   };
 }
 
+/**
+ * Refer to AWS Cognito User Pool Attributes
+ */
 export interface CognitoUserDetails {
   userEmail: string;
   userRole: UserRole;
 }
 
+/**
+ * Refer to lambda_backend/user/signup.ts and lambda_backend/user/enableAdmin.ts
+ */
 export type UserRole = 'admin' | 'user';
