@@ -281,11 +281,6 @@ export default defineComponent({
       const imageUri = stage.toDataURL({ mimeType: 'image/jpeg', pixelRatio: 4 });
       setRouteImageUri(imageUri);
       router.push({ name: 'UploadRoute' });
-      // -- Reset to the start of drawing process
-      handleReset();
-      changeSelectMode(SelectMode.DRAWBOX);
-      routeMakingStep.value = 0;
-      // --
     };
 
     const handleTapeClick = () => {
