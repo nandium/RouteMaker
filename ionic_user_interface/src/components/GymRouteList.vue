@@ -126,6 +126,9 @@
           <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
           <ion-card-title v-if="!isLoading">No Routes Found</ion-card-title>
         </ion-card-header>
+        <ion-card-content v-if="!isLoading">
+          <ion-button expand="full" color="medium" @click="handleAddRoute">Add route</ion-button>
+        </ion-card-content>
       </ion-card>
     </ion-list>
   </div>
@@ -412,6 +415,10 @@ export default defineComponent({
       sortRoutes();
     }, 500);
 
+    const handleAddRoute = () => {
+      router.push({ name: 'New' });
+    };
+
     return {
       range,
       setGymLocation,
@@ -431,6 +438,7 @@ export default defineComponent({
       searchOutline,
       searchText,
       isLoading,
+      handleAddRoute,
     };
   },
 });
