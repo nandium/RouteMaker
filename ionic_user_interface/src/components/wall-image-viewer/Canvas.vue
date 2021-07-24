@@ -33,17 +33,16 @@
         </div>
       </ion-item>
 
-      <ion-button
-        v-if="routeMakingStep === 0"
-        @click="handleUndoDraw"
-        class="solid-button"
-        fill="solid"
-        color="danger"
-      >
-        Undo Draw
-      </ion-button>
+      <div v-if="routeMakingStep === 0">
+        <ion-button @click="handleUndoDraw" class="solid-button" fill="solid" color="danger">
+          Undo Draw
+        </ion-button>
+        <ion-button @click="handleScrollTop" class="solid-button" fill="solid" color="tertiary">
+          Scroll Top
+        </ion-button>
+      </div>
       <ion-row class="hold-picker" v-if="routeMakingStep === 1">
-        <ion-col size-xs="9">
+        <ion-col class="ion-no-padding" size-xs="9">
           <ion-segment
             @ionChange="changeSelectMode($event.detail.value)"
             color="tertiary"
@@ -58,7 +57,7 @@
             </ion-segment-button>
           </ion-segment>
         </ion-col>
-        <ion-col size-xs="3">
+        <ion-col class="ion-no-padding" size-xs="3">
           <ion-button class="solid-button" fill="solid" color="danger" @click="handleReset">
             Reset
           </ion-button>
@@ -78,7 +77,7 @@
         <ion-button @click="handleExportClick" class="solid-button" color="medium">
           Export
         </ion-button>
-        <ion-button @click="handlePostClick" class="solid-button" fill="solid" color="primary">
+        <ion-button @click="handlePostClick" class="solid-button" fill="solid" color="tertiary">
           Post
         </ion-button>
       </div>
@@ -308,6 +307,10 @@ export default defineComponent({
       }
     };
 
+    const handleScrollTop = () => {
+      props.ionContent.$el.scrollToTop(500);
+    };
+
     watch(
       () => props.imgSrc,
       async () => {
@@ -356,6 +359,7 @@ export default defineComponent({
       handleExportClick,
       handlePostClick,
       handleUndoDraw,
+      handleScrollTop,
       handleReset,
       routeMakingStep,
       caretForwardOutline,
@@ -407,6 +411,8 @@ export default defineComponent({
 .hold-picker {
   max-width: 500px;
   margin: 0 auto;
+  display: flex;
+  align-items: center;
 }
 
 ion-segment {
