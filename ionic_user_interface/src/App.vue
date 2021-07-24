@@ -70,11 +70,19 @@ export default defineComponent({
 
     onMounted(async () => {
       document.body.classList.toggle('dark', prefersDarkMode.value);
+      document.documentElement.style.setProperty(
+        'color-scheme',
+        prefersDarkMode.value ? 'dark' : 'light',
+      );
       await checkExpiry();
     });
 
     watch(prefersDarkMode, () => {
       document.body.classList.toggle('dark', prefersDarkMode.value);
+      document.documentElement.style.setProperty(
+        'color-scheme',
+        prefersDarkMode.value ? 'dark' : 'light',
+      );
     });
     return {
       cameraOutline,
