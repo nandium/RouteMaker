@@ -2,7 +2,6 @@
   <ion-item>
     <ion-label class="global-absolute-position">{{ label }}</ion-label>
     <ion-input
-      v-bind="$attrs"
       class="ion-text-end"
       v-model="userInput"
       @keyup.enter="onEnter"
@@ -24,20 +23,17 @@
 
 <script lang="ts">
 import { defineComponent, watch, computed, ref, Ref } from 'vue';
-import { IonInput, IonList, IonItem } from '@ionic/vue';
+import { IonInput, IonLabel, IonList, IonItem } from '@ionic/vue';
 
 export default defineComponent({
   name: 'AutoComplete',
   components: {
     IonInput,
     IonItem,
+    IonLabel,
     IonList,
   },
   props: {
-    msg: {
-      type: String,
-      required: true,
-    },
     options: {
       type: Array,
       required: true,
@@ -51,6 +47,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['matchedItem'],
   setup(props, { emit }) {
     const userInput = ref('');
     const filteredSuggestions: Ref<Array<Record<string, any>>> = ref([]);
