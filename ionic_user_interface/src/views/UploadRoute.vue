@@ -28,14 +28,14 @@
                     <ion-label slot="start" class="grade-text">{{ gradeText }}</ion-label>
                   </ion-range>
                 </ion-item>
-                <ion-item class="global-rounded margin">
-                  <ion-label class="global-absolute-position">Country</ion-label>
-                  <auto-complete
-                    :options="countryNameList"
-                    optionsKey="country"
-                    @matchedItem="onCountrySelect"
-                  />
-                </ion-item>
+                <auto-complete
+                  class="global-rounded margin"
+                  :options="countryNameList"
+                  optionsKey="country"
+                  @matchedItem="onCountrySelect"
+                  label="Country"
+                />
+                <br />
                 <ion-list class="global-rounded margin" v-if="userHasSelectedCountry">
                   <ion-item>
                     <ion-label>Gym</ion-label>

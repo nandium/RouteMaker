@@ -4,15 +4,13 @@
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
         <MessageBox ref="errorMsg" color="danger" />
         <ion-list class="ion-list">
-          <ion-item>
-            <ion-label class="global-absolute-position">Country</ion-label>
-            <auto-complete
-              ref="autoComplete"
-              :options="countryNameList"
-              optionsKey="country"
-              @matchedItem="onCountrySelect"
-            />
-          </ion-item>
+          <auto-complete
+            ref="autoComplete"
+            :options="countryNameList"
+            optionsKey="country"
+            @matchedItem="onCountrySelect"
+            label="Country"
+          />
           <ion-item v-if="userHasSelectedCountry">
             <ion-label>Gym</ion-label>
             <ion-select

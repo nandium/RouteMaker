@@ -29,7 +29,9 @@
             class="ion-no-padding global-margin-left global-rounded profile-item"
             title="Go to profile"
             lines="none"
-            @click="() => router.push({ name: 'UserRoutes', params: routeDetails.username })"
+            @click="
+              () => router.push({ name: 'UserRoutes', params: { username: routeDetails.username } })
+            "
           >
             <ion-icon
               class="global-margin-left-right"
@@ -126,7 +128,13 @@
                 title="Go to user profile"
                 class="ion-no-padding margin-left-large global-rounded profile-item"
                 lines="none"
-                @click="() => router.push({ name: 'UserRoutes', params: commentDetails.username })"
+                @click="
+                  () =>
+                    router.push({
+                      name: 'UserRoutes',
+                      params: { username: commentDetails.username },
+                    })
+                "
               >
                 <ion-icon
                   class="global-margin-left-right"

@@ -4,41 +4,25 @@
     <ion-content>
       <ion-router-outlet />
     </ion-content>
-    <ion-footer>
-      <ion-toolbar>
-        <ion-tabs>
-          <ion-tab-bar slot="bottom">
-            <ion-tab-button @click="() => router.push({ name: 'Explore' })">
-              Explore
-              <ion-icon :icon="searchOutline"></ion-icon>
-            </ion-tab-button>
-            <ion-tab-button @click="() => router.push({ name: 'New' })">
-              New
-              <ion-icon :icon="cameraOutline"></ion-icon>
-            </ion-tab-button>
-            <ion-tab-button @click="() => router.push({ name: 'Help' })">
-              Help
-              <ion-icon :icon="helpCircleOutline"></ion-icon>
-            </ion-tab-button>
-          </ion-tab-bar>
-        </ion-tabs>
-      </ion-toolbar>
-    </ion-footer>
+    <ion-tab-bar>
+      <ion-tab-button @click="() => router.push({ name: 'Explore' })">
+        Explore
+        <ion-icon :icon="searchOutline"></ion-icon>
+      </ion-tab-button>
+      <ion-tab-button @click="() => router.push({ name: 'New' })">
+        New
+        <ion-icon :icon="cameraOutline"></ion-icon>
+      </ion-tab-button>
+      <ion-tab-button @click="() => router.push({ name: 'Help' })">
+        Help
+        <ion-icon :icon="helpCircleOutline"></ion-icon>
+      </ion-tab-button>
+    </ion-tab-bar>
   </ion-app>
 </template>
 
 <script lang="ts">
-import {
-  IonApp,
-  IonContent,
-  IonRouterOutlet,
-  IonIcon,
-  IonTabs,
-  IonTabBar,
-  IonTabButton,
-  IonFooter,
-  IonToolbar,
-} from '@ionic/vue';
+import { IonApp, IonContent, IonRouterOutlet, IonIcon, IonTabBar, IonTabButton } from '@ionic/vue';
 import { defineComponent, inject, onMounted, ref, Ref, watch } from 'vue';
 import { cameraOutline, searchOutline, helpCircleOutline } from 'ionicons/icons';
 import Header from '@/components/header/Header.vue';
@@ -52,11 +36,8 @@ export default defineComponent({
     IonContent,
     IonRouterOutlet,
     IonIcon,
-    IonTabs,
     IonTabBar,
     IonTabButton,
-    IonFooter,
-    IonToolbar,
   },
   setup() {
     const router = useRouter();
@@ -70,11 +51,19 @@ export default defineComponent({
 
     onMounted(async () => {
       document.body.classList.toggle('dark', prefersDarkMode.value);
+      document.documentElement.style.setProperty(
+        'color-scheme',
+        prefersDarkMode.value ? 'dark' : 'light',
+      );
       await checkExpiry();
     });
 
     watch(prefersDarkMode, () => {
       document.body.classList.toggle('dark', prefersDarkMode.value);
+      document.documentElement.style.setProperty(
+        'color-scheme',
+        prefersDarkMode.value ? 'dark' : 'light',
+      );
     });
     return {
       cameraOutline,
@@ -87,7 +76,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-ion-toolbar {
+ion-tab-bar {
   height: 50px;
   display: flex;
   align-items: center;
