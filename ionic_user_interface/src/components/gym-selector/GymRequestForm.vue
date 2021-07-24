@@ -4,15 +4,13 @@
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
         <MessageBox ref="errorMsg" color="danger" />
         <form @submit="onSubmit">
-          <ion-list>
-            <ion-item>
-              <ion-label class="global-absolute-position">Country</ion-label>
-              <auto-complete
-                :options="countryNameList"
-                optionsKey="country"
-                @matchedItem="onCountrySelect"
-              />
-            </ion-item>
+          <ion-list class="ion-no-padding">
+            <auto-complete
+              :options="countryNameList"
+              optionsKey="country"
+              @matchedItem="onCountrySelect"
+              label="Country"
+            />
             <ion-item>
               <ion-label class="global-absolute-position">Gym Name</ion-label>
               <ion-input class="ion-text-end" v-model="gymNameInput" />
