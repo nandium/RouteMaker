@@ -127,7 +127,7 @@
           <ion-card-title v-if="!isLoading">No Routes Found</ion-card-title>
         </ion-card-header>
         <ion-card-content v-if="!isLoading">
-          <ion-button expand="full" color="medium" @click="handleAddRoute">Add route</ion-button>
+          <ion-button expand="full" color="light" @click="handleAddRoute">Add route</ion-button>
         </ion-card-content>
       </ion-card>
     </ion-list>
