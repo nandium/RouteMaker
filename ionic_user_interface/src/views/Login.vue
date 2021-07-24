@@ -120,6 +120,7 @@ export default defineComponent({
       'setConfirmationNeeded',
       () => undefined,
     );
+    const getRouteImageUri: () => Ref<string> = inject('getRouteImageUri', () => ref(''));
     const usernameText = ref('');
     const passwordText = ref('');
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
@@ -185,7 +186,12 @@ export default defineComponent({
               toast.present();
             });
 
-          router.push({ name: 'Explore' });
+          // If the user is already creating a route before login, push to "New"
+          if (getRouteImageUri().value) {
+            router.push({ name: 'New' });
+          } else {
+            router.push({ name: 'Explore' });
+          }
         })
         .catch((error) => {
           if (error.response) {
