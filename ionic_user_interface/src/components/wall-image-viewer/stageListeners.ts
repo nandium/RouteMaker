@@ -1,3 +1,4 @@
+import { IonContent } from '@ionic/vue';
 import Konva from 'konva';
 import { throttle } from 'lodash';
 
@@ -19,6 +20,8 @@ const addKonvaListenerPinchZoom = (stageNode: Konva.Stage): void => {
     'touchmove',
     throttle((e) => {
       e.evt.preventDefault();
+      if (e.evt.touches.length !== 2) return;
+
       const touch1 = e.evt.touches[0];
       const touch2 = e.evt.touches[1];
 
@@ -122,7 +125,7 @@ const addKonvaListenerPinchZoom = (stageNode: Konva.Stage): void => {
  * Add listener to the node which awaits for single touch events to move the node around
  * @param {node} stageNode
  */
-const addKonvaListenerTouchMove = (stageNode: Konva.Stage): void => {
+const addKonvaListenerTouchMove = (stageNode: Konva.Stage, ionContent: typeof IonContent): void => {
   let lastCenter: Point | null = null;
   const { width: imageWidth, height: imageHeight } = stageNode.size();
 
@@ -157,12 +160,16 @@ const addKonvaListenerTouchMove = (stageNode: Konva.Stage): void => {
         y: newPos.y + imageHeight * stageNode.scaleY(),
       };
 
-      // ensure the user cannot drag out of the bound
+      // ensure the user cannot drag out of the x & y bound
       if (newPos.x > 0 || bottomRightPos.x < imageWidth) {
         newPos.x = stageNode.x();
       }
+      // if the user tries to drag out of y-bound, scroll the window instead
+      // https://ionicframework.com/docs/api/content
+      // BUG: https://github.com/ionic-team/ionic-framework/issues/22304
       if (newPos.y > 0 || bottomRightPos.y < imageHeight) {
         newPos.y = stageNode.y();
+        ionContent.$el.scrollByPoint(0, -1 * dy, 0);
       }
 
       stageNode.position(newPos);

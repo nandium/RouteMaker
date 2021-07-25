@@ -4,20 +4,22 @@ service: yolo-bouldering-sns
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: dev
   region: ap-southeast-1
   memorySize: 1024
   environment:
-    BOT_TOKEN: ${file(../serverless-config.${self:custom.stage}.json):BOT_TOKEN, ''}
-    BOT_CHAT_ID: ${file(../serverless-config.${self:custom.stage}.json):BOT_CHAT_ID, ''}
-  logRetentionInDays: 30
+    BOT_TOKEN: ${file(./serverless-config.${self:custom.stage}.json):BOT_TOKEN, ''}
+    BOT_CHAT_ID: ${file(./serverless-config.${self:custom.stage}.json):BOT_CHAT_ID, ''}
+  logRetentionInDays: 14
   lambdaHashingVersion: 20201221
 
 plugins:
   - serverless-plugin-typescript
 
 functions:
+  # Not a HTTP endpoint
+  # Listens to SNS event from TelegramSNS
   telegramDispatcher:
     handler: src/telegramDispatcher.handler
     events:
@@ -28,10 +30,17 @@ functions:
 
 resources:
   Resources:
+    # SNS that notifies developers via telegram
     TelegramSNS:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: '${self:service}-${self:custom.stage}-telegram'
+
+    # SNS that notifies services of deleteUser event
+    DeleteUserSNS:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: '${self:service}-${self:custom.stage}-deleteUser'
 
     SSMParameterTelegramSNSArn:
       Type: AWS::SSM::Parameter
@@ -40,6 +49,16 @@ resources:
         Type: String
         Value:
           Ref: TelegramSNS
+        Tags:
+          Environment: ${self:custom.stage}
+
+    SSMParameterDeleteUserSNSArn:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /${self:custom.stage}/sns/deleteUser/arn
+        Type: String
+        Value:
+          Ref: DeleteUserSNS
         Tags:
           Environment: ${self:custom.stage}
 

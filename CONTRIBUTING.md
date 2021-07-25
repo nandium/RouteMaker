@@ -14,10 +14,12 @@ When contributing to this repository, please first discuss the change you wish t
 
 ### Initial Setup
 
+The runtimes are NodeJS 14 and Python 3.7.
+
 To ensure the PR passes checks in Github Actions, there are [CommitLint](https://github.com/conventional-changelog/commitlint), [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) set up as git hooks. Please enable it:
 
 ```
-cd ./yolo_bouldering
+cd ./RouteMaker
 npm ci
 ```
 
@@ -29,17 +31,39 @@ There are currently three microservices.
 2. User: Provides authentication and authorization via AWS Cognito
 3. Route: Provides functions related to gyms and climbing routes
 
-API Documentation is available at the repo's [github page](https://yarkhinephyo.github.io/yolo_bouldering/). Postman Collections are available at `./lambda_backend/postman_collections`.
+API Documentation is available at the repo's [github page](https://nandium.github.io/RouteMaker/). Postman Collections are available at `./lambda_backend/postman_collections`.
 
 There is a bash script to setup everything via Serverless Framework. Ensure that [AWS Credentials](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html) with administrator permissions is set up for deployment and that Docker engine is running for preparing Python packages.
 
 ```
-cd ./yolo_bouldering/lambda_backend
+cd ./lambda_backend
 npm ci
 sudo ./serverless-deploy.sh deploy dev all
 ```
 
 Then should be a new file at `./lambda_backend/.env` which contains the required environment variables.
+
+#### Telegram Notification (Optional)
+
+Create a telegram bot. Then save the credentials as shown below before running `serverless-deploy.sh`. Notifications for the developers will be sent to the channel.
+
+```
+echo '{
+  "BOT_TOKEN": "1313131313:xxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "BOT_CHAT_ID": "-131313131"
+}' > ./lambda_backend/sns_setup/serverless-config.dev.json
+```
+
+#### New Relic Logging Dashboard (Optional)
+
+Create a [New Relic](https://docs.newrelic.com/docs/serverless-function-monitoring/aws-lambda-monitoring/get-started/monitoring-aws-lambda-serverless-monitoring/) account. Then save the credentials as shown below before running `serverless-deploy.sh`. Cloudwatch logs and Lambda insights will be sent to the dashboard.
+
+```
+echo '{
+  "NEW_RELIC_ACCOUNT_ID": 5555555,
+  "NEW_RELIC_API_KEY": "XXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+}' | tee ./lambda_backend/user_microservice/serverless-config.dev.json >> ./lambda_backend/route_microservice/serverless-config.dev.json
+```
 
 ### Frontend Setup
 

@@ -4,11 +4,12 @@ service: yolo-bouldering-route
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: dev
   region: ap-southeast-1
   memorySize: 1024
   apiGateway:
+    # Required for binary media such as images to work with api gateway
     binaryMediaTypes:
       - 'multipart/form-data'
   environment:
@@ -19,7 +20,7 @@ provider:
     GYM_TABLE_NAME: ${self:custom.gymTableName}
     TELEGRAM_SNS_ARN: ${self:custom.telegramSNSArn}
     COGNITO_USERPOOL_ID: ${self:custom.cognitoUserpoolId}
-  logRetentionInDays: 30
+  logRetentionInDays: 14
   lambdaHashingVersion: 20201221
   iam:
     role:
@@ -56,13 +57,14 @@ provider:
 plugins:
   - serverless-plugin-typescript
   - serverless-api-gateway-throttling
+  - serverless-newrelic-lambda-layers # Integrates NewRelic logging
 
 functions:
-  getAllGyms:
-    handler: src/getAllGyms.handler
+  getGymsByCountry:
+    handler: src/getGymsByCountry.handler
     events:
       - http:
-          path: route/gym/all
+          path: v1/route/gym/country
           method: get
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -71,7 +73,7 @@ functions:
     handler: src/createRoute.handler
     events:
       - http:
-          path: route/new
+          path: v1/route/new
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -84,7 +86,16 @@ functions:
     handler: src/getRoutesByGym.handler
     events:
       - http:
-          path: route/all
+          path: v1/route/all
+          method: get
+          cors:
+            origin: ${self:custom._origin.${self:custom.stage}}
+
+  getRoutesByUser:
+    handler: src/getRoutesByUser.handler
+    events:
+      - http:
+          path: v1/route/user
           method: get
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -93,16 +104,16 @@ functions:
     handler: src/getRouteDetails.handler
     events:
       - http:
-          path: route/details
+          path: v1/route/details
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
 
-  upVoteRoute:
-    handler: src/upVoteRoute.handler
+  toggleUpvoteRoute:
+    handler: src/toggleUpvoteRoute.handler
     events:
       - http:
-          path: route/details/vote
+          path: v1/route/details/toggleUpvote
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -115,7 +126,7 @@ functions:
     handler: src/reportRoute.handler
     events:
       - http:
-          path: route/details/report
+          path: v1/route/details/report
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -128,7 +139,7 @@ functions:
     handler: src/gradeRoute.handler
     events:
       - http:
-          path: route/details/grade
+          path: v1/route/details/grade
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -141,7 +152,7 @@ functions:
     handler: src/deleteRoute.handler
     events:
       - http:
-          path: route
+          path: v1/route
           method: delete
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -154,7 +165,7 @@ functions:
     handler: src/addComment.handler
     events:
       - http:
-          path: route/details/comment
+          path: v1/route/details/comment
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -167,7 +178,7 @@ functions:
     handler: src/deleteComment.handler
     events:
       - http:
-          path: route/details/comment
+          path: v1/route/details/comment
           method: delete
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -180,7 +191,7 @@ functions:
     handler: src/requestGym.handler
     events:
       - http:
-          path: route/gym/request
+          path: v1/route/gym/request
           method: post
           cors:
             origin: ${self:custom._origin.${self:custom.stage}}
@@ -189,21 +200,52 @@ functions:
             scopes:
               - aws.cognito.signin.user.admin
 
+  # Listens to the SNS event of user deletion
+  # Not a HTTP endpoint
+  deleteUserDispatcher:
+    handler: src/deleteUserDispatcher.handler
+    events:
+      - sns:
+          arn: ${self:custom.deleteUserSNSArn}
+
 custom:
   stage: ${opt:stage, self:provider.stage}
+
+  # Required for authorizing accessTokens from Cognito
   cognitoArn: ${ssm:/${self:custom.stage}/cognito/arn}
+
+  # Required for retrieving user details from Cognito
   cognitoUserpoolId: ${ssm:/${self:custom.stage}/cognito/poolId}
+
+  # Required for storing pictures of routes
   s3BucketArn: ${ssm:/${self:custom.stage}/s3/assets/arn}
   s3BucketName: ${ssm:/${self:custom.stage}/s3/assets/name}
+
   routeTableArn: ${ssm:/${self:custom.stage}/dynamodb/route/arn}
   routeTableName: ${ssm:/${self:custom.stage}/dynamodb/route/name}
   gymTableArn: ${ssm:/${self:custom.stage}/dynamodb/gym/arn}
   gymTableName: ${ssm:/${self:custom.stage}/dynamodb/gym/name}
+
+  # Required for notifying the administrators via telegram
   telegramSNSArn: ${ssm:/${self:custom.stage}/sns/telegram/arn}
+
+  # Required for listening to deleteUser events by user microservice
+  deleteUserSNSArn: ${ssm:/${self:custom.stage}/sns/deleteUser/arn}
+
+  # Read CONTRIBUTING.md for the configuration format
+  # The microservice can still function without this plugin
+  newRelic:
+    accountId: ${file(./serverless-config.${self:custom.stage}.json):NEW_RELIC_ACCOUNT_ID, ''}
+    apiKey: ${file(./serverless-config.${self:custom.stage}.json):NEW_RELIC_API_KEY, ''}
+    enableExtension: true
+    enableIntegration: true
+    logEnabled: true
+    enableFunctionLogs: true
+    cloudWatchFilter: '*'
+
   apiGatewayThrottling:
     maxRequestsPerSecond: ${self:custom._maxRequestsPerSecond.${self:custom.stage}}
     maxConcurrentRequests: ${self:custom._maxConcurrentRequests.${self:custom.stage}}
-
   _maxRequestsPerSecond:
     dev: 1
     prod: 5

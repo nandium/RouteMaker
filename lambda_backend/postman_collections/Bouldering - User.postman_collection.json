@@ -20,10 +20,10 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/signup",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/signup",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "signup"]
+          "path": ["dev", "v1", "user", "signup"]
         }
       },
       "response": []
@@ -35,7 +35,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"code\": \"852666\"\r\n}",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"code\": \"223017\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -43,22 +43,22 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/confirm",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/confirm",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "confirm"]
+          "path": ["dev", "v1", "user", "confirm"]
         }
       },
       "response": []
     },
     {
-      "name": "Log in",
+      "name": "Resend Code",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\": \"yarkhinephyo@gmail.com\",\r\n    \"password\": \"Qwer!234\"\r\n}",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -66,10 +66,145 @@
           }
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/login",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/resendCode",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "login"]
+          "path": ["dev", "v1", "user", "resendCode"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Forgot Password",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/forgotPassword",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "v1", "user", "forgotPassword"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"password\": \"Qwer!234\",\r\n    \"code\": \"013975\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/resetPassword",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "v1", "user", "resetPassword"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Log In",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{AccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"yarkhinephyo\",\r\n    \"password\": \"Qwer!234\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/login",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "v1", "user", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Disable User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{AccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"testingboy\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/disable",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "v1", "user", "disable"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"refreshToken\": \"eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.BriGs4y2sS9fGgs_si1JDbZsVVy1PnYMVXIvWidFWe0B2hSK9s6_L9BFo-SGrjAXzVer05iC9MqSBtyWeuVA0pfsFT4D11E-0FruOvmqk5pB_rB4476E650f8cB8Be0GZna5jD4t0Q0mSjwwGTL24VzqkY_r6ElzGxV-PROekQt4ztwH3APNyrnExXyhKmFVCq7-blJazHLVpIjhxbUNyYQ_tdASN_5ERNHph9j1E6AehZUDUtjm130YNjbx8hZ_1kSgyR4aEL8ibB1I4zQnh5xrw9PJcvParo7zhh6iwmecksoPTMfR4qScE-WkzWWV-wd-a-KMzhXj4IwWYJfzKg.Q8ogcFEEZ4VN8wll.gqqhJznMvIr7DxUE4G59aBS000P4ObOxOSaFghhgRt4p7DVwFc9cc2soP4CG9QLlofUZyTJYW2rhOrWurSrd6tT-niC_39Xr5eDJ5nxJjdRLDuUF23WmQD8BetSzPfz-MMZhhNxuvk-GCL3Tbe4s5baRDUPdtOsGypIkjcJr0rzyCwfymJrXkOAsN9-zITSEfL1ULseXE0xSVtW0mwL3s_5GV45oZUejlHhfvK89z-NFQsG-BWgUvT40JCTMm9RrAMGB_qcIJV2gTR7RBcCnqIzb-RvvTqnOHky-GjqEUT5si1UPSP60tp-PsBPvOGTzw61QLh2USZx04ylKmc_PCrfTxcTw0oU5pZ3_zYEG7Oc2Ad0nUISp48gtWNqhepWFSRFYLIUwNW2yeX6QciydEX9-fNz3DKSEOdYpFq80HKEsyvgpF9-SuLWDkfsuurXlA0B8IhiBdUZf4odx_vCqQVOhCN6NxLratq9xPSwOC1_c5KYnEivd5pwlvu78ZfHP34pYb1MIEyWGi3SljnTv5CyLN7m04RPsXND8nlyhN4FTBDe_6qcWZNYhw2AdzHZAjejszCyIw-MCT5le2iWQ4qauFVi1DiAYmuQYeP61hBRzY87z0EQ2wQQUVqeluHbgWlIUb5-i9V5X7l_1oioQhl4dnEmYwIdF3b_QymInLK1-rEIwUU9TX1PlpIbs83poG94gQCoC5P_Yt2s1VmU7it72oaCOiP7IOMNGfxrhcZ0oxjjRlsvrvdUkJAwtCJhdE-YyXegsFK5aUTulSgHn-bl2uv0oURcGkWvGY5NYqn7p-U4GorPzQKePMwDeZTYG0Vtr1EP5n798bR2jHdFvMtrl1ZipU5NSK4x2xy5qD1C_CLfi-pmR4wHaOGLxUD49iT9lwo1_vJB0okjDS0QIc3uK6MNLAPptHuZwmsK8MZ3CI4svKtXkwZe7CZNvSiMIp1vBrC6lUsV5Ync7j5IJ-jExo_rLnPXR_MNZIdZlgshF7y8uzdRECsPIPfUMSy6UL8fn8MVIFilFUDNGPCWJvaH3FKs-UAubsQBelx7d21hI1vz47a2bqyxCtWcHsrGX5FGQyjapPQwbnT8L4kZsK14Ba06RF6dWMdjSPiR7niKcej_bdMpOpzySrpSWNsMqcLgAdYOglJbFL4d-2dgH_Zx5AoRS_Fxn3cfrRAxqqUb8dP7ePtmaQ0msVui1ZJtyMOK8fOyVP2nIk5Llm0NOlBr3WzgWjnc43QMQbjxufi4ukLovFQrDnrzsHKnFqrZmc1Vccy__Wzc3nshTniV7mYDOC_KCnUTLhg.2OVRwtlkM8pSpUdjSyQ0jw\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/refreshToken",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "v1", "user", "refreshToken"]
         }
       },
       "response": []
@@ -82,7 +217,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJYY3h6akl2V0pySFZnTjhrWWdHQUY3WXZqR2FGZEhUeWpYOXV0R0lGTmRNPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI0ZTBmZDFhYy0xMjRmLTQ0NGMtODA4NS1iNzhjYTUzYWJjYWIiLCJldmVudF9pZCI6ImU5NGQ3NjYyLWVjOTQtNDFhYi05MjRlLTk0ZDI4ZGI0ZDk3OSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MTk3MDYxNDUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV9GTkJyZUZWcTciLCJleHAiOjE2MTk3MTY5NDUsImlhdCI6MTYxOTcwNjE0NSwianRpIjoiNGEzOGM2MjktMWIxZi00NjJiLWJmMzQtNzgxODQ0MTRjMDE2IiwiY2xpZW50X2lkIjoiM3BpYTVzMHNwaGxxcTJqaGFkaW1mNjhmbzIiLCJ1c2VybmFtZSI6IjRlMGZkMWFjLTEyNGYtNDQ0Yy04MDg1LWI3OGNhNTNhYmNhYiJ9.cg2j6jcpNMbCvAq9KHvBdziOEF7rV8Bl-Dm5kHkhTWrBG8NjzJWIcLUus4wQLD8jx_maXpnIb-U7V43jvW6vkzPu4Ur4zM2gm8z2tX5X3q619CGql1nKbucLjtyU_hN-bI0OI7C5fSxgkaf8LDHFPCMXMyWz22U_L7NvG-Xfg25vj74nYPs6lkdSNHDRwa1Eq3hFBSwDw2N-FmyYShzQnTFHwBYkDK-fXVKJPU-ChUrVymEpP23D6X6pMiQQJmGxV_NyFtI_FXVGNv40USpllFeIbU8lLolWUexU8dKQTRiL2om4Q4p3ehSY8zf19R4n05TFzrFVxYtcuvdxppWxRQ",
+              "value": "{{AccessToken}}",
               "type": "string"
             }
           ]
@@ -94,10 +229,43 @@
           "raw": ""
         },
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/logout",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/logout",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "logout"]
+          "path": ["dev", "v1", "user", "logout"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Report User",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{AccessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"testing\",\r\n    \"reason\": \"spammer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/report",
+          "protocol": "https",
+          "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
+          "path": ["dev", "v1", "user", "report"]
         }
       },
       "response": []
@@ -110,7 +278,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJraWQiOiJvWnBBeWVqKzJEdGk0REUrczFpZnAycURUU0ZnNWVwSFNId3hIMDlcL1VMcz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3ZDAwY2Y4ZS0wY2UwLTRkZmYtOGViNC1lMGE1MDlmMWY5MWQiLCJldmVudF9pZCI6ImYyYjk2MDFmLTk2NTMtNGU5ZS1hOTVjLTg1MmFmOGU5MjM2ZCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MjI5NDc0MzYsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aGVhc3QtMS5hbWF6b25hd3MuY29tXC9hcC1zb3V0aGVhc3QtMV8xN0VWUXloODIiLCJleHAiOjE2MjI5NjkwMzYsImlhdCI6MTYyMjk0NzQzNiwianRpIjoiZDMwOGRlOTYtMDFkMC00NWRlLTgyNmMtYjA2YjI5NzVmNGJmIiwiY2xpZW50X2lkIjoiZzVwNHZxNjFtYmZjbWVzb282dnNqa2c2cCIsInVzZXJuYW1lIjoiN2QwMGNmOGUtMGNlMC00ZGZmLThlYjQtZTBhNTA5ZjFmOTFkIn0.IgFAj5rYoq1Anc6xkHRhwhlKy1Fy_-Y69xxkn-EFaGjU1w25JIVE8zseOo1iOIjQA8-0lSqUJfxtwkJwNjl1Z5dBwyBazMQE4zYhXBkj1AB_36Jj0tZB8GpYDZDHrVsXgD4BeksIDhrppoxgzGRSve7TfN0Ho2Ms6vzagX0uaaRSvquBOoA34eyyNovhPV_uMdhvfWCCXXa7WC-T3mkmEw6NnL5h6bm4Ly4AOfOveBRP5IszeBMD08I6Sps1Uc9BUyt024tye-PhBtxzfvr634fpApPcwAI06C5I9xsEzb1TSaUc_f7iGJhCKH1TGXo2Uaa61sfIlVHSW0NBWSip3w",
+              "value": "{{AccessToken}}",
               "type": "string"
             }
           ]
@@ -118,10 +286,10 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/user/delete",
+          "raw": "https://t5afrkn47j.execute-api.ap-southeast-1.amazonaws.com/dev/v1/user/delete",
           "protocol": "https",
           "host": ["t5afrkn47j", "execute-api", "ap-southeast-1", "amazonaws", "com"],
-          "path": ["dev", "user", "delete"]
+          "path": ["dev", "v1", "user", "delete"]
         }
       },
       "response": []

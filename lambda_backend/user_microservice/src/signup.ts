@@ -1,33 +1,46 @@
 import { Handler } from 'aws-lambda';
 import CognitoIdentity, { SignUpRequest } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { SignupEvent, signupSchema, getMiddlewareAddedHandler } from './common';
-import createError from 'http-errors';
+
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { SignupEvent } from './common/types';
+import { signupSchema } from './common/schema';
+import { logger } from './common/logger';
 
 const cognitoIdentity = new CognitoIdentity();
 
+/**
+ * Allows a user to sign up if username does not exist
+ * Assigns a default userRole of 'user'
+ */
 const signup: Handler = async (event: SignupEvent) => {
-  if (!process.env['COGNITO_CLIENT_ID']) {
-    throw createError(400, 'Cognito Client ID is not set');
-  }
   const {
-    body: { email, name, password },
+    body: { email, name: username, password },
   } = event;
+  logger.info('signup initiated', { data: { username } });
+
   const signUpRequest: SignUpRequest = {
-    Username: email,
+    Username: username,
     Password: password,
     UserAttributes: [
       { Name: 'email', Value: email },
-      { Name: 'name', Value: name },
+      { Name: 'custom:role', Value: 'user' },
     ],
     ClientId: process.env['COGNITO_CLIENT_ID'] || '',
   };
   try {
     const { CodeDeliveryDetails } = await cognitoIdentity.signUp(signUpRequest).promise();
+    logger.info('signup success', { data: { username } });
     return {
       statusCode: 201,
       body: JSON.stringify({ Message: 'Sign up success', ...CodeDeliveryDetails }),
     };
   } catch (error) {
+    if (error.code === 'UsernameExistsException') {
+      logger.info('signup UsernameExistsException', { data: { username } });
+    } else {
+      logger.error('signup error', { data: { username, error: error.stack } });
+    }
+    logger.info('signup success', { data: { username } });
     return {
       statusCode: 400,
       body: JSON.stringify({ Message: error.code }),

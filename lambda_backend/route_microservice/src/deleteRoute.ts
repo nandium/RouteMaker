@@ -1,20 +1,22 @@
 import { Handler } from 'aws-lambda';
-import DynamoDB, { AttributeValue, QueryInput, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
-import S3, { DeleteObjectRequest } from 'aws-sdk/clients/s3';
-
-import {
-  getMiddlewareAddedHandler,
-  DeleteRouteEvent,
-  deleteRouteSchema,
-  JwtPayload,
-} from './common';
-import { createHash } from 'crypto';
+import DynamoDB, { AttributeValue, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
-const dynamoDb = new DynamoDB.DocumentClient();
-const s3 = new S3();
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { deleteRouteSchema } from './common/schema';
+import { DeleteRouteEvent, JwtPayload } from './common/types';
+import { getCognitoUserDetails } from './common/cognito';
+import { deleteRouteImageContent } from './common/s3';
+import { logger } from './common/logger';
 
+const dynamoDb = new DynamoDB.DocumentClient();
+
+/**
+ * Allows a user to delete a route if he is the route owner or an admin
+ * The route details are removed from the database and the route image is deleted from S3
+ */
 const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   if (
     !process.env['GYM_TABLE_NAME'] ||
@@ -25,54 +27,48 @@ const deleteRoute: Handler = async (event: DeleteRouteEvent) => {
   }
   const {
     headers: { Authorization },
-    body: { createdAt },
+    queryStringParameters: { username: routeOwnerUsername, createdAt },
   } = event;
+  const accessToken = Authorization.split(' ')[1];
+  const { username: requestUsername } = (await jwt_decode(accessToken)) as JwtPayload;
+  logger.info('deleteRoute initiated', {
+    data: { username: requestUsername, routeOwnerUsername, createdAt },
+  });
 
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
-  const queryInput: QueryInput = {
-    TableName: process.env['ROUTE_TABLE_NAME'],
-    ConsistentRead: false,
-    KeyConditionExpression: 'username = :username AND createdAt = :createdAt',
-    ExpressionAttributeValues: {
-      ':username': username as AttributeValue,
-      ':createdAt': createdAt as AttributeValue,
-    },
-  };
-  let Items;
-  try {
-    ({ Items } = await dynamoDb.query(queryInput).promise());
-  } catch (error) {
-    throw createError(500, 'Error querying table :' + error.stack);
-  }
-  if (!Items) {
-    createError(400, 'Route does not exist.');
+  // Delete only if requester is route owner or an admin
+  if (requestUsername !== routeOwnerUsername) {
+    const { userRole } = await getCognitoUserDetails(accessToken);
+    logger.error('deleteRoute Unauthorized', { data: { username: requestUsername, userRole } });
+    if (userRole !== 'admin') {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({
+          Message: 'Unauthorized',
+        }),
+      };
+    }
   }
 
-  const usernameHash = createHash('sha256').update(username).digest('base64');
-  const decodedRouteURL = decodeURIComponent(Items[0].routeURL as string);
-  const deleteObjectRequest: DeleteObjectRequest = {
-    Bucket: process.env['S3_BUCKET_NAME'],
-    Key: `public/${usernameHash}${decodedRouteURL.split(usernameHash)[1]}`,
-  };
-  try {
-    await s3.deleteObject(deleteObjectRequest).promise();
-  } catch (error) {
-    throw createError(500, 'S3 deletion failed.' + error.stack);
-  }
+  const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
+
+  await deleteRouteImageContent(routeOwnerUsername, Item.routeURL);
 
   const deleteItemInput: DeleteItemInput = {
     TableName: process.env['ROUTE_TABLE_NAME'],
     Key: {
-      username: username as AttributeValue,
+      username: routeOwnerUsername as AttributeValue,
       createdAt: createdAt as AttributeValue,
     },
   };
+  logger.info('deleteRoute deleteItem', { data: { username: requestUsername } });
   try {
     await dynamoDb.delete(deleteItemInput).promise();
   } catch (error) {
-    throw createError(500, 'DB delete operation failed: ' + error.stack);
+    logger.error('deleteRoute error', { data: { username: requestUsername, error: error.stack } });
+    throw createError(500, 'DB delete operation failed', error);
   }
 
+  logger.info('deleteRoute success', { data: { username: requestUsername } });
   return {
     statusCode: 200,
     body: JSON.stringify({ Message: 'Delete route success' }),

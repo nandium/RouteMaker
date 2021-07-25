@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <Header />
     <ion-content :fullscreen="true">
       <ion-grid>
         <ion-row color="primary" class="ion-align-items-center ion-justify-content-center">
@@ -9,20 +8,20 @@
               <h1>Sign up</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <ErrorMessage ref="errorMsg" class="margin" />
+              <MessageBox ref="errorMsg" color="danger" class="global-rounded margin" />
               <form @submit="onSubmit">
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Email</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
                     v-model="emailText"
                     name="email"
                     type="text"
-                    autofocus
+                    :autofocus="true"
                     required
                   />
                 </ion-item>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -33,7 +32,7 @@
                   />
                 </ion-item>
                 <div class="margin-less">
-                  <ion-item class="rounded">
+                  <ion-item class="global-rounded">
                     <ion-label position="stacked">Password</ion-label>
                     <ion-input
                       @keyup.enter="clickSignupButton"
@@ -52,7 +51,7 @@
                     </ion-col>
                   </ion-row>
                 </div>
-                <ion-item class="rounded margin">
+                <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Retype password</ion-label>
                   <ion-input
                     @keyup.enter="clickSignupButton"
@@ -71,6 +70,25 @@
                 >
                   Sign up
                 </ion-button>
+                <div class="privacy-policy">
+                  <ion-checkbox v-model="termsCheckbox" />
+                  <ion-text>
+                    I agree to the
+                    <a
+                      href="https://s3.ap-southeast-1.amazonaws.com/assets.routemaker.rocks/privacy.html"
+                      target="_blank"
+                    >
+                      <span>Privacy Policy</span>
+                    </a>
+                    &#38;
+                    <a
+                      href="https://s3.ap-southeast-1.amazonaws.com/assets.routemaker.rocks/terms.html"
+                      target="_blank"
+                    >
+                      <span>Terms and Conditions</span>
+                    </a>
+                  </ion-text>
+                </div>
                 <h5>
                   Already have an account?
                   <router-link to="/login">Login</router-link>
@@ -96,19 +114,20 @@ import {
   IonLabel,
   IonPage,
   IonRow,
+  IonCheckbox,
+  IonText,
 } from '@ionic/vue';
 import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import axios from 'axios';
 import PasswordMeter from 'vue-simple-password-meter';
-import Header from '@/components/header/Header.vue';
-import ErrorMessage from '@/components/ErrorMessage.vue';
-import router from '@/router';
+import MessageBox from '@/components/MessageBox.vue';
+import { useRouter } from 'vue-router';
+import { throttle } from 'lodash';
 
 export default defineComponent({
   name: 'Signup',
   components: {
-    ErrorMessage,
-    Header,
+    MessageBox,
     IonButton,
     IonCol,
     IonContent,
@@ -118,14 +137,17 @@ export default defineComponent({
     IonLabel,
     IonPage,
     IonRow,
+    IonCheckbox,
+    IonText,
     PasswordMeter,
   },
   setup() {
+    const router = useRouter();
     // Email validation regex taken from https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
     const emailPattern =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const usernamePattern = /^[a-zA-Z0-9 ]*$/;
-    const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
+    const setUsername: (name: string) => void = inject('setUsername', () => undefined);
     const setUserEmail: (email: string) => void = inject('setUserEmail', () => undefined);
     const setConfirmationNeeded: (confirmationNeeded: boolean) => void = inject(
       'setConfirmationNeeded',
@@ -136,7 +158,8 @@ export default defineComponent({
     const passwordText = ref('');
     const passwordStrength = ref('');
     const confirmPasswordText = ref('');
-    const errorMsg: Ref<typeof ErrorMessage | null> = ref(null);
+    const termsCheckbox = ref(false);
+    const errorMsg: Ref<typeof MessageBox | null> = ref(null);
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -147,61 +170,78 @@ export default defineComponent({
     };
 
     const isValidUsername = (username: string): boolean => {
-      return username.length >= 5 && usernamePattern.test(username);
+      return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
-    const onSubmit = (event: Event): boolean => {
+    const onSubmit = throttle((event: Event): boolean => {
       event.preventDefault();
+      errorMsg.value?.close();
 
-      errorMsg.value?.closeErrorMsg();
+      emailText.value = emailText.value.trim();
+      usernameText.value = usernameText.value.trim();
 
       // Invalid credentials
       if (!isValidEmail(emailText.value)) {
-        errorMsg.value?.showErrorMsg('Invalid email');
+        errorMsg.value?.showMsg('Invalid email');
         return false;
       }
       if (!isValidUsername(usernameText.value)) {
-        errorMsg.value?.showErrorMsg(
-          'Username has to be at least 5 characters and contain only letters, numbers, and spaces',
+        errorMsg.value?.showMsg(
+          'Username has to be between 5 to 20 characters and contains only letters, numbers, and spaces',
         );
         return false;
       }
       if (!isValidPassword(passwordText.value)) {
-        errorMsg.value?.showErrorMsg('Password has to be at least 8 characters');
+        errorMsg.value?.showMsg('Password has to be at least 8 characters');
         return false;
       }
       if (passwordText.value !== confirmPasswordText.value) {
-        errorMsg.value?.showErrorMsg('Passwords do not match');
+        errorMsg.value?.showMsg('Passwords do not match');
+        return false;
+      }
+      if (!termsCheckbox.value) {
+        errorMsg.value?.showMsg('Please agree to the terms and conditions');
         return false;
       }
 
       // Valid credentials
+      setUsername(usernameText.value);
       setUserEmail(emailText.value);
       axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/user/signup', {
+        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/signup', {
           name: usernameText.value,
-          email: getUserEmail().value,
+          email: emailText.value,
           password: passwordText.value,
         })
         .then((response) => {
           if (response.data.Message === 'Sign up success') {
-            errorMsg.value?.closeErrorMsg();
+            errorMsg.value?.close();
             setConfirmationNeeded(true);
-            router.push('/confirm');
+            router.push({ name: 'Confirm' });
           } else {
-            errorMsg.value?.showErrorMsg('Unable to sign up: ' + response.data.Message);
+            errorMsg.value?.showMsg('Unable to sign up: ' + response.data.Message);
           }
         })
         .catch((error) => {
-          if (!error.status) {
-            errorMsg.value?.showErrorMsg('Unknown error occured');
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            if (error.response.data.Message === 'UsernameExistsException') {
+              errorMsg.value?.showMsg('Username exists!');
+            } else {
+              console.error(error.response.data);
+            }
+          } else if (error.request) {
+            errorMsg.value?.showMsg('Unknown error occured');
+            console.error(error.request);
           } else {
-            errorMsg.value?.showErrorMsg('Error: ' + error.response.data.Message);
+            // Something happened in setting up the request that triggered an Error
+            errorMsg.value?.showMsg('Error: ' + error.message);
           }
         });
 
       return true;
-    };
+    }, 1000);
 
     const onPasswordScore = (payload: { score: number; strength: string }): void => {
       if (passwordText.value.length === 0) {
@@ -237,18 +277,15 @@ export default defineComponent({
       onPasswordScore,
       passwordStrength,
       errorMsg,
+      termsCheckbox,
     };
   },
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .password-strength {
   font-size: 0.9em;
-}
-
-.rounded {
-  border-radius: 5px;
 }
 
 .margin {
@@ -262,5 +299,23 @@ export default defineComponent({
 .signup-button {
   margin-top: 30px;
   margin-bottom: 40px;
+}
+
+.privacy-policy ion-text {
+  font-size: 0.7em;
+  display: inline-block;
+  margin-left: 0.5em;
+}
+
+.privacy-policy {
+  margin-top: 1em;
+  margin-bottom: 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.privacy-policy span {
+  white-space: nowrap;
 }
 </style>

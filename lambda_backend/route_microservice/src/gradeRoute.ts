@@ -1,17 +1,20 @@
 import { Handler } from 'aws-lambda';
 import DynamoDB, { AttributeValue, UpdateItemInput } from 'aws-sdk/clients/dynamodb';
-import {
-  getMiddlewareAddedHandler,
-  GradeRouteEvent,
-  gradeRouteSchema,
-  JwtPayload,
-  getItemFromRouteTable,
-} from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { gradeRouteSchema } from './common/schema';
+import { GradeRouteEvent, JwtPayload } from './common/types';
+import { logger } from './common/logger';
+
 const dynamoDb = new DynamoDB.DocumentClient();
 
+/**
+ * Allows a user to grade a route
+ * Updates the database accordingly if he is the owner
+ */
 const gradeRoute: Handler = async (event: GradeRouteEvent) => {
   if (!process.env['ROUTE_TABLE_NAME']) {
     throw createError(500, 'Route table name is not set');
@@ -20,23 +23,29 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
     headers: { Authorization },
     body: { username: routeOwnerUsername, createdAt, grade },
   } = event;
+  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+  logger.info('gradeRoute initiated', { data: { username, routeOwnerUsername, createdAt, grade } });
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
-
-  const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
   let { publicGradeSubmissions, ownerGrade } = Item;
-
   let publicGradeTotal = 0;
+  let userHasGradedBefore = false;
+  // If user has graded before, replace the original entry
   publicGradeSubmissions = publicGradeSubmissions.map((gradeSubmission) => {
     const { username: submittedName, grade: submittedGrade } = gradeSubmission;
     if (submittedName === username) {
       publicGradeTotal += grade;
+      userHasGradedBefore = true;
       return { username, grade };
     } else {
       publicGradeTotal += submittedGrade;
       return gradeSubmission;
     }
   });
+  if (!userHasGradedBefore) {
+    publicGradeTotal += grade;
+    publicGradeSubmissions = [...publicGradeSubmissions, { username, grade }];
+  }
 
   if (username === routeOwnerUsername) {
     ownerGrade = grade;
@@ -49,8 +58,8 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
       createdAt: createdAt as AttributeValue,
     },
     UpdateExpression: `
-      SET publicGradeSubmissions = :publicGradeSubmissions, 
-      publicGrade = :publicGrade, 
+      SET publicGradeSubmissions = :publicGradeSubmissions,
+      publicGrade = :publicGrade,
       ownerGrade = :ownerGrade
     `,
     ExpressionAttributeValues: {
@@ -59,12 +68,15 @@ const gradeRoute: Handler = async (event: GradeRouteEvent) => {
       ':ownerGrade': ownerGrade as AttributeValue,
     },
   };
+  logger.info('gradeRoute updateItem', { data: { username } });
   try {
     await dynamoDb.update(updateItemInput).promise();
   } catch (error) {
-    throw createError(500, 'Error updating item :' + error.stack);
+    logger.error('gradeRoute error', { data: { username, error: error.stack } });
+    throw createError(500, 'Error updating item', error);
   }
 
+  logger.info('gradeRoute success', { data: { username } });
   return {
     statusCode: 200,
     body: JSON.stringify({

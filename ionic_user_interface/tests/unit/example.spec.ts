@@ -1,9 +1,9 @@
 import { mount } from '@vue/test-utils';
-import Home from '@/views/Home.vue';
+import New from '@/views/New.vue';
 
-describe('Home.vue', () => {
+describe('New.vue', () => {
   it('renders home vue', () => {
-    const wrapper = mount(Home);
+    const wrapper = mount(New);
     expect(wrapper.text()).toMatch('Ready to create an app?');
   });
 });

@@ -1,15 +1,18 @@
 import { Handler } from 'aws-lambda';
-import {
-  adminGetCognitoUserDetails,
-  getItemFromRouteTable,
-  getMiddlewareAddedHandler,
-  GetRouteDetailsEvent,
-  getRouteDetailsSchema,
-  JwtPayload,
-} from './common';
 import jwt_decode from 'jwt-decode';
 import createError from 'http-errors';
 
+import { getMiddlewareAddedHandler } from './common/middleware';
+import { getItemFromRouteTable } from './common/db';
+import { getRouteDetailsSchema } from './common/schema';
+import { GetRouteDetailsEvent, JwtPayload } from './common/types';
+import { restoreRouteURL } from './common/s3/utils';
+import { logger } from './common/logger';
+
+/**
+ * A public endpoint to return the details of a particular route from the database
+ * If an authorization token is provided, returns whether the user (requester) has graded the route
+ */
 const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
   if (!process.env['ROUTE_TABLE_NAME'] || !process.env['COGNITO_USERPOOL_ID']) {
     throw createError(500, 'Route table name or Cognito userpool is not set');
@@ -18,37 +21,38 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
     headers: { Authorization },
     body: { username: routeOwnerUsername, createdAt },
   } = event;
+  logger.info('getRouteDetails initiated', { data: { routeOwnerUsername, createdAt } });
 
   const Item = await getItemFromRouteTable(routeOwnerUsername, createdAt);
 
-  const { fullName: routeOwnerDisplayName } = await adminGetCognitoUserDetails(routeOwnerUsername);
-
   let hasVoted = false;
   let hasReported = false;
-  let hasGraded = false;
   let graded = -1;
   const {
     ttl,
     routeName,
     gymLocation,
+    countryCode,
     routeURL,
     ownerGrade,
     publicGrade,
     publicGradeSubmissions,
-    voteCount,
-    upVotes,
+    upvotes,
     reports,
     comments,
   } = Item;
   if (Authorization) {
+    // Only utilizes token for username, no enforcing authorization as endpoint is GET & public
     const { username } = (await jwt_decode(Authorization.split(' ')[1])) as JwtPayload;
+    logger.info('getRouteDetails user identifier included', {
+      data: { username, routeOwnerUsername, createdAt },
+    });
     publicGradeSubmissions.forEach(({ username: name, grade }) => {
       if (name === username) {
-        hasGraded = true;
         graded = grade;
       }
     });
-    upVotes.forEach((name) => {
+    upvotes.forEach((name) => {
       if (name === username) {
         hasVoted = true;
       }
@@ -59,6 +63,7 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
       }
     });
   }
+  logger.info('getRouteDetails success', { data: { routeOwnerUsername, createdAt } });
   return {
     statusCode: 200,
     body: JSON.stringify({
@@ -66,18 +71,17 @@ const getRouteDetails: Handler = async (event: GetRouteDetailsEvent) => {
       Item: {
         username: routeOwnerUsername,
         createdAt,
-        displayName: routeOwnerDisplayName,
         expiredTime: new Date(ttl).toISOString(),
         routeName,
         gymLocation,
-        routeURL,
+        countryCode,
+        routeURL: restoreRouteURL(routeURL),
         ownerGrade,
         publicGrade,
-        voteCount,
+        voteCount: upvotes.length,
         comments,
         hasVoted,
         hasReported,
-        hasGraded,
         graded,
       },
     }),

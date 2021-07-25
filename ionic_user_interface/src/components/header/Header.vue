@@ -1,12 +1,8 @@
 <template>
   <ion-header :translucent="true">
-    <ion-toolbar>
-      <ion-title>
-        <ion-img class="logo" :src="`${publicPath}assets/icons/favicon.ico`" router-link="/home" />
-      </ion-title>
+    <ion-toolbar class="smaller-height">
+      <ion-img class="logo" @click="handleLogoClick" :src="logoImageSrc" />
       <ion-buttons slot="end">
-        <ion-button router-link="/home">Home</ion-button>
-        <ion-button router-link="/about">About</ion-button>
         <LoginButton />
       </ion-buttons>
     </ion-toolbar>
@@ -14,36 +10,64 @@
 </template>
 
 <script lang="ts">
-import { IonButton, IonButtons, IonHeader, IonImg, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonButtons, IonHeader, IonImg, IonToolbar } from '@ionic/vue';
 import LoginButton from './LoginButton.vue';
-import { defineComponent } from 'vue';
+import { defineComponent, Ref, ref, inject, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Header',
   components: {
-    IonButton,
     IonButtons,
     IonHeader,
     IonImg,
-    IonTitle,
     IonToolbar,
     LoginButton,
   },
   setup() {
-    const publicPath = process.env.BASE_URL;
+    const router = useRouter();
+    const getPrefersDarkMode: () => Ref<boolean> = inject('getPrefersDarkMode', () => ref(false));
+    const prefersDarkMode = getPrefersDarkMode();
+    const logoImageSrc = computed(() => {
+      if (prefersDarkMode.value) {
+        return process.env.BASE_URL + 'assets/icons/favicon-darkmode-name.svg';
+      } else {
+        return process.env.BASE_URL + 'assets/icons/favicon-lightmode-name.svg';
+      }
+    });
+
+    const handleLogoClick = () => {
+      router.push({ name: 'Explore' });
+    };
+
     return {
-      publicPath,
+      logoImageSrc,
+      handleLogoClick,
     };
   },
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .logo {
-  width: 40px;
-  height: 40px;
+  margin-left: min(17px, 4vw);
+  width: 50px;
+  height: 50px;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
-.logo:hover {
-  cursor: pointer;
+
+.smaller-height {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+ion-buttons > ion-button {
+  --border-radius: 5px !important;
+  --padding-start: min(7px, 1.5vw);
+  --padding-end: min(7px, 1.5vw);
 }
 </style>

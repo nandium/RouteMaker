@@ -1,5 +1,5 @@
 {
-  "name": "yolo_bouldering",
+  "name": "routemaker",
   "version": "1.0.0",
   "scripts": {
     "lint": "eslint **/*.js --ignore-pattern node_modules/",
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yarkhinephyo/yolo_bouldering.git"
+    "url": "git+https://github.com/nandium/RouteMaker.git"
   },
   "author": "yarkhinephyo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yarkhinephyo/yolo_bouldering/issues"
+    "url": "https://github.com/nandium/RouteMaker/issues"
   },
-  "homepage": "https://github.com/yarkhinephyo/yolo_bouldering#readme",
+  "homepage": "https://github.com/nandium/RouteMaker#readme",
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",

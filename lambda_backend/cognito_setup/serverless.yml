@@ -7,22 +7,26 @@ provider:
   stage: dev
   region: ap-southeast-1
   lambdaHashingVersion: 20201221
-  # iamRoleStatements:
-  # - Effect: "Allow"
-  #   Principal:
-  #     Service: cognito-idp.amazonaws.com
-  #   Action:
-  #    - ses:SendEmail
-  #    - ses:SendRawEmail
-  #   Resource: <arn:verified email in us-east-1>
+  # # If iamRoleStatements and EmailSendingAccount are uncommented,
+  # # that email will be used instead of cognito default email
+  # iam:
+  #   role:
+  #     statements:
+  #       - Effect: "Allow"
+  #         Principal:
+  #           Service: cognito-idp.amazonaws.com
+  #         Action:
+  #         - ses:SendEmail
+  #         - ses:SendRawEmail
+  #         Resource: <arn:verified email in us-east-1>
 
 resources:
   Resources:
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
-        UserPoolName: ${self:service}-${self:provider.stage}-user-pool
-        UsernameAttributes:
+        UserPoolName: ${self:service}-${self:custom.stage}-user-pool
+        AliasAttributes:
           - email
         AutoVerifiedAttributes:
           - email
@@ -31,20 +35,24 @@ resources:
             MinimumLength: 8
         EmailConfiguration:
           EmailSendingAccount: COGNITO_DEFAULT
-          # Ensure SourceArn is in us-east-1
-          # Ensure SES has AWS production access
+          # # Ensure SourceArn is in us-east-1
+          # # Ensure SES has AWS production access
           # EmailSendingAccount: DEVELOPER
           # SourceArn: <arn:email>
+        Schema:
+          - Name: role
+            Mutable: true
+            AttributeDataType: String
     CognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
       Properties:
-        ClientName: ${self:service}-${self:provider.stage}-client
+        ClientName: ${self:service}-${self:custom.stage}-client
         GenerateSecret: False
         ExplicitAuthFlows:
           - ALLOW_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
-        AccessTokenValidity: 6
-        IdTokenValidity: 3
+        AccessTokenValidity: 24
+        IdTokenValidity: 24
         RefreshTokenValidity: 365
         TokenValidityUnits:
           AccessToken: hours

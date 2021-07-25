@@ -3,9 +3,8 @@ import CognitoIdentityServiceProvider, {
   AttributeType,
   GetUserRequest,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import { CognitoUserDetails, UserRole } from './types';
 import createError from 'http-errors';
-
-import { CognitoUserDetails } from './types';
 
 const cognitoIdentity = new CognitoIdentityServiceProvider();
 
@@ -36,7 +35,7 @@ export const adminGetCognitoUserDetails = async (Username: string): Promise<Cogn
 const parseUserAttributes = (UserAttributes: AttributeType[]): CognitoUserDetails => {
   const userEmail = UserAttributes.filter((attribute) => attribute.Name === 'email')[0]
     .Value as string;
-  const fullName = UserAttributes.filter((attribute) => attribute.Name === 'name')[0]
-    .Value as string;
-  return { fullName, userEmail };
+  const userRole = UserAttributes.filter((attribute) => attribute.Name === 'custom:role')[0]
+    .Value as UserRole;
+  return { userEmail, userRole };
 };

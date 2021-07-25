@@ -4,7 +4,13 @@ interface AuthHeader {
   };
 }
 
-export interface GetAllGymsEvent {
+interface OptionalAuthHeader {
+  headers: {
+    Authorization?: string;
+  };
+}
+
+export interface GetGymsByCountryEvent {
   queryStringParameters: {
     countryCode: string;
   };
@@ -26,35 +32,39 @@ export interface CreateRouteEvent extends AuthHeader {
 }
 
 export interface DeleteRouteEvent extends AuthHeader {
-  body: {
+  queryStringParameters: {
+    username: string;
     createdAt: string;
   };
 }
 
-export interface GetRoutesByGymEvent {
+export interface GetRoutesByGymEvent extends OptionalAuthHeader {
   queryStringParameters: {
     gymLocation: string;
   };
 }
 
-export interface GetRouteDetailsEvent {
-  headers: {
-    Authorization?: string;
+export interface GetRoutesByUserEvent extends OptionalAuthHeader {
+  queryStringParameters: {
+    username: string;
   };
+}
+
+export interface GetRouteDetailsEvent extends OptionalAuthHeader {
   body: {
     username: string;
     createdAt: string;
   };
 }
 
-export interface UpVoteRouteEvent extends AuthHeader {
+export interface ToggleUpvoteRouteEvent extends AuthHeader {
   body: {
     username: string;
     createdAt: string;
   };
 }
 
-export type ReportRouteEvent = UpVoteRouteEvent;
+export type ReportRouteEvent = ToggleUpvoteRouteEvent;
 
 export interface GradeRouteEvent extends AuthHeader {
   body: {
@@ -73,9 +83,10 @@ export interface AddCommentEvent extends AuthHeader {
 }
 
 export interface DeleteCommentEvent extends AuthHeader {
-  body: {
+  queryStringParameters: {
     username: string;
     createdAt: string;
+    commentUsername: string;
     timestamp: number;
   };
 }
@@ -105,30 +116,61 @@ export interface Comment {
   comment: string;
 }
 
-export interface RouteItem {
+/**
+ * Refer to lambda_backend/database_setup/serverless.yml for the attributes
+ */
+export interface GymLocationIndexItem {
   username: string;
   createdAt: string;
-  ttl: number;
   routeName: string;
   gymLocation: string;
+  publicGrade: number;
+  commentCount: number;
+  upvotes: Array<string>;
+}
+
+/**
+ * Refer to lambda_backend/database_setup/serverless.yml for the attributes
+ */
+export interface UserRoutesIndexItem extends GymLocationIndexItem {
+  countryCode: string;
+}
+
+/**
+ * Refer to lambda_backend/database_setup/serverless.yml for the attributes
+ */
+export interface RouteItem extends UserRoutesIndexItem {
+  ttl: number;
   routeURL: string;
   ownerGrade: number;
-  publicGrade: number;
   publicGradeSubmissions: Array<GradeSubmission>;
-  voteCount: number;
-  upVotes: Array<string>;
   reports: Array<string>;
-  commentCount: number;
   comments: Array<Comment>;
 }
 
-export interface CognitoUserDetails {
-  fullName: string;
-  userEmail: string;
+export interface GymItem {
+  countryCode: string;
+  gymLocation: string;
+  gymName: string;
 }
 
 export interface RequestGymEvent extends AuthHeader {
   body: {
-    gymLocation: string;
+    countryCode: string;
+    postal: string;
+    gymName: string;
   };
 }
+
+/**
+ * Refer to AWS Cognito User Pool Attributes
+ */
+export interface CognitoUserDetails {
+  userEmail: string;
+  userRole: UserRole;
+}
+
+/**
+ * Refer to lambda_backend/user/signup.ts and lambda_backend/user/enableAdmin.ts
+ */
+export type UserRole = 'admin' | 'user';

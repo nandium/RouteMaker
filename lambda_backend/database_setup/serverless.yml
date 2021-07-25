@@ -29,9 +29,28 @@ resources:
           ReadCapacityUnits: ${self:custom._routeDataTable.ReadCapacityUnits.${self:custom.stage}}
           WriteCapacityUnits: ${self:custom._routeDataTable.WriteCapacityUnits.${self:custom.stage}}
         TableName: '${self:service}-${self:custom.stage}-route'
+        # The ttl token deletes the expired routes without consuming WCU
         TimeToLiveSpecification:
           AttributeName: ttl
           Enabled: true
+        # Index for the search of routes by the username
+        LocalSecondaryIndexes:
+          - IndexName: userRoutesIndex
+            KeySchema:
+              - AttributeName: username
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: INCLUDE
+              NonKeyAttributes:
+                - routeName
+                - gymLocation
+                - countryCode
+                - publicGrade
+                - commentCount
+                - upvotes
+        # Index for the search of routes by the gymLocation
         GlobalSecondaryIndexes:
           - IndexName: gymLocationIndex
             KeySchema:
@@ -44,9 +63,8 @@ resources:
                 - routeName
                 - username
                 - publicGrade
-                - voteCount
                 - commentCount
-                - routeURL
+                - upvotes
               ProjectionType: INCLUDE
             ProvisionedThroughput:
               ReadCapacityUnits: ${self:custom._routeDataTableGSI.ReadCapacityUnits.${self:custom.stage}}
@@ -114,24 +132,25 @@ resources:
 custom:
   stage: ${opt:stage, self:provider.stage}
 
+  # Free tier RCU: 25, Free tier WCU: 25
   _routeDataTable:
     ReadCapacityUnits:
       dev: 2
-      prod: 6
+      prod: 8
     WriteCapacityUnits:
       dev: 2
-      prod: 6
+      prod: 8
   _routeDataTableGSI:
     ReadCapacityUnits:
       dev: 2
-      prod: 4
+      prod: 8
     WriteCapacityUnits:
       dev: 2
-      prod: 4
+      prod: 8
   _gymDataTable:
     ReadCapacityUnits:
       dev: 1
-      prod: 2
+      prod: 3
     WriteCapacityUnits:
       dev: 1
-      prod: 2
+      prod: 1
