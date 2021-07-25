@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BoxClass } from '@/components/wall-image-viewer/types';
 
 const predictBaseUrl = process.env.VUE_APP_PREDICT_ENDPOINT_URL as string;
-const getBoundingBoxesUrl = predictBaseUrl + '/predict';
+const getBoundingBoxesUrl = predictBaseUrl + '/v1/predict';
 
 const mapClass = (boxClass: string) => {
   switch (boxClass) {
