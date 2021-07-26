@@ -112,7 +112,7 @@
                   <ion-icon :icon="flagOutline"></ion-icon>
                 </div>
                 <div
-                  v-if="commentDetails.username === myUsername || isAdmin"
+                  v-if="commentDetails.username === myUsername || isRouteSetter || isAdmin"
                   title="Delete review"
                   class="icon-button"
                   @click="
