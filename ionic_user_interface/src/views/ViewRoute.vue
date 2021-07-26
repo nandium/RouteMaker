@@ -340,7 +340,10 @@ export default defineComponent({
                           );
                         },
                       );
-                      hasAlreadyCommented.value = false;
+                      // If the user deletes his own comment
+                      if (commentUsername === myUsername.value) {
+                        hasAlreadyCommented.value = false;
+                      }
                     }
                   }
                 })
