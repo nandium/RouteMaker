@@ -5,19 +5,13 @@ import base64
 from utils import exception_handler, retrieve_numpy_image, parse_multipart_data, get_response_headers
 from service_inference import ServiceInference
 
-DEF_WEIGHTS = join("weights", "yolov4-tiny-obj.weights")
-DEF_CONFIG = join("weights", "yolov4-tiny-obj.cfg")
-DEF_CLASSES = ["hold"]
+DEFAULT_WEIGHTS = join("weights", "yolov4-tiny-obj.weights")
+DEFAULT_CONFIG = join("weights", "yolov4-tiny-obj.cfg")
+DEFAULT_CLASSES = ["hold"]
 
 ALLOWED_TYPES = ["image/jpeg"]
 
-def setup():
-    inference = ServiceInference(DEF_WEIGHTS, DEF_CONFIG, DEF_CLASSES)
-    inference.initialize()
-    inference.read_config()
-    return inference
-
-inference = setup()
+inference = ServiceInference(DEFAULT_WEIGHTS, DEFAULT_CONFIG, DEFAULT_CLASSES)
 
 @exception_handler
 def predict(event, context):
@@ -52,8 +46,10 @@ def predict(event, context):
 
     img = retrieve_numpy_image(image_dict["content"])
 
+    scaled_width = int(width_dict["content"].decode("utf-8"))
+
     # Run inference on image
-    scaled_height, scaled_width, boxes = inference.run(img, width_dict)
+    scaled_height, scaled_width, boxes = inference.run(img, scaled_width)
 
     return {
         "statusCode": "200",

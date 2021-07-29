@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 from configparser import RawConfigParser
 
-DEF_SCORE = 0.3
-DEF_NMS = 0.4
+CONFIDENCE_THRESHOLD = 0.3
+NMS_IOU_THRESHOLD = 0.4
 
 class BaseInference:
     """
@@ -14,7 +14,7 @@ class BaseInference:
     Attributes
     ----------
     weight_path : str
-        path to the .weight file
+        path to the .weights file
     config_path : str
         path to the .cfg file
     classes : list
@@ -39,10 +39,13 @@ class BaseInference:
         self.config_path = config_path
         self.classes = classes
         self.net = None
-        self.score_thresh = score_thresh if score_thresh is not None else DEF_SCORE
-        self.nms_thresh = nms_thresh if nms_thresh is not None else DEF_NMS
+        self.score_thresh = score_thresh if score_thresh is not None else CONFIDENCE_THRESHOLD
+        self.nms_thresh = nms_thresh if nms_thresh is not None else NMS_IOU_THRESHOLD
+
+        self._initialize()
+        self._read_config()
     
-    def initialize(self):
+    def _initialize(self):
         # Load Yolo
         self.net = cv2.dnn.readNet(
             self.weight_path,
@@ -51,19 +54,23 @@ class BaseInference:
         layer_names = self.net.getLayerNames()
         self.output_layers = [layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
     
-    def read_config(self):
+    def _read_config(self):
         cfg = RawConfigParser(strict=False)
         cfg.read(self.config_path)
 
         net_dict = dict(cfg.items('net'))
         self.train_height_width = (int(net_dict['height']), int(net_dict['width']))
 
-    def run(self, img):
+    def run(self, img, height=None, width=None):
         """
         Parameters
         ----------
         img : cv2.Mat
             Image as a matrix
+        height : int, optional
+            Height of img (default is None)
+        width : int, optional
+            Width of img (default is None)
         
         Returns
         -------
@@ -73,43 +80,34 @@ class BaseInference:
             Dimensions of boxes
         box_confidences : list(float)
             Confidence scores of boxes
-        dets : list(list(float))
+        box_dims_norm : list(list(float))
             Normalised dimensions of boxes
         indexes : list(int)
             Indexes of boxes that passed NMS
         """        
-        height, width = self.get_height_width_from_img(img)
-        
-        return self.get_filtered_boxes(img, height, width)
 
-    def get_filtered_boxes(self, img, height, width):
-        outs = self.run_single(img)
-        class_ids, box_dims, box_confidences, dets = self.get_boxes(outs, height, width)
-        indexes = self.filter_boxes(box_dims, box_confidences)
+        # If run is called without height or width given
+        if height is None or width is None:
+            height, width, channels = img.shape
 
-        return class_ids, box_dims, box_confidences, dets, indexes
-
-    def get_height_width_from_img(self, img):
-        height, width, channels = img.shape
-        return height, width
-            
-    def run_single(self, img):
         # Detecting objects
         blob = cv2.dnn.blobFromImage(img, 0.00392, self.train_height_width, (0, 0, 0), True, crop=False)
 
         self.net.setInput(blob)
         outs = self.net.forward(self.output_layers)
+        
+        class_ids, box_dims, box_confidences, box_dims_norm, indexes = self._get_filtered_boxes(outs, height, width)
 
-        return outs
-    
-    def get_boxes(self, output, height, width, test=True):
+        return class_ids, box_dims, box_confidences, box_dims_norm, indexes
+
+    def _get_filtered_boxes(self, output, height, width):
         
         # Showing informations on the screen
         class_ids = []
         box_confidences = []
         box_dims = []
         # Saving to txt
-        dets = []
+        box_dims_norm = []
 
         for out in output:
             for detection in out:
@@ -133,12 +131,9 @@ class BaseInference:
                     class_ids.append(class_id)
 
                     # Save normalised format
-                    dets.append(detection[:4])
-        
-        return class_ids, box_dims, box_confidences, dets
+                    box_dims_norm.append(detection[:4])
 
-    def filter_boxes(self, box_dims, box_confidences):
         indexes = cv2.dnn.NMSBoxes(box_dims, box_confidences, self.score_thresh, self.nms_thresh)
         indexes = [int(i) for i in indexes]
-        return indexes
-
+        
+        return class_ids, box_dims, box_confidences, box_dims_norm, indexes

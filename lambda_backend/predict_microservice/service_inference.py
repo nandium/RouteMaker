@@ -12,12 +12,14 @@ class ServiceInference(BaseInference):
         Obtains predicted boxes for predict_microservice
     """
 
-    def run(self, img, width_dict):
+    def run(self, img, scaled_width):
         """
         Parameters
         ----------
         img : cv2.Mat
             Image as a matrix
+        scaled_width : int
+            Scaled width of images
         
         Returns
         -------
@@ -28,23 +30,18 @@ class ServiceInference(BaseInference):
         boxes : list
             List of predicted boxes in JSON format
         """
-        scaled_height, scaled_width = self.get_height_width_from_img(img, width_dict)
-        class_ids, box_dims, box_confidences, _, indexes = super().get_filtered_boxes(img, scaled_height, scaled_width)
-        boxes = self.get_boxes_dict(box_dims, box_confidences, class_ids, indexes)
-        return scaled_height, scaled_width, boxes
 
-    def get_height_width_from_img(self, img, width_dict):
-        height, width = super().get_height_width_from_img(img)
-
-        scaled_width = int(width_dict["content"].decode("utf-8"))
-
+        height, width = img.shape
         # If given width is 0, do not scale
         scaled_width = scaled_width if scaled_width != 0 else width
         scaled_height = int((scaled_width / width) * height)
-        
-        return scaled_height, scaled_width
 
-    def get_boxes_dict(self, box_dims, box_confidences, class_ids, indexes):
+        class_ids, box_dims, box_confidences, _, indexes = super().run(img, scaled_height, scaled_width)
+
+        boxes = self._get_boxes_dict(box_dims, box_confidences, class_ids, indexes)
+        return scaled_height, scaled_width, boxes
+
+    def _get_boxes_dict(self, box_dims, box_confidences, class_ids, indexes):
         """
         Parameters
         ----------

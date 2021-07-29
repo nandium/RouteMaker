@@ -5,7 +5,7 @@ for trained models, and save them to .txt files,
 and/or visualize them using opencv2.
 """
 
-from base_inference import BaseInference, DEF_SCORE, DEF_NMS
+from base_inference import BaseInference, CONFIDENCE_THRESHOLD, NMS_IOU_THRESHOLD
 
 import cv2
 import numpy as np
@@ -13,14 +13,13 @@ import glob
 import random
 import argparse
 
-from os.path import join
 import os
 
-DEF_WEIGHTS = join(os.pardir, os.pardir, "lambda_backend", "predict_microservice", "weights", "yolov4-tiny-obj.weights")
-DEF_CONFIG = join(os.pardir, os.pardir, "lambda_backend", "predict_microservice", "weights", "yolov4-tiny-obj.cfg")
-DEF_IMAGES = join(os.curdir, "test_images")
+DEFAULT_WEIGHTS = os.path.join(os.pardir, os.pardir, "lambda_backend", "predict_microservice", "weights", "yolov4-tiny-obj.weights")
+DEFAULT_CONFIG = os.path.join(os.pardir, os.pardir, "lambda_backend", "predict_microservice", "weights", "yolov4-tiny-obj.cfg")
+DEFAULT_IMAGES = os.path.join(os.curdir, "test_images")
 # Can read classes from a file if more are ever added
-DEF_CLASSES = ["hold"]
+DEFAULT_CLASSES = ["hold"]
 
 class LocalInference(BaseInference):
     """
@@ -46,7 +45,7 @@ class LocalInference(BaseInference):
     def __init__(self, weight_path, config_path, classes, score_thresh, nms_thresh, images_path, will_save, will_show, is_random):
         super().__init__(weight_path, config_path, classes, score_thresh, nms_thresh)
         
-        self.images = glob.glob(join(images_path, "*.jpg"))
+        self.images = glob.glob(os.path.join(images_path, "*.jpg"))
 
         self.will_save = will_save
         self.will_show = will_show
@@ -64,9 +63,9 @@ class LocalInference(BaseInference):
             img = cv2.imread(img_path)
             # img = cv2.resize(img, None, fx=0.6, fy=0.6)
 
-            class_ids, box_dims, box_confidences, dets, indexes = super().run(img)
+            class_ids, box_dims, box_confidences, box_dims_norm, indexes = super().run(img)
             if self.will_save:
-                self.save_labelfile(img_path, class_ids, dets, indexes)
+                self.save_labelfile(img_path, class_ids, box_dims_norm, indexes)
             if self.will_show:
                 self.show(img, class_ids, box_dims, indexes)
                 cv2.destroyAllWindows()
@@ -84,30 +83,30 @@ class LocalInference(BaseInference):
         cv2.imshow("Image", img)
         key = cv2.waitKey(0)
     
-    def save_labelfile(self, img_path, class_ids, dets, indexes):
+    def save_labelfile(self, img_path, class_ids, box_dims_norm, indexes):
         # Get filename for labelfile
         labelfile = os.path.splitext(img_path)[0]
         f = open(labelfile + ".txt", "w+")
         for i in indexes:
             class_id = class_ids[i]
             # Normalised format for yolo labeling
-            nx, ny, nw, nh = dets[i]
+            nx, ny, nw, nh = box_dims_norm[i]
             f.write(f'{class_id} {nx} {ny} {nw} {nh}\n')
         f.close()
 
-def add_bool_arg(parser, name, default=True, help=""):
+def add_bool_arg(parser, name, default=True, msg=""):
     group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument('--' + name, dest=name, action='store_true', help=help)
+    group.add_argument('--' + name, dest=name, action='store_true', help=msg)
     group.add_argument('--no-' + name, dest=name, action='store_false')
     parser.set_defaults(**{name:default})
 
 def setup_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-w", "--weights", help="path to learned weights from model", default=DEF_WEIGHTS)
-    parser.add_argument("-c", "--config", help="path to config of yolo", default=DEF_CONFIG)
-    parser.add_argument("-i", "--images", help="path to test images", default=DEF_IMAGES)
-    parser.add_argument("-s", "--score", help="score threshold", default=DEF_SCORE, type=float)
-    parser.add_argument("-n", "--nms", help="nms threshold", default=DEF_NMS, type=float)
+    parser.add_argument("-w", "--weights", help="path to learned weights from model", default=DEFAULT_WEIGHTS)
+    parser.add_argument("-c", "--config", help="path to config of yolo", default=DEFAULT_CONFIG)
+    parser.add_argument("-i", "--images", help="path to test images", default=DEFAULT_IMAGES)
+    parser.add_argument("-s", "--score", help="score threshold", default=CONFIDENCE_THRESHOLD, type=float)
+    parser.add_argument("-n", "--nms", help="nms threshold", default=NMS_IOU_THRESHOLD, type=float)
     add_bool_arg(parser, 'save', help="save to labelfiles")
     add_bool_arg(parser, 'show', help="visualise using opencv2")
     add_bool_arg(parser, 'random', help="randomise image visualisation order")
@@ -121,16 +120,14 @@ def main():
     inference = LocalInference(
         weight_path   = args.weights, 
         config_path   = args.config, 
-        classes       = DEF_CLASSES, # can add 
+        classes       = DEFAULT_CLASSES,
         score_thresh  = args.score, 
         nms_thresh    = args.nms, 
         images_path   = args.images, 
         will_save     = args.save, 
         will_show     = args.show,
         is_random     = args.random
-        )
-    inference.read_config()
-    inference.initialize()
+    )
     inference.run()
 
 if __name__ == "__main__":
