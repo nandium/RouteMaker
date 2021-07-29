@@ -112,7 +112,7 @@
                   <ion-icon :icon="flagOutline"></ion-icon>
                 </div>
                 <div
-                  v-if="commentDetails.username === myUsername || isAdmin"
+                  v-if="commentDetails.username === myUsername || isRouteSetter || isAdmin"
                   title="Delete review"
                   class="icon-button"
                   @click="
@@ -340,7 +340,10 @@ export default defineComponent({
                           );
                         },
                       );
-                      hasAlreadyCommented.value = false;
+                      // If the user deletes his own comment
+                      if (commentUsername === myUsername.value) {
+                        hasAlreadyCommented.value = false;
+                      }
                     }
                   }
                 })
