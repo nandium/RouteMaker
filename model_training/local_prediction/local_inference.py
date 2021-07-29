@@ -21,6 +21,8 @@ DEFAULT_IMAGES = os.path.join(os.curdir, "test_images")
 # Can read classes from a file if more are ever added
 DEFAULT_CLASSES = ["hold"]
 
+IMSHOW_FONT = cv2.FONT_HERSHEY_PLAIN
+
 class LocalInference(BaseInference):
     """
     Inference class for local predictions
@@ -70,15 +72,13 @@ class LocalInference(BaseInference):
                 self.show(img, class_ids, box_dims, indexes)
                 cv2.destroyAllWindows()
     
-    def show(self, img, class_ids, box_dims, indexes):
-        font = cv2.FONT_HERSHEY_PLAIN
-        
+    def show(self, img, class_ids, box_dims, indexes):        
         for i in indexes:
             x, y, w, h = box_dims[i]
             label = str(self.classes[class_ids[i]])
             color = self.colors[class_ids[i]]
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-            cv2.putText(img, label, (x, y + 30), font, 1, color, 2)
+            cv2.putText(img, label, (x, y + 30), IMSHOW_FONT, 1, color, 2)
 
         cv2.imshow("Image", img)
         key = cv2.waitKey(0)

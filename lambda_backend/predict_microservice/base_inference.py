@@ -4,6 +4,7 @@ from configparser import RawConfigParser
 
 CONFIDENCE_THRESHOLD = 0.3
 NMS_IOU_THRESHOLD = 0.4
+SCALE_FACTOR = 0.00392
 
 class BaseInference:
     """
@@ -42,10 +43,10 @@ class BaseInference:
         self.score_thresh = score_thresh if score_thresh is not None else CONFIDENCE_THRESHOLD
         self.nms_thresh = nms_thresh if nms_thresh is not None else NMS_IOU_THRESHOLD
 
-        self._initialize()
+        self._initialize_model()
         self._read_config()
     
-    def _initialize(self):
+    def _initialize_model(self):
         # Load Yolo
         self.net = cv2.dnn.readNet(
             self.weight_path,
@@ -91,7 +92,14 @@ class BaseInference:
             height, width, channels = img.shape
 
         # Detecting objects
-        blob = cv2.dnn.blobFromImage(img, 0.00392, self.train_height_width, (0, 0, 0), True, crop=False)
+        blob = cv2.dnn.blobFromImage(
+            image       = img, 
+            scalefactor = SCALE_FACTOR, 
+            size        = self.train_height_width, 
+            mean        = (0,0,0), 
+            swapRB      = True, 
+            crop        = False
+        )
 
         self.net.setInput(blob)
         outs = self.net.forward(self.output_layers)

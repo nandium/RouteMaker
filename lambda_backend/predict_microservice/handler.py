@@ -1,12 +1,12 @@
-from os.path import join
+import os
 import json
 import base64
 
 from utils import exception_handler, retrieve_numpy_image, parse_multipart_data, get_response_headers
 from service_inference import ServiceInference
 
-DEFAULT_WEIGHTS = join("weights", "yolov4-tiny-obj.weights")
-DEFAULT_CONFIG = join("weights", "yolov4-tiny-obj.cfg")
+DEFAULT_WEIGHTS = os.path.join("weights", "yolov4-tiny-obj.weights")
+DEFAULT_CONFIG = os.path.join("weights", "yolov4-tiny-obj.cfg")
 DEFAULT_CLASSES = ["hold"]
 
 ALLOWED_TYPES = ["image/jpeg"]
