@@ -34,8 +34,7 @@ Tested on
 1. To obtain predictions on new images, simply place them in `.\test_images\` and run the script.
 1. Run LabelImg and open the `.\test_images\` directory. You can now adjust the bounding boxes and subsequently save the corresponding `.txt` files. The images can then be used as training data for the model.
 1. Some images may face an issue where a `ZeroDivisionError` occurs when saving using LabelImg. Be sure to check for this by saving after a single edit to avoid losing all your work.
-   ```bash
-   ...
+   ```Python
    ZeroDivisionError: float division by zero
    ```
    If this occurs, change the image format from:
@@ -52,3 +51,8 @@ Tested on
    ```bash
    mean average precision (mAP@0.50) = 0.823387, or 82.34 %
    ```
+
+## Training Locally
+
+1. Make sure requirements are setup as on the [darknet repo](https://github.com/AlexeyAB/darknet#requirements-for-windows-linux-and-macos). NVIDIA GPU is required.
+1. Follow the steps in `../Train_yolov4_tiny.ipynb` to configure envinronment variables, hyperparameters, and run scripts.
