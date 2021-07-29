@@ -26,4 +26,4 @@ npm ci
 
 ### Setup
 
-Refer to the [documentation](docs/README.md).
+Refer to the documentation [here](docs/README.md).
