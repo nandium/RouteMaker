@@ -56,3 +56,8 @@ Tested on
 
 1. Make sure requirements are setup as on the [darknet repo](https://github.com/AlexeyAB/darknet#requirements-for-windows-linux-and-macos). NVIDIA GPU is required.
 1. Follow the steps in `../Train_yolov4_tiny.ipynb` to configure envinronment variables, hyperparameters, and run scripts.
+
+## Saving Configurations
+
+1. Once the _improved_ model has been trained, the relevant config and weight files should be committed to this repo. These are located at [`/lambda_backend/predict_microservice/weights`](https://github.com/nandium/RouteMaker/tree/main/lambda_backend/predict_microservice/weights).
+1. The training/validation split used to train should also be saved. This is located in this folder in `./train_val_split/`.

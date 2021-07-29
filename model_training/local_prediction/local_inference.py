@@ -95,22 +95,22 @@ class LocalInference(BaseInference):
             f.write(f'{class_id} {nx} {ny} {nw} {nh}\n')
         f.close()
 
-def add_bool_arg(parser, name, default=True):
+def add_bool_arg(parser, name, default=True, help=""):
     group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument('--' + name, dest=name, action='store_true')
+    group.add_argument('--' + name, dest=name, action='store_true', help=help)
     group.add_argument('--no-' + name, dest=name, action='store_false')
     parser.set_defaults(**{name:default})
 
 def setup_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-w", "--weights", help="learned weights from model", default=DEF_WEIGHTS)
-    parser.add_argument("-c", "--config", help="config of yolo", default=DEF_CONFIG)
-    parser.add_argument("-i", "--images", help="test images", default=DEF_IMAGES)
+    parser.add_argument("-w", "--weights", help="path to learned weights from model", default=DEF_WEIGHTS)
+    parser.add_argument("-c", "--config", help="path to config of yolo", default=DEF_CONFIG)
+    parser.add_argument("-i", "--images", help="path to test images", default=DEF_IMAGES)
     parser.add_argument("-s", "--score", help="score threshold", default=DEF_SCORE, type=float)
     parser.add_argument("-n", "--nms", help="nms threshold", default=DEF_NMS, type=float)
-    add_bool_arg(parser, 'save')
-    add_bool_arg(parser, 'show')
-    add_bool_arg(parser, 'random')
+    add_bool_arg(parser, 'save', help="save to labelfiles")
+    add_bool_arg(parser, 'show', help="visualise using opencv2")
+    add_bool_arg(parser, 'random', help="randomise image visualisation order")
     return parser
 
 def main():
