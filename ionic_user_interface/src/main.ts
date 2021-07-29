@@ -24,6 +24,10 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.scss';
 import providers from './providers';
 
+/* MapBox CSS */
+import 'mapbox-gl/dist/mapbox-gl.css';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+
 const app = createApp(App).use(IonicVue).use(router);
 
 Object.entries(providers).forEach(([key, value]) => {

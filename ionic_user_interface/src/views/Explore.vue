@@ -50,7 +50,12 @@
             </ion-row>
           </ion-col>
           <ion-col class="ion-align-self-center ion-no-padding" size-xs="12">
-            <gym-map v-if="viewMap" :gymLocation="gymLocation" class="margin-top"></gym-map>
+            <gym-map
+              v-if="viewMap"
+              :gymLocationList="[gymLocation]"
+              :currentGymLocation="gymLocation"
+              class="margin-top"
+            ></gym-map>
           </ion-col>
         </ion-row>
 

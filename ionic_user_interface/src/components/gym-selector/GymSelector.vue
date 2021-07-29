@@ -56,7 +56,7 @@
       </ion-col>
     </ion-row>
     <div v-if="viewMap" class="margin-top center-inner">
-      <gym-map :gymLocation="selectedGym"></gym-map>
+      <gym-map :gymLocationList="gymLocationList" :currentGymLocation="selectedGym"></gym-map>
     </div>
   </div>
 </template>
