@@ -135,7 +135,11 @@ export default defineComponent({
 
     onMounted(updateRoutes);
 
-    watch(profileUsername, updateRoutes);
+    watch(profileUsername, () => {
+      if (profileUsername.value) {
+        updateRoutes();
+      }
+    });
 
     const handleRouteCardClick = (username: string, createdAt: string) => {
       router.push({
