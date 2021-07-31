@@ -18,6 +18,11 @@ const getGymsByCountry = async (countryCode: string): Promise<GymLocation[]> => 
     });
     // Sort alphabetically by gym name
     (Items as GymLocation[]).sort((a, b) => (a.gymName > b.gymName ? 1 : -1));
+    // Add in longitude and latitude object
+    for (const gymLocation of Items) {
+      const [latitude, longitude] = gymLocation.gymLocation.split(',').map(parseFloat);
+      gymLocation.latLong = { latitude, longitude };
+    }
     return Items;
   } catch (error) {
     console.error(error.response.data);
@@ -32,11 +37,17 @@ const getGymsByCountryCached = async (countryCode: string): Promise<GymLocation[
   });
 };
 
+interface LatLong {
+  latitude: number;
+  longitude: number;
+}
+
 interface GymLocation {
   countryCode: string;
+  latLong: LatLong;
   gymLocation: string;
   gymName: string;
 }
 
 export default getGymsByCountryCached;
-export { GymLocation };
+export { LatLong, GymLocation };

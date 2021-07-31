@@ -3,6 +3,10 @@
     <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
         <MessageBox ref="errorMsg" color="danger" />
+        <ion-button class="ion-no-margin" expand="full" color="tertiary" @click="handleLocateClick">
+          <ion-label>Locate Nearest Gym &nbsp;</ion-label>
+          <ion-icon :icon="locateOutline"></ion-icon>
+        </ion-button>
         <ion-list class="ion-list">
           <auto-complete
             ref="autoComplete"
@@ -56,7 +60,7 @@
       </ion-col>
     </ion-row>
     <div v-if="viewMap" class="margin-top center-inner">
-      <gym-map :gymLocationList="gymLocationList" :currentGymLocation="selectedGym"></gym-map>
+      <gym-map :gymLocationList="gymLocationList" :initialLocation="selectedGym"></gym-map>
     </div>
   </div>
 </template>
@@ -64,6 +68,7 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent, computed, Ref, inject } from 'vue';
 import {
+  IonButton,
   IonIcon,
   IonItem,
   IonLabel,
@@ -72,19 +77,22 @@ import {
   IonSelectOption,
   IonRow,
   IonCol,
-  IonButton,
 } from '@ionic/vue';
 import Lookup, { Country } from 'country-code-lookup';
-import { map, mapOutline, warning } from 'ionicons/icons';
+import { map, mapOutline, warning, locateOutline } from 'ionicons/icons';
 
 import MessageBox from '@/components/MessageBox.vue';
 import GymMap from '@/components/GymMap.vue';
-import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
+import getGymsByCountry, { LatLong, GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
+import { Geolocation } from '@capacitor/geolocation';
+import axios from 'axios';
+import haversine from 'haversine';
 
 export default defineComponent({
   name: 'GymSelector',
   components: {
+    IonButton,
     IonIcon,
     IonItem,
     IonLabel,
@@ -93,7 +101,6 @@ export default defineComponent({
     IonSelectOption,
     IonRow,
     IonCol,
-    IonButton,
     AutoComplete,
     MessageBox,
     GymMap,
@@ -115,6 +122,8 @@ export default defineComponent({
 
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
+
+    let userLatLong: LatLong | null = null;
 
     const viewMap = ref(false);
 
@@ -139,6 +148,38 @@ export default defineComponent({
       }
     });
 
+    const setNearestGym = () => {
+      if (userLatLong) {
+        let minDistance = Number.MAX_VALUE;
+        let minDistanceGym = null;
+        for (const gymLocation of gymLocationList.value) {
+          const distanceToUserLocation = haversine(gymLocation.latLong, userLatLong);
+          if (distanceToUserLocation < minDistance) {
+            minDistance = distanceToUserLocation;
+            minDistanceGym = gymLocation.gymLocation;
+          }
+        }
+        if (minDistanceGym) {
+          selectedGym.value = minDistanceGym;
+        }
+      }
+    };
+
+    const handleLocateClick = async () => {
+      const coordinates = await Geolocation.getCurrentPosition();
+      userLatLong = {
+        latitude: coordinates.coords.latitude,
+        longitude: coordinates.coords.longitude,
+      };
+      const response = await axios.get(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${userLatLong.longitude},${userLatLong.latitude}.json?types=country&access_token=${process.env.VUE_APP_MAPBOX_ACCESS_KEY}`,
+      );
+
+      const countryName = response.data.features[0].place_name;
+      autoComplete.value?.setValue(countryName);
+      setNearestGym();
+    };
+
     const reset = () => {
       selectedCountryIso3.value = '';
       gymLocationList.value = [];
@@ -146,12 +187,14 @@ export default defineComponent({
     };
 
     const onCountrySelect = async (country: Country) => {
+      console.log(country);
       errorMsg.value?.close();
       if (country) {
         const countryGymLocations = await getGymsByCountry(country.iso3);
         gymLocationList.value = countryGymLocations;
         selectedCountryIso3.value = country.iso3;
         setUserCountry(country);
+        setNearestGym();
       } else {
         reset();
         emit('onCountryReset', true);
@@ -186,6 +229,8 @@ export default defineComponent({
       mapOutline,
       warning,
       autoComplete,
+      locateOutline,
+      handleLocateClick,
     };
   },
 });

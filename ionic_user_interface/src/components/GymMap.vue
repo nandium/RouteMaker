@@ -33,7 +33,7 @@ export default defineComponent({
       type: Array,
       required: true,
     },
-    currentGymLocation: {
+    initialLocation: {
       type: String,
       required: true,
     },
@@ -44,12 +44,11 @@ export default defineComponent({
     const gymLocationsGeoJson = computed(() => {
       let locationJson: Feature[] = [];
       (props.gymLocationList as GymLocation[]).forEach((gymLocation, index) => {
-        const [lat, lng] = gymLocation.gymLocation.split(',').map(parseFloat);
         locationJson.push({
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [lng, lat],
+            coordinates: [gymLocation.latLong.longitude, gymLocation.latLong.latitude],
           },
           properties: {
             gymName: gymLocation.gymName,
@@ -64,7 +63,7 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      const [lat, lng] = props.currentGymLocation.split(',').map(parseFloat);
+      const [lat, lng] = props.initialLocation.split(',').map(parseFloat);
       const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',

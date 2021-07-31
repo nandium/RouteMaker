@@ -53,7 +53,7 @@
             <gym-map
               v-if="viewMap"
               :gymLocationList="[gymLocation]"
-              :currentGymLocation="gymLocation"
+              :initialLocation="gymLocation"
               class="margin-top"
             ></gym-map>
           </ion-col>
