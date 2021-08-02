@@ -9,7 +9,7 @@
             </div>
             <div class="ion-padding ion-text-center">
               <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
-              <form @submit="onSubmit">
+              <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="floating">Route name</ion-label>
                   <ion-input
@@ -191,8 +191,7 @@ export default defineComponent({
       content.value?.$el.scrollToTop(400);
     };
 
-    const onSubmit = throttle(async (event: Event): Promise<boolean> => {
-      event.preventDefault();
+    const onSubmit = throttle(async (): Promise<boolean> => {
       msgBox.value?.close();
 
       if (!isValidRouteName(routeNameText.value)) {

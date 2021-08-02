@@ -9,7 +9,7 @@
             </div>
             <div class="ion-padding ion-text-center">
               <MessageBox ref="errorMsg" color="danger" class="global-rounded margin" />
-              <form @submit="onSubmit">
+              <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Email</ion-label>
                   <ion-input
@@ -173,8 +173,7 @@ export default defineComponent({
       return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
-    const onSubmit = throttle((event: Event): boolean => {
-      event.preventDefault();
+    const onSubmit = throttle((): boolean => {
       errorMsg.value?.close();
 
       emailText.value = emailText.value.trim();

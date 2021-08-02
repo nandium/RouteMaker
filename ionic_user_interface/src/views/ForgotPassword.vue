@@ -90,8 +90,7 @@ export default defineComponent({
       return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
-    const onSubmit = throttle((event: Event): boolean => {
-      event.preventDefault();
+    const onSubmit = throttle((): boolean => {
       errorMsg.value?.close();
 
       if (!isValidUsername(usernameText.value)) {
