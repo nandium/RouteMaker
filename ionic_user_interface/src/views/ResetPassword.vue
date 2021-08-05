@@ -9,7 +9,7 @@
             </div>
             <div class="ion-padding ion-text-center">
               <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
-              <form @submit="onSubmit">
+              <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
                   <ion-input v-model="usernameText" type="text" disabled />
@@ -205,8 +205,7 @@ export default defineComponent({
       }
     }, 1000);
 
-    const onSubmit = throttle((event: Event): boolean => {
-      event.preventDefault();
+    const onSubmit = throttle((): boolean => {
       msgBox.value?.close();
       msgBoxColor.value = 'danger';
 
