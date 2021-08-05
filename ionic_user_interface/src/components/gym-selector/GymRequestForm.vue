@@ -3,7 +3,7 @@
     <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
         <MessageBox ref="errorMsg" color="danger" />
-        <form @submit="onSubmit">
+        <form @submit.prevent="onSubmit">
           <ion-list class="ion-no-padding">
             <auto-complete
               :options="countryNameList"
@@ -108,8 +108,7 @@ export default defineComponent({
       return alert.present();
     };
 
-    const onSubmit = throttle(async (event: Event): Promise<boolean> => {
-      event.preventDefault();
+    const onSubmit = throttle(async (): Promise<boolean> => {
       errorMsg.value?.close();
 
       // Invalid credentials
