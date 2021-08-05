@@ -49,7 +49,7 @@ Tested on
 
 1. Zip up all training data - images and labels (`.txt`) - into a zipfile `images.zip`.
 1. Create a folder `/yolov4_tiny` in your Google drive, and save `images.zip` inside it.
-1. Open up `../Train_yolov4_tiny.ipynb` in Google Colab, then click Runtime > Run All (Ctrl+F9).
+1. Open up [`../Train_yolov4_tiny.ipynb`](https://github.com/nandium/RouteMaker/blob/main/model_training/Train_yolov4_tiny.ipynb) in Google Colab, then click Runtime > Run All (Ctrl+F9).
 1. The model will be trained with the hyperparameters as set in the document. You can update them as you see fit, following guidance from the [darknet documentation](https://github.com/AlexeyAB/darknet#when-should-i-stop-training). Be sure to commit changes made if so.
 1. The key performance indicator will be the mAP (higher better).
 
@@ -60,7 +60,7 @@ Tested on
 ## Training Locally
 
 1. Make sure requirements are setup as on the [darknet repo](https://github.com/AlexeyAB/darknet#requirements-for-windows-linux-and-macos). NVIDIA GPU is required.
-1. Follow the steps in `../Train_yolov4_tiny.ipynb` to configure envinronment variables, hyperparameters, and run scripts.
+1. Follow the steps in [`../Train_yolov4_tiny.ipynb`](https://github.com/nandium/RouteMaker/blob/main/model_training/Train_yolov4_tiny.ipynb) to configure envinronment variables, hyperparameters, and run scripts.
 
 ## Saving Configurations
 

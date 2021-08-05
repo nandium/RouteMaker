@@ -8,7 +8,7 @@ class ServiceInference(BaseInference):
 
     Methods
     -------
-    run(img, width_dict)
+    run(img, scaled_width)
         Obtains predicted boxes for predict_microservice
     """
 
@@ -62,7 +62,6 @@ class ServiceInference(BaseInference):
 
         boxes = []
         for i in indexes:
-            i = int(i)
             x, y, w, h = box_dims[i]
             boxes.append({
                 "x": x,

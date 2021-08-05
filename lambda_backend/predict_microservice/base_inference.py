@@ -20,27 +20,23 @@ class BaseInference:
         path to the .cfg file
     classes : list
         names of classes detected
-    score_thresh : float
+    score_threshold : float
         threshold to classify object as detected
     nms_threshold : float
         threshold for non-max suppression
 
     Methods
     -------
-    initialize()
-        Initializes neural network using given weight and config
-    read_config()
-        Reads config for trained height and width
     run()
         Obtains predicted boxes 
     """
 
-    def __init__(self, weight_path, config_path, classes, score_thresh=None, nms_thresh=None):
+    def __init__(self, weight_path, config_path, classes, score_threshold=None, nms_thresh=None):
         self.weight_path = weight_path
         self.config_path = config_path
         self.classes = classes
         self.net = None
-        self.score_thresh = score_thresh if score_thresh is not None else CONFIDENCE_THRESHOLD
+        self.score_threshold = score_threshold if score_threshold is not None else CONFIDENCE_THRESHOLD
         self.nms_thresh = nms_thresh if nms_thresh is not None else NMS_IOU_THRESHOLD
 
         self._initialize_model()
@@ -53,13 +49,19 @@ class BaseInference:
             self.config_path
         )
         layer_names = self.net.getLayerNames()
+        # Gets the indexes of layers with unconnected outputs, 
+        # then stores the associated names into output_layers
         self.output_layers = [layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
     
     def _read_config(self):
         cfg = RawConfigParser(strict=False)
         cfg.read(self.config_path)
 
+        assert 'net' in cfg, 'No net section in config'
+
         net_dict = dict(cfg.items('net'))
+
+        assert 'height' in net_dict and 'weight' in net_dict, 'No height and/or weight in config'
         self.train_height_width = (int(net_dict['height']), int(net_dict['width']))
 
     def run(self, img, height=None, width=None):
@@ -109,7 +111,6 @@ class BaseInference:
         return class_ids, box_dims, box_confidences, box_dims_norm, indexes
 
     def _get_filtered_boxes(self, output, height, width):
-        
         # Showing informations on the screen
         class_ids = []
         box_confidences = []
@@ -123,7 +124,7 @@ class BaseInference:
                 scores = detection[5:]
                 class_id = np.argmax(scores)
                 confidence = scores[class_id]
-                if confidence > self.score_thresh:
+                if confidence > self.score_threshold:
                     # Object detected
                     center_x = int(detection[0] * width)
                     center_y = int(detection[1] * height)
@@ -141,7 +142,7 @@ class BaseInference:
                     # Save normalised format
                     box_dims_norm.append(detection[:4])
 
-        indexes = cv2.dnn.NMSBoxes(box_dims, box_confidences, self.score_thresh, self.nms_thresh)
+        indexes = cv2.dnn.NMSBoxes(box_dims, box_confidences, self.score_threshold, self.nms_thresh)
         indexes = [int(i) for i in indexes]
         
         return class_ids, box_dims, box_confidences, box_dims_norm, indexes

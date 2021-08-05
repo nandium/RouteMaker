@@ -32,11 +32,11 @@ class LocalInference(BaseInference):
     Attributes
     ----------
     images_path : str
-        path to the test images folder
+        Path to the test images folder
     will_save : bool
-        to save predicted boxes for each image to .txt files
+        To save predicted boxes for each image to .txt files
     will_show : bool
-        to show predicted boxes for each image using opencv2
+        To show predicted boxes for each image using opencv2
 
     Methods
     -------
@@ -44,8 +44,8 @@ class LocalInference(BaseInference):
         Obtains predicted boxes for visualization and/or saving to file
     """
 
-    def __init__(self, weight_path, config_path, classes, score_thresh, nms_thresh, images_path, will_save, will_show, is_random):
-        super().__init__(weight_path, config_path, classes, score_thresh, nms_thresh)
+    def __init__(self, weight_path, config_path, classes, score_threshold, nms_thresh, images_path, will_save, will_show, is_random):
+        super().__init__(weight_path, config_path, classes, score_threshold, nms_thresh)
         
         self.images = glob.glob(os.path.join(images_path, "*.jpg"))
 
@@ -67,12 +67,12 @@ class LocalInference(BaseInference):
 
             class_ids, box_dims, box_confidences, box_dims_norm, indexes = super().run(img)
             if self.will_save:
-                self.save_labelfile(img_path, class_ids, box_dims_norm, indexes)
+                self._save_labelfile(img_path, class_ids, box_dims_norm, indexes)
             if self.will_show:
-                self.show(img, class_ids, box_dims, indexes)
+                self._show(img, class_ids, box_dims, indexes)
                 cv2.destroyAllWindows()
     
-    def show(self, img, class_ids, box_dims, indexes):        
+    def _show(self, img, class_ids, box_dims, indexes):        
         for i in indexes:
             x, y, w, h = box_dims[i]
             label = str(self.classes[class_ids[i]])
@@ -83,16 +83,15 @@ class LocalInference(BaseInference):
         cv2.imshow("Image", img)
         key = cv2.waitKey(0)
     
-    def save_labelfile(self, img_path, class_ids, box_dims_norm, indexes):
+    def _save_labelfile(self, img_path, class_ids, box_dims_norm, indexes):
         # Get filename for labelfile
         labelfile = os.path.splitext(img_path)[0]
-        f = open(labelfile + ".txt", "w+")
-        for i in indexes:
-            class_id = class_ids[i]
-            # Normalised format for yolo labeling
-            nx, ny, nw, nh = box_dims_norm[i]
-            f.write(f'{class_id} {nx} {ny} {nw} {nh}\n')
-        f.close()
+        with open(labelfile + ".txt", "w+") as f:
+            for i in indexes:
+                class_id = class_ids[i]
+                # Normalised format for yolo labeling
+                nx, ny, nw, nh = box_dims_norm[i]
+                f.write(f'{class_id} {nx} {ny} {nw} {nh}\n')
 
 def add_bool_arg(parser, name, default=True, msg=""):
     group = parser.add_mutually_exclusive_group(required=False)
@@ -107,9 +106,9 @@ def setup_parser():
     parser.add_argument("-i", "--images", help="path to test images", default=DEFAULT_IMAGES)
     parser.add_argument("-s", "--score", help="score threshold", default=CONFIDENCE_THRESHOLD, type=float)
     parser.add_argument("-n", "--nms", help="nms threshold", default=NMS_IOU_THRESHOLD, type=float)
-    add_bool_arg(parser, 'save', help="save to labelfiles")
-    add_bool_arg(parser, 'show', help="visualise using opencv2")
-    add_bool_arg(parser, 'random', help="randomise image visualisation order")
+    add_bool_arg(parser, 'save', msg="save to labelfiles")
+    add_bool_arg(parser, 'show', msg="visualise using opencv2")
+    add_bool_arg(parser, 'random', msg="randomise image visualisation order")
     return parser
 
 def main():
@@ -121,7 +120,7 @@ def main():
         weight_path   = args.weights, 
         config_path   = args.config, 
         classes       = DEFAULT_CLASSES,
-        score_thresh  = args.score, 
+        score_threshold  = args.score, 
         nms_thresh    = args.nms, 
         images_path   = args.images, 
         will_save     = args.save, 
