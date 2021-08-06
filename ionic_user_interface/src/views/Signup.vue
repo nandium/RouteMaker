@@ -8,7 +8,7 @@
               <h1>Sign up</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="errorMsg" color="danger" class="global-rounded margin" />
+              <message-box ref="errorMsg" color="danger" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Email</ion-label>
@@ -61,15 +61,6 @@
                     required
                   />
                 </ion-item>
-                <ion-button
-                  id="signupButton"
-                  class="form-button"
-                  size="medium"
-                  type="submit"
-                  expand="block"
-                >
-                  Sign up
-                </ion-button>
                 <div class="privacy-policy">
                   <ion-checkbox v-model="termsCheckbox" />
                   <ion-text>
@@ -89,6 +80,16 @@
                     </a>
                   </ion-text>
                 </div>
+                <loading-button
+                  id="signupButton"
+                  ref="signupButton"
+                  class="form-button"
+                  size="medium"
+                  type="submit"
+                  expand="block"
+                >
+                  Sign up
+                </loading-button>
                 <h5>
                   Already have an account?
                   <router-link to="/login">Login</router-link>
@@ -105,7 +106,6 @@
 
 <script lang="ts">
 import {
-  IonButton,
   IonCol,
   IonContent,
   IonGrid,
@@ -121,6 +121,7 @@ import { defineComponent, inject, ref, Ref, watch } from 'vue';
 import axios from 'axios';
 import PasswordMeter from 'vue-simple-password-meter';
 import MessageBox from '@/components/MessageBox.vue';
+import LoadingButton from '@/components/LoadingButton.vue';
 import { useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 
@@ -128,7 +129,7 @@ export default defineComponent({
   name: 'Signup',
   components: {
     MessageBox,
-    IonButton,
+    LoadingButton,
     IonCol,
     IonContent,
     IonGrid,
@@ -160,6 +161,7 @@ export default defineComponent({
     const confirmPasswordText = ref('');
     const termsCheckbox = ref(false);
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
+    const signupButton: Ref<typeof LoadingButton | null> = ref(null);
 
     const isValidEmail = (email: string): boolean => {
       return emailPattern.test(email.toLowerCase());
@@ -173,7 +175,7 @@ export default defineComponent({
       return username.length >= 5 && username.length <= 20 && usernamePattern.test(username);
     };
 
-    const onSubmit = throttle((): boolean => {
+    const onSubmit = throttle(async (): Promise<boolean> => {
       errorMsg.value?.close();
 
       emailText.value = emailText.value.trim();
@@ -204,41 +206,44 @@ export default defineComponent({
       }
 
       // Valid credentials
+      signupButton.value?.setIsLoading(true);
       setUsername(usernameText.value);
       setUserEmail(emailText.value);
-      axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/signup', {
-          name: usernameText.value,
-          email: emailText.value,
-          password: passwordText.value,
-        })
-        .then((response) => {
-          if (response.data.Message === 'Sign up success') {
-            errorMsg.value?.close();
-            setConfirmationNeeded(true);
-            router.push({ name: 'Confirm' });
+      try {
+        const response = await axios.post(
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/signup',
+          {
+            name: usernameText.value,
+            email: emailText.value,
+            password: passwordText.value,
+          },
+        );
+        if (response.data.Message === 'Sign up success') {
+          errorMsg.value?.close();
+          setConfirmationNeeded(true);
+          router.push({ name: 'Confirm' });
+        } else {
+          errorMsg.value?.showMsg('Unable to sign up: ' + response.data.Message);
+        }
+      } catch (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          if (error.response.data.Message === 'UsernameExistsException') {
+            errorMsg.value?.showMsg('Username exists!');
           } else {
-            errorMsg.value?.showMsg('Unable to sign up: ' + response.data.Message);
+            console.error(error.response.data);
           }
-        })
-        .catch((error) => {
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            if (error.response.data.Message === 'UsernameExistsException') {
-              errorMsg.value?.showMsg('Username exists!');
-            } else {
-              console.error(error.response.data);
-            }
-          } else if (error.request) {
-            errorMsg.value?.showMsg('Unknown error occured');
-            console.error(error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            errorMsg.value?.showMsg('Error: ' + error.message);
-          }
-        });
-
+        } else if (error.request) {
+          errorMsg.value?.showMsg('Unknown error occured');
+          console.error(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          errorMsg.value?.showMsg('Error: ' + error.message);
+        }
+      } finally {
+        signupButton.value?.setIsLoading(false);
+      }
       return true;
     }, 1000);
 
@@ -267,6 +272,7 @@ export default defineComponent({
 
     return {
       onSubmit,
+      signupButton,
       clickSignupButton,
       clickSendButton,
       emailText,

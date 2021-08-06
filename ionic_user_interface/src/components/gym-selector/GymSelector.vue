@@ -2,7 +2,7 @@
   <div>
     <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-        <MessageBox ref="errorMsg" color="danger" />
+        <message-box ref="errorMsg" color="danger" />
         <ion-button class="ion-no-margin" expand="full" color="tertiary" @click="handleLocateClick">
           <ion-label>Locate Nearest Gym &nbsp;</ion-label>
           <ion-icon :icon="locateOutline"></ion-icon>

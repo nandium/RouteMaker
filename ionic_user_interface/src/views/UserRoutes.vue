@@ -138,9 +138,9 @@ export default defineComponent({
           },
           {
             text: 'Yes',
-            handler: () => {
-              axios
-                .post(
+            handler: async () => {
+              try {
+                await axios.post(
                   process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/disable',
                   {
                     name: profileUsername.value,
@@ -150,44 +150,36 @@ export default defineComponent({
                       Authorization: `Bearer ${getAccessToken().value}`,
                     },
                   },
-                )
-                .then(() => {
-                  toastController
-                    .create({
-                      header: 'User has been successfully disabled',
-                      position: 'bottom',
-                      color: 'success',
-                      duration: 3000,
-                      buttons: [
-                        {
-                          text: 'Close',
-                          role: 'cancel',
-                        },
-                      ],
-                    })
-                    .then((toast) => {
-                      toast.present();
-                    });
-                })
-                .catch((error) => {
-                  console.error(error);
-                  toastController
-                    .create({
-                      header: 'Failed to disable user, please try again',
-                      position: 'bottom',
-                      color: 'danger',
-                      duration: 3000,
-                      buttons: [
-                        {
-                          text: 'Close',
-                          role: 'cancel',
-                        },
-                      ],
-                    })
-                    .then((toast) => {
-                      toast.present();
-                    });
+                );
+                const toast = await toastController.create({
+                  header: 'User has been successfully disabled',
+                  position: 'bottom',
+                  color: 'success',
+                  duration: 3000,
+                  buttons: [
+                    {
+                      text: 'Close',
+                      role: 'cancel',
+                    },
+                  ],
                 });
+                toast.present();
+              } catch (error) {
+                console.error(error);
+                const toast = await toastController.create({
+                  header: 'Failed to disable user, please try again',
+                  position: 'bottom',
+                  color: 'danger',
+                  duration: 3000,
+                  buttons: [
+                    {
+                      text: 'Close',
+                      role: 'cancel',
+                    },
+                  ],
+                });
+                toast.present();
+              }
             },
           },
         ],

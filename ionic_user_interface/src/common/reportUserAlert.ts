@@ -57,12 +57,12 @@ const getAlertController = async (
       },
       {
         text: 'Ok',
-        handler: () => {
+        handler: async () => {
           if (reason === '' || !allowedReasons.includes(reason)) {
             return false;
           }
-          axios
-            .post(
+          try {
+            await axios.post(
               process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/report',
               {
                 name: username,
@@ -73,44 +73,36 @@ const getAlertController = async (
                   Authorization: `Bearer ${accessToken}`,
                 },
               },
-            )
-            .then(() => {
-              toastController
-                .create({
-                  header: 'Your report has been successfully sent',
-                  position: 'bottom',
-                  color: 'success',
-                  duration: 3000,
-                  buttons: [
-                    {
-                      text: 'Close',
-                      role: 'cancel',
-                    },
-                  ],
-                })
-                .then((toast) => {
-                  toast.present();
-                });
-            })
-            .catch((error) => {
-              console.error(error);
-              toastController
-                .create({
-                  header: 'Failed to report user, please try again',
-                  position: 'bottom',
-                  color: 'danger',
-                  duration: 3000,
-                  buttons: [
-                    {
-                      text: 'Close',
-                      role: 'cancel',
-                    },
-                  ],
-                })
-                .then((toast) => {
-                  toast.present();
-                });
+            );
+            const toast = await toastController.create({
+              header: 'Your report has been successfully sent',
+              position: 'bottom',
+              color: 'success',
+              duration: 3000,
+              buttons: [
+                {
+                  text: 'Close',
+                  role: 'cancel',
+                },
+              ],
             });
+            toast.present();
+          } catch (error) {
+            console.error(error);
+            const toast = await toastController.create({
+              header: 'Failed to report user, please try again',
+              position: 'bottom',
+              color: 'danger',
+              duration: 3000,
+              buttons: [
+                {
+                  text: 'Close',
+                  role: 'cancel',
+                },
+              ],
+            });
+            toast.present();
+          }
         },
       },
     ],

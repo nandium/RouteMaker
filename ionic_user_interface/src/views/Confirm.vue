@@ -8,7 +8,7 @@
               <h1>Confirm Signup</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
+              <message-box ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Confirmation code</ion-label>
@@ -22,15 +22,16 @@
                     required
                   />
                 </ion-item>
-                <ion-button
+                <loading-button
                   id="confirmButton"
                   class="confirm-button"
+                  ref="confirmButton"
                   size="medium"
                   type="submit"
                   expand="block"
                 >
                   Confirm
-                </ion-button>
+                </loading-button>
                 <ion-button
                   id="resendButton"
                   class="resend-button"
@@ -67,6 +68,7 @@ import {
 import { defineComponent, inject, onMounted, ref, Ref } from 'vue';
 import axios from 'axios';
 import MessageBox from '@/components/MessageBox.vue';
+import LoadingButton from '@/components/LoadingButton.vue';
 import { useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 
@@ -74,6 +76,7 @@ export default defineComponent({
   name: 'Confirm',
   components: {
     MessageBox,
+    LoadingButton,
     IonButton,
     IonCol,
     IonContent,
@@ -95,6 +98,7 @@ export default defineComponent({
       'setConfirmationNeeded',
       () => undefined,
     );
+    const confirmButton: Ref<typeof LoadingButton | null> = ref(null);
 
     onIonViewDidLeave(() => {
       msgBox.value?.close();
@@ -147,7 +151,7 @@ export default defineComponent({
       }
     }, 1000);
 
-    const onSubmit = throttle((): boolean => {
+    const onSubmit = throttle(async (): Promise<boolean> => {
       msgBox.value?.close();
       msgBoxColor.value = 'danger';
 
@@ -158,52 +162,53 @@ export default defineComponent({
         return false;
       }
 
-      axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/confirm', {
-          name: getUsername().value,
-          code: confirmationCodeText.value,
-        })
-        .then((response) => {
-          if (response.data.Message === 'Confirmation success') {
-            setConfirmationNeeded(false);
+      confirmButton.value?.setIsLoading(true);
+      try {
+        const response = await axios.post(
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/confirm',
+          {
+            name: getUsername().value,
+            code: confirmationCodeText.value,
+          },
+        );
+        if (response.data.Message === 'Confirmation success') {
+          setConfirmationNeeded(false);
 
-            toastController
-              .create({
-                header: 'Confirmation successful, please log in',
-                position: 'bottom',
-                color: 'success',
-                duration: 3000,
-                buttons: [
-                  {
-                    text: 'Close',
-                    role: 'cancel',
-                  },
-                ],
-              })
-              .then((toast) => {
-                toast.present();
-              });
+          const toast = await toastController.create({
+            header: 'Confirmation successful, please log in',
+            position: 'bottom',
+            color: 'success',
+            duration: 3000,
+            buttons: [
+              {
+                text: 'Close',
+                role: 'cancel',
+              },
+            ],
+          });
+          toast.present();
 
-            router.push({ name: 'Login' });
+          router.push({ name: 'Login' });
+        } else {
+          msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.data.Message === 'CodeMismatchException') {
+            msgBox.value?.showMsg('Wrong confirmation code');
+          } else if (error.response.data.Message === 'ExpiredCodeException') {
+            resendConfirmationCode(true);
           } else {
-            msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+            msgBox.value?.showMsg('Error: ' + error.response.data.Message);
           }
-        })
-        .catch((error) => {
-          if (error.response) {
-            if (error.response.data.Message === 'CodeMismatchException') {
-              msgBox.value?.showMsg('Wrong confirmation code');
-            } else if (error.response.data.Message === 'ExpiredCodeException') {
-              resendConfirmationCode(true);
-            } else {
-              msgBox.value?.showMsg('Error: ' + error.response.data.Message);
-            }
-          } else if (error.request) {
-            msgBox.value?.showMsg('Bad request');
-          } else {
-            msgBox.value?.showMsg('Error: ' + error.message);
-          }
-        });
+        } else if (error.request) {
+          msgBox.value?.showMsg('Bad request');
+        } else {
+          msgBox.value?.showMsg('Error: ' + error.message);
+        }
+      } finally {
+        confirmButton.value?.setIsLoading(false);
+      }
 
       return true;
     }, 1000);
@@ -214,6 +219,7 @@ export default defineComponent({
       msgBoxColor,
       confirmationCodeText,
       resendConfirmationCode,
+      confirmButton,
     };
   },
 });

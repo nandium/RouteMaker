@@ -8,7 +8,7 @@
               <h1>Reset Password</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
+              <message-box ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
@@ -205,7 +205,7 @@ export default defineComponent({
       }
     }, 1000);
 
-    const onSubmit = throttle((): boolean => {
+    const onSubmit = throttle(async (): Promise<boolean> => {
       msgBox.value?.close();
       msgBoxColor.value = 'danger';
 
@@ -221,53 +221,50 @@ export default defineComponent({
         msgBox.value?.showMsg('Passwords do not match');
         return false;
       }
+      try {
+        const response = await axios.post(
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/resetPassword',
+          {
+            name: usernameText.value,
+            password: passwordText.value,
+            code: passwordResetCodeText.value,
+          },
+        );
+        if (response.data.Message === 'Password reset success') {
+          const toast = await toastController.create({
+            header: 'Password reset success!',
+            position: 'bottom',
+            color: 'success',
+            duration: 3000,
+            buttons: [
+              {
+                text: 'Close',
+                role: 'cancel',
+              },
+            ],
+          });
+          toast.present();
 
-      axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/resetPassword', {
-          name: usernameText.value,
-          password: passwordText.value,
-          code: passwordResetCodeText.value,
-        })
-        .then((response) => {
-          if (response.data.Message === 'Password reset success') {
-            toastController
-              .create({
-                header: 'Password reset success!',
-                position: 'bottom',
-                color: 'success',
-                duration: 3000,
-                buttons: [
-                  {
-                    text: 'Close',
-                    role: 'cancel',
-                  },
-                ],
-              })
-              .then((toast) => {
-                toast.present();
-              });
-            router.push({ name: 'Login' });
+          router.push({ name: 'Login' });
+        } else {
+          msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+        }
+      } catch (error) {
+        if (error.response) {
+          if (
+            error.response.data.Message === 'ExpiredCodeException' ||
+            error.response.data.Message === 'CodeMismatchException'
+          ) {
+            msgBox.value?.showMsg('Wrong password reset code');
           } else {
-            msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+            msgBox.value?.showMsg('Error: ' + error.response.data.Message);
           }
-        })
-        .catch((error) => {
-          if (error.response) {
-            if (
-              error.response.data.Message === 'ExpiredCodeException' ||
-              error.response.data.Message === 'CodeMismatchException'
-            ) {
-              msgBox.value?.showMsg('Wrong password reset code');
-            } else {
-              msgBox.value?.showMsg('Error: ' + error.response.data.Message);
-            }
-          } else if (error.request) {
-            msgBox.value?.showMsg('Bad request');
-          } else {
-            msgBox.value?.showMsg('Error: ' + error.message);
-          }
-        });
-
+        } else if (error.request) {
+          msgBox.value?.showMsg('Bad request');
+        } else {
+          msgBox.value?.showMsg('Error: ' + error.message);
+        }
+      }
       return true;
     }, 1000);
 

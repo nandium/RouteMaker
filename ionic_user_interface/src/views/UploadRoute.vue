@@ -8,7 +8,7 @@
               <h1>Upload Route</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
+              <message-box ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="floating">Route name</ion-label>
@@ -217,7 +217,7 @@ export default defineComponent({
         return false;
       }
 
-      const routeImageBlob = await fetch(routeImage.value).then((res) => res.blob());
+      const routeImageBlob = await (await fetch(routeImage.value)).blob();
       const formData = new FormData();
       formData.append('countryCode', selectedCountryIso3.value);
       formData.append('expiredTime', expiryTimeISO);
@@ -226,59 +226,58 @@ export default defineComponent({
       formData.append('routePhoto', routeImageBlob);
       formData.append('routeName', routeNameText.value);
 
-      axios
-        .post(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/new', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${getAccessToken().value}`,
+      try {
+        const response = await axios.post(
+          process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/new',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${getAccessToken().value}`,
+            },
           },
-        })
-        .then((response) => {
-          if (response.data.Message === 'Create route success') {
-            toastController
-              .create({
-                header: 'Route has been uploaded successfully',
-                position: 'bottom',
-                color: 'success',
-                duration: 3000,
-                buttons: [
-                  {
-                    text: 'Close',
-                    role: 'cancel',
-                  },
-                ],
-              })
-              .then((toast) => {
-                toast.present();
-              });
+        );
+        if (response.data.Message === 'Create route success') {
+          const toast = await toastController.create({
+            header: 'Route has been uploaded successfully',
+            position: 'bottom',
+            color: 'success',
+            duration: 3000,
+            buttons: [
+              {
+                text: 'Close',
+                role: 'cancel',
+              },
+            ],
+          });
+          toast.present();
 
-            router.push({ name: 'UserRoutes', params: { username: getUsername().value } });
+          router.push({ name: 'UserRoutes', params: { username: getUsername().value } });
+        } else {
+          showErrorMsg('Unable to create route, please try again');
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.data.Message === 'Unregistered gym') {
+            showErrorMsg(
+              'Unregistered gym, please go to https://routemaker.rocks/gyms/request to register',
+            );
+          } else if (error.response.data.Message === 'Upload Limit Reached') {
+            showErrorMsg(
+              `Daily upload limit of ${error.response.data.Limit} reached, please wait till tomorrow or delete some routes from today`,
+            );
           } else {
-            showErrorMsg('Unable to create route, please try again');
+            showErrorMsg('Error: ' + error.response.data.Message);
           }
-        })
-        .catch((error) => {
-          if (error.response) {
-            if (error.response.data.Message === 'Unregistered gym') {
-              showErrorMsg(
-                'Unregistered gym, please go to https://routemaker.rocks/gyms/request to register',
-              );
-            } else if (error.response.data.Message === 'Upload Limit Reached') {
-              showErrorMsg(
-                `Daily upload limit of ${error.response.data.Limit} reached, please wait till tomorrow or delete some routes from today`,
-              );
-            } else {
-              showErrorMsg('Error: ' + error.response.data.Message);
-            }
-          } else if (error.request) {
-            showErrorMsg('Bad request');
-          } else {
-            showErrorMsg('Error: ' + error.message);
-          }
-        });
-
+        } else if (error.request) {
+          showErrorMsg('Bad request');
+        } else {
+          showErrorMsg('Error: ' + error.message);
+        }
+      }
       return true;
     }, 1000);
+
     return {
       content,
       countryNameList,

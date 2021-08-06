@@ -167,28 +167,29 @@ export default defineComponent({
               text: 'Delete',
               cssClass: 'global-danger-text',
               handler: throttle(async () => {
-                await axios
-                  .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route', {
-                    headers: {
-                      Authorization: `Bearer ${getAccessToken().value}`,
+                try {
+                  const response = await axios.delete(
+                    process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route',
+                    {
+                      headers: {
+                        Authorization: `Bearer ${getAccessToken().value}`,
+                      },
+                      params: {
+                        username,
+                        createdAt,
+                      },
                     },
-                    params: {
-                      username,
-                      createdAt,
-                    },
-                  })
-                  .then((response) => {
-                    if (response.data.Message === 'Delete route success') {
-                      if (routes.value) {
-                        routes.value = routes.value.filter(
-                          (route) => route.username !== username || route.createdAt !== createdAt,
-                        );
-                      }
+                  );
+                  if (response.data.Message === 'Delete route success') {
+                    if (routes.value) {
+                      routes.value = routes.value.filter(
+                        (route) => route.username !== username || route.createdAt !== createdAt,
+                      );
                     }
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                  });
+                  }
+                } catch (error) {
+                  console.error(error);
+                }
               }, 1000),
             },
           ],

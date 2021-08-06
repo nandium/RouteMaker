@@ -57,22 +57,19 @@ export default defineComponent({
       setPopoverOpen(false);
       await forceLogout();
 
-      toastController
-        .create({
-          header: 'Logged out successfully',
-          position: 'bottom',
-          color: 'success',
-          duration: 3000,
-          buttons: [
-            {
-              text: 'Close',
-              role: 'cancel',
-            },
-          ],
-        })
-        .then((toast) => {
-          toast.present();
-        });
+      const toast = await toastController.create({
+        header: 'Logged out successfully',
+        position: 'bottom',
+        color: 'success',
+        duration: 3000,
+        buttons: [
+          {
+            text: 'Close',
+            role: 'cancel',
+          },
+        ],
+      });
+      toast.present();
     };
 
     const clickProfileButton = () => {

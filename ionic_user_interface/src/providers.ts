@@ -31,45 +31,46 @@ const forceLogout = async (): Promise<void> => {
       Authorization: `Bearer ${providers.getAccessToken().value}`,
     },
   };
-  return axios
-    .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/logout', {}, config)
-    .then((response) => {
-      console.log(response.data.Message);
-    })
-    .catch((error) => {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error(error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        console.error(error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error('Error', error.message);
-      }
-    })
-    .finally(() => {
-      isLoggedIn.value = false;
-      username.value = '';
-      userEmail.value = '';
-      accessToken.value = '';
-      refreshToken.value = '';
-      idToken.value = '';
-      isConfirmationNeeded.value = false;
-      routeImageUri.value = '';
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('username');
-      localStorage.removeItem('userEmail');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('idToken');
-      localStorage.removeItem('isConfirmationNeeded');
-      localStorage.removeItem('routeImageUri');
-      router.push({ name: 'Explore' });
-    });
+  try {
+    const response = await axios.post(
+      process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/logout',
+      {},
+      config,
+    );
+    console.log(response.data.Message);
+  } catch (error) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error(error.response.data);
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.error(error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error('Error', error.message);
+    }
+  } finally {
+    isLoggedIn.value = false;
+    username.value = '';
+    userEmail.value = '';
+    accessToken.value = '';
+    refreshToken.value = '';
+    idToken.value = '';
+    isConfirmationNeeded.value = false;
+    routeImageUri.value = '';
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('username');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('isConfirmationNeeded');
+    localStorage.removeItem('routeImageUri');
+    router.push({ name: 'Explore' });
+  }
 };
 
 const checkExpiry = async (): Promise<void> => {
@@ -93,21 +94,18 @@ const checkExpiry = async (): Promise<void> => {
       expired = true;
     }
     if (expired) {
-      toastController
-        .create({
-          header: 'Logged out due to session expiry. Please login again!',
-          position: 'bottom',
-          color: 'danger',
-          buttons: [
-            {
-              text: 'Close',
-              role: 'cancel',
-            },
-          ],
-        })
-        .then((toast) => {
-          toast.present();
-        });
+      const toast = await toastController.create({
+        header: 'Logged out due to session expiry. Please login again!',
+        position: 'bottom',
+        color: 'danger',
+        buttons: [
+          {
+            text: 'Close',
+            role: 'cancel',
+          },
+        ],
+      });
+      toast.present();
     }
   }
 };
