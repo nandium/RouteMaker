@@ -3,10 +3,16 @@
     <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
         <message-box ref="errorMsg" color="danger" />
-        <ion-button class="ion-no-margin" expand="full" color="tertiary" @click="handleLocateClick">
+        <loading-button
+          class="ion-no-margin"
+          expand="full"
+          color="tertiary"
+          @click="handleLocateClick"
+          ref="locateButton"
+        >
           <ion-label>Locate Nearest Gym &nbsp;</ion-label>
           <ion-icon :icon="locateOutline"></ion-icon>
-        </ion-button>
+        </loading-button>
         <ion-list class="ion-list">
           <auto-complete
             ref="autoComplete"
@@ -82,6 +88,7 @@ import Lookup, { Country } from 'country-code-lookup';
 import { map, mapOutline, warning, locateOutline } from 'ionicons/icons';
 
 import MessageBox from '@/components/MessageBox.vue';
+import LoadingButton from '@/components/LoadingButton.vue';
 import GymMap from '@/components/GymMap.vue';
 import getGymsByCountry, { LatLong, GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
@@ -102,8 +109,9 @@ export default defineComponent({
     IonRow,
     IonCol,
     AutoComplete,
-    MessageBox,
     GymMap,
+    LoadingButton,
+    MessageBox,
   },
   setup(_, { emit }) {
     const countryNameList = ref<Array<Country>>([...Lookup.countries.sort()]);
@@ -119,6 +127,7 @@ export default defineComponent({
     const userCountry = getUserCountry();
     const userGym = getUserGym();
     const autoComplete: Ref<typeof AutoComplete | null> = ref(null);
+    const locateButton: Ref<typeof LoadingButton | null> = ref(null);
 
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
@@ -166,18 +175,25 @@ export default defineComponent({
     };
 
     const handleLocateClick = async () => {
-      const coordinates = await Geolocation.getCurrentPosition();
-      userLatLong = {
-        latitude: coordinates.coords.latitude,
-        longitude: coordinates.coords.longitude,
-      };
-      const response = await axios.get(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${userLatLong.longitude},${userLatLong.latitude}.json?types=country&access_token=${process.env.VUE_APP_MAPBOX_ACCESS_KEY}`,
-      );
+      locateButton.value?.setIsLoading(true);
+      try {
+        const coordinates = await Geolocation.getCurrentPosition();
+        userLatLong = {
+          latitude: coordinates.coords.latitude,
+          longitude: coordinates.coords.longitude,
+        };
+        const response = await axios.get(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${userLatLong.longitude},${userLatLong.latitude}.json?types=country&access_token=${process.env.VUE_APP_MAPBOX_ACCESS_KEY}`,
+        );
 
-      const countryName = response.data.features[0].place_name;
-      autoComplete.value?.setValue(countryName);
-      setNearestGym();
+        const countryName = response.data.features[0].place_name;
+        autoComplete.value?.setValue(countryName);
+        setNearestGym();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        locateButton.value?.setIsLoading(false);
+      }
     };
 
     const reset = () => {
@@ -187,7 +203,6 @@ export default defineComponent({
     };
 
     const onCountrySelect = async (country: Country) => {
-      console.log(country);
       errorMsg.value?.close();
       if (country) {
         const countryGymLocations = await getGymsByCountry(country.iso3);
@@ -231,6 +246,7 @@ export default defineComponent({
       autoComplete,
       locateOutline,
       handleLocateClick,
+      locateButton,
     };
   },
 });
