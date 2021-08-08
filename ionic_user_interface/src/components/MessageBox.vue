@@ -1,12 +1,12 @@
 <template>
-  <ion-item class="message" :color="color" v-if="msgText.length !== 0">
+  <ion-item class="message" :color="msgBoxColor" v-if="msgText.length !== 0">
     <ion-label class="ion-text-wrap">
       {{ msgText }}
     </ion-label>
     <ion-button fill="clear" color="light" shape="round" @click="close">
       <ion-icon
         :icon="closeCircleOutline"
-        :class="color === 'danger' ? 'light-color' : ''"
+        :class="msgBoxColor === 'danger' ? 'light-color' : ''"
       ></ion-icon>
     </ion-button>
   </ion-item>
@@ -28,11 +28,13 @@ export default defineComponent({
   props: {
     color: {
       type: String,
-      required: true,
+      required: false,
+      default: 'danger',
     },
   },
-  setup() {
+  setup(props) {
     const msgText = ref('');
+    const msgBoxColor = ref(props.color);
 
     const showMsg = (message: string): void => {
       close();
@@ -43,11 +45,17 @@ export default defineComponent({
       msgText.value = '';
     };
 
+    const setColor = (color: string): void => {
+      msgBoxColor.value = color;
+    };
+
     return {
       msgText,
       showMsg,
       close,
       closeCircleOutline,
+      msgBoxColor,
+      setColor,
     };
   },
 });

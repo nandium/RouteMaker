@@ -8,7 +8,7 @@
               <h1>Confirm Signup</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <message-box ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
+              <message-box ref="msgBox" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Confirmation code</ion-label>
@@ -90,7 +90,6 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
-    const msgBoxColor = ref('danger');
     const confirmationCodeText = ref('');
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
     const getUserEmail: () => Ref<string> = inject('getUserEmail', () => ref(''));
@@ -120,7 +119,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      msgBoxColor.value = 'medium';
+      msgBox.value?.setColor('medium');
       msgBox.value?.showMsg(`A confirmation code has been sent to ${getUserEmail().value}`);
     });
 
@@ -153,7 +152,7 @@ export default defineComponent({
 
     const onSubmit = throttle(async (): Promise<boolean> => {
       msgBox.value?.close();
-      msgBoxColor.value = 'danger';
+      msgBox.value?.setColor('danger');
 
       confirmationCodeText.value = confirmationCodeText.value.trim();
 
@@ -216,7 +215,6 @@ export default defineComponent({
     return {
       onSubmit,
       msgBox,
-      msgBoxColor,
       confirmationCodeText,
       resendConfirmationCode,
       confirmButton,

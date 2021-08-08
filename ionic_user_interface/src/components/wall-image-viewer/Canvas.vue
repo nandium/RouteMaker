@@ -155,6 +155,18 @@ export default defineComponent({
     const isLoading = ref(false);
     const routeMakingStep = ref(0);
 
+    const computeDimensions = (heightToWidthRatio: number) => {
+      const windowHeight =
+        window.innerHeight && document.documentElement.clientHeight
+          ? Math.min(window.innerHeight, document.documentElement.clientHeight)
+          : window.innerHeight ||
+            document.documentElement.clientHeight ||
+            document.getElementsByTagName('body')[0].clientHeight;
+      const height = Math.min(props.width * heightToWidthRatio, windowHeight * 0.95);
+      const width = height * (1 / heightToWidthRatio);
+      return { width, height };
+    };
+
     const setRouteImageUri: (imageUri: string) => void = inject(
       'setRouteImageUri',
       () => undefined,
@@ -177,21 +189,19 @@ export default defineComponent({
     const loadImageOnStage = async () => {
       const image = new Image();
       // eslint-disable-next-line
-      image.onload = async () => {
+      image.addEventListener('load', async function () {
         // Clear all boxes first
         clearBoxLayer();
         // Add image to stage
-        stage.width(props.width);
-        stage.height((props.width / image.width) * image.height);
-        konvaImage.setAttrs({
-          image,
-          width: props.width,
-          height: (props.width / image.width) * image.height,
-        });
+        const { width, height } = computeDimensions(image.height / image.width);
+        stage.width(width);
+        stage.height(height);
+        konvaImage.setAttrs({ image, width, height });
         // Get new boxes
         const formData = new FormData();
+        const imageWidth = this.width;
         formData.append('image', await (await fetch(props.imgSrc)).blob());
-        formData.append('width', props.width.toString());
+        formData.append('width', imageWidth.toString());
         let rawBoundingBoxes: Array<any>;
         isLoading.value = true;
         try {
@@ -200,13 +210,14 @@ export default defineComponent({
           isLoading.value = false;
         }
         addBoxLayerBoundingBoxes(rawBoundingBoxes);
+        resizeBoxLayer(width / imageWidth);
         imageLayer.batchDraw();
 
         // Listeners must be added after image is loaded
         // Currently initial listeners are for SelectMode.DRAWBOX
         addKonvaListenerPinchZoom(stage);
         DrawLayer.addKonvaDrawLayer(stage);
-      };
+      });
       image.src = props.imgSrc;
     };
 
@@ -243,12 +254,14 @@ export default defineComponent({
     };
 
     const resizeStage = () => {
-      const factor = props.width / konvaImage.width();
-      const newHeight = factor * konvaImage.height();
-      konvaImage.width(props.width);
+      const { width: newWidth, height: newHeight } = computeDimensions(
+        konvaImage.height() / konvaImage.width(),
+      );
+      const factor = newWidth / konvaImage.width();
+      konvaImage.width(newWidth);
       konvaImage.height(newHeight);
       imageLayer.batchDraw();
-      stage.width(props.width);
+      stage.width(newWidth);
       stage.height(newHeight);
       resizeBoxLayer(factor);
       if (DrawLayer.isDrawLayerAdded(stage)) {

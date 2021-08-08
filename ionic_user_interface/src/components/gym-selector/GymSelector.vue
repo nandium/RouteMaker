@@ -2,7 +2,7 @@
   <div>
     <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-        <message-box ref="errorMsg" color="danger" />
+        <message-box ref="msgBox" class="ion-margin-bottom global-rounded" />
         <loading-button
           class="ion-no-margin"
           expand="full"
@@ -66,13 +66,17 @@
       </ion-col>
     </ion-row>
     <div v-if="viewMap" class="margin-top center-inner">
-      <gym-map :gymLocationList="gymLocationList" :initialLocation="selectedGym"></gym-map>
+      <gym-map
+        :gymLocationList="gymLocationList"
+        :mapLocation="selectedGym"
+        v-model:clickedGymLocation="clickedGymLocation"
+      ></gym-map>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent, computed, Ref, inject } from 'vue';
+import { ref, onMounted, defineComponent, computed, Ref, inject, watch } from 'vue';
 import {
   IonButton,
   IonIcon,
@@ -134,6 +138,9 @@ export default defineComponent({
 
     let userLatLong: LatLong | null = null;
 
+    const msgBox: Ref<typeof MessageBox | null> = ref(null);
+    const clickedGymLocation = ref('');
+
     const viewMap = ref(false);
 
     onMounted(async () => {
@@ -165,11 +172,17 @@ export default defineComponent({
           const distanceToUserLocation = haversine(gymLocation.latLong, userLatLong);
           if (distanceToUserLocation < minDistance) {
             minDistance = distanceToUserLocation;
-            minDistanceGym = gymLocation.gymLocation;
+            minDistanceGym = gymLocation;
           }
         }
         if (minDistanceGym) {
-          selectedGym.value = minDistanceGym;
+          selectedGym.value = minDistanceGym.gymLocation;
+          // Simulate being selected in ion-select
+          onGymSelect(minDistanceGym.gymLocation);
+          msgBox.value?.setColor('medium');
+          msgBox.value?.showMsg(`Gym has been set to: ${minDistanceGym.gymName}`);
+        } else {
+          throw 'No minimum distance gym found!';
         }
       }
     };
@@ -190,6 +203,8 @@ export default defineComponent({
         autoComplete.value?.setValue(countryName);
         setNearestGym();
       } catch (error) {
+        msgBox.value?.setColor('danger');
+        msgBox.value?.showMsg('Unable to determine nearest gym!');
         console.error(error);
       } finally {
         locateButton.value?.setIsLoading(false);
@@ -215,6 +230,12 @@ export default defineComponent({
         emit('onCountryReset', true);
       }
     };
+
+    watch(clickedGymLocation, () => {
+      selectedGym.value = clickedGymLocation.value;
+      // Simulate being selected in ion-select
+      onGymSelect(clickedGymLocation.value);
+    });
 
     /**
      * Whenever a gym is selected, emit the location of selected gym
@@ -247,6 +268,8 @@ export default defineComponent({
       locateOutline,
       handleLocateClick,
       locateButton,
+      clickedGymLocation,
+      msgBox,
     };
   },
 });

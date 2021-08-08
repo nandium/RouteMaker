@@ -3,9 +3,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue';
+import { computed, defineComponent, onMounted, PropType, watch } from 'vue';
 import mapboxgl from 'mapbox-gl';
-import { GymLocation } from '@/common/api/route/getGymsByCountry';
+import { GymLocation, LatLong } from '@/common/api/route/getGymsByCountry';
 
 interface Geometry {
   type: 'Point';
@@ -30,20 +30,23 @@ export default defineComponent({
   name: 'GymMap',
   props: {
     gymLocationList: {
-      type: Array,
+      type: Array as PropType<Array<GymLocation>>,
       required: true,
     },
-    initialLocation: {
+    mapLocation: {
       type: String,
       required: true,
     },
   },
-  setup(props) {
+  emits: ['update:clickedGymLocation'],
+  setup(props, { emit }) {
     mapboxgl.accessToken = process.env.VUE_APP_MAPBOX_ACCESS_KEY as string;
+
+    let map: mapboxgl.Map;
 
     const gymLocationsGeoJson = computed(() => {
       let locationJson: Feature[] = [];
-      (props.gymLocationList as GymLocation[]).forEach((gymLocation, index) => {
+      props.gymLocationList.forEach((gymLocation, index) => {
         locationJson.push({
           type: 'Feature',
           geometry: {
@@ -62,22 +65,79 @@ export default defineComponent({
       } as FeatureCollection;
     });
 
+    watch(
+      () => props.mapLocation,
+      () => {
+        const [lat, lng] = props.mapLocation.split(',').map(parseFloat) as [number, number];
+        map.flyTo({
+          center: [lng, lat],
+          zoom: 16,
+        });
+        const coordsLatLong: LatLong = {
+          latitude: lat,
+          longitude: lng,
+        };
+        const matchingGymLocations = props.gymLocationList.filter((gymLocation) =>
+          latLongAreEqual(gymLocation.latLong, coordsLatLong),
+        );
+        if (matchingGymLocations.length) {
+          createPopUp(matchingGymLocations[0].gymName, [lng, lat]);
+        }
+      },
+    );
+
+    const createPopUp = (gymName: string, lngLat: [number, number]) => {
+      /* Close all other popups and display popup for clicked store */
+      const popUps = document.getElementsByClassName('mapboxgl-popup');
+      /** Check if there is already a popup on the map and if so, remove it */
+      if (popUps[0]) {
+        popUps[0].remove();
+      }
+      new mapboxgl.Popup({ closeOnClick: false })
+        .setLngLat(lngLat)
+        .setHTML(`<h3 style="color: black;">${gymName}</h3>`)
+        .addTo(map);
+    };
+
+    const latLongAreEqual = (a: LatLong, b: LatLong) => {
+      return a.latitude === b.latitude && a.longitude === b.longitude;
+    };
+
     onMounted(() => {
-      const [lat, lng] = props.initialLocation.split(',').map(parseFloat);
-      const map = new mapboxgl.Map({
+      const [lat, lng] = props.mapLocation.split(',').map(parseFloat);
+      map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [lng, lat],
         zoom: 16,
       });
       map.on('load', () => {
-        map.addLayer({
-          id: 'locations',
-          type: 'circle',
-          source: {
-            type: 'geojson',
-            data: gymLocationsGeoJson.value,
-          },
+        map.loadImage('assets/mapbox-marker.png', (error, image) => {
+          if (image && !error) {
+            map.addImage('custom-marker', image);
+            map.addSource('gyms', {
+              type: 'geojson',
+              data: gymLocationsGeoJson.value,
+            });
+            map.addLayer({
+              id: 'locations',
+              type: 'symbol',
+              source: 'gyms',
+              layout: {
+                'icon-image': 'custom-marker',
+              },
+            });
+            const coordsLatLong: LatLong = {
+              latitude: lat,
+              longitude: lng,
+            };
+            const matchingGymLocations = props.gymLocationList.filter((gymLocation) =>
+              latLongAreEqual(gymLocation.latLong, coordsLatLong),
+            );
+            if (matchingGymLocations.length) {
+              createPopUp(matchingGymLocations[0].gymName, [lng, lat]);
+            }
+          }
         });
       });
       map.on('click', (event) => {
@@ -88,31 +148,21 @@ export default defineComponent({
 
         /* If yes, then: */
         if (features.length) {
-          var clickedPoint = features[0];
+          const clickedPoint = features[0];
 
           /* Fly to the point */
+          const coords = (clickedPoint.geometry as Geometry).coordinates;
           map.flyTo({
-            center: (clickedPoint.geometry as Geometry).coordinates,
+            center: coords,
             zoom: 16,
           });
 
-          /* Close all other popups and display popup for clicked store */
-          var popUps = document.getElementsByClassName('mapboxgl-popup');
-          /** Check if there is already a popup on the map and if so, remove it */
-          if (popUps[0]) popUps[0].remove();
+          emit(
+            'update:clickedGymLocation',
+            props.gymLocationList[clickedPoint.properties?.id].gymLocation,
+          );
 
-          new mapboxgl.Popup({ closeOnClick: false })
-            .setLngLat((clickedPoint.geometry as Geometry).coordinates)
-            .setHTML(`<h3 style="color: black;">${clickedPoint.properties?.gymName}</h3>`)
-            .addTo(map);
-
-          /* Highlight listing in sidebar (and remove highlight for all other listings) */
-          const activeItem = document.getElementsByClassName('active');
-          if (activeItem[0]) {
-            activeItem[0].classList.remove('active');
-          }
-          const listing = document.getElementById('listing-' + clickedPoint.properties?.id);
-          listing?.classList.add('active');
+          createPopUp(clickedPoint.properties?.gymName, coords);
         }
       });
     });
@@ -140,6 +190,10 @@ body .embed-map {
 <style>
 /* This style section has to be unscoped due to mapbox being from an external source */
 /* Marker tweaks */
+.mapboxgl-popup {
+  top: -30px !important;
+}
+
 .mapboxgl-popup-close-button {
   display: none;
 }

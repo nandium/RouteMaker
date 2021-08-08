@@ -8,7 +8,7 @@
               <h1>Upload Route</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <message-box ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
+              <message-box ref="msgBox" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="floating">Route name</ion-label>
@@ -133,7 +133,6 @@ export default defineComponent({
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
     const getAccessToken: () => Ref<string> = inject('getAccessToken', () => ref(''));
     const getUsername: () => Ref<string> = inject('getUsername', () => ref(''));
-    const msgBoxColor = ref('danger');
     const routeNameText = ref('');
     const gradeNumber = ref(0);
     const gradeText = computed(() => 'V' + gradeNumber.value);
@@ -186,7 +185,7 @@ export default defineComponent({
     };
 
     const showErrorMsg = (errorMsg: string): void => {
-      msgBoxColor.value = 'danger';
+      msgBox.value?.setColor('danger');
       msgBox.value?.showMsg(errorMsg);
       content.value?.$el.scrollToTop(400);
     };
@@ -287,7 +286,6 @@ export default defineComponent({
       gymLocationList,
       onSubmit,
       msgBox,
-      msgBoxColor,
       minRouteExpiry,
       maxRouteExpiry,
       expiryTime,
