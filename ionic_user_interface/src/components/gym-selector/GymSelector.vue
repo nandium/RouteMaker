@@ -97,7 +97,7 @@ import GymMap from '@/components/GymMap.vue';
 import getGymsByCountry, { LatLong, GymLocation } from '@/common/api/route/getGymsByCountry';
 import AutoComplete from './AutoComplete.vue';
 import { Geolocation } from '@capacitor/geolocation';
-import axios from 'axios';
+import getReverseGeoLocationCached from '@/common/api/map/getReverseGeolocation';
 import haversine from 'haversine';
 
 export default defineComponent({
@@ -195,10 +195,9 @@ export default defineComponent({
           latitude: coordinates.coords.latitude,
           longitude: coordinates.coords.longitude,
         };
-        const response = await axios.get(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${userLatLong.longitude},${userLatLong.latitude}.json?types=country&access_token=${process.env.VUE_APP_MAPBOX_ACCESS_KEY}`,
+        const response = await getReverseGeoLocationCached(
+          `${coordinates.coords.longitude},${coordinates.coords.latitude}`,
         );
-
         const countryName = response.data.features[0].place_name;
         autoComplete.value?.setValue(countryName);
         setNearestGym();
@@ -224,7 +223,6 @@ export default defineComponent({
         gymLocationList.value = countryGymLocations;
         selectedCountryIso3.value = country.iso3;
         setUserCountry(country);
-        setNearestGym();
       } else {
         reset();
         emit('onCountryReset', true);
