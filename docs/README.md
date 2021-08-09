@@ -50,7 +50,9 @@ echo '{
 
 The Vue application can run in browser and also in Android through Capacitor plugin.
 
-Ensure `.env` file from the backend setup is present in `./ionic_user_interface`. Ping @yarkhinephyo if there is any issue.
+Ensure `.env` file produced from the backend setup is present in `./ionic_user_interface`. Ping @yarkhinephyo if there is any issue.
+
+The application will work aside for the map views which require an API token from [MapBox](https://docs.mapbox.com/api/overview/). To enable the feature, append the `VUE_APP_MAPBOX_ACCESS_KEY` environment variable in the `.env` file.
 
 For running in browser:
 
