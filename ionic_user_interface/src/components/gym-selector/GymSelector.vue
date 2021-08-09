@@ -2,7 +2,17 @@
   <div>
     <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col class="ion-align-self-center" size-lg="6" size-md="8" size-xs="12">
-        <MessageBox ref="errorMsg" color="danger" />
+        <message-box ref="msgBox" class="ion-margin-bottom global-rounded" />
+        <loading-button
+          class="ion-no-margin"
+          expand="full"
+          color="tertiary"
+          @click="handleLocateClick"
+          ref="locateButton"
+        >
+          <ion-label>Locate Nearest Gym &nbsp;</ion-label>
+          <ion-icon :icon="locateOutline"></ion-icon>
+        </loading-button>
         <ion-list class="ion-list">
           <auto-complete
             ref="autoComplete"
@@ -56,14 +66,19 @@
       </ion-col>
     </ion-row>
     <div v-if="viewMap" class="margin-top center-inner">
-      <gym-map :gymLocation="selectedGym"></gym-map>
+      <gym-map
+        :gymLocationList="gymLocationList"
+        :mapLocation="selectedGym"
+        v-model:clickedGymLocation="clickedGymLocation"
+      ></gym-map>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent, computed, Ref, inject } from 'vue';
+import { ref, onMounted, defineComponent, computed, Ref, inject, watch } from 'vue';
 import {
+  IonButton,
   IonIcon,
   IonItem,
   IonLabel,
@@ -72,19 +87,23 @@ import {
   IonSelectOption,
   IonRow,
   IonCol,
-  IonButton,
 } from '@ionic/vue';
+import { Geolocation } from '@capacitor/geolocation';
 import Lookup, { Country } from 'country-code-lookup';
-import { map, mapOutline, warning } from 'ionicons/icons';
+import { map, mapOutline, warning, locateOutline } from 'ionicons/icons';
+import haversine from 'haversine';
 
 import MessageBox from '@/components/MessageBox.vue';
+import LoadingButton from '@/components/LoadingButton.vue';
 import GymMap from '@/components/GymMap.vue';
-import getGymsByCountry, { GymLocation } from '@/common/api/route/getGymsByCountry';
+import getGymsByCountry, { LatLong, GymLocation } from '@/common/api/route/getGymsByCountry';
+import getReverseGeoLocationCached from '@/common/api/map/getReverseGeolocation';
 import AutoComplete from './AutoComplete.vue';
 
 export default defineComponent({
   name: 'GymSelector',
   components: {
+    IonButton,
     IonIcon,
     IonItem,
     IonLabel,
@@ -93,10 +112,10 @@ export default defineComponent({
     IonSelectOption,
     IonRow,
     IonCol,
-    IonButton,
     AutoComplete,
-    MessageBox,
     GymMap,
+    LoadingButton,
+    MessageBox,
   },
   setup(_, { emit }) {
     const countryNameList = ref<Array<Country>>([...Lookup.countries.sort()]);
@@ -112,9 +131,15 @@ export default defineComponent({
     const userCountry = getUserCountry();
     const userGym = getUserGym();
     const autoComplete: Ref<typeof AutoComplete | null> = ref(null);
+    const locateButton: Ref<typeof LoadingButton | null> = ref(null);
 
     const userHasSelectedGym = computed(() => selectedGym.value !== '');
     const userHasSelectedCountry = computed(() => selectedCountryIso3.value !== '');
+
+    let userLatLong: LatLong | null = null;
+
+    const msgBox: Ref<typeof MessageBox | null> = ref(null);
+    const clickedGymLocation = ref('');
 
     const viewMap = ref(false);
 
@@ -139,6 +164,52 @@ export default defineComponent({
       }
     });
 
+    const setNearestGym = () => {
+      if (userLatLong) {
+        let minDistance = Number.MAX_VALUE;
+        let minDistanceGym = null;
+        for (const gymLocation of gymLocationList.value) {
+          const distanceToUserLocation = haversine(gymLocation.latLong, userLatLong);
+          if (distanceToUserLocation < minDistance) {
+            minDistance = distanceToUserLocation;
+            minDistanceGym = gymLocation;
+          }
+        }
+        if (minDistanceGym) {
+          selectedGym.value = minDistanceGym.gymLocation;
+          // Simulate being selected in ion-select
+          onGymSelect(minDistanceGym.gymLocation);
+          msgBox.value?.setColor('medium');
+          msgBox.value?.showMsg(`Gym has been set to: ${minDistanceGym.gymName}`);
+        } else {
+          throw 'No minimum distance gym found!';
+        }
+      }
+    };
+
+    const handleLocateClick = async () => {
+      locateButton.value?.setIsLoading(true);
+      try {
+        const coordinates = await Geolocation.getCurrentPosition();
+        userLatLong = {
+          latitude: coordinates.coords.latitude,
+          longitude: coordinates.coords.longitude,
+        };
+        const response = await getReverseGeoLocationCached(
+          `${coordinates.coords.longitude},${coordinates.coords.latitude}`,
+        );
+        const countryName = response.data.features[0].place_name;
+        autoComplete.value?.setValue(countryName);
+        setNearestGym();
+      } catch (error) {
+        msgBox.value?.setColor('danger');
+        msgBox.value?.showMsg('Unable to determine nearest gym!');
+        console.error(error);
+      } finally {
+        locateButton.value?.setIsLoading(false);
+      }
+    };
+
     const reset = () => {
       selectedCountryIso3.value = '';
       gymLocationList.value = [];
@@ -157,6 +228,12 @@ export default defineComponent({
         emit('onCountryReset', true);
       }
     };
+
+    watch(clickedGymLocation, () => {
+      selectedGym.value = clickedGymLocation.value;
+      // Simulate being selected in ion-select
+      onGymSelect(clickedGymLocation.value);
+    });
 
     /**
      * Whenever a gym is selected, emit the location of selected gym
@@ -186,6 +263,11 @@ export default defineComponent({
       mapOutline,
       warning,
       autoComplete,
+      locateOutline,
+      handleLocateClick,
+      locateButton,
+      clickedGymLocation,
+      msgBox,
     };
   },
 });

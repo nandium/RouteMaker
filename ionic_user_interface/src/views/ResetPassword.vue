@@ -8,7 +8,7 @@
               <h1>Reset Password</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="msgBox" :color="msgBoxColor" class="global-rounded margin" />
+              <message-box ref="msgBox" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
@@ -125,7 +125,6 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const msgBox: Ref<typeof MessageBox | null> = ref(null);
-    const msgBoxColor = ref('danger');
     const usernameText = ref('');
     const passwordResetCodeText = ref('');
     const passwordText = ref('');
@@ -139,8 +138,8 @@ export default defineComponent({
 
     onMounted(() => {
       usernameText.value = getUsername().value;
-      msgBoxColor.value = 'medium';
       if (route.params.Destination) {
+        msgBox.value?.setColor('medium');
         msgBox.value?.showMsg(`A password reset code has been sent to ${route.params.Destination}`);
       }
     });
@@ -179,6 +178,8 @@ export default defineComponent({
 
     const resendPasswordResetCode = throttle(async (): Promise<void> => {
       msgBox.value?.close();
+      msgBox.value?.setColor('danger');
+
       try {
         const response = await axios.post(
           process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/forgotPassword',
@@ -187,7 +188,7 @@ export default defineComponent({
           },
         );
         if (response.data.Message === 'Request password reset success') {
-          msgBoxColor.value = 'medium';
+          msgBox.value?.setColor('medium');
           msgBox.value?.showMsg(
             `A password reset code has been sent to ${response.data.Destination}`,
           );
@@ -205,9 +206,9 @@ export default defineComponent({
       }
     }, 1000);
 
-    const onSubmit = throttle((): boolean => {
+    const onSubmit = throttle(async (): Promise<boolean> => {
       msgBox.value?.close();
-      msgBoxColor.value = 'danger';
+      msgBox.value?.setColor('danger');
 
       if (!isValidPasswordResetCode(passwordResetCodeText.value)) {
         msgBox.value?.showMsg('Password reset code must be 6 digits');
@@ -221,53 +222,50 @@ export default defineComponent({
         msgBox.value?.showMsg('Passwords do not match');
         return false;
       }
+      try {
+        const response = await axios.post(
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/resetPassword',
+          {
+            name: usernameText.value,
+            password: passwordText.value,
+            code: passwordResetCodeText.value,
+          },
+        );
+        if (response.data.Message === 'Password reset success') {
+          const toast = await toastController.create({
+            header: 'Password reset success!',
+            position: 'bottom',
+            color: 'success',
+            duration: 3000,
+            buttons: [
+              {
+                text: 'Close',
+                role: 'cancel',
+              },
+            ],
+          });
+          toast.present();
 
-      axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/resetPassword', {
-          name: usernameText.value,
-          password: passwordText.value,
-          code: passwordResetCodeText.value,
-        })
-        .then((response) => {
-          if (response.data.Message === 'Password reset success') {
-            toastController
-              .create({
-                header: 'Password reset success!',
-                position: 'bottom',
-                color: 'success',
-                duration: 3000,
-                buttons: [
-                  {
-                    text: 'Close',
-                    role: 'cancel',
-                  },
-                ],
-              })
-              .then((toast) => {
-                toast.present();
-              });
-            router.push({ name: 'Login' });
+          router.push({ name: 'Login' });
+        } else {
+          msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+        }
+      } catch (error) {
+        if (error.response) {
+          if (
+            error.response.data.Message === 'ExpiredCodeException' ||
+            error.response.data.Message === 'CodeMismatchException'
+          ) {
+            msgBox.value?.showMsg('Wrong password reset code');
           } else {
-            msgBox.value?.showMsg('Unable to verify: ' + response.data.Message);
+            msgBox.value?.showMsg('Error: ' + error.response.data.Message);
           }
-        })
-        .catch((error) => {
-          if (error.response) {
-            if (
-              error.response.data.Message === 'ExpiredCodeException' ||
-              error.response.data.Message === 'CodeMismatchException'
-            ) {
-              msgBox.value?.showMsg('Wrong password reset code');
-            } else {
-              msgBox.value?.showMsg('Error: ' + error.response.data.Message);
-            }
-          } else if (error.request) {
-            msgBox.value?.showMsg('Bad request');
-          } else {
-            msgBox.value?.showMsg('Error: ' + error.message);
-          }
-        });
-
+        } else if (error.request) {
+          msgBox.value?.showMsg('Bad request');
+        } else {
+          msgBox.value?.showMsg('Error: ' + error.message);
+        }
+      }
       return true;
     }, 1000);
 
@@ -280,7 +278,6 @@ export default defineComponent({
       resendPasswordResetCode,
       onSubmit,
       msgBox,
-      msgBoxColor,
       usernameText,
       passwordResetCodeText,
       passwordText,

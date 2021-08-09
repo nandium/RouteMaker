@@ -52,24 +52,21 @@ export default defineComponent({
 
     let waitingForResponse = false;
 
-    const handleVoteClick = throttle((username: string, createdAt: string) => {
+    const handleVoteClick = throttle(async (username: string, createdAt: string) => {
       if (!getLoggedIn().value) {
-        toastController
-          .create({
-            header: 'Please log in!',
-            position: 'bottom',
-            color: 'danger',
-            duration: 2000,
-            buttons: [
-              {
-                text: 'Close',
-                role: 'cancel',
-              },
-            ],
-          })
-          .then((toast) => {
-            toast.present();
-          });
+        const toast = await toastController.create({
+          header: 'Please log in!',
+          position: 'bottom',
+          color: 'danger',
+          duration: 2000,
+          buttons: [
+            {
+              text: 'Close',
+              role: 'cancel',
+            },
+          ],
+        });
+        toast.present();
         return;
       }
       if (waitingForResponse) {
@@ -80,8 +77,8 @@ export default defineComponent({
       hasVotedRef.value = !hasVotedRef.value;
 
       waitingForResponse = true;
-      axios
-        .post(
+      try {
+        const response = await axios.post(
           process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/toggleUpvote',
           {
             username,
@@ -92,22 +89,19 @@ export default defineComponent({
               Authorization: `Bearer ${getAccessToken().value}`,
             },
           },
-        )
-        .then((response) => {
-          // If different message received, throw error to jump to catch block
-          if (response.data.Message !== 'Toggle upvote route success') {
-            throw Error(response.data.Message);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          // Toggle back voteCount and hasVoted if voting failed
-          voteCountRef.value += hasVotedRef.value ? -1 : 1;
-          hasVotedRef.value = !hasVotedRef.value;
-        })
-        .finally(() => {
-          waitingForResponse = false;
-        });
+        );
+        // If different message received, throw error to jump to catch block
+        if (response.data.Message !== 'Toggle upvote route success') {
+          throw Error(response.data.Message);
+        }
+      } catch (error) {
+        console.error(error);
+        // Toggle back voteCount and hasVoted if voting failed
+        voteCountRef.value += hasVotedRef.value ? -1 : 1;
+        hasVotedRef.value = !hasVotedRef.value;
+      } finally {
+        waitingForResponse = false;
+      }
     }, 500);
 
     return {

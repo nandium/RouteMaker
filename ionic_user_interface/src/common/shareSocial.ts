@@ -21,22 +21,19 @@ const shareSocial = async (
     // Copy to clipboard as fallback
     if (error instanceof CapacitorException) {
       navigator.clipboard.writeText(DOMAIN + vueRoute.path);
-      toastController
-        .create({
-          header: 'Copied URL to clipboard!',
-          position: 'bottom',
-          color: 'medium',
-          duration: 2000,
-          buttons: [
-            {
-              text: 'Close',
-              role: 'cancel',
-            },
-          ],
-        })
-        .then((toast) => {
-          toast.present();
-        });
+      const toast = await toastController.create({
+        header: 'Copied URL to clipboard!',
+        position: 'bottom',
+        color: 'medium',
+        duration: 2000,
+        buttons: [
+          {
+            text: 'Close',
+            role: 'cancel',
+          },
+        ],
+      });
+      toast.present();
     } else {
       throw error;
     }

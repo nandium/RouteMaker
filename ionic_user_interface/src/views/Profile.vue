@@ -117,23 +117,20 @@ export default defineComponent({
       setPrefersDarkMode(event.detail.checked);
     };
 
-    const showFailedToDeleteAccountToast = (): void => {
-      toastController
-        .create({
-          header: 'Failed to delete account. Please login and try again',
-          position: 'bottom',
-          color: 'danger',
-          duration: 3000,
-          buttons: [
-            {
-              text: 'Close',
-              role: 'cancel',
-            },
-          ],
-        })
-        .then((toast) => {
-          toast.present();
-        });
+    const showFailedToDeleteAccountToast = async (): Promise<void> => {
+      const toast = await toastController.create({
+        header: 'Failed to delete account. Please login and try again',
+        position: 'bottom',
+        color: 'danger',
+        duration: 3000,
+        buttons: [
+          {
+            text: 'Close',
+            role: 'cancel',
+          },
+        ],
+      });
+      toast.present();
     };
 
     const clickDeleteAccountButton = async (): Promise<void> => {
@@ -150,54 +147,53 @@ export default defineComponent({
             text: 'Delete',
             cssClass: 'global-danger-text',
             handler: throttle(async () => {
-              await axios
-                .delete(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/delete', {
-                  headers: {
-                    Authorization: `Bearer ${getAccessToken().value}`,
+              try {
+                const response = await axios.delete(
+                  process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/delete',
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getAccessToken().value}`,
+                    },
                   },
-                })
-                .then(async (response) => {
-                  if (response.status === 204) {
-                    await forceLogout();
+                );
 
-                    toastController
-                      .create({
-                        header: 'Account deleted successfully',
-                        position: 'bottom',
-                        color: 'success',
-                        duration: 3000,
-                        buttons: [
-                          {
-                            text: 'Close',
-                            role: 'cancel',
-                          },
-                        ],
-                      })
-                      .then((toast) => {
-                        toast.present();
-                      });
+                if (response.status === 204) {
+                  await forceLogout();
 
-                    router.push({ name: 'Explore' });
-                  } else {
-                    showFailedToDeleteAccountToast();
-                  }
-                })
-                .catch((error) => {
-                  if (error.response) {
-                    // The request was made and the server responded with a status code
-                    // that falls out of the range of 2xx
-                    console.error(error.response.data);
-                  } else if (error.request) {
-                    // The request was made but no response was received
-                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                    // http.ClientRequest in node.js
-                    console.error(error.request);
-                  } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.error('Error', error.message);
-                  }
+                  const toast = await toastController.create({
+                    header: 'Account deleted successfully',
+                    position: 'bottom',
+                    color: 'success',
+                    duration: 3000,
+                    buttons: [
+                      {
+                        text: 'Close',
+                        role: 'cancel',
+                      },
+                    ],
+                  });
+                  toast.present();
+
+                  router.push({ name: 'Explore' });
+                } else {
                   showFailedToDeleteAccountToast();
-                });
+                }
+              } catch (error) {
+                if (error.response) {
+                  // The request was made and the server responded with a status code
+                  // that falls out of the range of 2xx
+                  console.error(error.response.data);
+                } else if (error.request) {
+                  // The request was made but no response was received
+                  // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                  // http.ClientRequest in node.js
+                  console.error(error.request);
+                } else {
+                  // Something happened in setting up the request that triggered an Error
+                  console.error('Error', error.message);
+                }
+                showFailedToDeleteAccountToast();
+              }
             }, 1000),
           },
         ],

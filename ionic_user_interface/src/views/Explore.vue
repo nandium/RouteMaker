@@ -50,7 +50,12 @@
             </ion-row>
           </ion-col>
           <ion-col class="ion-align-self-center ion-no-padding" size-xs="12">
-            <gym-map v-if="viewMap" :gymLocation="gymLocation" class="margin-top"></gym-map>
+            <gym-map
+              v-if="viewMap"
+              :gymLocationList="gymLocationArray"
+              :mapLocation="gymLocation"
+              class="margin-top"
+            ></gym-map>
           </ion-col>
         </ion-row>
 
@@ -66,7 +71,7 @@
 
 <script lang="ts">
 import { IonContent, IonPage, IonRow, IonCol, IonButton, IonIcon } from '@ionic/vue';
-import { defineComponent, onMounted, ref, computed } from 'vue';
+import { defineComponent, onMounted, ref, computed, Ref, ComputedRef } from 'vue';
 import { useRoute } from 'vue-router';
 import { map, mapOutline, shareSocialOutline } from 'ionicons/icons';
 
@@ -74,6 +79,7 @@ import GymSelector from '@/components/gym-selector/GymSelector.vue';
 import GymMap from '@/components/GymMap.vue';
 import GymRouteList from '@/components/GymRouteList.vue';
 import { shareSocial } from '@/common/shareSocial';
+import { GymLocation } from '@/common/api/route/getGymsByCountry';
 
 export default defineComponent({
   name: 'Explore',
@@ -94,10 +100,27 @@ export default defineComponent({
      * If gymLocation exists in path parameters, use a different page layout
      */
     const route = useRoute();
-    const gymRouteList = ref<typeof GymRouteList | null>(null);
+    const gymRouteList: Ref<typeof GymRouteList | null> = ref(null);
     const showGymRouteList = ref(false);
     const gymLocation = computed(() => route.params.gymLocation as string);
     const gymName = computed(() => route.params.gymName as string);
+    /* This is a dummy location array to feed into our map so that it shows our current gym location */
+    const gymLocationArray: ComputedRef<Array<GymLocation>> = computed(() => {
+      const coords = gymLocation.value.split(',').map(parseFloat);
+      const latLong = {
+        latitude: coords[0],
+        longitude: coords[1],
+      };
+      /* No need for country code as our map doesn't require it */
+      return [
+        {
+          countryCode: '',
+          latLong,
+          gymLocation: gymLocation.value,
+          gymName: gymName.value,
+        },
+      ];
+    });
     const showGymSelector = computed(
       () => gymLocation.value === undefined && gymName.value === undefined,
     );
@@ -114,7 +137,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (gymLocation.value && gymName.value) {
-        handleOnGymSelect(gymLocation.value as string);
+        handleOnGymSelect(gymLocation.value);
       }
     });
 
@@ -141,6 +164,7 @@ export default defineComponent({
       mapOutline,
       shareSocialOutline,
       gymName,
+      gymLocationArray,
     };
   },
 });

@@ -8,7 +8,7 @@
               <h1>Login</h1>
             </div>
             <div class="ion-padding ion-text-center">
-              <MessageBox ref="errorMsg" color="danger" class="global-rounded margin" />
+              <message-box ref="errorMsg" color="danger" class="global-rounded margin" />
               <form @submit.prevent="onSubmit">
                 <ion-item class="global-rounded margin">
                   <ion-label position="stacked">Username</ion-label>
@@ -34,15 +34,16 @@
                     required
                   />
                 </ion-item>
-                <ion-button
+                <loading-button
                   id="loginButton"
                   class="login-button"
                   size="medium"
                   type="submit"
                   expand="block"
+                  ref="loginButton"
                 >
                   Login
-                </ion-button>
+                </loading-button>
                 <router-link style="text-decoration: none" to="/forgotPassword">
                   <ion-button
                     id="forgotButton"
@@ -88,6 +89,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { throttle } from 'lodash';
 import MessageBox from '@/components/MessageBox.vue';
+import LoadingButton from '@/components/LoadingButton.vue';
 
 export default defineComponent({
   name: 'Login',
@@ -102,6 +104,7 @@ export default defineComponent({
     IonLabel,
     IonPage,
     IonRow,
+    LoadingButton,
   },
   setup() {
     const router = useRouter();
@@ -124,6 +127,7 @@ export default defineComponent({
     const usernameText = ref('');
     const passwordText = ref('');
     const errorMsg: Ref<typeof MessageBox | null> = ref(null);
+    const loginButton: Ref<typeof LoadingButton | null> = ref(null);
 
     onIonViewDidLeave(() => {
       errorMsg.value?.close();
@@ -137,7 +141,7 @@ export default defineComponent({
       return password.length >= 8;
     };
 
-    const onSubmit = throttle((): boolean => {
+    const onSubmit = throttle(async (): Promise<boolean> => {
       errorMsg.value?.close();
 
       usernameText.value = usernameText.value.trim();
@@ -155,64 +159,66 @@ export default defineComponent({
       }
 
       // Valid credentials
+      loginButton.value?.setIsLoading(true);
       setUsername(usernameText.value);
-      axios
-        .post(process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/login', {
-          name: usernameText.value,
-          password: passwordText.value,
-        })
-        .then((response) => {
-          // const { AccessToken, ExpiresIn, IdToken, Message, RefreshToken } = response.data;
-          setIdToken(response.data.IdToken);
-          setAccessToken(response.data.AccessToken);
-          setRefreshToken(response.data.RefreshToken);
-          setLoggedIn(true);
+      try {
+        const response = await axios.post(
+          process.env.VUE_APP_USER_ENDPOINT_URL + '/v1/user/login',
+          {
+            name: usernameText.value,
+            password: passwordText.value,
+          },
+        );
 
-          toastController
-            .create({
-              header: 'Logged in successfully',
-              position: 'bottom',
-              color: 'success',
-              duration: 3000,
-              buttons: [
-                {
-                  text: 'Close',
-                  role: 'cancel',
-                },
-              ],
-            })
-            .then((toast) => {
-              toast.present();
-            });
+        // const { AccessToken, ExpiresIn, IdToken, Message, RefreshToken } = response.data;
+        setIdToken(response.data.IdToken);
+        setAccessToken(response.data.AccessToken);
+        setRefreshToken(response.data.RefreshToken);
+        setLoggedIn(true);
 
-          // If the user is already creating a route before login, push to "New"
-          if (getRouteImageUri().value) {
-            router.push({ name: 'New' });
-          } else {
-            router.push({ name: 'Explore' });
-          }
-        })
-        .catch((error) => {
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            if (error.response.data.Message === 'UserNotFoundException') {
-              errorMsg.value?.showMsg('Account not found, please sign up!');
-            } else if (error.response.data.Message === 'NotAuthorizedException') {
-              errorMsg.value?.showMsg('Incorrect email or password');
-            } else if (error.response.data.Message === 'UserNotConfirmedException') {
-              setConfirmationNeeded(true);
-              setUserEmail(error.response.data.Email);
-              router.push({ name: 'Confirm' });
-            } else {
-              console.error(error.response.data);
-            }
-          } else if (error.request) {
-            errorMsg.value?.showMsg('Invalid credentials');
-          } else {
-            errorMsg.value?.showMsg('Error: ' + error.message);
-          }
+        const toast = await toastController.create({
+          header: 'Logged in successfully',
+          position: 'bottom',
+          color: 'success',
+          duration: 3000,
+          buttons: [
+            {
+              text: 'Close',
+              role: 'cancel',
+            },
+          ],
         });
+        toast.present();
+
+        // If the user is already creating a route before login, push to "New"
+        if (getRouteImageUri().value) {
+          router.push({ name: 'New' });
+        } else {
+          router.push({ name: 'Explore' });
+        }
+      } catch (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          if (error.response.data.Message === 'UserNotFoundException') {
+            errorMsg.value?.showMsg('Account not found, please sign up!');
+          } else if (error.response.data.Message === 'NotAuthorizedException') {
+            errorMsg.value?.showMsg('Incorrect email or password');
+          } else if (error.response.data.Message === 'UserNotConfirmedException') {
+            setConfirmationNeeded(true);
+            setUserEmail(error.response.data.Email);
+            router.push({ name: 'Confirm' });
+          } else {
+            console.error(error.response.data);
+          }
+        } else if (error.request) {
+          errorMsg.value?.showMsg('Invalid credentials');
+        } else {
+          errorMsg.value?.showMsg('Error: ' + error.message);
+        }
+      } finally {
+        loginButton.value?.setIsLoading(false);
+      }
       return true;
     }, 1000);
 
@@ -226,6 +232,7 @@ export default defineComponent({
       usernameText,
       passwordText,
       errorMsg,
+      loginButton,
     };
   },
 });

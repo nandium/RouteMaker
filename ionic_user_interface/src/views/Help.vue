@@ -5,7 +5,7 @@
         <strong>-- Hello Climbers! --</strong>
         <p>This is a free open source project between friends who happen to code and climb.</p>
 
-        <p>It aims to provide the following features:</p>
+        <p>As a mobile-first application, it provides the following features:</p>
         <div class="features-div">
           <ol class="ion-text-start">
             <li>

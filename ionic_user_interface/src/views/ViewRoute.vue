@@ -79,7 +79,7 @@
           ></GradeSlider>
         </div>
         <br />
-        <MessageBox ref="msgBox" color="danger" class="rounded margin" />
+        <message-box ref="msgBox" color="danger" class="rounded margin" />
         <div class="global-margin-left-right">
           <h1 class="ion-text-center ion-margin comment-title">
             -- Reviews ({{ routeDetails.comments.length }}) --
@@ -316,41 +316,40 @@ export default defineComponent({
           {
             text: 'Delete',
             cssClass: 'global-danger-text',
-            handler: () => {
-              axios
-                .delete(process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/comment', {
-                  headers: {
-                    Authorization: `Bearer ${getAccessToken().value}`,
+            handler: async () => {
+              try {
+                const response = await axios.delete(
+                  process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/comment',
+                  {
+                    headers: {
+                      Authorization: `Bearer ${getAccessToken().value}`,
+                    },
+                    params: {
+                      username: username.value,
+                      createdAt: createdAt.value,
+                      commentUsername,
+                      timestamp: timestamp.toString(),
+                    },
                   },
-                  params: {
-                    username: username.value,
-                    createdAt: createdAt.value,
-                    commentUsername,
-                    timestamp: timestamp.toString(),
-                  },
-                })
-                .then((response) => {
-                  if (response.data.Message === 'Delete comment success') {
-                    if (routeDetails.value) {
-                      // Username may be different from commentUsername when it is an admin delete
-                      routeDetails.value.comments = routeDetails.value?.comments.filter(
-                        (comment) => {
-                          return (
-                            comment.username !== commentUsername && comment.timestamp !== timestamp
-                          );
-                        },
+                );
+                if (response.data.Message === 'Delete comment success') {
+                  if (routeDetails.value) {
+                    // Username may be different from commentUsername when it is an admin delete
+                    routeDetails.value.comments = routeDetails.value?.comments.filter((comment) => {
+                      return (
+                        comment.username !== commentUsername && comment.timestamp !== timestamp
                       );
-                      // If the user deletes his own comment
-                      if (commentUsername === myUsername.value) {
-                        hasAlreadyCommented.value = false;
-                      }
+                    });
+                    // If the user deletes his own comment
+                    if (commentUsername === myUsername.value) {
+                      hasAlreadyCommented.value = false;
                     }
                   }
-                })
-                .catch((error) => {
-                  msgBox.value?.showMsg('Please try again in a while');
-                  console.error(error);
-                });
+                }
+              } catch (error) {
+                msgBox.value?.showMsg('Please try again in a while');
+                console.error(error);
+              }
             },
           },
         ],
@@ -376,9 +375,9 @@ export default defineComponent({
           },
           {
             text: 'Yes',
-            handler: () => {
-              axios
-                .post(
+            handler: async () => {
+              try {
+                await axios.post(
                   process.env.VUE_APP_ROUTE_ENDPOINT_URL + '/v1/route/details/report',
                   {
                     username: routeUsername,
@@ -389,45 +388,37 @@ export default defineComponent({
                       Authorization: `Bearer ${getAccessToken().value}`,
                     },
                   },
-                )
-                .then(() => {
-                  hasReported.value = true;
-                  toastController
-                    .create({
-                      header: 'Your report has been successfully sent',
-                      position: 'bottom',
-                      color: 'success',
-                      duration: 3000,
-                      buttons: [
-                        {
-                          text: 'Close',
-                          role: 'cancel',
-                        },
-                      ],
-                    })
-                    .then((toast) => {
-                      toast.present();
-                    });
-                })
-                .catch((error) => {
-                  console.error(error);
-                  toastController
-                    .create({
-                      header: 'Failed to report route, please try again',
-                      position: 'bottom',
-                      color: 'danger',
-                      duration: 3000,
-                      buttons: [
-                        {
-                          text: 'Close',
-                          role: 'cancel',
-                        },
-                      ],
-                    })
-                    .then((toast) => {
-                      toast.present();
-                    });
+                );
+                hasReported.value = true;
+                const toast = await toastController.create({
+                  header: 'Your report has been successfully sent',
+                  position: 'bottom',
+                  color: 'success',
+                  duration: 3000,
+                  buttons: [
+                    {
+                      text: 'Close',
+                      role: 'cancel',
+                    },
+                  ],
                 });
+                toast.present();
+              } catch (error) {
+                console.error(error);
+                const toast = await toastController.create({
+                  header: 'Failed to report route, please try again',
+                  position: 'bottom',
+                  color: 'danger',
+                  duration: 3000,
+                  buttons: [
+                    {
+                      text: 'Close',
+                      role: 'cancel',
+                    },
+                  ],
+                });
+                toast.present();
+              }
             },
           },
         ],
