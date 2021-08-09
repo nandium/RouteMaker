@@ -88,17 +88,17 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/vue';
+import { Geolocation } from '@capacitor/geolocation';
 import Lookup, { Country } from 'country-code-lookup';
 import { map, mapOutline, warning, locateOutline } from 'ionicons/icons';
+import haversine from 'haversine';
 
 import MessageBox from '@/components/MessageBox.vue';
 import LoadingButton from '@/components/LoadingButton.vue';
 import GymMap from '@/components/GymMap.vue';
 import getGymsByCountry, { LatLong, GymLocation } from '@/common/api/route/getGymsByCountry';
-import AutoComplete from './AutoComplete.vue';
-import { Geolocation } from '@capacitor/geolocation';
 import getReverseGeoLocationCached from '@/common/api/map/getReverseGeolocation';
-import haversine from 'haversine';
+import AutoComplete from './AutoComplete.vue';
 
 export default defineComponent({
   name: 'GymSelector',
