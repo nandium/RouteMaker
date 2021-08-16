@@ -9,7 +9,7 @@
         <div class="features-div">
           <ol class="ion-text-start">
             <li>
-              <b>AI Drawing Board</b>
+              <b>Auto-detection of Holds</b>
               - Draw custom climbing routes faster with a climbing hold detection model
             </li>
             <li>
