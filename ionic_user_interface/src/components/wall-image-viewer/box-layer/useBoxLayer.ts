@@ -16,9 +16,13 @@ export function useBoxLayer(
   const handholdPositionArr = ref<Array<number>>([]);
 
   const clearBoxLayer = () => {
+    // Destroy konva elements in the box layer
     boxLayer.clear();
     boxLayer.destroyChildren();
     boxLayer.batchDraw();
+    // Reset the tracking of bounding boxes
+    boundingBoxes = [];
+    handholdPositionArr.value = [];
   };
 
   /**

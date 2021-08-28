@@ -17,6 +17,11 @@ const DRAW_LAYER_NAME = 'drawLayer';
  * @param {node} stageNode
  */
 const addKonvaDrawLayer = (stageNode: Konva.Stage): void => {
+  // Remove the old draw layer if it exists
+  if (isDrawLayerAdded(stageNode)) {
+    removeKonvaDrawLayer(stageNode);
+  }
+
   const { width: imageWidth, height: imageHeight } = stageNode.size();
 
   const drawLayer = new Konva.Layer({ name: DRAW_LAYER_NAME, draggable: false });
