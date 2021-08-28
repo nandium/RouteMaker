@@ -12,7 +12,7 @@
           class="instruction-arrow shift-down"
           v-if="routeMakingStep > 0"
           slot="start"
-          @click="changeRouteMakingStep(false)"
+          @click="changeRouteMakingStep(routeMakingStep - 1)"
         >
           <ion-icon :icon="caretBackOutline"></ion-icon>
         </div>
@@ -27,7 +27,7 @@
           class="instruction-arrow"
           v-if="routeMakingStep < 4"
           slot="end"
-          @click="changeRouteMakingStep(true)"
+          @click="changeRouteMakingStep(routeMakingStep + 1)"
         >
           <ion-icon :icon="caretForwardOutline"></ion-icon>
         </div>
@@ -322,7 +322,7 @@ export default defineComponent({
     watch(
       () => props.imgSrc,
       async () => {
-        offKonvaStageListeners(stage);
+        changeRouteMakingStep(0);
         await loadImageOnStage();
       },
     );
@@ -330,14 +330,10 @@ export default defineComponent({
     /**
      * Depending on the step of the route making process, the canvas mode is switched accordingly
      */
-    const changeRouteMakingStep = (doIncrement: boolean) => {
-      if (doIncrement) {
-        if (routeMakingStep.value + 1 > 4) return;
-        routeMakingStep.value = routeMakingStep.value + 1;
-      } else {
-        if (routeMakingStep.value - 1 < 0) return;
-        routeMakingStep.value = routeMakingStep.value - 1;
-      }
+    const changeRouteMakingStep = (step: number) => {
+      if (step > 4 || step < 0) return;
+      routeMakingStep.value = step;
+
       switch (routeMakingStep.value) {
         case 0:
           changeSelectMode(SelectMode.DRAWBOX);
