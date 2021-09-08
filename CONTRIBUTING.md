@@ -15,7 +15,7 @@ When contributing to this repository, please first discuss the change you wish t
 
 ### Initial Setup
 
-The runtimes are NodeJS 14 and Python 3.7.
+The runtimes are NodeJS 14 and Python 3.8.
 
 To ensure the PR passes checks in Github Actions, there are [CommitLint](https://github.com/conventional-changelog/commitlint), [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) set up as git hooks. Please enable it:
 
