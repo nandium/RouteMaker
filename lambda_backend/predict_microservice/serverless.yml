@@ -5,7 +5,7 @@ service: yolo-bouldering-predictor
 provider:
   name: aws
   stage: dev
-  runtime: python3.7
+  runtime: python3.8
   region: ap-southeast-1
   memorySize: 2048
   apiGateway:
