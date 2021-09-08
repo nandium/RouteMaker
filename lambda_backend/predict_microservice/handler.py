@@ -1,29 +1,17 @@
-import numpy as np
-import cv2
-
-from os.path import join
 import os
-import glob
 import json
 import base64
 
 from utils import exception_handler, retrieve_numpy_image, parse_multipart_data, get_response_headers
+from service_inference import ServiceInference
+
+DEFAULT_WEIGHTS = os.path.join("weights", "yolov4-tiny-obj.weights")
+DEFAULT_CONFIG = os.path.join("weights", "yolov4-tiny-obj.cfg")
+DEFAULT_CLASSES = ["hold"]
 
 ALLOWED_TYPES = ["image/jpeg"]
 
-# Load Yolo
-net = cv2.dnn.readNet(
-    join("weights", "yolov4-tiny-obj.weights"),
-    join("weights", "yolov4-tiny-obj.cfg")
-)
-
-# Names of custom objects
-# Refer to colab notebook for index to class mappings
-classes = ["hold"]
-
-layer_names = net.getLayerNames()
-output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-
+inference = ServiceInference(DEFAULT_WEIGHTS, DEFAULT_CONFIG, DEFAULT_CLASSES)
 
 @exception_handler
 def predict(event, context):
@@ -57,68 +45,11 @@ def predict(event, context):
     assert image_dict["type"] in ALLOWED_TYPES, "Unallowed file type"
 
     img = retrieve_numpy_image(image_dict["content"])
-    height, width, channels = img.shape
 
     scaled_width = int(width_dict["content"].decode("utf-8"))
 
-    # If given width is 0, do not scale
-    scaled_width = scaled_width if scaled_width != 0 else width
-    scaled_height = int((scaled_width / width) * height)
-
-    # Image Blob
-    blob = cv2.dnn.blobFromImage(
-        img,
-        0.00392,
-        (416, 416),
-        (0, 0, 0),
-        True,
-        crop=False
-    )
-
-    net.setInput(blob)
-    outs = net.forward(output_layers)
-
-    box_dimensions = []
-    box_confidences = []
-    class_ids = []
-
-    for out in outs:
-        for detection in out:
-            scores = detection[5:]
-            class_id = np.argmax(scores)
-            confidence = scores[class_id]
-            if confidence > 0.3:
-                # Object detected
-                center_x = int(detection[0] * scaled_width)
-                center_y = int(detection[1] * scaled_height)
-                w = int(detection[2] * scaled_width)
-                h = int(detection[3] * scaled_height)
-
-                # Rectangle coordinates
-                x = int(center_x - w / 2)
-                y = int(center_y - h / 2)
-
-                box_dimensions.append([x, y, w, h])
-                box_confidences.append(float(confidence))
-                class_ids.append(class_id)
-
-    boxes = []
-    # Non Maximum Suppression
-    indexes = cv2.dnn.NMSBoxes(box_dimensions, box_confidences, 0.5, 0.4)
-    for i in indexes:
-        i = int(i)
-        x, y, w, h = box_dimensions[i]
-        boxes.append({
-            "x": x,
-            "y": y,
-            "w": w,
-            "h": h,
-            "confidence": float(box_confidences[i]),
-            "class": str(classes[class_ids[i]])
-        })
-
-    # Sort boxes in descending sizes
-    boxes = sorted(boxes, key=lambda box: box["w"] * box["h"], reverse=True)
+    # Run inference on image
+    scaled_height, scaled_width, boxes = inference.run(img, scaled_width)
 
     return {
         "statusCode": "200",

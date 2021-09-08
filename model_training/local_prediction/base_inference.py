@@ -1,0 +1,1 @@
+../../lambda_backend/predict_microservice/base_inference.py

@@ -11,6 +11,7 @@ Tested on
 ## Getting Started
 
 1. Install `pipenv` if not done so already.
+
    ```bash
    $ pip install --user pipenv
    ...
@@ -18,6 +19,7 @@ Tested on
    Successfully installed appdirs-1.4.4 distlib-0.3.2 pipenv-2021.5.29 virtualenv-20.4.7 virtualenv-clone-0.5.4
    ```
 1. Install dependencies, then launch the subshell.
+
    ```bash
    $ pipenv install
    ...
@@ -27,15 +29,16 @@ Tested on
    $ pipenv shell
    Launching subshell in virtual environment...
    ```
-1. Running the Python script now will give predictions on images in `.\test_images\` based on weights and config given by the repo, located at [`..\..\lambda_backend\predict_microservice\weights`](https://github.com/nandium/RouteMaker/tree/main/lambda_backend/predict_microservice/weights). Images will appear with the predicted bounding boxes, and the labels will be saved as `.txt` files saved in the `.\test_images\` folder.
+1. Running the Python script now will give predictions on images in `./test_images/` based on weights and config given by the repo, located at [`../../lambda_backend/predict_microservice/weights`](https://github.com/nandium/RouteMaker/tree/main/lambda_backend/predict_microservice/weights). Images will appear with the predicted bounding boxes, and the labels will be saved as `.txt` files saved in the `./test_images/` folder.
+
    ```bash
    $ python yolo_object_detection.py
    ```
-1. To obtain predictions on new images, simply place them in `.\test_images\` and run the script.
-1. Run LabelImg and open the `.\test_images\` directory. You can now adjust the bounding boxes and subsequently save the corresponding `.txt` files. The images can then be used as training data for the model.
+1. To obtain predictions on new images, simply place them in `./test_images/` and run the script.
+1. Run LabelImg and open the `./test_images/` directory. You can now adjust the bounding boxes and subsequently save the corresponding `.txt` files. The images can then be used as training data for the model.
 1. Some images may face an issue where a `ZeroDivisionError` occurs when saving using LabelImg. Be sure to check for this by saving after a single edit to avoid losing all your work.
-   ```bash
-   ...
+
+   ```Python
    ZeroDivisionError: float division by zero
    ```
    If this occurs, change the image format from:
@@ -46,9 +49,20 @@ Tested on
 
 1. Zip up all training data - images and labels (`.txt`) - into a zipfile `images.zip`.
 1. Create a folder `/yolov4_tiny` in your Google drive, and save `images.zip` inside it.
-1. Open up `../Train_yolov4_tiny.ipynb` in Google Colab, then click Runtime > Run All (Ctrl+F9).
+1. Open up [`../Train_yolov4_tiny.ipynb`](https://github.com/nandium/RouteMaker/blob/main/model_training/Train_yolov4_tiny.ipynb) in Google Colab, then click Runtime > Run All (Ctrl+F9).
 1. The model will be trained with the hyperparameters as set in the document. You can update them as you see fit, following guidance from the [darknet documentation](https://github.com/AlexeyAB/darknet#when-should-i-stop-training). Be sure to commit changes made if so.
 1. The key performance indicator will be the mAP (higher better).
+
    ```bash
    mean average precision (mAP@0.50) = 0.823387, or 82.34 %
    ```
+
+## Training Locally
+
+1. Make sure requirements are setup as on the [darknet repo](https://github.com/AlexeyAB/darknet#requirements-for-windows-linux-and-macos). NVIDIA GPU is required.
+1. Follow the steps in [`../Train_yolov4_tiny.ipynb`](https://github.com/nandium/RouteMaker/blob/main/model_training/Train_yolov4_tiny.ipynb) to configure envinronment variables, hyperparameters, and run scripts.
+
+## Saving Configurations
+
+1. Once the _improved_ model has been trained, the relevant config and weight files should be committed to this repo. These are located at [`/lambda_backend/predict_microservice/weights`](https://github.com/nandium/RouteMaker/tree/main/lambda_backend/predict_microservice/weights).
+1. The training/validation split used to train should also be saved. This is located in this folder in `./train_val_split/`.

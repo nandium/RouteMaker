@@ -8,6 +8,7 @@ numpy = "*"
 opencv-python = "*"
 autopep8 = "*"
 requests-toolbelt = "*"
+configparser = "*"
 
 [dev-packages]
 
