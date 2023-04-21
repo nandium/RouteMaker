@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/favicon-lightmode-name.svg" width="200" />
 
-![GitHub](https://img.shields.io/github/license/nandium/RouteMaker?style=flat-square) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) ![Website](https://img.shields.io/website?style=flat-square&url=https%3A%2F%2Froutemaker.rocks) ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/nandium/RouteMaker?style=flat-square)
+![GitHub](https://img.shields.io/github/license/nandium/RouteMaker?style=flat-square) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/nandium/RouteMaker?style=flat-square)
 
 ## Features
 
@@ -13,12 +13,6 @@ By utilizing Object Detection, this application takes in :camera: pictures of cl
 ### Route Sharing System
 
 Users can upload the routes that they created so that other climbers in the same gyms can try out too. Since climbing grades have subjective aspects to them, people can also grade each other's routes to produce a more accurate assessment. Fun and interesting routes can be upvoted so that more people will take notice. If there are interesting betas to a problem, users can mention them in the comments too.
-
-## Live Application
-
-Application: https://routemaker.rocks
-
-Quick Guide: https://routemaker.rocks/help
 
 ## Contributing
 
