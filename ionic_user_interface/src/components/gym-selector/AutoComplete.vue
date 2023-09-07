@@ -84,8 +84,15 @@ export default defineComponent({
             .toLowerCase()
             .indexOf(userInput.value.toLowerCase()) === 0,
       );
+
+      //Check if user is selecting United States (edge case)
+      if(userInput.value === "United States"){
+        showList.value = false
+        const matchedUS = filteredSuggestions.value[0].country === "United States" ? filteredSuggestions.value[0] : null;
+        emit('matchedItem', matchedUS);
+      }
       // Don't show anymore if the user input is the same as suggestion
-      if (
+      else if (
         filteredSuggestions.value.length === 1 &&
         filteredSuggestions.value[0][props.optionsKey as string] === userInput.value
       ) {
