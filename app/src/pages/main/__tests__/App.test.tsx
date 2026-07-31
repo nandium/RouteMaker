@@ -1,0 +1,358 @@
+import '@testing-library/jest-dom';
+import { fireEvent, getQueriesForElement, render } from '@lynx-js/react/testing-library';
+import { beforeEach, expect, test, vi } from 'vitest';
+
+const gym = {
+  id: 'central',
+  name: 'Central Bloc',
+  address: '1 Test Street',
+  country_code: 'SG',
+  latitude: 1.3,
+  longitude: 103.8,
+  status: 'approved',
+};
+const route = {
+  id: 'blue',
+  name: 'Blue Moon',
+  public_grade: 'V4',
+  votes: 18,
+  voted: false,
+  comment_count: 1,
+  image_url: '/media/blue.jpg',
+  author: { username: 'maya', display_name: 'Maya Tan' },
+  gym: { name: gym.name },
+};
+const account = {
+  id: 'maya',
+  email: 'maya@example.com',
+  username: 'maya',
+  display_name: 'Maya Tan',
+  role: 'user' as const,
+  disabled: false,
+};
+
+vi.mock('../../../api.js', () => ({
+  apiBaseUrl: 'http://localhost:8788',
+  ApiError: class extends Error {
+    constructor(
+      message: string,
+      readonly status: number
+    ) {
+      super(message);
+    }
+  },
+  api: {
+    gyms: vi.fn(async () => [gym]),
+    routes: vi.fn(async () => [route]),
+    route: vi.fn(async () => route),
+    comments: vi.fn(async () => [
+      {
+        id: 'comment',
+        body: 'Friendly finish',
+        author: { username: 'leon', display_name: 'Leon' },
+      },
+    ]),
+    imageUrl: vi.fn((path: string) => path),
+    login: vi.fn(async () => ({
+      token: 'test-token',
+      user: account,
+    })),
+    logout: vi.fn(async () => undefined),
+    me: vi.fn(async () => account),
+    signup: vi.fn(async () => ({ message: 'Verification email sent.' })),
+    forgot: vi.fn(async () => ({ message: 'Password reset email sent.' })),
+    updateProfile: vi.fn(async () => undefined),
+    profile: vi.fn(async () => ({
+      id: 'maya',
+      username: 'maya',
+      display_name: 'Maya Tan',
+      followers: 2,
+      following: 3,
+      followed: false,
+    })),
+    vote: vi.fn(async () => ({ voted: true, votes: 19 })),
+    grade: vi.fn(async () => ({ public_grade: 'V5' })),
+    comment: vi.fn(async () => undefined),
+    follow: vi.fn(async () => ({ followed: true })),
+    report: vi.fn(async () => undefined),
+    adminReports: vi.fn(async () => []),
+    adminGyms: vi.fn(async () => []),
+    adminUsers: vi.fn(async () => []),
+    moderateReport: vi.fn(async () => undefined),
+    moderateGym: vi.fn(async () => undefined),
+    setUserDisabled: vi.fn(async () => undefined),
+  },
+}));
+
+import { App } from '../App.js';
+import { ApiError, api } from '../../../api.js';
+import { BRAND_PALETTE } from '../../../brand.js';
+import { ICON_PALETTE } from '../../../icons.js';
+
+const baselineNativeModules = globalThis.NativeModules;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  globalThis.NativeModules = baselineNativeModules;
+});
+
+async function tapText(queries: ReturnType<typeof getQueriesForElement>, text: string, index = 0) {
+  const matches = await queries.findAllByText(text);
+  let target = matches[index];
+  while (target && !target.hasAttribute('accessibility-label')) target = target.parentElement!;
+  expect(target).toBeTruthy();
+  fireEvent.tap(target);
+}
+
+test('loads gyms and follows the route-detail journey', async () => {
+  const push = vi.fn();
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    RouteMakerNavigation: { push, replace: vi.fn(), back: vi.fn() },
+  };
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Central Bloc');
+  await tapText(queries, 'Blue Moon');
+
+  expect(push).toHaveBeenCalledWith('/gyms/central');
+  expect(push).toHaveBeenCalledWith('/routes/blue');
+  expect(await queries.findByText('Maya Tan')).toBeTruthy();
+  expect(await queries.findByText('Friendly finish')).toBeTruthy();
+  expect(elementTree.root!.querySelector('image')?.getAttribute('src')).toBe('/media/blue.jpg');
+});
+
+test('uses browser history for route-detail back navigation when available', async () => {
+  const back = vi.fn();
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    RouteMakerNavigation: { push: vi.fn(), replace: vi.fn(), back },
+  };
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Central Bloc');
+  await tapText(queries, 'Blue Moon');
+  await tapText(queries, 'Back');
+
+  expect(back).toHaveBeenCalledOnce();
+});
+
+test('still renders route details when comments fail to load', async () => {
+  vi.mocked(api.comments).mockRejectedValueOnce(new Error('offline'));
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Central Bloc');
+  await tapText(queries, 'Blue Moon');
+
+  expect(await queries.findByText('Blue Moon')).toBeInTheDocument();
+  expect(await queries.findByText('Could not load comments. Try again.')).toBeInTheDocument();
+});
+
+test('keeps account actions behind a clear sign-in screen', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Guest');
+  expect(await queries.findByText('Welcome back.')).toBeInTheDocument();
+  expect(await queries.findByText('Create an account')).toBeInTheDocument();
+  expect(await queries.findByText('Forgot password?')).toBeInTheDocument();
+});
+
+test('reports tool navigation failures without asking users to open a raw URL', async () => {
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    spkPipe: {
+      call: (
+        _method: string,
+        _params: unknown,
+        callback: (result: { code: number; msg: string }) => void
+      ) => callback({ code: 0, msg: 'failed' }),
+    },
+  };
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Gym map');
+
+  expect(await queries.findByText('Could not open the gym map. Try again.')).toBeInTheDocument();
+  expect(queries.queryByText(/Open http/)).not.toBeInTheDocument();
+});
+
+test('applies and persists an explicit color theme', async () => {
+  const setPreference = vi.fn();
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    RouteMakerAppearance: { setPreference },
+  };
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+  expect(elementTree.root!.querySelector('.nav__icon')?.getAttribute('content')).toContain(
+    `stroke="${ICON_PALETTE.light.active}"`
+  );
+  expect(elementTree.root!.querySelector('.brand__mark')?.getAttribute('content')).toContain(
+    `fill="${BRAND_PALETTE.light.primary}"`
+  );
+
+  fireEvent.tap(await queries.findByLabelText('Switch to dark theme'));
+  expect(elementTree.root!.querySelector('.page')).toHaveClass('theme-dark');
+  expect(elementTree.root!.querySelector('.nav__icon')?.getAttribute('content')).toContain(
+    `stroke="${ICON_PALETTE.dark.active}"`
+  );
+  expect(elementTree.root!.querySelector('.brand__mark')?.getAttribute('content')).toContain(
+    `fill="${BRAND_PALETTE.dark.primary}"`
+  );
+  expect(setPreference).toHaveBeenCalledWith('dark');
+});
+
+test('supports the login and logout state transition', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+  await tapText(queries, 'Guest');
+  await tapText(queries, 'Sign in');
+  expect(await queries.findByText('Fresh routes.')).toBeInTheDocument();
+  expect((await queries.findByText('Everyone')).parentElement).not.toHaveClass('action--quiet');
+  expect((await queries.findByText('Following')).parentElement).toHaveClass('action--quiet');
+  await tapText(queries, 'maya');
+  await tapText(queries, 'Sign out');
+  expect(await queries.findByText('Welcome back.')).toBeInTheDocument();
+});
+
+test('does not commit a login when the initial authenticated feed is rejected', async () => {
+  const setToken = vi.fn();
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    RouteMakerSession: {
+      getToken: (callback: (token: string) => void) => callback(''),
+      setToken,
+      clearToken: vi.fn(),
+    },
+  };
+  vi.mocked(api.routes).mockRejectedValueOnce(new ApiError('Unauthorized', 401));
+
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+  await tapText(queries, 'Guest');
+  await tapText(queries, 'Sign in');
+
+  expect(await queries.findByText('Unauthorized')).toBeInTheDocument();
+  expect(await queries.findByText('Welcome back.')).toBeInTheDocument();
+  expect(setToken).not.toHaveBeenCalled();
+  expect(queries.queryByText('Fresh routes.')).not.toBeInTheDocument();
+});
+
+test('restores and clears a saved session', async () => {
+  let cleared = false;
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    RouteMakerSession: {
+      getToken: (callback: (token: string) => void) => callback('saved-token'),
+      setToken: vi.fn(),
+      clearToken: () => {
+        cleared = true;
+      },
+    },
+  };
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  expect(await queries.findByText('maya')).toBeInTheDocument();
+  expect(api.me).toHaveBeenCalledWith('saved-token');
+  await tapText(queries, 'maya');
+  await tapText(queries, 'Sign out');
+  expect(cleared).toBe(true);
+});
+
+test('keeps a saved session through a transient restore failure', async () => {
+  let cleared = false;
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    RouteMakerSession: {
+      getToken: (callback: (token: string) => void) => callback('saved-token'),
+      setToken: vi.fn(),
+      clearToken: () => {
+        cleared = true;
+      },
+    },
+  };
+  vi.mocked(api.me).mockRejectedValueOnce(new Error('offline'));
+
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  expect(
+    await queries.findByText('Could not restore your session. Check your connection and try again.')
+  ).toBeInTheDocument();
+  expect(cleared).toBe(false);
+});
+
+test('keeps verification and password reset in the browser', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+  await tapText(queries, 'Guest');
+  await tapText(queries, 'Create an account');
+  await tapText(queries, 'Create account');
+  expect(
+    await queries.findByText(
+      'Check your email for a verification link. Open it in your browser, then return here and sign in.'
+    )
+  ).toBeInTheDocument();
+  await tapText(queries, 'Forgot password?');
+  expect(
+    queries.queryByText(
+      'Check your email for a verification link. Open it in your browser, then return here and sign in.'
+    )
+  ).not.toBeInTheDocument();
+  expect(await queries.findByText('Back to sign in')).toBeInTheDocument();
+  expect(queries.queryByText('Forgot password?')).not.toBeInTheDocument();
+  await tapText(queries, 'Send reset link');
+  expect(
+    await queries.findByText(
+      'Check your email for a password-reset link. Complete it in your browser, then return here and sign in.'
+    )
+  ).toBeInTheDocument();
+  expect(await queries.findByText('Welcome back.')).toBeInTheDocument();
+});
+
+test('covers voting, commenting and reporting from route detail', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+  await tapText(queries, 'Guest');
+  await tapText(queries, 'Sign in');
+  await tapText(queries, 'Blue Moon');
+  await tapText(queries, 'Vote · 18');
+  expect(await queries.findByText('Voted · 19')).toBeInTheDocument();
+  await tapText(queries, 'Post comment');
+  expect(api.comment).toHaveBeenCalled();
+  await tapText(queries, 'Report this route');
+  expect(await queries.findByText('Report sent to the moderators.')).toBeInTheDocument();
+});
+
+test('lets administrators inspect a report before moderating it', async () => {
+  vi.mocked(api.login).mockResolvedValueOnce({
+    token: 'admin-token',
+    user: { ...account, role: 'admin' },
+  });
+  vi.mocked(api.adminReports).mockResolvedValueOnce([
+    {
+      id: 'report',
+      target_type: 'route',
+      target_id: route.id,
+      target_label: route.name,
+      route_id: route.id,
+      reason: 'Unsafe landing',
+    },
+  ]);
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Guest');
+  await tapText(queries, 'Sign in');
+  await tapText(queries, 'Admin');
+  expect(await queries.findByText('Blue Moon')).toBeInTheDocument();
+  expect(await queries.findByText('Unsafe landing')).toBeInTheDocument();
+  await tapText(queries, 'Inspect');
+  expect(api.route).toHaveBeenCalledWith(route.id, 'admin-token');
+});

@@ -1,0 +1,46 @@
+{
+  "name": "routemaker-app",
+  "version": "1.0.0",
+  "description": "RouteMaker's shared Lynx application",
+  "type": "module",
+  "dependencies": {
+    "@lynx-js/react": "^0.116.2",
+    "mapbox-gl": "^3.27.0",
+    "onnxruntime-web": "^1.27.0",
+    "sparkling-navigation": "^2.0.1"
+  },
+  "devDependencies": {
+    "@lynx-js/lynx-core": "^0.1.4",
+    "@lynx-js/qrcode-rsbuild-plugin": "^0.4.4",
+    "@lynx-js/react-rsbuild-plugin": "^0.12.7",
+    "@lynx-js/rspeedy": "^0.13.3",
+    "@lynx-js/types": "^3.6.0",
+    "@lynx-js/web-core": "^0.23.0",
+    "@rsbuild/core": "^1.5.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/react": "^18.3.20",
+    "@vitest/coverage-v8": "^4.0.18",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "sparkling-app-cli": "~2.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "engines": {
+    "node": "^22 || ^24"
+  },
+  "private": true,
+  "scripts": {
+    "brand:assets": "node --experimental-strip-types scripts/generate-brand-assets.mjs",
+    "brand:check": "node --experimental-strip-types scripts/check-brand-assets.mjs",
+    "check": "npm run brand:check && npm run format:check && tsc --noEmit && vitest run && npm run build:web",
+    "format:check": "prettier --check src web scripts app.config.ts theme.css package.json",
+    "build": "sparkling-app-cli build --copy",
+    "build:web": "npm run build && rsbuild build --config web/rsbuild.config.ts",
+    "autolink": "sparkling-app-cli autolink",
+    "test": "vitest run --passWithNoTests",
+    "run:android": "sparkling-app-cli run:android",
+    "run:ios": "sparkling-app-cli run:ios --copy",
+    "dev:web": "rsbuild dev --config web/rsbuild.config.ts"
+  }
+}

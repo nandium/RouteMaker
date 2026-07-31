@@ -1,0 +1,1820 @@
+
+pytorch2.13.0:ﬁÍ
+⁄
+input
+models.0.conv1.weight
+models.0.conv1.weight_biasgetitemnode_Conv_298"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÁ
+	namespaceŸ: tool.darknet2pytorch.Darknet/models.0: torch.nn.modules.container.Sequential/models.0.bn1: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']Jº
+pkg.torch.onnx.fx_node°%_native_batch_norm_legit_functional : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d, %p_models_0_bn1_weight, %p_models_0_bn1_bias, %b_models_0_bn1_running_mean, %b_models_0_bn1_running_var, True, 0.1, 1e-05), kwargs = {})Je
+pkg.torch.onnx.name_scopesG['', 'models.0', 'models.0.bn1', '_native_batch_norm_legit_functional']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+∞	
+getitem
+leaky_relunode_leaky_relu"	LeakyRelu*
+alphaÕÃÃ=†J∑
+	namespace©: tool.darknet2pytorch.Darknet/models.0: torch.nn.modules.container.Sequential/models.0.leaky1: torch.nn.modules.activation.LeakyReLU/leaky_relu: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jî
+pkg.torch.onnx.fx_nodez%leaky_relu : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem, 0.1), kwargs = {})JO
+pkg.torch.onnx.name_scopes1['', 'models.0', 'models.0.leaky1', 'leaky_relu']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+È
+
+leaky_relu
+models.1.conv2.weight
+models.1.conv2.weight_bias	getitem_5node_Conv_300"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÈ
+	namespace€: tool.darknet2pytorch.Darknet/models.1: torch.nn.modules.container.Sequential/models.1.bn2: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_1: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J¿
+pkg.torch.onnx.fx_node•%_native_batch_norm_legit_functional_1 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_1, %p_models_1_bn2_weight, %p_models_1_bn2_bias, %b_models_1_bn2_running_mean, %b_models_1_bn2_running_var, True, 0.1, 1e-05), kwargs = {})Jg
+pkg.torch.onnx.name_scopesI['', 'models.1', 'models.1.bn2', '_native_batch_norm_legit_functional_1']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+æ	
+	getitem_5leaky_relu_1node_leaky_relu_1"	LeakyRelu*
+alphaÕÃÃ=†Jπ
+	namespace´: tool.darknet2pytorch.Darknet/models.1: torch.nn.modules.container.Sequential/models.1.leaky2: torch.nn.modules.activation.LeakyReLU/leaky_relu_1: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jò
+pkg.torch.onnx.fx_node~%leaky_relu_1 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_5, 0.1), kwargs = {})JQ
+pkg.torch.onnx.name_scopes3['', 'models.1', 'models.1.leaky2', 'leaky_relu_1']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+Ï
+leaky_relu_1
+models.2.conv3.weight
+models.2.conv3.weight_bias
+getitem_10node_Conv_302"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÈ
+	namespace€: tool.darknet2pytorch.Darknet/models.2: torch.nn.modules.container.Sequential/models.2.bn3: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_2: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J¿
+pkg.torch.onnx.fx_node•%_native_batch_norm_legit_functional_2 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_2, %p_models_2_bn3_weight, %p_models_2_bn3_bias, %b_models_2_bn3_running_mean, %b_models_2_bn3_running_var, True, 0.1, 1e-05), kwargs = {})Jg
+pkg.torch.onnx.name_scopesI['', 'models.2', 'models.2.bn3', '_native_batch_norm_legit_functional_2']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+¿	
+
+getitem_10leaky_relu_2node_leaky_relu_2"	LeakyRelu*
+alphaÕÃÃ=†Jπ
+	namespace´: tool.darknet2pytorch.Darknet/models.2: torch.nn.modules.container.Sequential/models.2.leaky3: torch.nn.modules.activation.LeakyReLU/leaky_relu_2: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_2 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_10, 0.1), kwargs = {})JQ
+pkg.torch.onnx.name_scopes3['', 'models.2', 'models.2.leaky3', 'leaky_relu_2']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+”
+leaky_relu_2
+val_34
+val_38
+val_41
+val_41slice_2node_slice_2"SliceJ§
+	namespaceñ: tool.darknet2pytorch.Darknet/models.4: torch.nn.modules.container.Sequential/models.4.conv4: torch.nn.modules.conv.Conv2d/slice_2: aten.slice.TensorJ†
+pkg.torch.onnx.class_hierarchy~['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.slice.Tensor']Jñ
+pkg.torch.onnx.fx_node|%slice_2 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%leaky_relu_2, 1, 32, 64), kwargs = {})JK
+pkg.torch.onnx.name_scopes-['', 'models.4', 'models.4.conv4', 'slice_2']J‘
+pkg.torch.onnx.stack_traceµFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 174, in forward
+    x = outputs[layers[0]][:, b // groups * group_id:b // groups * (group_id + 1)]
+Á
+slice_2
+models.4.conv4.weight
+models.4.conv4.weight_bias
+getitem_15node_Conv_304"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÈ
+	namespace€: tool.darknet2pytorch.Darknet/models.4: torch.nn.modules.container.Sequential/models.4.bn4: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_3: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J¿
+pkg.torch.onnx.fx_node•%_native_batch_norm_legit_functional_3 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_3, %p_models_4_bn4_weight, %p_models_4_bn4_bias, %b_models_4_bn4_running_mean, %b_models_4_bn4_running_var, True, 0.1, 1e-05), kwargs = {})Jg
+pkg.torch.onnx.name_scopesI['', 'models.4', 'models.4.bn4', '_native_batch_norm_legit_functional_3']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+¿	
+
+getitem_15leaky_relu_3node_leaky_relu_3"	LeakyRelu*
+alphaÕÃÃ=†Jπ
+	namespace´: tool.darknet2pytorch.Darknet/models.4: torch.nn.modules.container.Sequential/models.4.leaky4: torch.nn.modules.activation.LeakyReLU/leaky_relu_3: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_3 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_15, 0.1), kwargs = {})JQ
+pkg.torch.onnx.name_scopes3['', 'models.4', 'models.4.leaky4', 'leaky_relu_3']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+Ï
+leaky_relu_3
+models.5.conv5.weight
+models.5.conv5.weight_bias
+getitem_20node_Conv_306"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÈ
+	namespace€: tool.darknet2pytorch.Darknet/models.5: torch.nn.modules.container.Sequential/models.5.bn5: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_4: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J¿
+pkg.torch.onnx.fx_node•%_native_batch_norm_legit_functional_4 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_4, %p_models_5_bn5_weight, %p_models_5_bn5_bias, %b_models_5_bn5_running_mean, %b_models_5_bn5_running_var, True, 0.1, 1e-05), kwargs = {})Jg
+pkg.torch.onnx.name_scopesI['', 'models.5', 'models.5.bn5', '_native_batch_norm_legit_functional_4']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+¿	
+
+getitem_20leaky_relu_4node_leaky_relu_4"	LeakyRelu*
+alphaÕÃÃ=†Jπ
+	namespace´: tool.darknet2pytorch.Darknet/models.5: torch.nn.modules.container.Sequential/models.5.leaky5: torch.nn.modules.activation.LeakyReLU/leaky_relu_4: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_4 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_20, 0.1), kwargs = {})JQ
+pkg.torch.onnx.name_scopes3['', 'models.5', 'models.5.leaky5', 'leaky_relu_4']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+«
+leaky_relu_4
+leaky_relu_3catnode_cat"Concat*
+axis†JA
+	namespace4: tool.darknet2pytorch.Darknet/cat: aten.cat.defaultJV
+pkg.torch.onnx.class_hierarchy4['tool.darknet2pytorch.Darknet', 'aten.cat.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%cat : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%leaky_relu_4, %leaky_relu_3], 1), kwargs = {})J)
+pkg.torch.onnx.name_scopes['', 'cat']J†
+pkg.torch.onnx.stack_traceÅFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 179, in forward
+    x = torch.cat((x1, x2), 1)
+„
+cat
+models.7.conv6.weight
+models.7.conv6.weight_bias
+getitem_25node_Conv_308"Conv*
+group†*
+pads@ @ @ @ †*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÈ
+	namespace€: tool.darknet2pytorch.Darknet/models.7: torch.nn.modules.container.Sequential/models.7.bn6: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_5: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J¿
+pkg.torch.onnx.fx_node•%_native_batch_norm_legit_functional_5 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_5, %p_models_7_bn6_weight, %p_models_7_bn6_bias, %b_models_7_bn6_running_mean, %b_models_7_bn6_running_var, True, 0.1, 1e-05), kwargs = {})Jg
+pkg.torch.onnx.name_scopesI['', 'models.7', 'models.7.bn6', '_native_batch_norm_legit_functional_5']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+¿	
+
+getitem_25leaky_relu_5node_leaky_relu_5"	LeakyRelu*
+alphaÕÃÃ=†Jπ
+	namespace´: tool.darknet2pytorch.Darknet/models.7: torch.nn.modules.container.Sequential/models.7.leaky6: torch.nn.modules.activation.LeakyReLU/leaky_relu_5: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_5 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_25, 0.1), kwargs = {})JQ
+pkg.torch.onnx.name_scopes3['', 'models.7', 'models.7.leaky6', 'leaky_relu_5']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+—
+leaky_relu_2
+leaky_relu_5cat_1
+node_cat_1"Concat*
+axis†JC
+	namespace6: tool.darknet2pytorch.Darknet/cat_1: aten.cat.defaultJV
+pkg.torch.onnx.class_hierarchy4['tool.darknet2pytorch.Darknet', 'aten.cat.default']Jù
+pkg.torch.onnx.fx_nodeÇ%cat_1 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%leaky_relu_2, %leaky_relu_5], 1), kwargs = {})J+
+pkg.torch.onnx.name_scopes['', 'cat_1']J†
+pkg.torch.onnx.stack_traceÅFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 179, in forward
+    x = torch.cat((x1, x2), 1)
+‰
+cat_1
+max_pool2dnode_max_pool2d"MaxPool*
+storage_order †*
+	ceil_mode †*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+	dilations@@†*
+auto_pad"NOTSET†J|
+	namespaceo: tool.darknet2pytorch.Darknet/models.9: torch.nn.modules.pooling.MaxPool2d/max_pool2d: aten.max_pool2d.defaultJÉ
+pkg.torch.onnx.class_hierarchya['tool.darknet2pytorch.Darknet', 'torch.nn.modules.pooling.MaxPool2d', 'aten.max_pool2d.default']Jû
+pkg.torch.onnx.fx_nodeÉ%max_pool2d : [num_users=1] = call_function[target=torch.ops.aten.max_pool2d.default](args = (%cat_1, [2, 2], [2, 2]), kwargs = {})J<
+pkg.torch.onnx.name_scopes['', 'models.9', 'max_pool2d']J¬
+pkg.torch.onnx.stack_trace£File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/pooling.py", line 224, in forward
+    return F.max_pool2d(
+Ù
+
+max_pool2d
+models.10.conv7.weight
+models.10.conv7.weight_bias
+getitem_30node_Conv_310"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÎ
+	namespace›: tool.darknet2pytorch.Darknet/models.10: torch.nn.modules.container.Sequential/models.10.bn7: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_6: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']Jƒ
+pkg.torch.onnx.fx_node©%_native_batch_norm_legit_functional_6 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_6, %p_models_10_bn7_weight, %p_models_10_bn7_bias, %b_models_10_bn7_running_mean, %b_models_10_bn7_running_var, True, 0.1, 1e-05), kwargs = {})Ji
+pkg.torch.onnx.name_scopesK['', 'models.10', 'models.10.bn7', '_native_batch_norm_legit_functional_6']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+ƒ	
+
+getitem_30leaky_relu_6node_leaky_relu_6"	LeakyRelu*
+alphaÕÃÃ=†Jª
+	namespace≠: tool.darknet2pytorch.Darknet/models.10: torch.nn.modules.container.Sequential/models.10.leaky7: torch.nn.modules.activation.LeakyReLU/leaky_relu_6: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_6 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_30, 0.1), kwargs = {})JS
+pkg.torch.onnx.name_scopes5['', 'models.10', 'models.10.leaky7', 'leaky_relu_6']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+ÿ
+leaky_relu_6
+val_38
+val_86
+val_41
+val_41slice_4node_slice_4"SliceJ¶
+	namespaceò: tool.darknet2pytorch.Darknet/models.12: torch.nn.modules.container.Sequential/models.12.conv8: torch.nn.modules.conv.Conv2d/slice_4: aten.slice.TensorJ†
+pkg.torch.onnx.class_hierarchy~['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.slice.Tensor']Jó
+pkg.torch.onnx.fx_node}%slice_4 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%leaky_relu_6, 1, 64, 128), kwargs = {})JM
+pkg.torch.onnx.name_scopes/['', 'models.12', 'models.12.conv8', 'slice_4']J‘
+pkg.torch.onnx.stack_traceµFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 174, in forward
+    x = outputs[layers[0]][:, b // groups * group_id:b // groups * (group_id + 1)]
+Ò
+slice_4
+models.12.conv8.weight
+models.12.conv8.weight_bias
+getitem_35node_Conv_312"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÎ
+	namespace›: tool.darknet2pytorch.Darknet/models.12: torch.nn.modules.container.Sequential/models.12.bn8: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_7: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']Jƒ
+pkg.torch.onnx.fx_node©%_native_batch_norm_legit_functional_7 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_7, %p_models_12_bn8_weight, %p_models_12_bn8_bias, %b_models_12_bn8_running_mean, %b_models_12_bn8_running_var, True, 0.1, 1e-05), kwargs = {})Ji
+pkg.torch.onnx.name_scopesK['', 'models.12', 'models.12.bn8', '_native_batch_norm_legit_functional_7']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+ƒ	
+
+getitem_35leaky_relu_7node_leaky_relu_7"	LeakyRelu*
+alphaÕÃÃ=†Jª
+	namespace≠: tool.darknet2pytorch.Darknet/models.12: torch.nn.modules.container.Sequential/models.12.leaky8: torch.nn.modules.activation.LeakyReLU/leaky_relu_7: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_7 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_35, 0.1), kwargs = {})JS
+pkg.torch.onnx.name_scopes5['', 'models.12', 'models.12.leaky8', 'leaky_relu_7']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+ˆ
+leaky_relu_7
+models.13.conv9.weight
+models.13.conv9.weight_bias
+getitem_40node_Conv_314"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÎ
+	namespace›: tool.darknet2pytorch.Darknet/models.13: torch.nn.modules.container.Sequential/models.13.bn9: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_8: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']Jƒ
+pkg.torch.onnx.fx_node©%_native_batch_norm_legit_functional_8 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_8, %p_models_13_bn9_weight, %p_models_13_bn9_bias, %b_models_13_bn9_running_mean, %b_models_13_bn9_running_var, True, 0.1, 1e-05), kwargs = {})Ji
+pkg.torch.onnx.name_scopesK['', 'models.13', 'models.13.bn9', '_native_batch_norm_legit_functional_8']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+ƒ	
+
+getitem_40leaky_relu_8node_leaky_relu_8"	LeakyRelu*
+alphaÕÃÃ=†Jª
+	namespace≠: tool.darknet2pytorch.Darknet/models.13: torch.nn.modules.container.Sequential/models.13.leaky9: torch.nn.modules.activation.LeakyReLU/leaky_relu_8: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_8 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_40, 0.1), kwargs = {})JS
+pkg.torch.onnx.name_scopes5['', 'models.13', 'models.13.leaky9', 'leaky_relu_8']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+—
+leaky_relu_8
+leaky_relu_7cat_2
+node_cat_2"Concat*
+axis†JC
+	namespace6: tool.darknet2pytorch.Darknet/cat_2: aten.cat.defaultJV
+pkg.torch.onnx.class_hierarchy4['tool.darknet2pytorch.Darknet', 'aten.cat.default']Jù
+pkg.torch.onnx.fx_nodeÇ%cat_2 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%leaky_relu_8, %leaky_relu_7], 1), kwargs = {})J+
+pkg.torch.onnx.name_scopes['', 'cat_2']J†
+pkg.torch.onnx.stack_traceÅFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 179, in forward
+    x = torch.cat((x1, x2), 1)
+˜
+cat_2
+models.15.conv10.weight
+models.15.conv10.weight_bias
+getitem_45node_Conv_316"Conv*
+group†*
+pads@ @ @ @ †*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÏ
+	namespaceﬁ: tool.darknet2pytorch.Darknet/models.15: torch.nn.modules.container.Sequential/models.15.bn10: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_9: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J»
+pkg.torch.onnx.fx_node≠%_native_batch_norm_legit_functional_9 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_9, %p_models_15_bn10_weight, %p_models_15_bn10_bias, %b_models_15_bn10_running_mean, %b_models_15_bn10_running_var, True, 0.1, 1e-05), kwargs = {})Jj
+pkg.torch.onnx.name_scopesL['', 'models.15', 'models.15.bn10', '_native_batch_norm_legit_functional_9']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+∆	
+
+getitem_45leaky_relu_9node_leaky_relu_9"	LeakyRelu*
+alphaÕÃÃ=†Jº
+	namespaceÆ: tool.darknet2pytorch.Darknet/models.15: torch.nn.modules.container.Sequential/models.15.leaky10: torch.nn.modules.activation.LeakyReLU/leaky_relu_9: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jô
+pkg.torch.onnx.fx_node%leaky_relu_9 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_45, 0.1), kwargs = {})JT
+pkg.torch.onnx.name_scopes6['', 'models.15', 'models.15.leaky10', 'leaky_relu_9']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+—
+leaky_relu_6
+leaky_relu_9cat_3
+node_cat_3"Concat*
+axis†JC
+	namespace6: tool.darknet2pytorch.Darknet/cat_3: aten.cat.defaultJV
+pkg.torch.onnx.class_hierarchy4['tool.darknet2pytorch.Darknet', 'aten.cat.default']Jù
+pkg.torch.onnx.fx_nodeÇ%cat_3 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%leaky_relu_6, %leaky_relu_9], 1), kwargs = {})J+
+pkg.torch.onnx.name_scopes['', 'cat_3']J†
+pkg.torch.onnx.stack_traceÅFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 179, in forward
+    x = torch.cat((x1, x2), 1)
+
+cat_3max_pool2d_1node_max_pool2d_1"MaxPool*
+storage_order †*
+	ceil_mode †*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+	dilations@@†*
+auto_pad"NOTSET†J
+	namespacer: tool.darknet2pytorch.Darknet/models.17: torch.nn.modules.pooling.MaxPool2d/max_pool2d_1: aten.max_pool2d.defaultJÉ
+pkg.torch.onnx.class_hierarchya['tool.darknet2pytorch.Darknet', 'torch.nn.modules.pooling.MaxPool2d', 'aten.max_pool2d.default']J†
+pkg.torch.onnx.fx_nodeÖ%max_pool2d_1 : [num_users=1] = call_function[target=torch.ops.aten.max_pool2d.default](args = (%cat_3, [2, 2], [2, 2]), kwargs = {})J?
+pkg.torch.onnx.name_scopes!['', 'models.17', 'max_pool2d_1']J¬
+pkg.torch.onnx.stack_trace£File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/pooling.py", line 224, in forward
+    return F.max_pool2d(
+Ç
+max_pool2d_1
+models.18.conv11.weight
+models.18.conv11.weight_bias
+getitem_50node_Conv_318"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.18: torch.nn.modules.container.Sequential/models.18.bn11: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_10: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_10 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_10, %p_models_18_bn11_weight, %p_models_18_bn11_bias, %b_models_18_bn11_running_mean, %b_models_18_bn11_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.18', 'models.18.bn11', '_native_batch_norm_legit_functional_10']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_50leaky_relu_10node_leaky_relu_10"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.18: torch.nn.modules.container.Sequential/models.18.leaky11: torch.nn.modules.activation.LeakyReLU/leaky_relu_10: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_10 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_50, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.18', 'models.18.leaky11', 'leaky_relu_10']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+ﬁ
+leaky_relu_10
+val_86
+val_134
+val_41
+val_41slice_6node_slice_6"SliceJß
+	namespaceô: tool.darknet2pytorch.Darknet/models.20: torch.nn.modules.container.Sequential/models.20.conv12: torch.nn.modules.conv.Conv2d/slice_6: aten.slice.TensorJ†
+pkg.torch.onnx.class_hierarchy~['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.slice.Tensor']Jô
+pkg.torch.onnx.fx_node%slice_6 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%leaky_relu_10, 1, 128, 256), kwargs = {})JN
+pkg.torch.onnx.name_scopes0['', 'models.20', 'models.20.conv12', 'slice_6']J‘
+pkg.torch.onnx.stack_traceµFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 174, in forward
+    x = outputs[layers[0]][:, b // groups * group_id:b // groups * (group_id + 1)]
+˝
+slice_6
+models.20.conv12.weight
+models.20.conv12.weight_bias
+getitem_55node_Conv_320"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.20: torch.nn.modules.container.Sequential/models.20.bn12: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_11: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_11 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_11, %p_models_20_bn12_weight, %p_models_20_bn12_bias, %b_models_20_bn12_running_mean, %b_models_20_bn12_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.20', 'models.20.bn12', '_native_batch_norm_legit_functional_11']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_55leaky_relu_11node_leaky_relu_11"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.20: torch.nn.modules.container.Sequential/models.20.leaky12: torch.nn.modules.activation.LeakyReLU/leaky_relu_11: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_11 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_55, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.20', 'models.20.leaky12', 'leaky_relu_11']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+É
+leaky_relu_11
+models.21.conv13.weight
+models.21.conv13.weight_bias
+getitem_60node_Conv_322"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.21: torch.nn.modules.container.Sequential/models.21.bn13: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_12: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_12 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_12, %p_models_21_bn13_weight, %p_models_21_bn13_bias, %b_models_21_bn13_running_mean, %b_models_21_bn13_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.21', 'models.21.bn13', '_native_batch_norm_legit_functional_12']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_60leaky_relu_12node_leaky_relu_12"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.21: torch.nn.modules.container.Sequential/models.21.leaky13: torch.nn.modules.activation.LeakyReLU/leaky_relu_12: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_12 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_60, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.21', 'models.21.leaky13', 'leaky_relu_12']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+’
+leaky_relu_12
+leaky_relu_11cat_4
+node_cat_4"Concat*
+axis†JC
+	namespace6: tool.darknet2pytorch.Darknet/cat_4: aten.cat.defaultJV
+pkg.torch.onnx.class_hierarchy4['tool.darknet2pytorch.Darknet', 'aten.cat.default']Jü
+pkg.torch.onnx.fx_nodeÑ%cat_4 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%leaky_relu_12, %leaky_relu_11], 1), kwargs = {})J+
+pkg.torch.onnx.name_scopes['', 'cat_4']J†
+pkg.torch.onnx.stack_traceÅFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 179, in forward
+    x = torch.cat((x1, x2), 1)
+˚
+cat_4
+models.23.conv14.weight
+models.23.conv14.weight_bias
+getitem_65node_Conv_324"Conv*
+group†*
+pads@ @ @ @ †*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.23: torch.nn.modules.container.Sequential/models.23.bn14: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_13: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_13 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_13, %p_models_23_bn14_weight, %p_models_23_bn14_bias, %b_models_23_bn14_running_mean, %b_models_23_bn14_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.23', 'models.23.bn14', '_native_batch_norm_legit_functional_13']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_65leaky_relu_13node_leaky_relu_13"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.23: torch.nn.modules.container.Sequential/models.23.leaky14: torch.nn.modules.activation.LeakyReLU/leaky_relu_13: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_13 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_65, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.23', 'models.23.leaky14', 'leaky_relu_13']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+’
+leaky_relu_10
+leaky_relu_13cat_5
+node_cat_5"Concat*
+axis†JC
+	namespace6: tool.darknet2pytorch.Darknet/cat_5: aten.cat.defaultJV
+pkg.torch.onnx.class_hierarchy4['tool.darknet2pytorch.Darknet', 'aten.cat.default']Jü
+pkg.torch.onnx.fx_nodeÑ%cat_5 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%leaky_relu_10, %leaky_relu_13], 1), kwargs = {})J+
+pkg.torch.onnx.name_scopes['', 'cat_5']J†
+pkg.torch.onnx.stack_traceÅFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 179, in forward
+    x = torch.cat((x1, x2), 1)
+
+cat_5max_pool2d_2node_max_pool2d_2"MaxPool*
+storage_order †*
+	ceil_mode †*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+	dilations@@†*
+auto_pad"NOTSET†J
+	namespacer: tool.darknet2pytorch.Darknet/models.25: torch.nn.modules.pooling.MaxPool2d/max_pool2d_2: aten.max_pool2d.defaultJÉ
+pkg.torch.onnx.class_hierarchya['tool.darknet2pytorch.Darknet', 'torch.nn.modules.pooling.MaxPool2d', 'aten.max_pool2d.default']J†
+pkg.torch.onnx.fx_nodeÖ%max_pool2d_2 : [num_users=1] = call_function[target=torch.ops.aten.max_pool2d.default](args = (%cat_5, [2, 2], [2, 2]), kwargs = {})J?
+pkg.torch.onnx.name_scopes!['', 'models.25', 'max_pool2d_2']J¬
+pkg.torch.onnx.stack_trace£File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/pooling.py", line 224, in forward
+    return F.max_pool2d(
+Ç
+max_pool2d_2
+models.26.conv15.weight
+models.26.conv15.weight_bias
+getitem_70node_Conv_326"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.26: torch.nn.modules.container.Sequential/models.26.bn15: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_14: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_14 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_14, %p_models_26_bn15_weight, %p_models_26_bn15_bias, %b_models_26_bn15_running_mean, %b_models_26_bn15_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.26', 'models.26.bn15', '_native_batch_norm_legit_functional_14']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_70leaky_relu_14node_leaky_relu_14"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.26: torch.nn.modules.container.Sequential/models.26.leaky15: torch.nn.modules.activation.LeakyReLU/leaky_relu_14: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_14 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_70, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.26', 'models.26.leaky15', 'leaky_relu_14']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+É
+leaky_relu_14
+models.27.conv16.weight
+models.27.conv16.weight_bias
+getitem_75node_Conv_328"Conv*
+group†*
+pads@ @ @ @ †*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.27: torch.nn.modules.container.Sequential/models.27.bn16: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_15: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_15 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_15, %p_models_27_bn16_weight, %p_models_27_bn16_bias, %b_models_27_bn16_running_mean, %b_models_27_bn16_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.27', 'models.27.bn16', '_native_batch_norm_legit_functional_15']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_75leaky_relu_15node_leaky_relu_15"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.27: torch.nn.modules.container.Sequential/models.27.leaky16: torch.nn.modules.activation.LeakyReLU/leaky_relu_15: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_15 : [num_users=2] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_75, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.27', 'models.27.leaky16', 'leaky_relu_15']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+É
+leaky_relu_15
+models.28.conv17.weight
+models.28.conv17.weight_bias
+getitem_80node_Conv_330"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.28: torch.nn.modules.container.Sequential/models.28.bn17: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_16: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_16 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_16, %p_models_28_bn17_weight, %p_models_28_bn17_bias, %b_models_28_bn17_running_mean, %b_models_28_bn17_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.28', 'models.28.bn17', '_native_batch_norm_legit_functional_16']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_80leaky_relu_16node_leaky_relu_16"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.28: torch.nn.modules.container.Sequential/models.28.leaky17: torch.nn.modules.activation.LeakyReLU/leaky_relu_16: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_16 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_80, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.28', 'models.28.leaky17', 'leaky_relu_16']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+∏
+
+leaky_relu_16
+models.29.conv18.weight
+models.29.conv18.biasboxesnode_conv2d_17"Conv*
+group†*
+pads@ @ @ @ †*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J´
+	namespaceù: tool.darknet2pytorch.Darknet/models.29: torch.nn.modules.container.Sequential/models.29.conv18: torch.nn.modules.conv.Conv2d/conv2d_17: aten.conv2d.defaultJ£
+pkg.torch.onnx.class_hierarchyÄ['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J«
+pkg.torch.onnx.fx_node¨%conv2d_17 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%leaky_relu_16, %p_models_29_conv18_weight, %p_models_29_conv18_bias), kwargs = {})JP
+pkg.torch.onnx.name_scopes2['', 'models.29', 'models.29.conv18', 'conv2d_17']Jã
+pkg.torch.onnx.stack_traceÏFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+É
+leaky_relu_15
+models.32.conv19.weight
+models.32.conv19.weight_bias
+getitem_85node_Conv_332"Conv*
+group†*
+pads@ @ @ @ †*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.32: torch.nn.modules.container.Sequential/models.32.bn19: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_17: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_17 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_18, %p_models_32_bn19_weight, %p_models_32_bn19_bias, %b_models_32_bn19_running_mean, %b_models_32_bn19_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.32', 'models.32.bn19', '_native_batch_norm_legit_functional_17']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_85leaky_relu_17node_leaky_relu_17"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.32: torch.nn.modules.container.Sequential/models.32.leaky19: torch.nn.modules.activation.LeakyReLU/leaky_relu_17: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_17 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_85, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.32', 'models.32.leaky19', 'leaky_relu_17']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+Ü
+leaky_relu_17
+val_210view_2node_view_2"Reshape*
+	allowzero†Ju
+	namespaceh: tool.darknet2pytorch.Darknet/models.33: tool.darknet2pytorch.Upsample_expand/view_2: aten.view.defaultJ
+pkg.torch.onnx.class_hierarchy]['tool.darknet2pytorch.Darknet', 'tool.darknet2pytorch.Upsample_expand', 'aten.view.default']J§
+pkg.torch.onnx.fx_nodeâ%view_2 : [num_users=1] = call_function[target=torch.ops.aten.view.default](args = (%leaky_relu_17, [1, 128, 13, 1, 13, 1]), kwargs = {})J9
+pkg.torch.onnx.name_scopes['', 'models.33', 'view_2']J·
+pkg.torch.onnx.stack_trace¬File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 61, in forward
+    expand(x.size(0), x.size(1), x.size(2), self.stride, x.size(3), self.stride).contiguous().\
+ˆ
+view_2
+val_218expand_1node_expand_1"ExpandJy
+	namespacel: tool.darknet2pytorch.Darknet/models.33: tool.darknet2pytorch.Upsample_expand/expand_1: aten.expand.defaultJÅ
+pkg.torch.onnx.class_hierarchy_['tool.darknet2pytorch.Darknet', 'tool.darknet2pytorch.Upsample_expand', 'aten.expand.default']J°
+pkg.torch.onnx.fx_nodeÜ%expand_1 : [num_users=1] = call_function[target=torch.ops.aten.expand.default](args = (%view_2, [1, 128, 13, 2, 13, 2]), kwargs = {})J;
+pkg.torch.onnx.name_scopes['', 'models.33', 'expand_1']J·
+pkg.torch.onnx.stack_trace¬File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 61, in forward
+    expand(x.size(0), x.size(1), x.size(2), self.stride, x.size(3), self.stride).contiguous().\
+„
+expand_1
+val_224view_3node_view_3"Reshape*
+	allowzero†Ju
+	namespaceh: tool.darknet2pytorch.Darknet/models.33: tool.darknet2pytorch.Upsample_expand/view_3: aten.view.defaultJ
+pkg.torch.onnx.class_hierarchy]['tool.darknet2pytorch.Darknet', 'tool.darknet2pytorch.Upsample_expand', 'aten.view.default']Jï
+pkg.torch.onnx.fx_node{%view_3 : [num_users=1] = call_function[target=torch.ops.aten.view.default](args = (%clone, [1, 128, 26, 26]), kwargs = {})J9
+pkg.torch.onnx.name_scopes['', 'models.33', 'view_3']J“
+pkg.torch.onnx.stack_trace≥File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 62, in forward
+    view(x.size(0), x.size(1), x.size(2) * self.stride, x.size(3) * self.stride)
+∆
+view_3
+leaky_relu_13cat_6
+node_cat_6"Concat*
+axis†JC
+	namespace6: tool.darknet2pytorch.Darknet/cat_6: aten.cat.defaultJV
+pkg.torch.onnx.class_hierarchy4['tool.darknet2pytorch.Darknet', 'aten.cat.default']Jó
+pkg.torch.onnx.fx_node}%cat_6 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%view_3, %leaky_relu_13], 1), kwargs = {})J+
+pkg.torch.onnx.name_scopes['', 'cat_6']J†
+pkg.torch.onnx.stack_traceÅFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 179, in forward
+    x = torch.cat((x1, x2), 1)
+˚
+cat_6
+models.35.conv20.weight
+models.35.conv20.weight_bias
+getitem_90node_Conv_334"Conv*
+group†*
+pads@@@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†JÌ
+	namespaceﬂ: tool.darknet2pytorch.Darknet/models.35: torch.nn.modules.container.Sequential/models.35.bn20: torch.nn.modules.batchnorm.BatchNorm2d/_native_batch_norm_legit_functional_18: aten._native_batch_norm_legit_functional.defaultJV
+!pkg.onnxscript.rewriter.rule_name1FuseBatchNormIntoConv, RemoveOptionalBiasFromConvJ 
+pkg.torch.onnx.class_hierarchyß['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.batchnorm.BatchNorm2d', 'aten._native_batch_norm_legit_functional.default']J 
+pkg.torch.onnx.fx_nodeØ%_native_batch_norm_legit_functional_18 : [num_users=3] = call_function[target=torch.ops.aten._native_batch_norm_legit_functional.default](args = (%conv2d_19, %p_models_35_bn20_weight, %p_models_35_bn20_bias, %b_models_35_bn20_running_mean, %b_models_35_bn20_running_var, True, 0.1, 1e-05), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'models.35', 'models.35.bn20', '_native_batch_norm_legit_functional_18']JÏ
+pkg.torch.onnx.stack_traceÕFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/batchnorm.py", line 210, in forward
+    return F.batch_norm(
+Ã	
+
+getitem_90leaky_relu_18node_leaky_relu_18"	LeakyRelu*
+alphaÕÃÃ=†JΩ
+	namespaceØ: tool.darknet2pytorch.Darknet/models.35: torch.nn.modules.container.Sequential/models.35.leaky20: torch.nn.modules.activation.LeakyReLU/leaky_relu_18: aten.leaky_relu.defaultJ∞
+pkg.torch.onnx.class_hierarchyç['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.LeakyReLU', 'aten.leaky_relu.default']Jõ
+pkg.torch.onnx.fx_nodeÄ%leaky_relu_18 : [num_users=1] = call_function[target=torch.ops.aten.leaky_relu.default](args = (%getitem_90, 0.1), kwargs = {})JU
+pkg.torch.onnx.name_scopes7['', 'models.35', 'models.35.leaky20', 'leaky_relu_18']Jñ
+pkg.torch.onnx.stack_trace˜File "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/activation.py", line 922, in forward
+    return F.leaky_relu(input, self.negative_slope, self.inplace)
+∏
+
+leaky_relu_18
+models.36.conv21.weight
+models.36.conv21.biasconfsnode_conv2d_20"Conv*
+group†*
+pads@ @ @ @ †*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J´
+	namespaceù: tool.darknet2pytorch.Darknet/models.36: torch.nn.modules.container.Sequential/models.36.conv21: torch.nn.modules.conv.Conv2d/conv2d_20: aten.conv2d.defaultJ£
+pkg.torch.onnx.class_hierarchyÄ['tool.darknet2pytorch.Darknet', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J«
+pkg.torch.onnx.fx_node¨%conv2d_20 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%leaky_relu_18, %p_models_36_conv21_weight, %p_models_36_conv21_bias), kwargs = {})JP
+pkg.torch.onnx.name_scopes2['', 'models.36', 'models.36.conv21', 'conv2d_20']Jã
+pkg.torch.onnx.stack_traceÏFile "/private/tmp/routemaker-onnx.jVg4g5/converter/tool/darknet2pytorch.py", line 161, in forward
+    x = self.models[ind](x)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/Users/kotyou/.cache/uv/archive-v0/K1vg0LiBRo9A8RqX/lib/python3.12/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+main_graph*u Bmodels.0.conv1.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset10752j
+length3456p*eBmodels.29.conv18.biasJHG…ª(•µº…ºæ.Ω¡æô“=$T√9©ØGªB{/:¿à;¨œ!æŒE!=--∏(Óπ®˝ë9‹¥8(04æ√…6<*eBmodels.36.conv21.biasJH)Õ\=Â]Ø<∫ï>i¥ÃΩâºûæÚ è@◊sª¿ΩHqΩ¨‰≤æ|0¿ÛdT@=Öºß≤¶9{Ê*ºoêôæ ‹ï¿X	q?*w@ Bmodels.1.conv2.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset225152j
+length73728p*x@@Bmodels.2.conv3.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset429952j
+length147456p*v  Bmodels.4.conv4.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset49024j
+length36864p*v  Bmodels.5.conv5.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset85888j
+length36864p*v@@Bmodels.7.conv6.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset14208j
+length16384p*|ÄÄBmodels.10.conv7.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset1658752j
+length589824p*y@@Bmodels.12.conv8.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset577408j
+length147456p*y@@Bmodels.13.conv9.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset724864j
+length147456p*{ÄÄBmodels.15.conv10.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset159616j
+length65536p*~ÄÄBmodels.18.conv11.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset3473408j
+length2359296p*}ÄÄBmodels.20.conv12.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset2248576j
+length589824p*}ÄÄBmodels.21.conv13.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset2838400j
+length589824p*|ÄÄBmodels.23.conv14.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset872320j
+length262144p*ÄÄBmodels.26.conv15.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset14090240j
+length9437184p*}ÄÄBmodels.27.conv16.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset1134464j
+length524288p*~ÄÄBmodels.28.conv17.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset9371648j
+length4718592p*zÄBmodels.29.conv18.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset122752j
+length36864p*|ÄÄBmodels.32.conv19.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset298880j
+length131072p*~ÄÄBmodels.35.conv20.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset5832704j
+length3538944p*yÄBmodels.36.conv21.weightj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset30592j
+length18432p*Bval_34J        *Bval_38J@       *Bval_41J       *Bval_86JÄ       *Bval_134J       *?Bval_210J0       Ä                                   *?Bval_218J0       Ä                                   */Bval_224J        Ä                     *£ Bmodels.0.conv1.weight_biasJÄwÙE¡8
+Í?&é?„∆>dî“øLÉ?äÙ»?¢P>@KN?—±S?F[H@¿yà>L‰DøD@w-¡¡s?Â„á?∞˙!@u5@≈ïô?wW@àXOø¯X»?ŒYK@∫X?Ú@?ˆ¿““=H=_@pëRæª»à?Änc@*£@Bmodels.1.conv2.weight_biasJÄP‘>?¿TΩb@Y@õóør‡≥?q?iéC@·v?"IP@Mà~?≤ô;@^56?@…}?jv–@x&e@Æ.‹?•»è@±3ëø˛é>\Nˆ>TÌà>qp>°Ãö?p-°?`Tu=`YìºÃíæû≥<?Ú@~@à∏?rß?/@¥$˙æÎÅ?eå@©É@&‰‘>˘}?!=@ë9”?pò@Øé™?≠Îøú.…¿PÛ;Ω‰#0¿¢±ì?5Î,@s—>tƒæ?
+ ?Nª•Ω∂Ó?ä´@?(O=(ê>ƒ◊¬@óΩS?tHuø∫s‘æ™œ™>,d@@9lú?*£@Bmodels.2.conv3.weight_biasJÄÖÓ‘@ZGÀøh™¿>.Îê@'‘Éæ®ËÔ?ÀÊŒ@ßMp?qÊ?él?ˆoALlá>ïﬂO?Ê„‰øÇ n?Ì≠Ö?˘QB?ﬂ<?‡3ö>`–?0ÚM>Õ ú?.†ï@í»møÇK?∏ÄÄ@¶zæ?U/≈?ûêQ@üˇ'?…ïÖ?∏óøË≤ë=¬ç[?SOÍ>(ølÍ⁄?˛»?î]N?^)?,Ò´?–“…æNg∂?:cå?pΩÑæ◊ı?√hæ»ÃT?XÖÎ?¯ÿ7Ω/Å‹>≤âz?l"»æÄœ˙?é_?…@!`+¿}8e?í€ø≥>R}2@‚Ω@@müÎ?i∆•?*£ Bmodels.4.conv4.weight_biasJÄvsÎø¨bøcV6¿û´@íÉø€c˝?™ìE@´“±æ04?fK@ﬂÀÓ?;öìø‚Y¿£êß?£â*@◊h	@îΩãæÖD@‡•A@R–≈?…Ùü@ñtY@¡ë≈?'r@ˆ>?Ñà@Áî?˙pÿ?¿
+'?‹›? ^@mQ⁄?*£ Bmodels.5.conv5.weight_biasJÄ&k§?¿◊Íº ö?Ó-ÔøL§ù?»-Pø‹ü	@V∞√@Ú9ã@Ù≈øN™ç¿Z›ó>‹?'Ã˚?Ym¡?ê:cøt{^ø_⁄Ñ@]WŒæZòZ@–‚À?ıÃ¿Ã!É>”S◊?ŒTs@@1ç@Èb¿?P]Äø‰«èø≠Ì@ùXø,ıZæ*£@Bmodels.7.conv6.weight_biasJÄ(Ú?éõ@(vå?d∂b@2á@ﬁp4@í‡√@A1€?^ÙN@¢∞`@gÒ·?dåw@´A@Ñ[@ˆı€?Ì ÿ@ƒ-:@≤…≈?én–@Zì@÷>ç@ A?∫¡åøÖ’S@ÏNù@<…!¿âèF@D)z@FÙç?†$>Ä
+¶øãJÖ@`Ä?FD?0Ó®@AÄ@ ⁄„ªÕ5J@ñ·∫?§¡5@˜»@Î∂Ê@à÷?U
+AÉà@•˝Ù?è‚¶@@+…@Js;ø≈aú@  }ªßüøP,@!T∞?’Ç7@„í@∏Ù‘ø‡éøˆ8µ?ˇÜ•?€øl@r=8?ó`C@-T©@*qÄBmodels.10.conv7.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset0j
+length512p*§@Bmodels.12.conv8.weight_biasJÄ*w@<µ>¶¬îøƒŒŒ?±Æªø»√È=ç∑ˇ?¶wã?bµ>‚Ê@_≠üø∞?c ñøËÔö?ˆê ¿(˘§ø6_? <@Â,Åæ ÀI=‡÷œ=† Î=íî6øƒû˘æ•∑æ∏ E@§Râøé±Œøï
+‹?±r@iºøÄ©å?"t§?Ä»eª û–ΩÎêøË¯¬øa\ø?U√äøÄîcºé∞@Ü˜±>XSΩT2ÊøËÀÔæB√>ÄÍéº†√¶øhLŸ?\ªëø≠.7ø∞:æøHVéæÙŒ¡æ”5Æ?“+Íø@⁄Z<q'øn÷Ô?˝]”?æ±@•ìøtº≤>Ÿ,üø*§@Bmodels.13.conv9.weight_biasJÄÙñæJ¥øc¿ﬁ¿¬[ö>¯|:>(∆%@˙æ¿@§’+@¸v,øvóØø#xí?Òeú?¬√?–'¶>ØÎ.@îñ@ˇé>ÿΩø¯√?>úæf=ˆø?€øçY@DÌµø0Üí=p=Føˆ4/æñWK¿„“=’)∆?ÓXõ¿ØÉæø¶¿ø-…?¢9ä?
+@‹^˘>∏søå9j>—3m?~}àæ˚ŸF@∂˝†@UK¿pA
+?pãŒ=’ƒŒ?Ñ≤(@!-x?Bvq?#<ı?â˙§øeôØø
+@Ù„¡´"õ?£∫Ææÿv÷=ˆ©$@PÔTΩ‹#%@⁄¡¿hñ•=*tÄBmodels.15.conv10.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset512j
+length512p*vÄBmodels.18.conv11.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset2560j
+length1024p*uÄBmodels.20.conv12.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset1024j
+length512p*uÄBmodels.21.conv13.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset1536j
+length512p*vÄBmodels.23.conv14.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset3584j
+length1024p*vÄBmodels.26.conv15.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset6656j
+length2048p*vÄBmodels.27.conv16.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset4608j
+length1024p*vÄBmodels.28.conv17.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset8704j
+length2048p*uÄBmodels.32.conv19.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset2048j
+length512p*vÄBmodels.35.conv20.weight_biasj/
+location#yolov4_1_3_416_416_static.onnx.dataj
+offset5632j
+length1024pZ«
+input
+
+
+
+†
+†"=
+/pkg.torch.export.graph_signature.InputSpec.kind
+USER_INPUT"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"&
+!pkg.torch.onnx.original_node_namexbê
+boxes
+
+
+
+
+"?
+0pkg.torch.export.graph_signature.OutputSpec.kindUSER_OUTPUT".
+!pkg.torch.onnx.original_node_name	conv2d_17bê
+confs
+
+
+
+
+"?
+0pkg.torch.export.graph_signature.OutputSpec.kindUSER_OUTPUT".
+!pkg.torch.onnx.original_node_name	conv2d_20j/
+models.0.conv1.weight
+
+ 
+
+
+jﬁ
+models.29.conv18.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_models_29_conv18_biasjﬁ
+models.36.conv21.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_models_36_conv21_biasj/
+models.1.conv2.weight
+
+@
+ 
+
+j/
+models.2.conv3.weight
+
+@
+@
+
+j/
+models.4.conv4.weight
+
+ 
+ 
+
+j/
+models.5.conv5.weight
+
+ 
+ 
+
+j/
+models.7.conv6.weight
+
+@
+@
+
+j2
+models.10.conv7.weight
+
+Ä
+Ä
+
+j0
+models.12.conv8.weight
+
+@
+@
+
+j0
+models.13.conv9.weight
+
+@
+@
+
+j3
+models.15.conv10.weight
+
+Ä
+Ä
+
+j3
+models.18.conv11.weight
+
+Ä
+Ä
+
+j3
+models.20.conv12.weight
+
+Ä
+Ä
+
+j3
+models.21.conv13.weight
+
+Ä
+Ä
+
+j3
+models.23.conv14.weight
+
+Ä
+Ä
+
+j3
+models.26.conv15.weight
+
+Ä
+Ä
+
+j3
+models.27.conv16.weight
+
+Ä
+Ä
+
+j3
+models.28.conv17.weight
+
+Ä
+Ä
+
+jÔ
+models.29.conv18.weight
+
+
+Ä
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_models_29_conv18_weightj3
+models.32.conv19.weight
+
+Ä
+Ä
+
+j3
+models.35.conv20.weight
+
+Ä
+Ä
+
+jÔ
+models.36.conv21.weight
+
+
+Ä
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_models_36_conv21_weightj\
+val_34
+
+
+"F
+$pkg.onnxscript.optimizer.folded_from['val_31', 'val_32', 'val_33']j\
+val_38
+
+
+"F
+$pkg.onnxscript.optimizer.folded_from['val_35', 'val_36', 'val_37']j[
+val_41
+
+
+"E
+$pkg.onnxscript.optimizer.folded_from['val_39', 'val_40', 'val_6']j\
+val_86
+
+
+"F
+$pkg.onnxscript.optimizer.folded_from['val_83', 'val_84', 'val_85']j`
+val_134
+
+
+"I
+$pkg.onnxscript.optimizer.folded_from!['val_131', 'val_132', 'val_133']jÅ
+val_210
+
+
+"j
+$pkg.onnxscript.optimizer.folded_fromB['val_204', 'val_205', 'val_206', 'val_207', 'val_208', 'val_209']jÅ
+val_218
+
+
+"j
+$pkg.onnxscript.optimizer.folded_fromB['val_212', 'val_213', 'val_214', 'val_215', 'val_216', 'val_217']jk
+val_224
+
+
+"T
+$pkg.onnxscript.optimizer.folded_from,['val_220', 'val_221', 'val_222', 'val_223']j(
+models.0.conv1.weight_bias
+
+
+ j(
+models.1.conv2.weight_bias
+
+
+@j(
+models.2.conv3.weight_bias
+
+
+@j(
+models.4.conv4.weight_bias
+
+
+ j(
+models.5.conv5.weight_bias
+
+
+ j(
+models.7.conv6.weight_bias
+
+
+@j*
+models.10.conv7.weight_bias
+	
+Äj)
+models.12.conv8.weight_bias
+
+
+@j)
+models.13.conv9.weight_bias
+
+
+@j+
+models.15.conv10.weight_bias
+	
+Äj+
+models.18.conv11.weight_bias
+	
+Äj+
+models.20.conv12.weight_bias
+	
+Äj+
+models.21.conv13.weight_bias
+	
+Äj+
+models.23.conv14.weight_bias
+	
+Äj+
+models.26.conv15.weight_bias
+	
+Äj+
+models.27.conv16.weight_bias
+	
+Äj+
+models.28.conv17.weight_bias
+	
+Äj+
+models.32.conv19.weight_bias
+	
+Äj+
+models.35.conv20.weight_bias
+	
+Äj#
+getitem
+
+
+ 
+–
+–j&
+
+leaky_relu
+
+
+ 
+–
+–j#
+	getitem_5
+
+
+@
+h
+hj&
+leaky_relu_1
+
+
+@
+h
+hj$
+
+getitem_10
+
+
+@
+h
+hj&
+leaky_relu_2
+
+
+@
+h
+hj!
+slice_2
+
+
+ 
+h
+hj$
+
+getitem_15
+
+
+ 
+h
+hj&
+leaky_relu_3
+
+
+ 
+h
+hj$
+
+getitem_20
+
+
+ 
+h
+hj&
+leaky_relu_4
+
+
+ 
+h
+hj
+cat
+
+
+@
+h
+hj$
+
+getitem_25
+
+
+@
+h
+hj&
+leaky_relu_5
+
+
+@
+h
+hj 
+cat_1
+
+
+Ä
+h
+hj%
+
+max_pool2d
+
+
+Ä
+4
+4j%
+
+getitem_30
+
+
+Ä
+4
+4j'
+leaky_relu_6
+
+
+Ä
+4
+4j!
+slice_4
+
+
+@
+4
+4j$
+
+getitem_35
+
+
+@
+4
+4j&
+leaky_relu_7
+
+
+@
+4
+4j$
+
+getitem_40
+
+
+@
+4
+4j&
+leaky_relu_8
+
+
+@
+4
+4j 
+cat_2
+
+
+Ä
+4
+4j%
+
+getitem_45
+
+
+Ä
+4
+4j'
+leaky_relu_9
+
+
+Ä
+4
+4j 
+cat_3
+
+
+Ä
+4
+4j'
+max_pool2d_1
+
+
+Ä
+
+j%
+
+getitem_50
+
+
+Ä
+
+j(
+leaky_relu_10
+
+
+Ä
+
+j"
+slice_6
+
+
+Ä
+
+j%
+
+getitem_55
+
+
+Ä
+
+j(
+leaky_relu_11
+
+
+Ä
+
+j%
+
+getitem_60
+
+
+Ä
+
+j(
+leaky_relu_12
+
+
+Ä
+
+j 
+cat_4
+
+
+Ä
+
+j%
+
+getitem_65
+
+
+Ä
+
+j(
+leaky_relu_13
+
+
+Ä
+
+j 
+cat_5
+
+
+Ä
+
+j'
+max_pool2d_2
+
+
+Ä
+
+j%
+
+getitem_70
+
+
+Ä
+
+j(
+leaky_relu_14
+
+
+Ä
+
+j%
+
+getitem_75
+
+
+Ä
+
+j(
+leaky_relu_15
+
+
+Ä
+
+j%
+
+getitem_80
+
+
+Ä
+
+j(
+leaky_relu_16
+
+
+Ä
+
+j%
+
+getitem_85
+
+
+Ä
+
+j(
+leaky_relu_17
+
+
+Ä
+
+j)
+view_2
+
+
+Ä
+
+
+
+j+
+expand_1
+
+
+Ä
+
+
+
+j!
+view_3
+
+
+Ä
+
+j 
+cat_6
+
+
+Ä
+
+j%
+
+getitem_90
+
+
+Ä
+
+j(
+leaky_relu_18
+
+
+Ä
+
+Çùf
+0pkg.torch.export.ExportedProgram.graph_signatureËe
+# inputs
+p_models_0_conv1_weight: PARAMETER target='models.0.conv1.weight'
+p_models_0_bn1_weight: PARAMETER target='models.0.bn1.weight'
+p_models_0_bn1_bias: PARAMETER target='models.0.bn1.bias'
+p_models_1_conv2_weight: PARAMETER target='models.1.conv2.weight'
+p_models_1_bn2_weight: PARAMETER target='models.1.bn2.weight'
+p_models_1_bn2_bias: PARAMETER target='models.1.bn2.bias'
+p_models_2_conv3_weight: PARAMETER target='models.2.conv3.weight'
+p_models_2_bn3_weight: PARAMETER target='models.2.bn3.weight'
+p_models_2_bn3_bias: PARAMETER target='models.2.bn3.bias'
+p_models_4_conv4_weight: PARAMETER target='models.4.conv4.weight'
+p_models_4_bn4_weight: PARAMETER target='models.4.bn4.weight'
+p_models_4_bn4_bias: PARAMETER target='models.4.bn4.bias'
+p_models_5_conv5_weight: PARAMETER target='models.5.conv5.weight'
+p_models_5_bn5_weight: PARAMETER target='models.5.bn5.weight'
+p_models_5_bn5_bias: PARAMETER target='models.5.bn5.bias'
+p_models_7_conv6_weight: PARAMETER target='models.7.conv6.weight'
+p_models_7_bn6_weight: PARAMETER target='models.7.bn6.weight'
+p_models_7_bn6_bias: PARAMETER target='models.7.bn6.bias'
+p_models_10_conv7_weight: PARAMETER target='models.10.conv7.weight'
+p_models_10_bn7_weight: PARAMETER target='models.10.bn7.weight'
+p_models_10_bn7_bias: PARAMETER target='models.10.bn7.bias'
+p_models_12_conv8_weight: PARAMETER target='models.12.conv8.weight'
+p_models_12_bn8_weight: PARAMETER target='models.12.bn8.weight'
+p_models_12_bn8_bias: PARAMETER target='models.12.bn8.bias'
+p_models_13_conv9_weight: PARAMETER target='models.13.conv9.weight'
+p_models_13_bn9_weight: PARAMETER target='models.13.bn9.weight'
+p_models_13_bn9_bias: PARAMETER target='models.13.bn9.bias'
+p_models_15_conv10_weight: PARAMETER target='models.15.conv10.weight'
+p_models_15_bn10_weight: PARAMETER target='models.15.bn10.weight'
+p_models_15_bn10_bias: PARAMETER target='models.15.bn10.bias'
+p_models_18_conv11_weight: PARAMETER target='models.18.conv11.weight'
+p_models_18_bn11_weight: PARAMETER target='models.18.bn11.weight'
+p_models_18_bn11_bias: PARAMETER target='models.18.bn11.bias'
+p_models_20_conv12_weight: PARAMETER target='models.20.conv12.weight'
+p_models_20_bn12_weight: PARAMETER target='models.20.bn12.weight'
+p_models_20_bn12_bias: PARAMETER target='models.20.bn12.bias'
+p_models_21_conv13_weight: PARAMETER target='models.21.conv13.weight'
+p_models_21_bn13_weight: PARAMETER target='models.21.bn13.weight'
+p_models_21_bn13_bias: PARAMETER target='models.21.bn13.bias'
+p_models_23_conv14_weight: PARAMETER target='models.23.conv14.weight'
+p_models_23_bn14_weight: PARAMETER target='models.23.bn14.weight'
+p_models_23_bn14_bias: PARAMETER target='models.23.bn14.bias'
+p_models_26_conv15_weight: PARAMETER target='models.26.conv15.weight'
+p_models_26_bn15_weight: PARAMETER target='models.26.bn15.weight'
+p_models_26_bn15_bias: PARAMETER target='models.26.bn15.bias'
+p_models_27_conv16_weight: PARAMETER target='models.27.conv16.weight'
+p_models_27_bn16_weight: PARAMETER target='models.27.bn16.weight'
+p_models_27_bn16_bias: PARAMETER target='models.27.bn16.bias'
+p_models_28_conv17_weight: PARAMETER target='models.28.conv17.weight'
+p_models_28_bn17_weight: PARAMETER target='models.28.bn17.weight'
+p_models_28_bn17_bias: PARAMETER target='models.28.bn17.bias'
+p_models_29_conv18_weight: PARAMETER target='models.29.conv18.weight'
+p_models_29_conv18_bias: PARAMETER target='models.29.conv18.bias'
+p_models_32_conv19_weight: PARAMETER target='models.32.conv19.weight'
+p_models_32_bn19_weight: PARAMETER target='models.32.bn19.weight'
+p_models_32_bn19_bias: PARAMETER target='models.32.bn19.bias'
+p_models_35_conv20_weight: PARAMETER target='models.35.conv20.weight'
+p_models_35_bn20_weight: PARAMETER target='models.35.bn20.weight'
+p_models_35_bn20_bias: PARAMETER target='models.35.bn20.bias'
+p_models_36_conv21_weight: PARAMETER target='models.36.conv21.weight'
+p_models_36_conv21_bias: PARAMETER target='models.36.conv21.bias'
+b_models_0_bn1_running_mean: BUFFER target='models.0.bn1.running_mean' persistent=True
+b_models_0_bn1_running_var: BUFFER target='models.0.bn1.running_var' persistent=True
+b_models_0_bn1_num_batches_tracked: BUFFER target='models.0.bn1.num_batches_tracked' persistent=True
+b_models_1_bn2_running_mean: BUFFER target='models.1.bn2.running_mean' persistent=True
+b_models_1_bn2_running_var: BUFFER target='models.1.bn2.running_var' persistent=True
+b_models_1_bn2_num_batches_tracked: BUFFER target='models.1.bn2.num_batches_tracked' persistent=True
+b_models_2_bn3_running_mean: BUFFER target='models.2.bn3.running_mean' persistent=True
+b_models_2_bn3_running_var: BUFFER target='models.2.bn3.running_var' persistent=True
+b_models_2_bn3_num_batches_tracked: BUFFER target='models.2.bn3.num_batches_tracked' persistent=True
+b_models_4_bn4_running_mean: BUFFER target='models.4.bn4.running_mean' persistent=True
+b_models_4_bn4_running_var: BUFFER target='models.4.bn4.running_var' persistent=True
+b_models_4_bn4_num_batches_tracked: BUFFER target='models.4.bn4.num_batches_tracked' persistent=True
+b_models_5_bn5_running_mean: BUFFER target='models.5.bn5.running_mean' persistent=True
+b_models_5_bn5_running_var: BUFFER target='models.5.bn5.running_var' persistent=True
+b_models_5_bn5_num_batches_tracked: BUFFER target='models.5.bn5.num_batches_tracked' persistent=True
+b_models_7_bn6_running_mean: BUFFER target='models.7.bn6.running_mean' persistent=True
+b_models_7_bn6_running_var: BUFFER target='models.7.bn6.running_var' persistent=True
+b_models_7_bn6_num_batches_tracked: BUFFER target='models.7.bn6.num_batches_tracked' persistent=True
+b_models_10_bn7_running_mean: BUFFER target='models.10.bn7.running_mean' persistent=True
+b_models_10_bn7_running_var: BUFFER target='models.10.bn7.running_var' persistent=True
+b_models_10_bn7_num_batches_tracked: BUFFER target='models.10.bn7.num_batches_tracked' persistent=True
+b_models_12_bn8_running_mean: BUFFER target='models.12.bn8.running_mean' persistent=True
+b_models_12_bn8_running_var: BUFFER target='models.12.bn8.running_var' persistent=True
+b_models_12_bn8_num_batches_tracked: BUFFER target='models.12.bn8.num_batches_tracked' persistent=True
+b_models_13_bn9_running_mean: BUFFER target='models.13.bn9.running_mean' persistent=True
+b_models_13_bn9_running_var: BUFFER target='models.13.bn9.running_var' persistent=True
+b_models_13_bn9_num_batches_tracked: BUFFER target='models.13.bn9.num_batches_tracked' persistent=True
+b_models_15_bn10_running_mean: BUFFER target='models.15.bn10.running_mean' persistent=True
+b_models_15_bn10_running_var: BUFFER target='models.15.bn10.running_var' persistent=True
+b_models_15_bn10_num_batches_tracked: BUFFER target='models.15.bn10.num_batches_tracked' persistent=True
+b_models_18_bn11_running_mean: BUFFER target='models.18.bn11.running_mean' persistent=True
+b_models_18_bn11_running_var: BUFFER target='models.18.bn11.running_var' persistent=True
+b_models_18_bn11_num_batches_tracked: BUFFER target='models.18.bn11.num_batches_tracked' persistent=True
+b_models_20_bn12_running_mean: BUFFER target='models.20.bn12.running_mean' persistent=True
+b_models_20_bn12_running_var: BUFFER target='models.20.bn12.running_var' persistent=True
+b_models_20_bn12_num_batches_tracked: BUFFER target='models.20.bn12.num_batches_tracked' persistent=True
+b_models_21_bn13_running_mean: BUFFER target='models.21.bn13.running_mean' persistent=True
+b_models_21_bn13_running_var: BUFFER target='models.21.bn13.running_var' persistent=True
+b_models_21_bn13_num_batches_tracked: BUFFER target='models.21.bn13.num_batches_tracked' persistent=True
+b_models_23_bn14_running_mean: BUFFER target='models.23.bn14.running_mean' persistent=True
+b_models_23_bn14_running_var: BUFFER target='models.23.bn14.running_var' persistent=True
+b_models_23_bn14_num_batches_tracked: BUFFER target='models.23.bn14.num_batches_tracked' persistent=True
+b_models_26_bn15_running_mean: BUFFER target='models.26.bn15.running_mean' persistent=True
+b_models_26_bn15_running_var: BUFFER target='models.26.bn15.running_var' persistent=True
+b_models_26_bn15_num_batches_tracked: BUFFER target='models.26.bn15.num_batches_tracked' persistent=True
+b_models_27_bn16_running_mean: BUFFER target='models.27.bn16.running_mean' persistent=True
+b_models_27_bn16_running_var: BUFFER target='models.27.bn16.running_var' persistent=True
+b_models_27_bn16_num_batches_tracked: BUFFER target='models.27.bn16.num_batches_tracked' persistent=True
+b_models_28_bn17_running_mean: BUFFER target='models.28.bn17.running_mean' persistent=True
+b_models_28_bn17_running_var: BUFFER target='models.28.bn17.running_var' persistent=True
+b_models_28_bn17_num_batches_tracked: BUFFER target='models.28.bn17.num_batches_tracked' persistent=True
+b_models_32_bn19_running_mean: BUFFER target='models.32.bn19.running_mean' persistent=True
+b_models_32_bn19_running_var: BUFFER target='models.32.bn19.running_var' persistent=True
+b_models_32_bn19_num_batches_tracked: BUFFER target='models.32.bn19.num_batches_tracked' persistent=True
+b_models_35_bn20_running_mean: BUFFER target='models.35.bn20.running_mean' persistent=True
+b_models_35_bn20_running_var: BUFFER target='models.35.bn20.running_var' persistent=True
+b_models_35_bn20_num_batches_tracked: BUFFER target='models.35.bn20.num_batches_tracked' persistent=True
+x: USER_INPUT
+
+# outputs
+getitem_3: BUFFER_MUTATION target='models.0.bn1.running_mean'
+getitem_4: BUFFER_MUTATION target='models.0.bn1.running_var'
+add: BUFFER_MUTATION target='models.0.bn1.num_batches_tracked'
+getitem_8: BUFFER_MUTATION target='models.1.bn2.running_mean'
+getitem_9: BUFFER_MUTATION target='models.1.bn2.running_var'
+add_1: BUFFER_MUTATION target='models.1.bn2.num_batches_tracked'
+getitem_13: BUFFER_MUTATION target='models.2.bn3.running_mean'
+getitem_14: BUFFER_MUTATION target='models.2.bn3.running_var'
+add_2: BUFFER_MUTATION target='models.2.bn3.num_batches_tracked'
+getitem_18: BUFFER_MUTATION target='models.4.bn4.running_mean'
+getitem_19: BUFFER_MUTATION target='models.4.bn4.running_var'
+add_3: BUFFER_MUTATION target='models.4.bn4.num_batches_tracked'
+getitem_23: BUFFER_MUTATION target='models.5.bn5.running_mean'
+getitem_24: BUFFER_MUTATION target='models.5.bn5.running_var'
+add_4: BUFFER_MUTATION target='models.5.bn5.num_batches_tracked'
+getitem_28: BUFFER_MUTATION target='models.7.bn6.running_mean'
+getitem_29: BUFFER_MUTATION target='models.7.bn6.running_var'
+add_5: BUFFER_MUTATION target='models.7.bn6.num_batches_tracked'
+getitem_33: BUFFER_MUTATION target='models.10.bn7.running_mean'
+getitem_34: BUFFER_MUTATION target='models.10.bn7.running_var'
+add_6: BUFFER_MUTATION target='models.10.bn7.num_batches_tracked'
+getitem_38: BUFFER_MUTATION target='models.12.bn8.running_mean'
+getitem_39: BUFFER_MUTATION target='models.12.bn8.running_var'
+add_7: BUFFER_MUTATION target='models.12.bn8.num_batches_tracked'
+getitem_43: BUFFER_MUTATION target='models.13.bn9.running_mean'
+getitem_44: BUFFER_MUTATION target='models.13.bn9.running_var'
+add_8: BUFFER_MUTATION target='models.13.bn9.num_batches_tracked'
+getitem_48: BUFFER_MUTATION target='models.15.bn10.running_mean'
+getitem_49: BUFFER_MUTATION target='models.15.bn10.running_var'
+add_9: BUFFER_MUTATION target='models.15.bn10.num_batches_tracked'
+getitem_53: BUFFER_MUTATION target='models.18.bn11.running_mean'
+getitem_54: BUFFER_MUTATION target='models.18.bn11.running_var'
+add_10: BUFFER_MUTATION target='models.18.bn11.num_batches_tracked'
+getitem_58: BUFFER_MUTATION target='models.20.bn12.running_mean'
+getitem_59: BUFFER_MUTATION target='models.20.bn12.running_var'
+add_11: BUFFER_MUTATION target='models.20.bn12.num_batches_tracked'
+getitem_63: BUFFER_MUTATION target='models.21.bn13.running_mean'
+getitem_64: BUFFER_MUTATION target='models.21.bn13.running_var'
+add_12: BUFFER_MUTATION target='models.21.bn13.num_batches_tracked'
+getitem_68: BUFFER_MUTATION target='models.23.bn14.running_mean'
+getitem_69: BUFFER_MUTATION target='models.23.bn14.running_var'
+add_13: BUFFER_MUTATION target='models.23.bn14.num_batches_tracked'
+getitem_73: BUFFER_MUTATION target='models.26.bn15.running_mean'
+getitem_74: BUFFER_MUTATION target='models.26.bn15.running_var'
+add_14: BUFFER_MUTATION target='models.26.bn15.num_batches_tracked'
+getitem_78: BUFFER_MUTATION target='models.27.bn16.running_mean'
+getitem_79: BUFFER_MUTATION target='models.27.bn16.running_var'
+add_15: BUFFER_MUTATION target='models.27.bn16.num_batches_tracked'
+getitem_83: BUFFER_MUTATION target='models.28.bn17.running_mean'
+getitem_84: BUFFER_MUTATION target='models.28.bn17.running_var'
+add_16: BUFFER_MUTATION target='models.28.bn17.num_batches_tracked'
+getitem_88: BUFFER_MUTATION target='models.32.bn19.running_mean'
+getitem_89: BUFFER_MUTATION target='models.32.bn19.running_var'
+add_17: BUFFER_MUTATION target='models.32.bn19.num_batches_tracked'
+getitem_93: BUFFER_MUTATION target='models.35.bn20.running_mean'
+getitem_94: BUFFER_MUTATION target='models.35.bn20.running_var'
+add_18: BUFFER_MUTATION target='models.35.bn20.num_batches_tracked'
+conv2d_17: USER_OUTPUT
+conv2d_20: USER_OUTPUT
+Ç8
+2pkg.torch.export.ExportedProgram.range_constraints{}B
+ 
