@@ -9,6 +9,7 @@
     "onnxruntime-web": "^1.27.0"
   },
   "devDependencies": {
+    "@lynx-js/lynx-core": "0.1.4",
     "@lynx-js/qrcode-rsbuild-plugin": "0.5.0",
     "@lynx-js/react-rsbuild-plugin": "0.17.2",
     "@lynx-js/rspeedy": "0.15.2",
