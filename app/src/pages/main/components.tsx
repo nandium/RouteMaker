@@ -4,7 +4,8 @@ import type { Route } from '../../api.js';
 import type { ColorScheme } from '../../appearance.js';
 import { iconColor, iconSvg, type IconName } from '../../icons.js';
 
-// Inline Lynx 4 linear layout keeps native and web orientation deterministic at creation.
+// Firefox's Lynx Web fallback snapshots orientation when an element connects.
+// Inline layout avoids a cold-load race with the asynchronously inserted stylesheet.
 export const COLUMN_STYLE = 'display: linear; linear-direction: column;';
 export const ROW_STYLE = 'display: linear; linear-direction: row;';
 export const GROWING_ROW_STYLE = `${ROW_STYLE} linear-weight: 1;`;
