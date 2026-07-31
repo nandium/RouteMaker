@@ -1,29 +1,21 @@
-## Contributor Guide
+# Contributing
 
-When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
+Prefer deletion and direct code over compatibility branches or speculative
+layers. Extract a shared abstraction when three real callers make it clearer.
 
-### Pull Request Process
+Keep constants consolidated at the narrowest useful scope:
 
-1. Write a summary with details of the changes in the pull request and link the related issue
-2. For UI changes: Test with browser and the android build
-3. For UI changes: Modify the deployment script at `./ionic_user_interface/.github` if necessary
-4. For API changes: Include Postman Collections at `./lambda_backend/postman_collections`
-5. For API changes: Update swagger UI in `./docs`
-6. For API changes: Modify the deployment script at `./lambda_backend/serverless-deploy.sh` if necessary
-7. Ensure all tests in the pipeline passes
-8. Request a reviewer for approval
+- API paths and wire types: `app/src/client-contract.ts`
+- visual tokens: `app/theme.css`
+- detector constants: `app/web/yolo.ts`
+- Worker limits and shared runtime values: `worker/src/shared.ts`
 
-### Initial Setup
+The API remains three cohesive domains: auth/profile, routes/social, and admin.
+Do not add repositories, service classes, queues, or provider interfaces until
+measured change pressure earns them.
 
-The runtimes are NodeJS 14 and Python 3.8.
+Comments should explain why a boundary or non-obvious flow exists. Obvious code
+does not need narration. Complex functions deserve a short, intuitive flow
+summary in their current scope.
 
-To ensure the PR passes checks in Github Actions, there are [CommitLint](https://github.com/conventional-changelog/commitlint), [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) set up as git hooks. Please enable it:
-
-```
-cd ./RouteMaker
-npm ci
-```
-
-### Setup
-
-Refer to the documentation [here](docs/README.md).
+Run the checks in the root README before requesting review.
