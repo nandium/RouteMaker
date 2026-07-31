@@ -164,12 +164,9 @@ test('keeps account actions behind a clear sign-in screen', async () => {
 test('reports tool navigation failures without asking users to open a raw URL', async () => {
   globalThis.NativeModules = {
     ...baselineNativeModules,
-    spkPipe: {
-      call: (
-        _method: string,
-        _params: unknown,
-        callback: (result: { code: number; msg: string }) => void
-      ) => callback({ code: 0, msg: 'failed' }),
+    RouteMakerNavigation: {
+      openExternal: (_url: string, _replace: boolean, callback: (success: boolean) => void) =>
+        callback(false),
     },
   };
   render(<App />);

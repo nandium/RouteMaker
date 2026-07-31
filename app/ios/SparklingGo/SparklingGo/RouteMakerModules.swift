@@ -122,3 +122,40 @@ final class RouteMakerShareModule: NSObject, LynxModule {
         return controller
     }
 }
+
+@objcMembers
+final class RouteMakerNavigationModule: NSObject, LynxModule {
+    static var name: String { "RouteMakerNavigation" }
+
+    static var methodLookup: [String: String] {
+        ["openExternal": NSStringFromSelector(#selector(openExternal(_:replace:completion:)))]
+    }
+
+    init(param: Any) {
+        super.init()
+    }
+
+    override init() {
+        super.init()
+    }
+
+    func openExternal(
+        _ url: String,
+        replace _: Bool,
+        completion: @escaping LynxCallbackBlock
+    ) {
+        guard
+            let target = URL(string: url),
+            ["http", "https"].contains(target.scheme?.lowercased() ?? ""),
+            target.host != nil
+        else {
+            completion(NSNumber(value: false))
+            return
+        }
+        DispatchQueue.main.async {
+            UIApplication.shared.open(target) { success in
+                completion(NSNumber(value: success))
+            }
+        }
+    }
+}

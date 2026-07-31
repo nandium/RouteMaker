@@ -1,12 +1,18 @@
 import java.net.URI
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
 }
 
 val debugApiBaseUrl = "http://10.0.2.2:8787"
+val androidBytecodeVersion = JavaVersion.toVersion(libs.versions.javaBytecode.get())
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(libs.versions.javaToolchain.get().toInt())
+    }
+}
 
 fun configuredApiBaseUrl(): String? =
     providers.gradleProperty("routeMakerApiBaseUrl").orNull?.trim()?.takeIf { it.isNotEmpty() }
@@ -35,12 +41,12 @@ fun buildConfigString(value: String): String =
 
 android {
     namespace = "rocks.routemaker.app"
-    compileSdk = 34
+    compileSdk = libs.versions.androidCompileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "rocks.routemaker.app"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = libs.versions.androidMinSdk.get().toInt()
+        targetSdk = libs.versions.androidTargetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -78,45 +84,30 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+        sourceCompatibility = androidBytecodeVersion
+        targetCompatibility = androidBytecodeVersion
     }
 
-    // Default integrate assets from dist; switch to native assets when env is set
-    val useNativeAssets =
-        System.getenv("SPARKLING_USE_NATIVE_ASSETS")?.equals("true", ignoreCase = true) ?: false
-    sourceSets {
-        getByName("main").apply {
-            if (useNativeAssets) {
-                // Use native assets directory (used in --copy mode)
-                assets.setSrcDirs(listOf("src/main/assets"))
-            } else {
-                // Default: use dist directly; no copy required
-                assets.setSrcDirs(listOf("../../dist"))
-            }
+    // The CLI's copy mode needs packaged assets; local builds can consume dist directly.
+    val assetsDirectory =
+        if (System.getenv("SPARKLING_USE_NATIVE_ASSETS").equals("true", ignoreCase = true)) {
+            "src/main/assets"
+        } else {
+            "../../dist"
         }
+    sourceSets.named("main") {
+        assets.directories.clear()
+        assets.directories.add(assetsDirectory)
     }
 
     dependencies {
-        implementation(libs.androidx.core.ktx)
         implementation(libs.androidx.appcompat)
-        implementation("com.tiktok.sparkling:sparkling:2.0.1")
-        implementation("com.tiktok.sparkling:sparkling-method:2.0.1")
+        implementation(libs.sparkling)
 
         implementation(libs.fresco)
         implementation(libs.fresco.animated.gif)
         implementation(libs.fresco.animated.webp)
-        implementation(libs.fresco.webp.support)
-        implementation(libs.fresco.animated.base)
 
-        // BEGIN SPARKLING AUTOLINK
-        listOf(
-            project(":sparkling-navigation")
-        ).forEach { dep -> add("implementation", dep) }
-        // END SPARKLING AUTOLINK
     }
 }
 

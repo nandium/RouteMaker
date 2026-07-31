@@ -1,6 +1,5 @@
 platform :ios, '15.6'
 
-# Use private spec repo for SparklingMethod and Sparkling
 source 'https://cdn.cocoapods.org/'
 
 use_modular_headers!
@@ -20,16 +19,9 @@ def sparkling_methods
   ]
 end
 
-def sparkling_methods_dep
-  # BEGIN SPARKLING AUTOLINK
-  pod 'Sparkling-Router', :path => '../node_modules/sparkling-navigation/ios'
-  # END SPARKLING AUTOLINK
-end
-
 def sparkling_kit
   pod 'Sparkling', SPARKLING_VERSION
   sparkling_methods
-  sparkling_methods_dep
 
   pod 'Lynx', '3.6.0', :subspecs => [
     'Framework',
@@ -45,13 +37,9 @@ def sparkling_kit
   'Devtool'
   ]
 
-#  pod 'BaseDevtool'
   pod 'LynxDevtool', '3.6.0', :subspecs => [
    'Framework',
   ]
-
-  pod 'SnapKit'
-  pod 'Mantle', '~> 2.2.0'
 
   pod 'SDWebImage','5.15.5'
   pod 'SDWebImageWebPCoder', '0.11.0'

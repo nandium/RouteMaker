@@ -17,20 +17,13 @@ import com.tiktok.sparkling.hybridkit.config.BaseInfoConfig
 import com.tiktok.sparkling.hybridkit.config.SparklingHybridConfig
 import com.tiktok.sparkling.hybridkit.config.SparklingLynxConfig
 import com.tiktok.sparkling.hybridkit.lynx.SparklingLynxModuleWrapper
-import com.tiktok.sparkling.method.registry.core.SparklingBridgeManager
-import com.tiktok.sparkling.method.router.close.RouterCloseMethod
-import com.tiktok.sparkling.method.router.open.RouterOpenMethod
-import com.tiktok.sparkling.method.router.utils.RouterProvider
-import rocks.routemaker.app.LynxInputComponent
-import rocks.routemaker.app.BuiltinTemplateProvider
-
 
 class SparklingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
         initFresco()
-        initSparkling()
+        initHybridKit()
     }
 
     private fun initFresco() {
@@ -38,12 +31,6 @@ class SparklingApplication : Application() {
         val builder = ImagePipelineConfig.newBuilder(applicationContext).setPoolFactory(factory)
         Fresco.initialize(applicationContext, builder.build())
     }
-
-    private fun initSparkling() {
-        initHybridKit()
-        initSparklingMethods()
-    }
-
 
     private fun initHybridKit() {
         HybridKit.init(this)
@@ -70,6 +57,10 @@ class SparklingApplication : Application() {
                         RouteMakerAppearanceModule::class.java,
                         null,
                     ),
+                    "RouteMakerNavigation" to SparklingLynxModuleWrapper(
+                        RouteMakerNavigationModule::class.java,
+                        null,
+                    ),
                 ),
             )
             setTemplateProvider(BuiltinTemplateProvider(this@SparklingApplication))
@@ -79,11 +70,5 @@ class SparklingApplication : Application() {
         }
         HybridKit.setHybridConfig(hybridConfig, this)
         HybridKit.initLynxKit()
-    }
-
-    private fun initSparklingMethods() {
-        SparklingBridgeManager.registerIDLMethod(RouterOpenMethod::class.java)
-        SparklingBridgeManager.registerIDLMethod(RouterCloseMethod::class.java)
-        RouterProvider.hostRouterDepend = SparklingHostRouterDepend()
     }
 }

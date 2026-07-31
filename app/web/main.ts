@@ -206,8 +206,8 @@ if (action) {
     onNativeModulesCall: (
       name: string,
       data: {
-        data?: { scheme?: string; replace?: boolean };
         preference?: string;
+        replace?: boolean;
         token?: string;
         url?: string;
         title?: string;
@@ -221,15 +221,6 @@ if (action) {
   view.initData = { initial_data: initialProps };
   view.injectStyleRules = ['x-text { -webkit-user-select: text; user-select: text; }'];
   view.nativeModulesMap = {
-    spkPipe: bridgeModule(
-      `export default function(_, callHost) {
-            return {
-              call(method, data, callback) {
-                callHost(method, data).then(callback);
-              }
-            };
-          }`
-    ),
     RouteMakerSession: bridgeModule(
       `export default function(_, callHost) {
             return {
@@ -274,6 +265,9 @@ if (action) {
               },
               back(fallbackPath) {
                 callHost('back', { path: fallbackPath });
+              },
+              openExternal(url, replace, callback) {
+                callHost('openExternal', { url, replace }).then(callback);
               }
             };
           }`
@@ -332,6 +326,19 @@ if (action) {
       return;
     }
     if (moduleName === 'RouteMakerNavigation') {
+      if (name === 'openExternal') {
+        if (typeof data.url !== 'string') return false;
+        let url: URL;
+        try {
+          url = new URL(data.url, location.origin);
+        } catch {
+          return false;
+        }
+        if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
+        if (data.replace === true) location.replace(url);
+        else location.assign(url);
+        return true;
+      }
       if (name === 'back') {
         const fallback = data.path;
         if (historyDepth() > 0) history.back();
@@ -349,13 +356,6 @@ if (action) {
       if (name === 'push') history.pushState(historyState(historyDepth() + 1), '', path);
       if (name === 'replace') history.replaceState(historyState(historyDepth()), '', path);
       return;
-    }
-    // Sparkling Pipe adds its protocol envelope before reaching the host.
-    const scheme = data.data?.scheme;
-    if (moduleName === 'spkPipe' && name === 'router.open' && scheme) {
-      if (data.data?.replace) location.replace(scheme);
-      else location.assign(scheme);
-      return { code: 1, msg: 'ok' };
     }
     return { code: -1, msg: 'Unsupported browser bridge method' };
   };

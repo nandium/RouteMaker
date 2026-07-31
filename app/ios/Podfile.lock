@@ -129,41 +129,32 @@ PODS:
     - SDWebImage/Core (~> 5.15)
   - SnapKit (5.7.1)
   - SocketRocket (0.7.1)
-  - Sparkling (2.0.0-rc.5):
-    - Sparkling/Application (= 2.0.0-rc.5)
-    - Sparkling/Service (= 2.0.0-rc.5)
-    - Sparkling/Utils (= 2.0.0-rc.5)
-  - Sparkling-Router (2.0.0-rc.6):
-    - Mantle (~> 2.2.0)
-    - Sparkling-Router/Core (= 2.0.0-rc.6)
-    - SparklingMethod/Core
-    - SparklingMethod/DIProvider
-  - Sparkling-Router/Core (2.0.0-rc.6):
-    - Mantle (~> 2.2.0)
-    - SparklingMethod/Core
-    - SparklingMethod/DIProvider
-  - Sparkling/Application (2.0.0-rc.5):
+  - Sparkling (2.0.1):
+    - Sparkling/Application (= 2.0.1)
+    - Sparkling/Service (= 2.0.1)
+    - Sparkling/Utils (= 2.0.1)
+  - Sparkling/Application (2.0.1):
     - SnapKit
     - Sparkling/Service
     - Sparkling/Utils
-    - SparklingMethod/Core (= 2.0.0-rc.5)
-  - Sparkling/Service (2.0.0-rc.5):
-    - Sparkling/Service/LynxService (= 2.0.0-rc.5)
+    - SparklingMethod/Core (= 2.0.1)
+  - Sparkling/Service (2.0.1):
+    - Sparkling/Service/LynxService (= 2.0.1)
     - Sparkling/Utils
-    - SparklingMethod/Core (= 2.0.0-rc.5)
-  - Sparkling/Service/LynxService (2.0.0-rc.5):
+    - SparklingMethod/Core (= 2.0.1)
+  - Sparkling/Service/LynxService (2.0.1):
     - Lynx/Framework (= 3.6.0)
     - Sparkling/Utils
-    - SparklingMethod/Core (= 2.0.0-rc.5)
-    - SparklingMethod/Lynx (= 2.0.0-rc.5)
-  - Sparkling/Utils (2.0.0-rc.5)
-  - SparklingMethod/Core (2.0.0-rc.5):
+    - SparklingMethod/Core (= 2.0.1)
+    - SparklingMethod/Lynx (= 2.0.1)
+  - Sparkling/Utils (2.0.1)
+  - SparklingMethod/Core (2.0.1):
     - Mantle (~> 2.2.0)
-  - SparklingMethod/Debug (2.0.0-rc.5):
+  - SparklingMethod/Debug (2.0.1):
     - SparklingMethod/Core
-  - SparklingMethod/DIProvider (2.0.0-rc.5):
+  - SparklingMethod/DIProvider (2.0.1):
     - SparklingMethod/Core
-  - SparklingMethod/Lynx (2.0.0-rc.5):
+  - SparklingMethod/Lynx (2.0.1):
     - Lynx/Framework (= 3.6.0)
     - PrimJS/napi (>= 2.12.0)
     - PrimJS/quickjs (>= 2.12.0)
@@ -177,17 +168,14 @@ DEPENDENCIES:
   - LynxService/Http (= 3.6.0)
   - LynxService/Image (= 3.6.0)
   - LynxService/Log (= 3.6.0)
-  - Mantle (~> 2.2.0)
   - PrimJS/napi (= 3.6.1)
   - PrimJS/quickjs (= 3.6.1)
   - SDWebImage (= 5.15.5)
   - SDWebImageWebPCoder (= 0.11.0)
-  - SnapKit
-  - Sparkling (= 2.0.0-rc.5)
-  - Sparkling-Router (from `../node_modules/sparkling-navigation/ios`)
-  - SparklingMethod/Debug (= 2.0.0-rc.5)
-  - SparklingMethod/DIProvider (= 2.0.0-rc.5)
-  - SparklingMethod/Lynx (= 2.0.0-rc.5)
+  - Sparkling (= 2.0.1)
+  - SparklingMethod/Debug (= 2.0.1)
+  - SparklingMethod/DIProvider (= 2.0.1)
+  - SparklingMethod/Lynx (= 2.0.1)
 
 SPEC REPOS:
   trunk:
@@ -208,10 +196,6 @@ SPEC REPOS:
     - Sparkling
     - SparklingMethod
 
-EXTERNAL SOURCES:
-  Sparkling-Router:
-    :path: "../node_modules/sparkling-navigation/ios"
-
 SPEC CHECKSUMS:
   BaseDevtool: 39ad8896da6d55bfe4a2231feb85b8e0ef23e6e3
   DebugRouter: f0323a03519feabd12f553f0da7ac7931873a0ea
@@ -227,10 +211,9 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 295a6573c512f54ad2dd58098e64e17dcf008499
   SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  Sparkling: ae45f50431fd6f904b3c8e3562894f19d50373ac
-  Sparkling-Router: 1db5d02861be0847b0049a404a1aca352a7fae53
-  SparklingMethod: 149844f0e241df45f7bb635ff6705b6e05a6233e
+  Sparkling: e9540c2847cc9b3e3d9fa3ca52464a474cad9e5b
+  SparklingMethod: 49b276aabfac4578e3dcffab252f6119d6781e1f
 
-PODFILE CHECKSUM: 99f1208e49ae13412618f31977d34b61383aa035
+PODFILE CHECKSUM: df1c9e53a6bb7408a27607663a094af5d9a8c983
 
 COCOAPODS: 1.16.2

@@ -87,7 +87,7 @@ class LynxInputComponent(context: LynxContext?) : LynxUI<AppCompatEditText>(cont
 
   private fun showSoftInput(): Boolean {
     val imm = lynxContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    return imm.showSoftInput(mView, InputMethodManager.SHOW_IMPLICIT, null)
+    return imm.showSoftInput(mView, InputMethodManager.SHOW_IMPLICIT)
   }
 
   @LynxProp(name = "placeholder")

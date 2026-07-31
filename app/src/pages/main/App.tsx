@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from '@lynx-js/react';
-import { open } from 'sparkling-navigation';
 
 import {
   ApiError,
@@ -321,12 +320,10 @@ export function App() {
       notify('error', 'The app server is not configured.');
       return;
     }
-    open(
-      { scheme: `${apiBaseUrl}${path}`, options: { useSysBrowser: true, replace } },
-      (result) => {
-        if (result.code !== 1) notify('error', `Could not open the ${label}. Try again.`);
-      }
-    );
+    const opened = navigation.openExternal(`${apiBaseUrl}${path}`, replace, (success) => {
+      if (!success) notify('error', `Could not open the ${label}. Try again.`);
+    });
+    if (!opened) notify('error', `Could not open the ${label} on this device.`);
   };
 
   const login = () => {

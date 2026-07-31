@@ -6,8 +6,7 @@
   "dependencies": {
     "@lynx-js/react": "^0.116.2",
     "mapbox-gl": "^3.27.0",
-    "onnxruntime-web": "^1.27.0",
-    "sparkling-navigation": "^2.0.1"
+    "onnxruntime-web": "^1.27.0"
   },
   "devDependencies": {
     "@lynx-js/lynx-core": "^0.1.4",

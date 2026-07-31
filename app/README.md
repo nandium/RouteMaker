@@ -21,6 +21,13 @@ development servers: Android emulators use `http://10.0.2.2:8787`, while iOS
 simulators use `http://127.0.0.1:8787`. Cleartext/local networking is enabled only
 for those debug variants.
 
+CI runs Gradle on JDK 25; select JDK 25 as the Gradle JVM in local shells and
+Android Studio as well. The Android module also requests a JDK 25 compiler
+toolchain, but emits Java 17 bytecode because Android devices run ART rather
+than a Java 25 JVM. The compiler toolchain, bytecode, and Android SDK levels are
+centralized in `android/gradle/libs.versions.toml`; CI's runtime JDK is selected
+independently in `.github/workflows/ci.yml`.
+
 For Android, override the debug endpoint when needed with either a Gradle
 property or environment variable:
 

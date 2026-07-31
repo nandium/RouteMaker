@@ -17,11 +17,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let webPCoder = SDImageWebPCoder.shared
         SDImageCodersManager.shared.addCoder(webPCoder)
 
-        SPKServiceRegister.registerAll()
+        // Sparkling resolves native methods through its global container before Lynx starts.
+        DefaultDIContainerProvider.inject()
+        MethodRegistry.autoRegisterGlobalMethods()
         SPKExecuteAllPrepareBootTask()
         LynxEnv.sharedInstance().config.registerModule(RouteMakerSessionModule.self)
         LynxEnv.sharedInstance().config.registerModule(RouteMakerShareModule.self)
         LynxEnv.sharedInstance().config.registerModule(RouteMakerAppearanceModule.self)
+        LynxEnv.sharedInstance().config.registerModule(RouteMakerNavigationModule.self)
         SPKKit.DIContainer.register(SPKTrackerService.self, scope: ServiceScope.transient) {
             SparklingGoTrackerService()
         }
