@@ -1,0 +1,12 @@
+name = "routemaker-worker-tests"
+main = "src/index.ts"
+compatibility_date = "2026-07-29"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "routemaker-test"
+database_id = "local-test"
+migrations_dir = "migrations"
+
+[vars]
+FIREBASE_API_KEY = "test-firebase-key"
