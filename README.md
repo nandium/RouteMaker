@@ -19,7 +19,7 @@ legacy AWS/Ionic runtime.
 
 ## Run locally
 
-Use Node 22 or 24.
+Use Node 22.12 or newer.
 
 ```sh
 cd app
