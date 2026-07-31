@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            app/package-lock.json
+            worker/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - run: npm ci
+        working-directory: app
+      - run: npm run check
+        working-directory: app
+      - run: ./gradlew assembleDebug --no-daemon
+        working-directory: app/android
+
+      - run: npm ci
+        working-directory: worker
+      - run: npm run check
+        working-directory: worker
