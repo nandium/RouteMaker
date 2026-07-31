@@ -7,7 +7,12 @@ import {
   type ThemePreference,
 } from '../src/appearance.js';
 import { BRAND_PALETTE, logoMarkSvg } from '../src/brand.js';
-import { APP_NAME, STORAGE_KEYS, SYSTEM_THEME_EVENT } from '../src/client-contract.js';
+import {
+  APP_NAME,
+  LAYOUT_CHANGE_EVENT,
+  STORAGE_KEYS,
+  SYSTEM_THEME_EVENT,
+} from '../src/client-contract.js';
 import { iconColor, iconSvg, type IconName, type IconTone } from '../src/icons.js';
 import { loginPath, parseWebRoute, WEB_PATHS, type AppRoute } from '../src/web-routes.js';
 import { deleteStorage, readStorage, writeStorage } from './storage.js';
@@ -104,15 +109,16 @@ function icon(name: IconName, className = 'web-icon', tone: IconTone = 'base') {
   return node;
 }
 
-function enableLynxWebBehavior(view: HTMLElement, wideLayout: MediaQueryList) {
+function enableLynxWebBehavior(
+  view: HTMLElement & { sendGlobalEvent(name: string, params: unknown[]): void },
+  wideLayout: MediaQueryList
+) {
   // Lynx Web strips shared-bundle media queries and does not activate custom views by keyboard.
   void customElements.whenDefined('lynx-view').then(() => {
     requestAnimationFrame(() => {
       const root = view.shadowRoot;
       if (!root) return;
-      const syncLayout = () => {
-        root.querySelector('.page')?.classList.toggle('page--desktop', wideLayout.matches);
-      };
+      const syncLayout = () => view.sendGlobalEvent(LAYOUT_CHANGE_EVENT, [wideLayout.matches]);
       syncLayout();
       wideLayout.addEventListener('change', syncLayout);
       root.addEventListener('keydown', (event) => {

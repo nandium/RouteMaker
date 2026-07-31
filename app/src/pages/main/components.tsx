@@ -4,6 +4,11 @@ import type { Route } from '../../api.js';
 import type { ColorScheme } from '../../appearance.js';
 import { iconColor, iconSvg, type IconName } from '../../icons.js';
 
+// Inline Lynx 4 linear layout keeps native and web orientation deterministic at creation.
+export const COLUMN_STYLE = 'display: linear; linear-direction: column;';
+export const ROW_STYLE = 'display: linear; linear-direction: row;';
+export const GROWING_ROW_STYLE = `${ROW_STYLE} linear-weight: 1;`;
+
 export function Icon({
   name,
   color,
@@ -28,12 +33,14 @@ export function Pressable({
   onTap,
   className,
   selected,
+  style,
 }: {
   children: ReactNode;
   label: string;
   onTap: () => void;
   className?: string;
   selected?: boolean;
+  style?: string;
 }) {
   const selectedProps =
     selected === undefined
@@ -45,6 +52,7 @@ export function Pressable({
   return (
     <view
       className={className ? `pressable ${className}` : 'pressable'}
+      style={style}
       {...({ 'aria-label': label, role: 'button', tabindex: '0', ...selectedProps } as object)}
       bindtap={onTap}
       accessibility-element
@@ -124,6 +132,7 @@ export function AppearanceToggle({
       }
       label={`Switch to ${nextTheme} theme`}
       onTap={onToggle}
+      style={ROW_STYLE}
     >
       <Icon name="sun" color={iconColor(value, 'sun')} className="appearance-toggle__icon" />
       <view className="appearance-toggle__track">
@@ -140,6 +149,7 @@ export function NavItem({
   colorScheme,
   icon,
   label,
+  style,
   onTap,
 }: {
   active: boolean;
@@ -147,6 +157,7 @@ export function NavItem({
   colorScheme: ColorScheme;
   icon: IconName;
   label: string;
+  style: string;
   onTap: () => void;
 }) {
   return (
@@ -155,6 +166,7 @@ export function NavItem({
       label={accessibilityLabel ?? label}
       onTap={onTap}
       selected={active}
+      style={style}
     >
       <Icon
         name={icon}
@@ -171,16 +183,18 @@ export function ToolLink({
   icon,
   title,
   detail,
+  style = ROW_STYLE,
   onTap,
 }: {
   colorScheme: ColorScheme;
   icon: IconName;
   title: string;
   detail: string;
+  style?: string;
   onTap: () => void;
 }) {
   return (
-    <Pressable className="tool-link" label={`${title}: ${detail}`} onTap={onTap}>
+    <Pressable className="tool-link" label={`${title}: ${detail}`} onTap={onTap} style={style}>
       <view className="tool-link__symbol">
         <Icon name={icon} color={iconColor(colorScheme, 'active')} />
       </view>
@@ -216,6 +230,7 @@ export function RouteList({
           key={route.id}
           onTap={() => chooseRoute(route)}
           label={`Open route ${index + 1}, ${route.name}`}
+          style={ROW_STYLE}
         >
           <text className="route-card__index">{String(index + 1).padStart(2, '0')}</text>
           <view className="route-card__copy">

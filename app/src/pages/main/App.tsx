@@ -20,7 +20,7 @@ import {
   type ThemePreference,
 } from '../../appearance.js';
 import { BRAND_PALETTE, logoMarkSvg } from '../../brand.js';
-import { APP_NAME, SYSTEM_THEME_EVENT } from '../../client-contract.js';
+import { APP_NAME, LAYOUT_CHANGE_EVENT, SYSTEM_THEME_EVENT } from '../../client-contract.js';
 import { navigation } from '../../navigation.js';
 import { sessionStore } from '../../session.js';
 import { shareRoute } from '../../share.js';
@@ -28,9 +28,12 @@ import { loginPath, WEB_PATHS, type AppRoute } from '../../web-routes.js';
 import {
   Action,
   AppearanceToggle,
+  COLUMN_STYLE,
   Field,
+  GROWING_ROW_STYLE,
   NavItem,
   Pressable,
+  ROW_STYLE,
   RouteList,
   ToolLink,
 } from './components.js';
@@ -111,8 +114,13 @@ export function App() {
     initialThemePreference
   );
   const [systemTheme, setSystemTheme] = useState<ColorScheme>(initialSystemTheme);
+  const [wideLayout, setWideLayout] = useState(initialWideLayout);
   const colorScheme = resolveColorScheme(themePreference, systemTheme);
   const themeClass = ` theme-${colorScheme}`;
+
+  useLynxGlobalEventListener(LAYOUT_CHANGE_EVENT, (value: unknown) => {
+    if (typeof value === 'boolean') setWideLayout(value);
+  });
 
   useLynxGlobalEventListener(SYSTEM_THEME_EVENT, (value: unknown) => {
     if (isThemePreference(value)) setSystemTheme(value);
@@ -543,15 +551,17 @@ export function App() {
 
   const accountName = user?.username ?? GUEST_NAME;
   const accountInitial = [...(user?.display_name || accountName)][0].toUpperCase();
+  const navItemStyle = wideLayout ? ROW_STYLE : COLUMN_STYLE;
   const nav = (
-    <view className="nav">
-      <view className="nav__primary">
+    <view className="nav" style={ROW_STYLE}>
+      <view className="nav__primary" style={ROW_STYLE}>
         <NavItem
           active={screen === 'explore'}
           accessibilityLabel="Explore gyms"
           colorScheme={colorScheme}
           icon="map"
           label="Gyms"
+          style={navItemStyle}
           onTap={showExplore}
         />
         <NavItem
@@ -560,6 +570,7 @@ export function App() {
           colorScheme={colorScheme}
           icon="feed"
           label="Feed"
+          style={navItemStyle}
           onTap={() => {
             if (busyRef.current) return;
             setSelectedGym(null);
@@ -577,6 +588,7 @@ export function App() {
             colorScheme={colorScheme}
             icon="admin"
             label="Admin"
+            style={navItemStyle}
             onTap={() => {
               if (busyRef.current) return;
               setScreen('admin');
@@ -589,6 +601,7 @@ export function App() {
       <Pressable
         className="nav__account"
         label={user ? 'Your profile' : 'Guest account'}
+        style={ROW_STYLE}
         onTap={() => {
           if (busyRef.current) return;
           setPostLoginPath(undefined);
@@ -660,7 +673,7 @@ export function App() {
         <text className="eyebrow">{selectedRoute.gym.name}</text>
         <text className="topo-number">ROUTE {selectedRoute.id.slice(0, 4).toUpperCase()}</text>
         <text className="heading">{selectedRoute.name}</text>
-        <view className="route-meta">
+        <view className="route-meta" style={ROW_STYLE}>
           <text className="grade">{selectedRoute.public_grade}</text>
           <Pressable
             label={`Open ${selectedRoute.author.display_name}'s profile`}
@@ -676,7 +689,7 @@ export function App() {
           accessibility-element
           accessibility-label={`${selectedRoute.name} route topo`}
         />
-        <view className="stat-row">
+        <view className="stat-row" style={ROW_STYLE}>
           <Action
             quiet={selectedRoute.voted}
             onTap={() => {
@@ -721,7 +734,7 @@ export function App() {
         {token && (
           <>
             <text className="section-title">Community grade</text>
-            <view className="inline-form">
+            <view className="inline-form" style={ROW_STYLE}>
               <input
                 className="field__input field__input--small"
                 accessibility-element
@@ -834,7 +847,7 @@ export function App() {
               ? 'Send reset link'
               : 'Sign in'}
         </Action>
-        <view className="auth-links">
+        <view className="auth-links" style={ROW_STYLE}>
           {authMode === 'forgot' ? (
             <Pressable label="Back to sign in" onTap={() => changeAuthMode('login')}>
               <text>Back to sign in</text>
@@ -872,7 +885,7 @@ export function App() {
                   <text className="card__body">
                     {report.target_label ?? report.target_id} · {report.reason}
                   </text>
-                  <view className="stat-row">
+                  <view className="stat-row" style={ROW_STYLE}>
                     {(report.route_id ||
                       (report.target_type === 'user' && report.target_label)) && (
                       <Action quiet onTap={() => inspectReport(report)}>
@@ -912,7 +925,7 @@ export function App() {
                 <view className="card" key={gym.id}>
                   <text className="card__title">{gym.name}</text>
                   <text className="card__body">{gym.address}</text>
-                  <view className="stat-row">
+                  <view className="stat-row" style={ROW_STYLE}>
                     <Action
                       onTap={() =>
                         void attempt(async () => {
@@ -979,7 +992,7 @@ export function App() {
       <view className="content">
         <text className="eyebrow">Community beta</text>
         <text className="heading">Fresh routes.</text>
-        <view className="stat-row">
+        <view className="stat-row" style={ROW_STYLE}>
           <Action
             quiet={followingFeed}
             onTap={() => {
@@ -1016,7 +1029,7 @@ export function App() {
           {selectedGym?.address ?? 'Browse approved gyms or explore them by location on the map.'}
         </text>
         {selectedGym ? (
-          <view className="stat-row">
+          <view className="stat-row" style={ROW_STYLE}>
             <Action
               quiet
               onTap={() => {
@@ -1031,12 +1044,13 @@ export function App() {
             <Action onTap={() => openTool('editor')}>Add a route</Action>
           </view>
         ) : (
-          <view className="tool-links">
+          <view className="tool-links" style={wideLayout ? ROW_STYLE : COLUMN_STYLE}>
             <ToolLink
               colorScheme={colorScheme}
               icon="map"
               title="Gym map"
               detail="Browse gyms by location"
+              style={wideLayout ? GROWING_ROW_STYLE : ROW_STYLE}
               onTap={() => openTool('map')}
             />
             <ToolLink
@@ -1044,6 +1058,7 @@ export function App() {
               icon="plus"
               title="Add a route"
               detail="Mark holds on a wall photo"
+              style={wideLayout ? GROWING_ROW_STYLE : ROW_STYLE}
               onTap={() => openTool('editor')}
             />
           </view>
@@ -1075,12 +1090,12 @@ export function App() {
 
   return (
     <scroll-view
-      className={`${initialWideLayout ? 'page page--desktop' : 'page'}${themeClass}`}
+      className={`${wideLayout ? 'page page--desktop' : 'page'}${themeClass}`}
       scroll-orientation="vertical"
     >
       <view className="shell">
-        <view className="topbar">
-          <view className="brand">
+        <view className="topbar" style={ROW_STYLE}>
+          <view className="brand" style={ROW_STYLE}>
             <svg
               key={`brand-${colorScheme}`}
               className="brand__mark"

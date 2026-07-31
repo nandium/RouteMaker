@@ -436,7 +436,6 @@ text {
 }
 
 .nav__link {
-  flex-direction: column;
   gap: 1px;
 }
 
@@ -521,7 +520,6 @@ text {
 }
 
 .page--desktop .nav__link {
-  flex-direction: row;
   gap: 7px;
 }
 
@@ -577,12 +575,7 @@ text {
   font-size: var(--rm-type-title);
 }
 
-.page--desktop .tool-links {
-  flex-direction: row;
-}
-
 .page--desktop .tool-link {
-  flex: 1;
   min-height: 78px;
   padding: 14px 16px;
 }
