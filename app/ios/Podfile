@@ -12,15 +12,21 @@ install! 'cocoapods',
 
 # Run `npm run build` from app/ before xcodebuild; the app target copies
 # app/dist/main.lynx.bundle directly and does not run a Node build phase.
-LYNX_VERSION = '4.0.0'
+LYNX_VERSION = '4.0.1'
+LYNX_RELEASE = "https://github.com/lynx-family/lynx/releases/download/#{LYNX_VERSION}"
 
 use_frameworks!
 target 'RouteMaker' do
-  pod 'Lynx', LYNX_VERSION, :subspecs => [
+  # The 4.0.1 podspecs ship inside the official release archives before they
+  # reach CocoaPods trunk. Pinning those immutable assets keeps iOS aligned
+  # with Maven without maintaining local podspecs.
+  pod 'Lynx', :http => "#{LYNX_RELEASE}/Lynx-#{LYNX_VERSION}.zip", :subspecs => [
     'Framework'
   ]
 
-  pod 'LynxService', LYNX_VERSION, :subspecs => [
+  pod 'LynxService',
+      :http => "#{LYNX_RELEASE}/LynxService-#{LYNX_VERSION}.zip",
+      :subspecs => [
     'Image',
     'Log',
     'Http'
@@ -28,7 +34,9 @@ target 'RouteMaker' do
 
   # Input includes the official <input> implementation and its shadow node;
   # SVG provides the <svg> renderer. Register both on the app's LynxConfig.
-  pod 'XElement', LYNX_VERSION, :subspecs => ['Input', 'SVG']
+  pod 'XElement',
+      :http => "#{LYNX_RELEASE}/XElement-#{LYNX_VERSION}.zip",
+      :subspecs => ['Input', 'SVG']
 end
 
 # Lynx 4.0's core target supplies -Werror flags that Xcode 26 cannot compile.

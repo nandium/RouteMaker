@@ -5,7 +5,7 @@ javaBytecode = "17"
 androidCompileSdk = "36"
 androidMinSdk = "24"
 androidTargetSdk = "36"
-lynx = "4.0.0"
+lynx = "4.0.1"
 appcompat = "1.7.1"
 fresco = "2.3.0"
 
