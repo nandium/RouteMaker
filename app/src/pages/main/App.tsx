@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from '@lynx-js/react';
+import { useEffect, useLynxGlobalEventListener, useRef, useState } from '@lynx-js/react';
+import type { GlobalProps } from '@lynx-js/types';
 
 import {
   ApiError,
@@ -19,7 +20,7 @@ import {
   type ThemePreference,
 } from '../../appearance.js';
 import { BRAND_PALETTE, logoMarkSvg } from '../../brand.js';
-import { APP_NAME } from '../../client-contract.js';
+import { APP_NAME, SYSTEM_THEME_EVENT } from '../../client-contract.js';
 import { navigation } from '../../navigation.js';
 import { sessionStore } from '../../session.js';
 import { shareRoute } from '../../share.js';
@@ -38,24 +39,16 @@ import './App.css';
 type Screen = 'explore' | 'feed' | 'route' | 'profile' | 'account' | 'admin';
 type AuthMode = 'login' | 'signup' | 'forgot';
 type NoticeKind = 'success' | 'error';
-type AppBootstrap = {
-  initialRoute?: AppRoute;
-  wideLayout?: boolean;
-  themePreference?: ThemePreference;
-  systemTheme?: ColorScheme;
-};
 
 const GUEST_NAME = 'Guest';
 const DEFAULT_ROUTE: AppRoute = { name: 'gyms' };
 
-const initialData = lynx.__presetData?.initial_data as AppBootstrap | undefined;
-const globalProps = lynx.__globalProps as AppBootstrap;
-const initialRoute = globalProps?.initialRoute ?? initialData?.initialRoute ?? DEFAULT_ROUTE;
-const initialWideLayout = Boolean(globalProps?.wideLayout ?? initialData?.wideLayout);
-const configuredTheme = globalProps?.themePreference ?? initialData?.themePreference;
+const globalProps: GlobalProps = lynx.__globalProps;
+const initialRoute = globalProps?.initialRoute ?? DEFAULT_ROUTE;
+const initialWideLayout = Boolean(globalProps?.wideLayout);
+const configuredTheme = globalProps?.themePreference;
 const initialThemePreference = isThemePreference(configuredTheme) ? configuredTheme : null;
-const initialSystemTheme =
-  (globalProps?.systemTheme ?? initialData?.systemTheme) === 'dark' ? 'dark' : 'light';
+const initialSystemTheme = globalProps?.systemTheme === 'dark' ? 'dark' : 'light';
 const initialScreen: Screen =
   initialRoute.name === 'feed'
     ? 'feed'
@@ -117,8 +110,13 @@ export function App() {
   const [themePreference, setThemePreference] = useState<ThemePreference | null>(
     initialThemePreference
   );
-  const colorScheme = resolveColorScheme(themePreference, initialSystemTheme);
+  const [systemTheme, setSystemTheme] = useState<ColorScheme>(initialSystemTheme);
+  const colorScheme = resolveColorScheme(themePreference, systemTheme);
   const themeClass = ` theme-${colorScheme}`;
+
+  useLynxGlobalEventListener(SYSTEM_THEME_EVENT, (value: unknown) => {
+    if (isThemePreference(value)) setSystemTheme(value);
+  });
 
   // Mutations are serialized to make double taps harmless. Background reads can
   // opt out so a slow startup request never blocks sign-in or navigation.
@@ -728,7 +726,7 @@ export function App() {
                 className="field__input field__input--small"
                 accessibility-element
                 accessibility-label="Community grade"
-                {...({ value: grade } as object)}
+                value={grade}
                 placeholder="Choose a grade"
                 bindinput={(event) => setGrade(event.detail.value)}
                 confirm-type="done"

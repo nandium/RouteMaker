@@ -7,7 +7,7 @@ import {
   type ThemePreference,
 } from '../src/appearance.js';
 import { BRAND_PALETTE, logoMarkSvg } from '../src/brand.js';
-import { APP_NAME, STORAGE_KEYS } from '../src/client-contract.js';
+import { APP_NAME, STORAGE_KEYS, SYSTEM_THEME_EVENT } from '../src/client-contract.js';
 import { iconColor, iconSvg, type IconName, type IconTone } from '../src/icons.js';
 import { loginPath, parseWebRoute, WEB_PATHS, type AppRoute } from '../src/web-routes.js';
 import { deleteStorage, readStorage, writeStorage } from './storage.js';
@@ -49,7 +49,11 @@ function currentSystemTheme(): ColorScheme {
 }
 
 function showTheme(preference: ThemePreference | null) {
-  document.documentElement.dataset.theme = resolveColorScheme(preference, currentSystemTheme());
+  const scheme = resolveColorScheme(preference, currentSystemTheme());
+  document.documentElement.dataset.theme = scheme;
+  document.documentElement.classList.toggle('theme-light', scheme === 'light');
+  document.documentElement.classList.toggle('theme-dark', scheme === 'dark');
+  document.documentElement.style.colorScheme = scheme;
   document.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }
 
@@ -60,6 +64,12 @@ function chooseTheme(preference: ThemePreference) {
 }
 
 showTheme(savedTheme());
+let notifySystemThemeChange = () => {};
+systemTheme.addEventListener('change', () => {
+  if (savedTheme()) return;
+  showTheme(null);
+  notifySystemThemeChange();
+});
 
 function link(label: string, href: string) {
   const anchor = document.createElement('a');
@@ -200,9 +210,9 @@ if (action) {
   };
   const view = document.createElement('lynx-view') as HTMLElement & {
     globalProps: Record<string, unknown>;
-    initData: Record<string, unknown>;
     injectStyleRules: string[];
     nativeModulesMap: Record<string, string>;
+    sendGlobalEvent(name: string, params: unknown[]): void;
     onNativeModulesCall: (
       name: string,
       data: {
@@ -216,10 +226,14 @@ if (action) {
       moduleName: string
     ) => unknown;
   };
+  notifySystemThemeChange = () => view.sendGlobalEvent(SYSTEM_THEME_EVENT, [currentSystemTheme()]);
   view.setAttribute('url', '/main.web.bundle');
   view.globalProps = initialProps;
-  view.initData = { initial_data: initialProps };
-  view.injectStyleRules = ['x-text { -webkit-user-select: text; user-select: text; }'];
+  view.injectStyleRules = [
+    'x-text { -webkit-user-select: text; user-select: text; }',
+    '.pressable:focus { outline-offset: 3px; }',
+    '.field__input:focus { outline-offset: 2px; }',
+  ];
   view.nativeModulesMap = {
     RouteMakerSession: bridgeModule(
       `export default function(_, callHost) {

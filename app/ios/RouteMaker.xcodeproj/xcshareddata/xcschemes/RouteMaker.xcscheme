@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "44B59A862DE9041F00A05B89"
-               BuildableName = "SparklingGo.app"
-               BlueprintName = "SparklingGo"
-               ReferencedContainer = "container:SparklingGo.xcodeproj">
+               BuildableName = "RouteMaker.app"
+               BlueprintName = "RouteMaker"
+               ReferencedContainer = "container:RouteMaker.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -38,9 +38,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "44B59A862DE9041F00A05B89"
-            BuildableName = "SparklingGo.app"
-            BlueprintName = "SparklingGo"
-            ReferencedContainer = "container:SparklingGo.xcodeproj">
+            BuildableName = "RouteMaker.app"
+            BlueprintName = "RouteMaker"
+            ReferencedContainer = "container:RouteMaker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "44B59A862DE9041F00A05B89"
-            BuildableName = "SparklingGo.app"
-            BlueprintName = "SparklingGo"
-            ReferencedContainer = "container:SparklingGo.xcodeproj">
+            BuildableName = "RouteMaker.app"
+            BlueprintName = "RouteMaker"
+            ReferencedContainer = "container:RouteMaker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

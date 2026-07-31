@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.res.Configuration
 import com.lynx.jsbridge.LynxMethod
 import com.lynx.jsbridge.LynxModule
+import com.lynx.tasm.LynxColorScheme
 
 object RouteMakerAppearance {
+    const val SYSTEM_THEME_EVENT = "routemaker:system-theme-change"
+
     private const val PREFERENCES = "routemaker.appearance"
     private const val THEME = "theme"
 
@@ -25,6 +28,9 @@ object RouteMakerAppearance {
         } else {
             "light"
         }
+
+    fun lynxColorScheme(configuration: Configuration): LynxColorScheme =
+        if (systemTheme(configuration) == "dark") LynxColorScheme.DARK else LynxColorScheme.LIGHT
 
     fun save(context: Context, preference: String) {
         context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)

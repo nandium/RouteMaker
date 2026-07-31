@@ -30,11 +30,9 @@
   --rm-type-display: 44px;
   --rm-leading-body: 22px;
   --rm-leading-lede: 27px;
-  color-scheme: light;
 }
 
-.theme-dark,
-:root[data-theme='dark'] {
+.theme-dark {
   --rm-accent: #e07a55;
   --rm-accent-soft: #44271f;
   --rm-accent-ink: #ffc2ab;
@@ -50,7 +48,6 @@
   --rm-success-soft: #1c3024;
   --rm-success-line: #395744;
   --rm-focus: #7aa8ff;
-  color-scheme: dark;
 }
 
 .appearance-toggle {

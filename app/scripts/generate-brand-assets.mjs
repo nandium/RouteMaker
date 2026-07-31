@@ -34,7 +34,7 @@ for (const [name, palette] of variants) {
 
 const resource = new URL('../resource/', import.meta.url);
 const iosIcons = new URL(
-  '../ios/SparklingGo/SparklingGo/Assets.xcassets/AppIcon.appiconset/',
+  '../ios/RouteMaker/RouteMaker/Assets.xcassets/AppIcon.appiconset/',
   import.meta.url
 );
 copyFileSync(new URL('app_icon.png', resource), new URL('RouteMaker.png', iosIcons));
@@ -110,8 +110,8 @@ const generatedAssets = [
   'resource/app_icon.png',
   'resource/app_icon_dark.svg',
   'resource/app_icon_dark.png',
-  'ios/SparklingGo/SparklingGo/Assets.xcassets/AppIcon.appiconset/RouteMaker.png',
-  'ios/SparklingGo/SparklingGo/Assets.xcassets/AppIcon.appiconset/RouteMaker-dark.png',
+  'ios/RouteMaker/RouteMaker/Assets.xcassets/AppIcon.appiconset/RouteMaker.png',
+  'ios/RouteMaker/RouteMaker/Assets.xcassets/AppIcon.appiconset/RouteMaker-dark.png',
   'android/app/src/main/res/drawable/ic_launcher_foreground.xml',
   'android/app/src/main/res/drawable/ic_launcher_background.xml',
   ...densities.flatMap(([density]) => [

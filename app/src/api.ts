@@ -26,8 +26,7 @@ type RouteFilters = {
   following?: boolean;
 };
 
-const initialData = lynx.__presetData?.initial_data as { apiBaseUrl?: string } | undefined;
-const configuredApiBaseUrl = lynx.__globalProps?.apiBaseUrl ?? initialData?.apiBaseUrl ?? '';
+const configuredApiBaseUrl = lynx.__globalProps?.apiBaseUrl ?? '';
 export const apiBaseUrl = configuredApiBaseUrl.replace(/\/+$/, '');
 
 export class ApiError extends Error {

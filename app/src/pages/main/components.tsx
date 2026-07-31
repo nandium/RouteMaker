@@ -82,7 +82,7 @@ export function Field({
         accessibility-label={label}
         type={type}
         confirm-type={onConfirm ? 'done' : undefined}
-        {...({ value } as object)}
+        value={value}
         placeholder={label}
         bindinput={(event) => onInput(event.detail.value)}
         bindconfirm={onConfirm}

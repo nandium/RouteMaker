@@ -5,18 +5,21 @@ javaBytecode = "17"
 androidCompileSdk = "36"
 androidMinSdk = "24"
 androidTargetSdk = "36"
-sparkling = "2.0.1"
-appcompat = "1.6.1"
+lynx = "4.0.0"
+appcompat = "1.7.1"
 fresco = "2.3.0"
 
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-sparkling = { group = "com.tiktok.sparkling", name = "sparkling", version.ref = "sparkling" }
+lynx = { group = "org.lynxsdk.lynx", name = "lynx", version.ref = "lynx" }
+lynx-service-http = { group = "org.lynxsdk.lynx", name = "lynx-service-http", version.ref = "lynx" }
+lynx-service-image = { group = "org.lynxsdk.lynx", name = "lynx-service-image", version.ref = "lynx" }
+lynx-service-log = { group = "org.lynxsdk.lynx", name = "lynx-service-log", version.ref = "lynx" }
+lynx-xelement-input = { group = "org.lynxsdk.lynx", name = "xelement-input", version.ref = "lynx" }
+lynx-xelement-svg = { group = "org.lynxsdk.lynx", name = "xelement-svg", version.ref = "lynx" }
 
 fresco = { group = "com.facebook.fresco", name = "fresco", version.ref = "fresco" }
-fresco-animated-gif = { group = "com.facebook.fresco", name = "animated-gif", version.ref = "fresco" }
-fresco-animated-webp = { group = "com.facebook.fresco", name = "animated-webp", version.ref = "fresco" }
 
 
 [plugins]

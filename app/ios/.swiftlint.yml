@@ -9,10 +9,7 @@ opt_in_rules:
   - closure_body_length
 
 included:
-  - SparklingGo
-  - SparklingGoTests
-  - SparklingGoUITests
-  - SparklingMethodsTests
+  - RouteMaker
 
 excluded:
   - Pods

@@ -2,5 +2,3 @@ node_modules/
 dist/
 android/.gradle/
 android/app/build/
-android/app/src/main/assets/
-ios/SparklingGo/SparklingGo/Resources/Assets/

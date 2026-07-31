@@ -59,6 +59,10 @@ android {
         buildConfig = true
     }
 
+    androidResources {
+        ignoreAssetsPatterns.add("main.web.bundle")
+    }
+
     buildTypes {
         debug {
             buildConfigField(
@@ -68,11 +72,6 @@ android {
             )
         }
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
             // Validation is wired to release tasks below; an empty value prevents
             // an unconfigured release from silently inheriting the emulator URL.
             buildConfigField(
@@ -88,26 +87,24 @@ android {
         targetCompatibility = androidBytecodeVersion
     }
 
-    // The CLI's copy mode needs packaged assets; local builds can consume dist directly.
-    val assetsDirectory =
-        if (System.getenv("SPARKLING_USE_NATIVE_ASSETS").equals("true", ignoreCase = true)) {
-            "src/main/assets"
-        } else {
-            "../../dist"
-        }
+    // Package the shared Lynx bundle produced by the app build.
+    val assetsDirectory = "../../dist"
     sourceSets.named("main") {
         assets.directories.clear()
         assets.directories.add(assetsDirectory)
     }
 
     dependencies {
+        // XElement's input and SVG views extend AppCompat widgets.
         implementation(libs.androidx.appcompat)
-        implementation(libs.sparkling)
+        implementation(libs.lynx)
+        implementation(libs.lynx.service.http)
+        implementation(libs.lynx.service.image)
+        implementation(libs.lynx.service.log)
+        implementation(libs.lynx.xelement.input)
+        implementation(libs.lynx.xelement.svg)
 
         implementation(libs.fresco)
-        implementation(libs.fresco.animated.gif)
-        implementation(libs.fresco.animated.webp)
-
     }
 }
 

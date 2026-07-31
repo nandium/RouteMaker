@@ -8,7 +8,7 @@ import com.lynx.jsbridge.LynxMethod
 import com.lynx.jsbridge.LynxModule
 import com.lynx.react.bridge.Callback
 
-/** Opens browser-only tools without pulling in Sparkling's full routing bridge. */
+/** Opens browser-only tools through the host platform. */
 class RouteMakerNavigationModule(context: Context) : LynxModule(context) {
     private val hostContext = context
 

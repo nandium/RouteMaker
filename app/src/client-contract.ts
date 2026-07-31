@@ -1,5 +1,6 @@
 /** The small set of data shapes, paths, and constants shared by app and browser clients. */
 export const APP_NAME = 'ROUTEMAKER';
+export const SYSTEM_THEME_EVENT = 'routemaker:system-theme-change';
 
 export type User = {
   id: string;

@@ -20,7 +20,6 @@ text {
 
 .pressable:focus {
   outline: 3px solid var(--rm-focus);
-  outline-offset: 3px;
 }
 
 .pressable:active {
@@ -29,7 +28,6 @@ text {
 
 .field__input:focus {
   outline: 3px solid var(--rm-focus);
-  outline-offset: 2px;
 }
 
 .page {
@@ -113,7 +111,6 @@ text {
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 1px;
-  text-transform: uppercase;
 }
 
 .heading {

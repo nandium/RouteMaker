@@ -1,52 +1,54 @@
-platform :ios, '15.6'
+IOS_DEPLOYMENT_TARGET = '15.6'
+
+platform :ios, IOS_DEPLOYMENT_TARGET
 
 source 'https://cdn.cocoapods.org/'
 
 use_modular_headers!
 
 install! 'cocoapods',
-:generate_multiple_pod_projects => true,
-:incremental_installation => true,
-:deterministic_uuids => true
+  :generate_multiple_pod_projects => true,
+  :deterministic_uuids => true
 
-inhibit_all_warnings!
-
-SPARKLING_VERSION = '2.0.1'
-
-def sparkling_methods
-  pod 'SparklingMethod', SPARKLING_VERSION, :subspecs => [
-  'Lynx', 'DIProvider', 'Debug'
-  ]
-end
-
-def sparkling_kit
-  pod 'Sparkling', SPARKLING_VERSION
-  sparkling_methods
-
-  pod 'Lynx', '3.6.0', :subspecs => [
-    'Framework',
-    'ReleaseResource'
-  ]
-
-  pod 'PrimJS', '3.6.1', :subspecs => ['quickjs', 'napi']
-
-  pod 'LynxService', '3.6.0', :subspecs => [
-  'Image',
-  'Log',
-  'Http',
-  'Devtool'
-  ]
-
-  pod 'LynxDevtool', '3.6.0', :subspecs => [
-   'Framework',
-  ]
-
-  pod 'SDWebImage','5.15.5'
-  pod 'SDWebImageWebPCoder', '0.11.0'
-
-end
+# Run `npm run build` from app/ before xcodebuild; the app target copies
+# app/dist/main.lynx.bundle directly and does not run a Node build phase.
+LYNX_VERSION = '4.0.0'
 
 use_frameworks!
-target 'SparklingGo' do
-  sparkling_kit
+target 'RouteMaker' do
+  pod 'Lynx', LYNX_VERSION, :subspecs => [
+    'Framework'
+  ]
+
+  pod 'LynxService', LYNX_VERSION, :subspecs => [
+    'Image',
+    'Log',
+    'Http'
+  ]
+
+  # Input includes the official <input> implementation and its shadow node;
+  # SVG provides the <svg> renderer. Register both on the app's LynxConfig.
+  pod 'XElement', LYNX_VERSION, :subspecs => ['Input', 'SVG']
+end
+
+# Lynx 4.0's core target supplies -Werror flags that Xcode 26 cannot compile.
+# Keep the documented workaround scoped to that upstream target.
+post_install do |installer|
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET
+        next unless target.name == 'Lynx'
+
+        config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+        disable = ['-Wno-error', '-Wno-c99-designator',
+                   '-Wno-deprecated-declarations', '-Wno-deprecated-implementations']
+        ['OTHER_CPLUSPLUSFLAGS', 'OTHER_CFLAGS'].each do |key|
+          flags = config.build_settings[key] || ['$(inherited)']
+          flags = [flags] unless flags.is_a?(Array)
+          config.build_settings[key] = flags + disable
+        end
+      end
+    end
+  end
 end
