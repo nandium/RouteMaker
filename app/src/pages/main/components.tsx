@@ -1,14 +1,37 @@
 import type { ReactNode } from 'react';
+import type { ViewProps } from '@lynx-js/types/element';
 
 import type { Route } from '../../api.js';
 import type { ColorScheme } from '../../appearance.js';
 import { iconColor, iconSvg, type IconName } from '../../icons.js';
 
-// Firefox's Lynx Web fallback snapshots orientation when an element connects.
-// Inline layout avoids a cold-load race with the asynchronously inserted stylesheet.
-export const COLUMN_STYLE = 'display: linear; linear-direction: column;';
-export const ROW_STYLE = 'display: linear; linear-direction: row;';
-export const GROWING_ROW_STYLE = `${ROW_STYLE} linear-weight: 1;`;
+type LayoutDirection = 'column' | 'row';
+
+function linearStyle(direction: LayoutDirection, grow = false) {
+  return {
+    display: 'linear' as const,
+    linearDirection: direction,
+    ...(grow ? { linearWeight: 1 } : {}),
+  };
+}
+
+// FIXME(lynx-web): Remove Stack and the inline direction/grow plumbing once
+// Lynx Web refreshes style-reactive fallbacks after StyleInfo is installed.
+// Restore these structural layouts to App.css when that upstream fix ships.
+export function Stack({
+  children,
+  direction,
+  ...props
+}: Omit<ViewProps, 'style'> & {
+  children: ReactNode;
+  direction: LayoutDirection;
+}) {
+  return (
+    <view {...props} style={linearStyle(direction)}>
+      {children}
+    </view>
+  );
+}
 
 export function Icon({
   name,
@@ -34,14 +57,16 @@ export function Pressable({
   onTap,
   className,
   selected,
-  style,
+  direction,
+  grow = false,
 }: {
   children: ReactNode;
   label: string;
   onTap: () => void;
   className?: string;
   selected?: boolean;
-  style?: string;
+  direction?: LayoutDirection;
+  grow?: boolean;
 }) {
   const selectedProps =
     selected === undefined
@@ -53,7 +78,7 @@ export function Pressable({
   return (
     <view
       className={className ? `pressable ${className}` : 'pressable'}
-      style={style}
+      style={direction ? linearStyle(direction, grow) : undefined}
       {...({ 'aria-label': label, role: 'button', tabindex: '0', ...selectedProps } as object)}
       bindtap={onTap}
       accessibility-element
@@ -133,7 +158,7 @@ export function AppearanceToggle({
       }
       label={`Switch to ${nextTheme} theme`}
       onTap={onToggle}
-      style={ROW_STYLE}
+      direction="row"
     >
       <Icon name="sun" color={iconColor(value, 'sun')} className="appearance-toggle__icon" />
       <view className="appearance-toggle__track">
@@ -150,7 +175,7 @@ export function NavItem({
   colorScheme,
   icon,
   label,
-  style,
+  direction,
   onTap,
 }: {
   active: boolean;
@@ -158,7 +183,7 @@ export function NavItem({
   colorScheme: ColorScheme;
   icon: IconName;
   label: string;
-  style: string;
+  direction: LayoutDirection;
   onTap: () => void;
 }) {
   return (
@@ -167,7 +192,7 @@ export function NavItem({
       label={accessibilityLabel ?? label}
       onTap={onTap}
       selected={active}
-      style={style}
+      direction={direction}
     >
       <Icon
         name={icon}
@@ -184,18 +209,26 @@ export function ToolLink({
   icon,
   title,
   detail,
-  style = ROW_STYLE,
+  direction = 'row',
+  grow = false,
   onTap,
 }: {
   colorScheme: ColorScheme;
   icon: IconName;
   title: string;
   detail: string;
-  style?: string;
+  direction?: LayoutDirection;
+  grow?: boolean;
   onTap: () => void;
 }) {
   return (
-    <Pressable className="tool-link" label={`${title}: ${detail}`} onTap={onTap} style={style}>
+    <Pressable
+      className="tool-link"
+      label={`${title}: ${detail}`}
+      onTap={onTap}
+      direction={direction}
+      grow={grow}
+    >
       <view className="tool-link__symbol">
         <Icon name={icon} color={iconColor(colorScheme, 'active')} />
       </view>
@@ -231,7 +264,7 @@ export function RouteList({
           key={route.id}
           onTap={() => chooseRoute(route)}
           label={`Open route ${index + 1}, ${route.name}`}
-          style={ROW_STYLE}
+          direction="row"
         >
           <text className="route-card__index">{String(index + 1).padStart(2, '0')}</text>
           <view className="route-card__copy">

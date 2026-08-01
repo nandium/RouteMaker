@@ -28,13 +28,11 @@ import { loginPath, WEB_PATHS, type AppRoute } from '../../web-routes.js';
 import {
   Action,
   AppearanceToggle,
-  COLUMN_STYLE,
   Field,
-  GROWING_ROW_STYLE,
   NavItem,
   Pressable,
-  ROW_STYLE,
   RouteList,
+  Stack,
   ToolLink,
 } from './components.js';
 import './App.css';
@@ -551,17 +549,17 @@ export function App() {
 
   const accountName = user?.username ?? GUEST_NAME;
   const accountInitial = [...(user?.display_name || accountName)][0].toUpperCase();
-  const navItemStyle = wideLayout ? ROW_STYLE : COLUMN_STYLE;
+  const navItemDirection = wideLayout ? 'row' : 'column';
   const nav = (
-    <view className="nav" style={ROW_STYLE}>
-      <view className="nav__primary" style={ROW_STYLE}>
+    <Stack className="nav" direction="row">
+      <Stack className="nav__primary" direction="row">
         <NavItem
           active={screen === 'explore'}
           accessibilityLabel="Explore gyms"
           colorScheme={colorScheme}
           icon="map"
           label="Gyms"
-          style={navItemStyle}
+          direction={navItemDirection}
           onTap={showExplore}
         />
         <NavItem
@@ -570,7 +568,7 @@ export function App() {
           colorScheme={colorScheme}
           icon="feed"
           label="Feed"
-          style={navItemStyle}
+          direction={navItemDirection}
           onTap={() => {
             if (busyRef.current) return;
             setSelectedGym(null);
@@ -588,7 +586,7 @@ export function App() {
             colorScheme={colorScheme}
             icon="admin"
             label="Admin"
-            style={navItemStyle}
+            direction={navItemDirection}
             onTap={() => {
               if (busyRef.current) return;
               setScreen('admin');
@@ -597,11 +595,11 @@ export function App() {
             }}
           />
         )}
-      </view>
+      </Stack>
       <Pressable
         className="nav__account"
         label={user ? 'Your profile' : 'Guest account'}
-        style={ROW_STYLE}
+        direction="row"
         onTap={() => {
           if (busyRef.current) return;
           setPostLoginPath(undefined);
@@ -620,7 +618,7 @@ export function App() {
           {accountName}
         </text>
       </Pressable>
-    </view>
+    </Stack>
   );
 
   let content;
@@ -673,7 +671,7 @@ export function App() {
         <text className="eyebrow">{selectedRoute.gym.name}</text>
         <text className="topo-number">ROUTE {selectedRoute.id.slice(0, 4).toUpperCase()}</text>
         <text className="heading">{selectedRoute.name}</text>
-        <view className="route-meta" style={ROW_STYLE}>
+        <Stack className="route-meta" direction="row">
           <text className="grade">{selectedRoute.public_grade}</text>
           <Pressable
             label={`Open ${selectedRoute.author.display_name}'s profile`}
@@ -681,7 +679,7 @@ export function App() {
           >
             <text className="muted">by {selectedRoute.author.display_name}</text>
           </Pressable>
-        </view>
+        </Stack>
         <image
           className="route-image"
           src={api.imageUrl(selectedRoute.image_url)}
@@ -689,7 +687,7 @@ export function App() {
           accessibility-element
           accessibility-label={`${selectedRoute.name} route topo`}
         />
-        <view className="stat-row" style={ROW_STYLE}>
+        <Stack className="stat-row" direction="row">
           <Action
             quiet={selectedRoute.voted}
             onTap={() => {
@@ -730,11 +728,11 @@ export function App() {
           >
             Share route
           </Action>
-        </view>
+        </Stack>
         {token && (
           <>
             <text className="section-title">Community grade</text>
-            <view className="inline-form" style={ROW_STYLE}>
+            <Stack className="inline-form" direction="row">
               <input
                 className="field__input field__input--small"
                 accessibility-element
@@ -746,7 +744,7 @@ export function App() {
                 bindconfirm={submitGrade}
               />
               <Action onTap={submitGrade}>Submit</Action>
-            </view>
+            </Stack>
             <text className="section-title">Add one comment</text>
             <Field
               label="Add a useful note"
@@ -847,7 +845,7 @@ export function App() {
               ? 'Send reset link'
               : 'Sign in'}
         </Action>
-        <view className="auth-links" style={ROW_STYLE}>
+        <Stack className="auth-links" direction="row">
           {authMode === 'forgot' ? (
             <Pressable label="Back to sign in" onTap={() => changeAuthMode('login')}>
               <text>Back to sign in</text>
@@ -865,7 +863,7 @@ export function App() {
               </Pressable>
             </>
           )}
-        </view>
+        </Stack>
       </view>
     );
   } else if (screen === 'admin' && user?.role === 'admin') {
@@ -885,7 +883,7 @@ export function App() {
                   <text className="card__body">
                     {report.target_label ?? report.target_id} · {report.reason}
                   </text>
-                  <view className="stat-row" style={ROW_STYLE}>
+                  <Stack className="stat-row" direction="row">
                     {(report.route_id ||
                       (report.target_type === 'user' && report.target_label)) && (
                       <Action quiet onTap={() => inspectReport(report)}>
@@ -913,7 +911,7 @@ export function App() {
                     >
                       Dismiss
                     </Action>
-                  </view>
+                  </Stack>
                 </view>
               ))
             ) : (
@@ -925,7 +923,7 @@ export function App() {
                 <view className="card" key={gym.id}>
                   <text className="card__title">{gym.name}</text>
                   <text className="card__body">{gym.address}</text>
-                  <view className="stat-row" style={ROW_STYLE}>
+                  <Stack className="stat-row" direction="row">
                     <Action
                       onTap={() =>
                         void attempt(async () => {
@@ -947,7 +945,7 @@ export function App() {
                     >
                       Reject
                     </Action>
-                  </view>
+                  </Stack>
                 </view>
               ))
             ) : (
@@ -992,7 +990,7 @@ export function App() {
       <view className="content">
         <text className="eyebrow">Community beta</text>
         <text className="heading">Fresh routes.</text>
-        <view className="stat-row" style={ROW_STYLE}>
+        <Stack className="stat-row" direction="row">
           <Action
             quiet={followingFeed}
             onTap={() => {
@@ -1014,7 +1012,7 @@ export function App() {
           >
             Following
           </Action>
-        </view>
+        </Stack>
         <RouteList routes={routes} chooseRoute={chooseRoute} loading={routesLoading} />
       </view>
     );
@@ -1029,7 +1027,7 @@ export function App() {
           {selectedGym?.address ?? 'Browse approved gyms or explore them by location on the map.'}
         </text>
         {selectedGym ? (
-          <view className="stat-row" style={ROW_STYLE}>
+          <Stack className="stat-row" direction="row">
             <Action
               quiet
               onTap={() => {
@@ -1042,15 +1040,15 @@ export function App() {
               All gyms
             </Action>
             <Action onTap={() => openTool('editor')}>Add a route</Action>
-          </view>
+          </Stack>
         ) : (
-          <view className="tool-links" style={wideLayout ? ROW_STYLE : COLUMN_STYLE}>
+          <Stack className="tool-links" direction={wideLayout ? 'row' : 'column'}>
             <ToolLink
               colorScheme={colorScheme}
               icon="map"
               title="Gym map"
               detail="Browse gyms by location"
-              style={wideLayout ? GROWING_ROW_STYLE : ROW_STYLE}
+              grow={wideLayout}
               onTap={() => openTool('map')}
             />
             <ToolLink
@@ -1058,10 +1056,10 @@ export function App() {
               icon="plus"
               title="Add a route"
               detail="Mark holds on a wall photo"
-              style={wideLayout ? GROWING_ROW_STYLE : ROW_STYLE}
+              grow={wideLayout}
               onTap={() => openTool('editor')}
             />
-          </view>
+          </Stack>
         )}
         {selectedGym ? (
           <RouteList routes={routes} chooseRoute={chooseRoute} loading={routesLoading} />
@@ -1094,19 +1092,19 @@ export function App() {
       scroll-orientation="vertical"
     >
       <view className="shell">
-        <view className="topbar" style={ROW_STYLE}>
-          <view className="brand" style={ROW_STYLE}>
+        <Stack className="topbar" direction="row">
+          <Stack className="brand" direction="row">
             <svg
               key={`brand-${colorScheme}`}
               className="brand__mark"
               content={logoMarkSvg(BRAND_PALETTE[colorScheme])}
             />
             <text className="brand__name">{APP_NAME}</text>
-          </view>
+          </Stack>
           <text className="status">{busy ? 'Working…' : ''}</text>
           <AppearanceToggle value={colorScheme} onToggle={toggleTheme} />
           {nav}
-        </view>
+        </Stack>
         {message && (
           <text
             className={noticeKind === 'success' ? 'notice notice--success' : 'notice'}
