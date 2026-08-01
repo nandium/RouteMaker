@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@lynx-js/react": "0.122.1",
-    "mapbox-gl": "^3.27.0",
+    "maplibre-gl": "6.1.0",
     "onnxruntime-web": "^1.27.0"
   },
   "devDependencies": {

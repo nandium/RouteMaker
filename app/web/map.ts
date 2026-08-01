@@ -1,26 +1,42 @@
 import { API_PATHS, STORAGE_KEYS } from '../src/client-contract.js';
 import type { Gym } from '../src/client-contract.js';
 import { THEME_CHANGE_EVENT } from '../src/appearance.js';
+import { DEFAULT_MAP_VIEW, MAP_STYLES } from '../src/map-config.js';
 import { loginPath, WEB_PATHS } from '../src/web-routes.js';
 import { browserRequest } from './http.js';
 import { readStorage } from './storage.js';
 import { element, field, setStatus } from './shared.js';
 
-const MAPBOX_PUBLIC_TOKEN = import.meta.env.PUBLIC_MAPBOX_TOKEN?.trim() ?? '';
-const DEFAULT_MAP_CENTER: [number, number] = [103.8198, 1.3521];
-const DEFAULT_MAP_ZOOM = 10.5;
 const DEFAULT_COUNTRY_CODE = 'SG';
+const MARKER_POPUP_OFFSET = 34;
+const MAP_WORKER_PATH = '/maplibre-gl-worker.mjs';
 
-function mapMarker(modifier = '') {
-  const marker = element('span', modifier ? `map-marker ${modifier}` : 'map-marker');
-  marker.setAttribute('aria-hidden', 'true');
+function mapMarker(label?: string, modifier = '') {
+  const className = modifier ? `map-marker ${modifier}` : 'map-marker';
+  const marker = label ? element('button', className) : element('span', className);
+  if (label && marker instanceof HTMLButtonElement) {
+    marker.type = 'button';
+    marker.setAttribute('aria-label', label);
+  } else {
+    marker.setAttribute('aria-hidden', 'true');
+  }
   marker.append(element('span', 'map-marker__pin'));
   return marker;
 }
 
+function collapseCompactAttribution(mapNode: HTMLElement) {
+  // MapLibre initially expands compact attribution. Collapse it once the map is
+  // ready so small screens keep the map usable while attribution remains one tap away.
+  const control = mapNode.querySelector<HTMLDetailsElement>(
+    '.maplibregl-ctrl-attrib.maplibregl-compact'
+  );
+  control?.removeAttribute('open');
+  control?.classList.remove('maplibregl-compact-show');
+}
+
 export async function mountMap(root: HTMLElement, gyms: Gym[]) {
-  // Keep the directory usable without Mapbox; the same form accepts either a
-  // map click or explicit coordinates before making the authenticated request.
+  // Keep the directory useful if the public tile service or WebGL is
+  // unavailable; explicit coordinates still support gym requests.
   const mapNode = element('div', 'map');
   const mapStatus = element('p', 'tool-status');
   const mapCard = element('section', 'tool-card tool-map-card');
@@ -42,80 +58,74 @@ export async function mountMap(root: HTMLElement, gyms: Gym[]) {
     element('p', 'tool-note', `${gyms.length} ${gyms.length === 1 ? 'gym' : 'gyms'}`)
   );
   directory.append(directoryHeader, gymList);
-  mapNode.hidden = !MAPBOX_PUBLIC_TOKEN;
   mapCard.append(mapHeader, mapNode, mapStatus);
   root.append(mapCard, directory);
 
   let selected: { latitude: number; longitude: number } | null = null;
   const selectionStatus = element('p');
   setStatus(selectionStatus, 'First, select the gym location on the map.');
-  if (MAPBOX_PUBLIC_TOKEN) {
-    setStatus(mapStatus, 'Loading map…');
-    try {
-      const [{ default: mapboxgl }] = await Promise.all([
-        import('mapbox-gl'),
-        import('mapbox-gl/dist/mapbox-gl.css'),
-      ]);
-      const map = new mapboxgl.Map({
-        accessToken: MAPBOX_PUBLIC_TOKEN,
-        container: mapNode,
-        style: 'mapbox://styles/mapbox/standard',
-        config: {
-          basemap: {
-            lightPreset: document.documentElement.dataset.theme === 'dark' ? 'night' : 'day',
-          },
-        },
-        center: gyms[0] ? [gyms[0].longitude, gyms[0].latitude] : DEFAULT_MAP_CENTER,
-        zoom: DEFAULT_MAP_ZOOM,
-      });
-      const syncMapTheme = () => {
-        map.setConfigProperty(
-          'basemap',
-          'lightPreset',
-          document.documentElement.dataset.theme === 'dark' ? 'night' : 'day'
-        );
-      };
-      document.addEventListener(THEME_CHANGE_EVENT, syncMapTheme);
-      map.on('remove', () => document.removeEventListener(THEME_CHANGE_EVENT, syncMapTheme));
-      map.on('load', () => {
-        setStatus(mapStatus, 'Select a marker to view a gym, or click the map to place a request.');
-      });
-      map.on('error', () => {
-        mapNode.hidden = true;
-        setStatus(
-          mapStatus,
-          'The map could not load. The approved gym list is still available below.',
-          true
-        );
-      });
-      gyms.forEach((gym) => {
-        new mapboxgl.Marker({ element: mapMarker(), anchor: 'bottom' })
-          .setLngLat([gym.longitude, gym.latitude])
-          .setPopup(new mapboxgl.Popup().setText(`${gym.name} — ${gym.address}`))
-          .addTo(map);
-      });
-      const selection = new mapboxgl.Marker({
-        element: mapMarker('map-marker--selection'),
-        anchor: 'bottom',
-      });
-      map.on('click', (event) => {
-        selected = { latitude: event.lngLat.lat, longitude: event.lngLat.lng };
-        selection.setLngLat(event.lngLat).addTo(map);
-        latitude.input.value = event.lngLat.lat.toFixed(6);
-        longitude.input.value = event.lngLat.lng.toFixed(6);
-        setStatus(selectionStatus, 'Location selected. Add the gym details below.');
-      });
-    } catch (error) {
-      mapNode.hidden = true;
-      setStatus(mapStatus, error instanceof Error ? error.message : 'Mapbox could not load.', true);
-    }
-  } else {
+  setStatus(mapStatus, 'Loading map…');
+  try {
+    const [{ Map, Marker, Popup, setWorkerUrl }] = await Promise.all([
+      import('maplibre-gl'),
+      import('maplibre-gl/dist/maplibre-gl.css'),
+    ]);
+    setWorkerUrl(new URL(MAP_WORKER_PATH, location.origin).href);
+    const mapStyle = () =>
+      MAP_STYLES[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'];
+    const map = new Map({
+      container: mapNode,
+      style: mapStyle(),
+      center: gyms[0]
+        ? [gyms[0].longitude, gyms[0].latitude]
+        : [DEFAULT_MAP_VIEW.longitude, DEFAULT_MAP_VIEW.latitude],
+      zoom: DEFAULT_MAP_VIEW.zoom,
+    });
+    const syncMapTheme = () => map.setStyle(mapStyle());
+    document.addEventListener(THEME_CHANGE_EVENT, syncMapTheme);
+    map.on('remove', () => document.removeEventListener(THEME_CHANGE_EVENT, syncMapTheme));
+    map.on('load', () => {
+      collapseCompactAttribution(mapNode);
+      setStatus(mapStatus, 'Select a marker to view a gym, or click the map to place a request.');
+    });
+    map.on('error', () => {
+      setStatus(
+        mapStatus,
+        'Some map data could not load. The approved gym list is still available below.',
+        true
+      );
+    });
+    gyms.forEach((gym) => {
+      new Marker({ element: mapMarker(`Open ${gym.name}`), anchor: 'bottom' })
+        .setLngLat([gym.longitude, gym.latitude])
+        .setPopup(
+          new Popup({ offset: MARKER_POPUP_OFFSET }).setText(`${gym.name} — ${gym.address}`)
+        )
+        .addTo(map);
+    });
+    const selection = new Marker({
+      element: mapMarker(undefined, 'map-marker--selection'),
+      anchor: 'bottom',
+    });
+    map.on('click', (event) => {
+      if (
+        event.originalEvent.target instanceof Element &&
+        event.originalEvent.target.closest(
+          '.maplibregl-marker, .maplibregl-popup, .maplibregl-ctrl'
+        )
+      ) {
+        return;
+      }
+      selected = { latitude: event.lngLat.lat, longitude: event.lngLat.lng };
+      selection.setLngLat(event.lngLat).addTo(map);
+      latitude.input.value = event.lngLat.lat.toFixed(6);
+      longitude.input.value = event.lngLat.lng.toFixed(6);
+      setStatus(selectionStatus, 'Location selected. Add the gym details below.');
+    });
+  } catch (error) {
+    mapNode.hidden = true;
+    setStatus(mapStatus, error instanceof Error ? error.message : 'The map could not load.', true);
     setStatus(selectionStatus, 'Enter the gym coordinates below.');
-    setStatus(
-      mapStatus,
-      'The interactive map is not configured for this build. Approved gyms are listed below.',
-      false
-    );
   }
 
   const sessionToken = readStorage(STORAGE_KEYS.session) ?? '';

@@ -16,6 +16,14 @@ export default defineConfig({
       { from: path.join(directory, '../dist/main.web.bundle'), to: 'main.web.bundle' },
       { from: path.join(directory, 'model'), to: 'model' },
       { from: path.join(directory, '../resource/app_icon.svg'), to: 'app-icon.svg' },
+      {
+        from: path.join(directory, '../node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs'),
+        to: 'maplibre-gl-worker.mjs',
+      },
+      {
+        from: path.join(directory, '../node_modules/maplibre-gl/dist/maplibre-gl-shared.mjs'),
+        to: 'maplibre-gl-shared.mjs',
+      },
     ],
   },
 });
