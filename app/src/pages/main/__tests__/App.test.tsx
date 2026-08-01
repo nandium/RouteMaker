@@ -104,6 +104,29 @@ async function tapText(queries: ReturnType<typeof getQueriesForElement>, text: s
   fireEvent.tap(target);
 }
 
+async function enterField(
+  queries: ReturnType<typeof getQueriesForElement>,
+  label: string,
+  value: string
+) {
+  await queries.findByPlaceholderText(label);
+  const event = new window.Event('bindEvent:input', { bubbles: true });
+  Object.assign(event, {
+    detail: { value },
+    eventName: 'input',
+    eventType: 'bindEvent',
+  });
+  fireEvent(
+    lynx.createSelectorQuery().select(`[placeholder="${label}"]`) as unknown as Element,
+    event
+  );
+}
+
+async function enterLogin(queries: ReturnType<typeof getQueriesForElement>) {
+  await enterField(queries, 'Email', account.email);
+  await enterField(queries, 'Password', 'valid-password');
+}
+
 test('loads gyms and follows the route-detail journey', async () => {
   const push = vi.fn();
   globalThis.NativeModules = {
@@ -161,6 +184,17 @@ test('keeps account actions behind a clear sign-in screen', async () => {
   expect(await queries.findByText('Forgot password?')).toBeInTheDocument();
 });
 
+test('validates authentication before calling the API', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Guest');
+  await tapText(queries, 'Sign in');
+
+  expect(await queries.findByText('Enter your email.')).toBeInTheDocument();
+  expect(api.login).not.toHaveBeenCalled();
+});
+
 test('reports tool navigation failures without asking users to open a raw URL', async () => {
   globalThis.NativeModules = {
     ...baselineNativeModules,
@@ -208,6 +242,7 @@ test('supports the login and logout state transition', async () => {
   render(<App />);
   const queries = getQueriesForElement(elementTree.root!);
   await tapText(queries, 'Guest');
+  await enterLogin(queries);
   await tapText(queries, 'Sign in');
   expect(await queries.findByText('Fresh routes.')).toBeInTheDocument();
   expect((await queries.findByText('Everyone')).parentElement).not.toHaveClass('action--quiet');
@@ -232,6 +267,7 @@ test('does not commit a login when the initial authenticated feed is rejected', 
   render(<App />);
   const queries = getQueriesForElement(elementTree.root!);
   await tapText(queries, 'Guest');
+  await enterLogin(queries);
   await tapText(queries, 'Sign in');
 
   expect(await queries.findByText('Unauthorized')).toBeInTheDocument();
@@ -290,6 +326,8 @@ test('keeps verification and password reset in the browser', async () => {
   const queries = getQueriesForElement(elementTree.root!);
   await tapText(queries, 'Guest');
   await tapText(queries, 'Create an account');
+  await enterField(queries, 'Username', account.username);
+  await enterLogin(queries);
   await tapText(queries, 'Create account');
   expect(
     await queries.findByText(
@@ -317,6 +355,7 @@ test('covers voting, commenting and reporting from route detail', async () => {
   render(<App />);
   const queries = getQueriesForElement(elementTree.root!);
   await tapText(queries, 'Guest');
+  await enterLogin(queries);
   await tapText(queries, 'Sign in');
   await tapText(queries, 'Blue Moon');
   await tapText(queries, 'Vote · 18');
@@ -346,6 +385,7 @@ test('lets administrators inspect a report before moderating it', async () => {
   const queries = getQueriesForElement(elementTree.root!);
 
   await tapText(queries, 'Guest');
+  await enterLogin(queries);
   await tapText(queries, 'Sign in');
   await tapText(queries, 'Admin');
   expect(await queries.findByText('Blue Moon')).toBeInTheDocument();

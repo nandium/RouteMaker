@@ -404,7 +404,23 @@ export function App() {
       );
     });
 
-  const submitAuth = authMode === 'signup' ? signup : authMode === 'forgot' ? forgot : login;
+  const missingAuthField = () => {
+    if (authMode === 'signup' && !username.trim()) return 'username';
+    if (!email.trim()) return 'email';
+    if (authMode !== 'forgot' && !password) return 'password';
+    return null;
+  };
+
+  const submitAuth = () => {
+    const missingField = missingAuthField();
+    if (missingField) {
+      notify('error', `Enter your ${missingField}.`);
+      return;
+    }
+    if (authMode === 'signup') signup();
+    else if (authMode === 'forgot') forgot();
+    else login();
+  };
 
   const logout = () => {
     authGeneration.current += 1;
