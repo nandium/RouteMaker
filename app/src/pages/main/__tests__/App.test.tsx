@@ -88,6 +88,7 @@ import { App } from '../App.js';
 import { ApiError, api } from '../../../api.js';
 import { BRAND_PALETTE } from '../../../brand.js';
 import { ICON_PALETTE } from '../../../icons.js';
+import { MAP_STYLES } from '../../../map-config.js';
 
 const baselineNativeModules = globalThis.NativeModules;
 
@@ -210,6 +211,35 @@ test('reports tool navigation failures without asking users to open a raw URL', 
 
   expect(await queries.findByText('Could not open the gym map. Try again.')).toBeInTheDocument();
   expect(queries.queryByText(/Open http/)).not.toBeInTheDocument();
+});
+
+test('opens the native map and follows a selected gym', async () => {
+  const push = vi.fn();
+  let mapScene: unknown;
+  let selectGym: ((gymId: string) => void) | undefined;
+  globalThis.NativeModules = {
+    ...baselineNativeModules,
+    RouteMakerNavigation: { push, replace: vi.fn(), back: vi.fn() },
+    RouteMakerMap: {
+      open: (scene: string, callback: (gymId: string) => void) => {
+        mapScene = JSON.parse(scene);
+        selectGym = callback;
+      },
+    },
+  };
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Gym map');
+  expect(mapScene).toMatchObject({
+    gyms: [{ id: 'central', latitude: 1.3, longitude: 103.8 }],
+    style: MAP_STYLES.light,
+    theme: 'light',
+  });
+  selectGym?.('central');
+
+  expect(await queries.findByText('Blue Moon')).toBeInTheDocument();
+  expect(push).toHaveBeenCalledWith('/gyms/central');
 });
 
 test('applies and persists an explicit color theme', async () => {

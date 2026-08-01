@@ -103,6 +103,7 @@ android {
         implementation(libs.lynx.service.log)
         implementation(libs.lynx.xelement.input)
         implementation(libs.lynx.xelement.svg)
+        implementation(libs.maplibre)
 
         implementation(libs.fresco)
     }

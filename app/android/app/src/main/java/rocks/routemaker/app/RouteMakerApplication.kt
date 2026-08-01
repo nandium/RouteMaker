@@ -53,6 +53,7 @@ class RouteMakerApplication : Application() {
         environment.registerModule("RouteMakerShare", RouteMakerShareModule::class.java)
         environment.registerModule("RouteMakerAppearance", RouteMakerAppearanceModule::class.java)
         environment.registerModule("RouteMakerNavigation", RouteMakerNavigationModule::class.java)
+        environment.registerModule("RouteMakerMap", RouteMakerMapModule::class.java)
     }
 }
 

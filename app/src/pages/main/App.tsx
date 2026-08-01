@@ -21,6 +21,7 @@ import {
 } from '../../appearance.js';
 import { BRAND_PALETTE, logoMarkSvg } from '../../brand.js';
 import { APP_NAME, LAYOUT_CHANGE_EVENT, SYSTEM_THEME_EVENT } from '../../client-contract.js';
+import { openNativeMap } from '../../native-map.js';
 import { navigation } from '../../navigation.js';
 import { sessionStore } from '../../session.js';
 import { shareRoute } from '../../share.js';
@@ -330,6 +331,23 @@ export function App() {
     if (!opened) notify('error', `Could not open the ${label} on this device.`);
   };
 
+  const openTool = (tool: 'map' | 'editor', replace = false) => {
+    if (
+      tool === 'map' &&
+      openNativeMap(gyms, colorScheme, (gymId) => {
+        const gym = gyms.find((candidate) => candidate.id === gymId);
+        if (gym) chooseGym(gym);
+      })
+    ) {
+      return;
+    }
+    openBrowserPath(
+      tool === 'map' ? WEB_PATHS.gymMap : WEB_PATHS.newRoute,
+      tool === 'map' ? 'gym map' : 'route editor',
+      replace
+    );
+  };
+
   const login = () => {
     authGeneration.current += 1;
     void attempt(async () => {
@@ -352,7 +370,7 @@ export function App() {
       const nextPath = postLoginPath;
       setPostLoginPath(undefined);
       if (nextPath === WEB_PATHS.gymMap || nextPath === WEB_PATHS.newRoute) {
-        openBrowserPath(nextPath, nextPath === WEB_PATHS.gymMap ? 'gym map' : 'route editor', true);
+        openTool(nextPath === WEB_PATHS.gymMap ? 'map' : 'editor', true);
         return;
       }
       if (nextPath === WEB_PATHS.admin) {
@@ -461,13 +479,6 @@ export function App() {
       setCommentBody('');
       setComments(await api.comments(selectedRoute.id));
     });
-  };
-
-  const openTool = (tool: 'map' | 'editor') => {
-    openBrowserPath(
-      tool === 'map' ? WEB_PATHS.gymMap : WEB_PATHS.newRoute,
-      tool === 'map' ? 'gym map' : 'route editor'
-    );
   };
 
   const inspectReport = (report: Report) => {

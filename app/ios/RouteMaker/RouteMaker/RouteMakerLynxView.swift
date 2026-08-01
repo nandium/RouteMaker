@@ -54,6 +54,7 @@ enum RouteMakerLynxRuntime {
         config.register(RouteMakerShareModule.self)
         config.register(RouteMakerAppearanceModule.self)
         config.register(RouteMakerNavigationModule.self)
+        config.register(RouteMakerMapModule.self)
 
         // These are the official XElement implementations. The input shadow
         // node is registered explicitly so layout can measure <input>.

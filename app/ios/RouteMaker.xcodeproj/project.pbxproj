@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A6D5E4C3B2A190800000001 /* MapLibre in Frameworks */ = {isa = PBXBuildFile; productRef = 7A6D5E4C3B2A190800000003 /* MapLibre */; };
 		903208242ED9629900167236 /* main.lynx.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 903208232ED9629900167236 /* main.lynx.bundle */; };
 		CEAB8C5202B26CF8F0BE5581 /* Pods_RouteMaker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B00F0DF4C89E15C31BC93A3 /* Pods_RouteMaker.framework */; };
 /* End PBXBuildFile section */
@@ -34,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A6D5E4C3B2A190800000001 /* MapLibre in Frameworks */,
 				CEAB8C5202B26CF8F0BE5581 /* Pods_RouteMaker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -99,6 +101,9 @@
 				44B59A892DE9041F00A05B89 /* RouteMaker */,
 			);
 			name = RouteMaker;
+			packageProductDependencies = (
+				7A6D5E4C3B2A190800000003 /* MapLibre */,
+			);
 			productName = RouteMaker;
 			productReference = 44B59A872DE9041F00A05B89 /* RouteMaker.app */;
 			productType = "com.apple.product-type.application";
@@ -126,6 +131,9 @@
 			);
 			mainGroup = 44B59A7E2DE9041F00A05B89;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7A6D5E4C3B2A190800000002 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 44B59A882DE9041F00A05B89 /* Products */;
 			projectDirPath = "";
@@ -218,6 +226,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7A6D5E4C3B2A190800000002 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/maplibre/maplibre-gl-native-distribution";
+			requirement = {
+				kind = exactVersion;
+				version = 6.28.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7A6D5E4C3B2A190800000003 /* MapLibre */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A6D5E4C3B2A190800000002 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			productName = MapLibre;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		44B59AAA2DE9042100A05B89 /* Debug */ = {

@@ -1,10 +1,12 @@
 package rocks.routemaker.app
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.ViewGroup
 import com.lynx.react.bridge.JavaOnlyArray
+import com.lynx.react.bridge.Callback
 import com.lynx.tasm.LynxLoadMeta
 import com.lynx.tasm.LynxView
 import com.lynx.tasm.LynxViewBuilder
@@ -13,6 +15,7 @@ import com.lynx.tasm.TemplateData
 class MainActivity : Activity() {
 
     private lateinit var lynxView: LynxView
+    private var mapCallback: Callback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +55,29 @@ class MainActivity : Activity() {
         )
     }
 
+    fun openMap(scene: String, callback: Callback) {
+        mapCallback = callback
+        startActivityForResult(
+            Intent(this, RouteMakerMapActivity::class.java)
+                .putExtra(RouteMakerMapActivity.SCENE, scene),
+            MAP_REQUEST,
+        )
+    }
+
+    @Deprecated("Activity results are intentionally local to this single native map screen.")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != MAP_REQUEST) return
+        mapCallback?.invoke(
+            if (resultCode == RESULT_OK) data?.getStringExtra(RouteMakerMapActivity.GYM_ID).orEmpty()
+            else "",
+        )
+        mapCallback = null
+    }
+
     override fun onDestroy() {
+        mapCallback?.invoke("")
+        mapCallback = null
         lynxView.destroy()
         super.onDestroy()
     }
@@ -65,5 +90,9 @@ class MainActivity : Activity() {
     override fun onPause() {
         lynxView.onEnterBackground()
         super.onPause()
+    }
+
+    private companion object {
+        const val MAP_REQUEST = 41
     }
 }

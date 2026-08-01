@@ -6,6 +6,7 @@ androidCompileSdk = "36"
 androidMinSdk = "24"
 androidTargetSdk = "36"
 lynx = "4.0.1"
+maplibre = "13.4.1"
 appcompat = "1.7.1"
 fresco = "2.3.0"
 
@@ -18,6 +19,7 @@ lynx-service-image = { group = "org.lynxsdk.lynx", name = "lynx-service-image", 
 lynx-service-log = { group = "org.lynxsdk.lynx", name = "lynx-service-log", version.ref = "lynx" }
 lynx-xelement-input = { group = "org.lynxsdk.lynx", name = "xelement-input", version.ref = "lynx" }
 lynx-xelement-svg = { group = "org.lynxsdk.lynx", name = "xelement-svg", version.ref = "lynx" }
+maplibre = { group = "org.maplibre.gl", name = "android-sdk", version.ref = "maplibre" }
 
 fresco = { group = "com.facebook.fresco", name = "fresco", version.ref = "fresco" }
 

@@ -2,6 +2,18 @@ import Foundation
 import Lynx
 import UIKit
 
+enum RouteMakerPresentation {
+    static func topViewController() -> UIViewController? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let window = scenes.flatMap(\.windows).first { $0.isKeyWindow }
+        var controller = window?.rootViewController
+        while let presented = controller?.presentedViewController {
+            controller = presented
+        }
+        return controller
+    }
+}
+
 enum RouteMakerAppearance {
     private static let key = "routemaker.theme"
 
@@ -94,7 +106,7 @@ final class RouteMakerShareModule: NSObject, LynxModule {
                 activityItems: [url],
                 applicationActivities: nil
             )
-            guard let presenter = Self.topViewController() else {
+            guard let presenter = RouteMakerPresentation.topViewController() else {
                 completion("unavailable")
                 return
             }
@@ -110,16 +122,6 @@ final class RouteMakerShareModule: NSObject, LynxModule {
             presenter.present(activity, animated: true)
             completion("opened")
         }
-    }
-
-    private static func topViewController() -> UIViewController? {
-        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-        let window = scenes.flatMap(\.windows).first { $0.isKeyWindow }
-        var controller = window?.rootViewController
-        while let presented = controller?.presentedViewController {
-            controller = presented
-        }
-        return controller
     }
 }
 
