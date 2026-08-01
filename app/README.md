@@ -4,8 +4,11 @@ One ReactLynx bundle renders the product UI on Android, iOS, and the web host.
 The native shells host Lynx 4 directly; there is no intermediate application
 framework or generated native project. Rspeedy 0.15 builds the bundle with
 Rspack 2 and Rsbuild 2.
-Mapbox and wall-photo annotation are lazy-loaded browser tools because retaining
-those strong web primitives costs less than custom native bridges.
+MapLibre is isolated behind one small platform boundary: the browser uses
+MapLibre GL JS, while Android and iOS present MapLibre Native and return only a
+selected gym ID to ReactLynx. Wall-photo annotation remains a lazy browser tool
+because reproducing Canvas and ONNX Runtime in both shells would add more code
+than value.
 
 Native and browser storage are separate, so opening a hosted tool from Android
 or iOS asks you to sign in there. On the website, the product UI and tools share

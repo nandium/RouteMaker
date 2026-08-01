@@ -5,8 +5,9 @@ gym, and discuss, vote on, and grade it together.
 
 The revival has two runtime parts:
 
-- `app/` — one ReactLynx product UI for Android, iOS, and the web. Mapbox,
-  Canvas, and the browser-local ONNX detector are loaded only by the web tools.
+- `app/` — one ReactLynx product UI for Android, iOS, and the web. MapLibre
+  renders native maps in both shells and the browser map; Canvas and the
+  browser-local ONNX detector are loaded only by the web route editor.
 - `worker/` — one TypeScript Cloudflare Worker serving the website and API,
   with one D1 database for product data and tightly compressed route photos.
 
@@ -39,9 +40,8 @@ FIREBASE_API_KEY=your-key
 ADMIN_EMAIL=you@example.com
 ```
 
-To enable the interactive gym map, copy `app/.env.example` to `app/.env` and
-add one URL-restricted Mapbox public token. The token belongs to the site, not
-each visitor; without it, RouteMaker shows the approved gym list instead.
+Gym maps use OpenFreeMap's public OpenStreetMap-based styles and tiles. No map
+account, token, or build-time environment variable is required.
 
 Web navigation uses resource paths such as `/gyms`, `/routes/:id`, and
 `/users/:username`; account and tool pages have their own paths too. Cloudflare
@@ -73,9 +73,7 @@ npm run deploy
 ```
 
 `ADMIN_EMAIL` is the account that becomes the first administrator. Restrict the
-Firebase key to the Identity Toolkit API. Keep `app/.env` on the machine that
-builds the site so the Mapbox token is included in later releases. Later
-releases need only:
+Firebase key to the Identity Toolkit API. Later releases need only:
 
 ```sh
 cd worker

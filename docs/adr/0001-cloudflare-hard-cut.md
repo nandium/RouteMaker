@@ -37,9 +37,11 @@ The WASM-only runtime stays below Cloudflare's static-asset limit and avoids
 cross-origin isolation requirements. On this small model, one CPU thread is
 already interactive, while model download remains the dominant first-use cost.
 
-Mapbox and photo editing remain browser-native because reproducing those mature
-surfaces in Swift, Kotlin, and Lynx would add more code than value. Native apps
-open the same hosted tools and keep the main product UI in ReactLynx.
+MapLibre renders the gym map through one platform boundary: GL JS on the web and
+thin MapLibre Native controllers in Android and iOS. ReactLynx still owns gym
+data and navigation, so the native shells do not duplicate product state or API
+logic. Photo editing remains browser-native because reproducing Canvas and ONNX
+Runtime in Swift, Kotlin, and Lynx would add more code than value.
 
 D1 BLOB storage is deliberately narrow rather than pretending to be a general
 object store. Each JPEG is capped at 512 KiB, each account at 20 photos, and the
