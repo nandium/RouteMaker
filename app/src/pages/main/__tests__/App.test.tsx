@@ -96,6 +96,7 @@ const baselineNativeModules = globalThis.NativeModules;
 beforeEach(() => {
   vi.clearAllMocks();
   globalThis.NativeModules = baselineNativeModules;
+  route.public_grade = 'V4';
 });
 
 async function tapText(queries: ReturnType<typeof getQueriesForElement>, text: string, index = 0) {
@@ -129,6 +130,20 @@ async function enterLogin(queries: ReturnType<typeof getQueriesForElement>) {
   await enterField(queries, 'Password', 'valid-password');
 }
 
+async function confirmField(queries: ReturnType<typeof getQueriesForElement>, label: string) {
+  await queries.findByPlaceholderText(label);
+  const event = new window.Event('bindEvent:confirm', { bubbles: true });
+  Object.assign(event, {
+    detail: {},
+    eventName: 'confirm',
+    eventType: 'bindEvent',
+  });
+  fireEvent(
+    lynx.createSelectorQuery().select(`[placeholder="${label}"]`) as unknown as Element,
+    event
+  );
+}
+
 test('loads gyms and follows the route-detail journey', async () => {
   const push = vi.fn();
   globalThis.NativeModules = {
@@ -146,6 +161,52 @@ test('loads gyms and follows the route-detail journey', async () => {
   expect(await queries.findByText('Maya Tan')).toBeTruthy();
   expect(await queries.findByText('Friendly finish')).toBeTruthy();
   expect(elementTree.root!.querySelector('image')?.getAttribute('src')).toBe('/media/blue.jpg');
+});
+
+test('keeps mobile navigation outside the screen scroller', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+  const scroller = () => elementTree.root!.querySelector('.page');
+
+  expect(elementTree.root!.querySelector('.app-frame .nav')).toBeInTheDocument();
+  expect(scroller()!.querySelector('.nav')).not.toBeInTheDocument();
+
+  await tapText(queries, 'Central Bloc');
+  expect(scroller()!.querySelector('.nav')).not.toBeInTheDocument();
+
+  await tapText(queries, 'Blue Moon');
+  expect(await queries.findByText('Friendly finish')).toBeTruthy();
+  expect(scroller()!.querySelector('.nav')).not.toBeInTheDocument();
+});
+
+test('keeps ungraded routes visible in lists and details', async () => {
+  route.public_grade = '';
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Central Bloc');
+  expect(await queries.findByText('Unrated')).toBeTruthy();
+
+  await tapText(queries, 'Blue Moon');
+  expect(await queries.findByText('Unrated')).toBeTruthy();
+});
+
+test('invites guests to sign in before contributing to a route', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Central Bloc');
+  await tapText(queries, 'Blue Moon');
+
+  expect(await queries.findByText('Sign in to suggest a grade or add a note.')).toBeInTheDocument();
+  expect(await queries.findByText('Sign in to contribute')).toBeInTheDocument();
+
+  await tapText(queries, 'Sign in to contribute');
+  await enterLogin(queries);
+  await tapText(queries, 'Sign in');
+
+  expect(await queries.findByText('Blue Moon')).toBeInTheDocument();
+  expect(api.route).toHaveBeenCalledWith(route.id, 'test-token');
 });
 
 test('uses browser history for route-detail back navigation when available', async () => {
@@ -195,6 +256,18 @@ test('validates authentication before calling the API', async () => {
 
   expect(await queries.findByText('Enter your email.')).toBeInTheDocument();
   expect(api.login).not.toHaveBeenCalled();
+});
+
+test('validates forgot-password email when the field is confirmed', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  await tapText(queries, 'Guest');
+  await tapText(queries, 'Forgot password?');
+  await confirmField(queries, 'Email');
+
+  expect(await queries.findByText('Enter your email.')).toBeInTheDocument();
+  expect(api.forgot).not.toHaveBeenCalled();
 });
 
 test('reports tool navigation failures without asking users to open a raw URL', async () => {
@@ -326,7 +399,7 @@ test('applies and persists an explicit color theme', async () => {
   );
 
   fireEvent.tap(await queries.findByLabelText('Switch to dark theme'));
-  expect(elementTree.root!.querySelector('.page')).toHaveClass('theme-dark');
+  expect(elementTree.root!.querySelector('.app-frame')).toHaveClass('theme-dark');
   expect(elementTree.root!.querySelector('.nav__icon')?.getAttribute('content')).toContain(
     `stroke="${ICON_PALETTE.dark.active}"`
   );
@@ -343,8 +416,12 @@ test('supports the login and logout state transition', async () => {
   await enterLogin(queries);
   await tapText(queries, 'Sign in');
   expect(await queries.findByText('Fresh routes.')).toBeInTheDocument();
-  expect((await queries.findByText('Everyone')).parentElement).not.toHaveClass('action--quiet');
-  expect((await queries.findByText('Following')).parentElement).toHaveClass('action--quiet');
+  const everyone = (await queries.findByText('Everyone')).parentElement!;
+  const following = (await queries.findByText('Following')).parentElement!;
+  expect(everyone).not.toHaveClass('action--quiet');
+  expect(everyone).toHaveAttribute('aria-pressed', 'true');
+  expect(following).toHaveClass('action--quiet');
+  expect(following).toHaveAttribute('aria-pressed', 'false');
   await tapText(queries, 'maya');
   await tapText(queries, 'Sign out');
   expect(await queries.findByText('Welcome back.')).toBeInTheDocument();
@@ -458,10 +535,29 @@ test('covers voting, commenting and reporting from route detail', async () => {
   await tapText(queries, 'Blue Moon');
   await tapText(queries, 'Vote · 18');
   expect(await queries.findByText('Voted · 19')).toBeInTheDocument();
+  await enterField(queries, 'Note', 'Useful beta');
   await tapText(queries, 'Post comment');
-  expect(api.comment).toHaveBeenCalled();
+  expect(api.comment).toHaveBeenCalledWith('test-token', route.id, 'Useful beta');
   await tapText(queries, 'Report this route');
   expect(await queries.findByText('Report sent to the moderators.')).toBeInTheDocument();
+});
+
+test('validates community contributions before calling the API', async () => {
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+  await tapText(queries, 'Guest');
+  await enterLogin(queries);
+  await tapText(queries, 'Sign in');
+  await tapText(queries, 'Blue Moon');
+
+  await enterField(queries, 'V0–V17', 'V99');
+  await tapText(queries, 'Submit');
+  expect(await queries.findByText('Use a grade from V0 to V17.')).toBeInTheDocument();
+  expect(api.grade).not.toHaveBeenCalled();
+
+  await tapText(queries, 'Post comment');
+  expect(await queries.findByText('Write a note before posting.')).toBeInTheDocument();
+  expect(api.comment).not.toHaveBeenCalled();
 });
 
 test('lets administrators inspect a report before moderating it', async () => {

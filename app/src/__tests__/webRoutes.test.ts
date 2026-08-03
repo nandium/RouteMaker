@@ -35,12 +35,17 @@ describe('web routes', () => {
       name: 'login',
       next: WEB_PATHS.gymMap,
     });
+    expect(parseWebRoute('/login', '?next=%2Froutes%2Fblue')).toEqual({
+      name: 'login',
+      next: WEB_PATHS.route('blue'),
+    });
     expect(parseWebRoute('/login', '?next=https%3A%2F%2Fevil.example')).toEqual({
       name: 'login',
       next: undefined,
     });
     expect(loginPath(WEB_PATHS.gymMap)).toBe('/login?next=%2Fgyms%2Fmap');
     expect(loginPath(WEB_PATHS.admin)).toBe('/login?next=%2Fadmin');
+    expect(loginPath(WEB_PATHS.route('blue'))).toBe('/login?next=%2Froutes%2Fblue');
   });
 
   test('builds encoded resource paths', () => {

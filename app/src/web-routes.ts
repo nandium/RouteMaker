@@ -39,8 +39,12 @@ export const WEB_PATHS = {
 
 const AUTH_NEXT_PATHS = new Set<string>([WEB_PATHS.gymMap, WEB_PATHS.newRoute, WEB_PATHS.admin]);
 
+function isAuthNextPath(path: string) {
+  return AUTH_NEXT_PATHS.has(path) || parseWebRoute(path)?.name === 'route';
+}
+
 export function loginPath(next?: string) {
-  return next && AUTH_NEXT_PATHS.has(next)
+  return next && isAuthNextPath(next)
     ? `${WEB_PATHS.login}?next=${encodeURIComponent(next)}`
     : WEB_PATHS.login;
 }
@@ -69,7 +73,7 @@ export function parseWebRoute(pathname: string, search = ''): WebRoute | null {
     const next = params.get('next') ?? undefined;
     return {
       name: 'login',
-      next: next && AUTH_NEXT_PATHS.has(next) ? next : undefined,
+      next: next && isAuthNextPath(next) ? next : undefined,
     };
   }
   if (path === WEB_PATHS.signup) return { name: 'signup' };

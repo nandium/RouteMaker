@@ -21,13 +21,15 @@ function linearStyle(direction: LayoutDirection, grow = false) {
 export function Stack({
   children,
   direction,
+  grow = false,
   ...props
 }: Omit<ViewProps, 'style'> & {
   children: ReactNode;
   direction: LayoutDirection;
+  grow?: boolean;
 }) {
   return (
-    <view {...props} style={linearStyle(direction)}>
+    <view {...props} style={linearStyle(direction, grow)}>
       {children}
     </view>
   );
@@ -97,12 +99,14 @@ export function Field({
   value,
   onInput,
   onConfirm,
+  maxLength,
   type = 'text',
 }: {
   label: string;
   value: string;
   onInput: (value: string) => void;
   onConfirm?: () => void;
+  maxLength?: number;
   type?: 'text' | 'email' | 'password';
 }) {
   return (
@@ -116,6 +120,7 @@ export function Field({
         accessibility-label={label}
         type={type}
         confirm-type={onConfirm ? 'done' : undefined}
+        max-length={maxLength}
         value={value}
         placeholder={label}
         bindinput={(event) => onInput(event.detail.value)}
@@ -129,13 +134,20 @@ export function Action({
   children,
   onTap,
   quiet = false,
+  selected,
 }: {
   children: string;
   onTap: () => void;
   quiet?: boolean;
+  selected?: boolean;
 }) {
   return (
-    <Pressable className={quiet ? 'action action--quiet' : 'action'} label={children} onTap={onTap}>
+    <Pressable
+      className={quiet ? 'action action--quiet' : 'action'}
+      label={children}
+      onTap={onTap}
+      selected={selected}
+    >
       <text className={quiet ? 'action__text action__text--quiet' : 'action__text'}>
         {children}
       </text>
@@ -267,14 +279,14 @@ export function RouteList({
           direction="row"
         >
           <text className="route-card__index">{String(index + 1).padStart(2, '0')}</text>
-          <view className="route-card__copy">
+          <Stack className="route-card__copy" direction="column" grow>
             <text className="card__title">{route.name}</text>
             <text className="card__body">
               {route.gym.name} · {route.author.display_name}
             </text>
-          </view>
+          </Stack>
           <view className="route-card__right">
-            <text className="grade">{route.public_grade}</text>
+            <text className="grade">{route.public_grade || 'Unrated'}</text>
             <text className="route-card__stats">
               {route.votes} votes · {route.comment_count} notes
             </text>

@@ -20,22 +20,31 @@ import {
   type ThemePreference,
 } from '../../appearance.js';
 import { BRAND_PALETTE, logoMarkSvg } from '../../brand.js';
-import { APP_NAME, LAYOUT_CHANGE_EVENT, SYSTEM_THEME_EVENT } from '../../client-contract.js';
+import {
+  APP_NAME,
+  CLIMBING_GRADES,
+  LAYOUT_CHANGE_EVENT,
+  MAX_COMMENT_LENGTH,
+  SYSTEM_THEME_EVENT,
+} from '../../client-contract.js';
+import { iconColor } from '../../icons.js';
 import { openNativeMap } from '../../native-map.js';
 import { navigation } from '../../navigation.js';
 import { sessionStore } from '../../session.js';
 import { shareRoute } from '../../share.js';
-import { loginPath, WEB_PATHS, type AppRoute } from '../../web-routes.js';
+import { loginPath, parseWebRoute, WEB_PATHS, type AppRoute } from '../../web-routes.js';
 import {
   Action,
   AppearanceToggle,
   Field,
+  Icon,
   NavItem,
   Pressable,
   RouteList,
   Stack,
   ToolLink,
 } from './components.js';
+import { RouteDetail } from './RouteDetail.js';
 import './App.css';
 
 type Screen = 'explore' | 'feed' | 'route' | 'profile' | 'account' | 'admin';
@@ -44,6 +53,9 @@ type NoticeKind = 'success' | 'error';
 
 const GUEST_NAME = 'Guest';
 const DEFAULT_ROUTE: AppRoute = { name: 'gyms' };
+const FIRST_CLIMBING_GRADE = CLIMBING_GRADES[0];
+const LAST_CLIMBING_GRADE = CLIMBING_GRADES.at(-1)!;
+const CLIMBING_GRADE_RANGE = `${FIRST_CLIMBING_GRADE}–${LAST_CLIMBING_GRADE}`;
 
 const globalProps: GlobalProps = lynx.__globalProps;
 const initialRoute = globalProps?.initialRoute ?? DEFAULT_ROUTE;
@@ -261,30 +273,39 @@ export function App() {
     }).finally(() => setRoutesLoading(false));
   };
 
-  const openRoute = (routeId: string, origin: Screen = screen, syncHistory = true) => {
-    if (busyRef.current) return;
-    setRouteOrigin(origin);
+  const loadRouteDetail = async (
+    routeId: string,
+    sessionToken: string | null,
+    historyMode: 'push' | 'replace' | null
+  ) => {
     setCommentBody('');
     setGrade('');
-    setRoutesLoading(true);
     setCommentsLoading(true);
-    void attempt(async () => {
-      const detail = await api.route(routeId, token);
+    try {
+      const detail = await api.route(routeId, sessionToken);
       setSelectedRoute(detail);
       setGrade(detail.public_grade);
       setComments([]);
       changeScreen('route');
-      if (syncHistory) navigation.push(WEB_PATHS.route(routeId));
+      if (historyMode) navigation[historyMode](WEB_PATHS.route(routeId));
       try {
         setComments(await api.comments(routeId));
       } catch (error) {
-        if (error instanceof ApiError && error.status === 401 && token) throw error;
+        if (error instanceof ApiError && error.status === 401 && sessionToken) throw error;
         notify('error', 'Could not load comments. Try again.');
       }
-    }).finally(() => {
-      setRoutesLoading(false);
+    } finally {
       setCommentsLoading(false);
-    });
+    }
+  };
+
+  const openRoute = (routeId: string, origin: Screen = screen, syncHistory = true) => {
+    if (busyRef.current) return;
+    setRouteOrigin(origin);
+    setRoutesLoading(true);
+    void attempt(() => loadRouteDetail(routeId, token, syncHistory ? 'push' : null)).finally(() =>
+      setRoutesLoading(false)
+    );
   };
   const chooseRoute = (route: Route) => openRoute(route.id, screen);
 
@@ -384,8 +405,9 @@ export function App() {
       const result = await api.login(email, password);
       const returnsToBrowserTool =
         postLoginPath === WEB_PATHS.gymMap || postLoginPath === WEB_PATHS.newRoute;
+      const returnRoute = postLoginPath ? parseWebRoute(postLoginPath) : null;
       const nextRoutes =
-        returnsToBrowserTool || postLoginPath === WEB_PATHS.admin
+        returnsToBrowserTool || postLoginPath === WEB_PATHS.admin || returnRoute?.name === 'route'
           ? []
           : await api.routes(result.token);
       sessionStore.save(result.token);
@@ -418,6 +440,10 @@ export function App() {
         } finally {
           setAdminLoading(false);
         }
+        return;
+      }
+      if (returnRoute?.name === 'route') {
+        await loadRouteDetail(returnRoute.routeId, result.token, 'replace');
         return;
       }
       changeScreen('feed');
@@ -493,11 +519,12 @@ export function App() {
   const submitGrade = () => {
     if (!token || !selectedRoute) return;
     void attempt(async () => {
-      if (!grade.trim()) {
-        notify('error', 'Choose a community grade before submitting.');
+      const normalizedGrade = grade.trim().toUpperCase();
+      if (!CLIMBING_GRADES.includes(normalizedGrade)) {
+        notify('error', `Use a grade from ${FIRST_CLIMBING_GRADE} to ${LAST_CLIMBING_GRADE}.`);
         return;
       }
-      const result = await api.grade(token, selectedRoute.id, grade.trim());
+      const result = await api.grade(token, selectedRoute.id, normalizedGrade);
       setSelectedRoute({ ...selectedRoute, public_grade: result.public_grade });
     });
   };
@@ -505,7 +532,16 @@ export function App() {
   const postComment = () => {
     if (!token || !selectedRoute) return;
     void attempt(async () => {
-      await api.comment(token, selectedRoute.id, commentBody);
+      const comment = commentBody.trim();
+      if (!comment) {
+        notify('error', 'Write a note before posting.');
+        return;
+      }
+      if (comment.length > MAX_COMMENT_LENGTH) {
+        notify('error', `Keep notes at most ${MAX_COMMENT_LENGTH} characters.`);
+        return;
+      }
+      await api.comment(token, selectedRoute.id, comment);
       setCommentBody('');
       setComments(await api.comments(selectedRoute.id));
     });
@@ -607,6 +643,16 @@ export function App() {
   const accountName = user?.username ?? GUEST_NAME;
   const accountInitial = [...(user?.display_name || accountName)][0].toUpperCase();
   const navItemDirection = wideLayout ? 'row' : 'column';
+  const scrollKey =
+    screen === 'route'
+      ? `route-${selectedRoute?.id}`
+      : screen === 'profile'
+        ? `profile-${selectedProfile?.username}`
+        : screen === 'explore'
+          ? `explore-${selectedGym?.id ?? 'gyms'}`
+          : screen === 'feed'
+            ? `feed-${followingFeed ? 'following' : 'everyone'}`
+            : screen;
   const nav = (
     <Stack className="nav" direction="row">
       <Stack className="nav__primary" direction="row">
@@ -656,6 +702,7 @@ export function App() {
       <Pressable
         className="nav__account"
         label={user ? 'Your profile' : 'Guest account'}
+        selected={screen === 'account'}
         direction="row"
         onTap={() => {
           if (busyRef.current) return;
@@ -682,9 +729,14 @@ export function App() {
   if (screen === 'profile' && selectedProfile) {
     content = (
       <view className="content">
-        <Action quiet onTap={backFromProfile}>
-          Back
-        </Action>
+        <Pressable className="back-link" label="Back" onTap={backFromProfile} direction="row">
+          <Icon
+            name="arrowLeft"
+            color={iconColor(colorScheme, 'base')}
+            className="back-link__icon"
+          />
+          <text className="back-link__text">Back</text>
+        </Pressable>
         <text className="eyebrow">Climber profile</text>
         <text className="heading">{selectedProfile.display_name}</text>
         <text className="lede">
@@ -721,147 +773,88 @@ export function App() {
     );
   } else if (screen === 'route' && selectedRoute) {
     content = (
-      <view className="content">
-        <Action quiet onTap={backFromRoute}>
-          Back
-        </Action>
-        <text className="eyebrow">{selectedRoute.gym.name}</text>
-        <text className="topo-number">ROUTE {selectedRoute.id.slice(0, 4).toUpperCase()}</text>
-        <text className="heading">{selectedRoute.name}</text>
-        <Stack className="route-meta" direction="row">
-          <text className="grade">{selectedRoute.public_grade}</text>
-          <Pressable
-            label={`Open ${selectedRoute.author.display_name}'s profile`}
-            onTap={() => chooseProfile(selectedRoute.author.username)}
-          >
-            <text className="muted">by {selectedRoute.author.display_name}</text>
-          </Pressable>
-        </Stack>
-        <image
-          className="route-image"
-          src={api.imageUrl(selectedRoute.image_url)}
-          mode="aspectFit"
-          accessibility-element
-          accessibility-label={`${selectedRoute.name} route topo`}
-        />
-        <Stack className="stat-row" direction="row">
-          <Action
-            quiet={selectedRoute.voted}
-            onTap={() => {
-              if (!token) {
-                return requireLogin('Sign in to vote on routes.');
-              }
-              void attempt(async () => {
-                const vote = await api.vote(token, selectedRoute.id, !selectedRoute.voted);
-                setSelectedRoute({ ...selectedRoute, ...vote });
-              });
-            }}
-          >
-            {selectedRoute.voted
-              ? `Voted · ${selectedRoute.votes}`
-              : `Vote · ${selectedRoute.votes}`}
-          </Action>
-          <Action
-            quiet
-            onTap={() =>
-              void shareRoute(selectedRoute.id, selectedRoute.name)
-                .then((result) => {
-                  if (result === 'cancelled') return;
-                  if (result === 'unavailable')
-                    throw new Error('Sharing is not available on this device.');
-                  notify(
-                    'success',
-                    result === 'copied'
-                      ? 'Route link copied.'
-                      : result === 'opened'
-                        ? 'Share sheet opened.'
-                        : 'Route shared.'
-                  );
-                })
-                .catch((error) =>
-                  notify('error', error instanceof Error ? error.message : 'Sharing failed.')
-                )
+      <RouteDetail
+        view={{
+          route: selectedRoute,
+          routeImageUrl: api.imageUrl(selectedRoute.image_url),
+          comments,
+          commentsLoading,
+          signedIn: Boolean(token),
+          wideLayout,
+          colorScheme,
+          grade,
+          gradeRange: CLIMBING_GRADE_RANGE,
+          gradeAccessibilityLabel: `Community grade from ${FIRST_CLIMBING_GRADE} to ${LAST_CLIMBING_GRADE}`,
+          commentBody,
+          maxCommentLength: MAX_COMMENT_LENGTH,
+        }}
+        actions={{
+          back: backFromRoute,
+          openAuthor: () => chooseProfile(selectedRoute.author.username),
+          vote: () => {
+            if (!token) {
+              return requireLogin('Sign in to vote on routes.');
             }
-          >
-            Share route
-          </Action>
-        </Stack>
-        {token && (
-          <>
-            <text className="section-title">Community grade</text>
-            <Stack className="inline-form" direction="row">
-              <input
-                className="field__input field__input--small"
-                accessibility-element
-                accessibility-label="Community grade"
-                value={grade}
-                placeholder="Choose a grade"
-                bindinput={(event) => setGrade(event.detail.value)}
-                confirm-type="done"
-                bindconfirm={submitGrade}
-              />
-              <Action onTap={submitGrade}>Submit</Action>
-            </Stack>
-            <text className="section-title">Add one comment</text>
-            <Field
-              label="Add a useful note"
-              value={commentBody}
-              onInput={setCommentBody}
-              onConfirm={postComment}
-            />
-            <Action onTap={postComment}>Post comment</Action>
-          </>
-        )}
-        <text className="section-title">Comments</text>
-        {commentsLoading ? (
-          <text className="muted">Loading comments…</text>
-        ) : comments.length ? (
-          comments.map((comment) => (
-            <view className="card" key={comment.id}>
-              <text className="card__title">{comment.author.display_name}</text>
-              <text className="card__body">{comment.body}</text>
-            </view>
-          ))
-        ) : (
-          <text className="muted">No comments yet.</text>
-        )}
-        {token && (
-          <Pressable
-            className="danger-link"
-            label="Report this route"
-            onTap={() =>
-              void attempt(async () => {
-                await api.report(token, selectedRoute.id, 'Community safety review');
-                notify('success', 'Report sent to the moderators.');
+            void attempt(async () => {
+              const vote = await api.vote(token, selectedRoute.id, !selectedRoute.voted);
+              setSelectedRoute({ ...selectedRoute, ...vote });
+            });
+          },
+          share: () =>
+            void shareRoute(selectedRoute.id, selectedRoute.name)
+              .then((result) => {
+                if (result === 'cancelled') return;
+                if (result === 'unavailable')
+                  throw new Error('Sharing is not available on this device.');
+                notify(
+                  'success',
+                  result === 'copied'
+                    ? 'Route link copied.'
+                    : result === 'opened'
+                      ? 'Share sheet opened.'
+                      : 'Route shared.'
+                );
               })
-            }
-          >
-            <text>Report this route</text>
-          </Pressable>
-        )}
-      </view>
+              .catch((error) =>
+                notify('error', error instanceof Error ? error.message : 'Sharing failed.')
+              ),
+          changeGrade: setGrade,
+          submitGrade,
+          changeComment: setCommentBody,
+          postComment,
+          signInToContribute: () =>
+            requireLogin('Sign in to contribute.', WEB_PATHS.route(selectedRoute.id)),
+          report: () =>
+            void attempt(async () => {
+              await api.report(token!, selectedRoute.id, 'Community safety review');
+              notify('success', 'Report sent to the moderators.');
+            }),
+        }}
+      />
     );
   } else if (screen === 'account') {
     content = user ? (
-      <view className="content">
+      <view className="content content--account">
         <text className="eyebrow">Your account</text>
         <text className="heading">{user.username}</text>
         <text className="lede">{user.email}</text>
         <Field label="Display name" value={displayName} onInput={setDisplayName} />
-        <Action
-          onTap={() =>
-            void attempt(async () => {
-              const updated = await api.updateProfile(token!, displayName);
-              setUser(updated);
-              notify('success', 'Profile saved.');
-            })
-          }
-        >
-          Save profile
-        </Action>
-        <Action quiet onTap={logout}>
-          Sign out
-        </Action>
+        <Stack className="account-actions" direction="column">
+          <Action
+            onTap={() =>
+              void attempt(async () => {
+                const updated = await api.updateProfile(token!, displayName);
+                setUser(updated);
+                notify('success', 'Profile saved.');
+              })
+            }
+          >
+            Save profile
+          </Action>
+          <Action quiet onTap={logout}>
+            Sign out
+          </Action>
+        </Stack>
       </view>
     ) : (
       <view className="content content--auth">
@@ -884,7 +877,7 @@ export function App() {
           type="email"
           value={email}
           onInput={setEmail}
-          onConfirm={authMode === 'forgot' ? forgot : undefined}
+          onConfirm={authMode === 'forgot' ? submitAuth : undefined}
         />
         {authMode !== 'forgot' && (
           <Field
@@ -1050,6 +1043,7 @@ export function App() {
         <Stack className="stat-row" direction="row">
           <Action
             quiet={followingFeed}
+            selected={!followingFeed}
             onTap={() => {
               navigation.push(WEB_PATHS.feed());
               void loadFeed(false);
@@ -1059,6 +1053,7 @@ export function App() {
           </Action>
           <Action
             quiet={!followingFeed}
+            selected={followingFeed}
             onTap={() => {
               if (!token) {
                 return requireLogin('Sign in to see routes from climbers you follow.');
@@ -1145,37 +1140,38 @@ export function App() {
     );
   }
 
+  const pageClass = `${wideLayout ? 'app-frame page--desktop' : 'app-frame'}${themeClass}`;
   return (
-    <scroll-view
-      className={`${wideLayout ? 'page page--desktop' : 'page'}${themeClass}`}
-      scroll-orientation="vertical"
-    >
-      <view className="shell">
-        <Stack className="topbar" direction="row">
-          <Stack className="brand" direction="row">
-            <svg
-              key={`brand-${colorScheme}`}
-              className="brand__mark"
-              content={logoMarkSvg(BRAND_PALETTE[colorScheme])}
-            />
-            <text className="brand__name">{APP_NAME}</text>
+    <view className={pageClass}>
+      <scroll-view key={scrollKey} className="page" scroll-orientation="vertical">
+        <view className="shell">
+          <Stack className="topbar" direction="row">
+            <Stack className="brand" direction="row">
+              <svg
+                key={`brand-${colorScheme}`}
+                className="brand__mark"
+                content={logoMarkSvg(BRAND_PALETTE[colorScheme])}
+              />
+              <text className="brand__name">{APP_NAME}</text>
+            </Stack>
+            <text className="status">{busy ? 'Working…' : ''}</text>
+            <AppearanceToggle value={colorScheme} onToggle={toggleTheme} />
+            {wideLayout && nav}
           </Stack>
-          <text className="status">{busy ? 'Working…' : ''}</text>
-          <AppearanceToggle value={colorScheme} onToggle={toggleTheme} />
-          {nav}
-        </Stack>
-        {message && (
-          <text
-            className={noticeKind === 'success' ? 'notice notice--success' : 'notice'}
-            accessibility-element
-            accessibility-traits="updating"
-            accessibility-label={message}
-          >
-            {message}
-          </text>
-        )}
-        {content}
-      </view>
-    </scroll-view>
+          {message && (
+            <text
+              className={noticeKind === 'success' ? 'notice notice--success' : 'notice'}
+              accessibility-element
+              accessibility-traits="updating"
+              accessibility-label={message}
+            >
+              {message}
+            </text>
+          )}
+          {content}
+        </view>
+      </scroll-view>
+      {!wideLayout && nav}
+    </view>
   );
 }
