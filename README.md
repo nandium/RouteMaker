@@ -41,7 +41,14 @@ ADMIN_EMAIL=you@example.com
 ```
 
 Gym maps use OpenFreeMap's public OpenStreetMap-based styles and tiles. No map
-account, token, or build-time environment variable is required.
+account, token, or build-time environment variable is required. Place search is
+proxied through the Worker to Photon's public OpenStreetMap geocoder, so the
+clients share one small response contract and the provider remains replaceable.
+Map centering prefers optional device location and otherwise uses Cloudflare's
+coarse request location when available; coordinates are neither cached nor
+persisted by RouteMaker. Approved gym coordinates are product data and remain in
+D1. The public search relay intentionally has no app-level state or rate-limit
+store; the free Worker request allowance is its cost boundary.
 
 Web navigation uses resource paths such as `/gyms`, `/routes/:id`, and
 `/users/:username`; account and tool pages have their own paths too. Cloudflare

@@ -10,6 +10,19 @@ selected gym ID to ReactLynx. Wall-photo annotation remains a lazy browser tool
 because reproducing Canvas and ONNX Runtime in both shells would add more code
 than value.
 
+Browser place search is submitted explicitly rather than on every keystroke.
+Known gym matches appear immediately, while the same submission also reaches
+Photon so a query can find both RouteMaker gyms and general places.
+Maps ask for device location only while they are open. Before permission
+resolves—or if it is declined—the map uses Cloudflare's coarse connection
+location when it is available, then an approved gym or the shared Singapore
+default. Coordinates are reduced to map-level precision and never cached or
+persisted by RouteMaker when used as device or search-bias hints; approved and
+requested gym coordinates remain product data. Photon receives the submitted
+query and rounded map center and operates independently. Explicit submission,
+bounded queries, and a five-result cap keep fair-use traffic low without a cache
+table or provider SDK.
+
 Native and browser storage are separate, so opening a hosted tool from Android
 or iOS asks you to sign in there. On the website, the product UI and tools share
 the same browser session.
