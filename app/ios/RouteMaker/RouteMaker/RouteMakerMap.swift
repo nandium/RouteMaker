@@ -18,6 +18,7 @@ private struct MapScene: Decodable {
     let centerLatitude: CLLocationDegrees
     let centerLongitude: CLLocationDegrees
     let zoom: Double
+    let locationZoom: Double
 }
 
 @objcMembers
@@ -67,6 +68,7 @@ private final class RouteMakerMapViewController: UIViewController, MLNMapViewDel
     private let completion: (String) -> Void
     private var gymIDs: [ObjectIdentifier: String] = [:]
     private var completed = false
+    private var centeredOnUser = false
 
     init(scene: MapScene, completion: @escaping (String) -> Void) {
         self.scene = scene
@@ -88,6 +90,13 @@ private final class RouteMakerMapViewController: UIViewController, MLNMapViewDel
             target: self,
             action: #selector(close)
         )
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Gyms",
+            style: .plain,
+            target: self,
+            action: #selector(showGyms)
+        )
+        navigationItem.rightBarButtonItem?.isEnabled = !scene.gyms.isEmpty
         navigationController?.navigationBar.overrideUserInterfaceStyle = dark ? .dark : .light
 
         let mapView = MLNMapView(
@@ -96,6 +105,8 @@ private final class RouteMakerMapViewController: UIViewController, MLNMapViewDel
         )
         mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         mapView.delegate = self
+        mapView.locationManager.setDesiredAccuracy?(kCLLocationAccuracyReduced)
+        mapView.showsUserLocation = true
         view.addSubview(mapView)
 
         let annotations = scene.gyms.map { gym -> MLNPointAnnotation in
@@ -110,41 +121,62 @@ private final class RouteMakerMapViewController: UIViewController, MLNMapViewDel
             return annotation
         }
         mapView.addAnnotations(annotations)
-        if annotations.isEmpty {
-            mapView.setCenter(
-                CLLocationCoordinate2D(
-                    latitude: scene.centerLatitude,
-                    longitude: scene.centerLongitude
-                ),
-                zoomLevel: scene.zoom,
-                animated: false
-            )
-        } else if annotations.count == 1, let coordinate = annotations.first?.coordinate {
-            mapView.setCenter(coordinate, zoomLevel: scene.zoom, animated: false)
-        } else {
-            mapView.showAnnotations(
-                annotations,
-                edgePadding: UIEdgeInsets(top: 72, left: 40, bottom: 72, right: 40),
-                animated: false,
-                completionHandler: nil
-            )
-        }
+        mapView.setCenter(
+            CLLocationCoordinate2D(
+                latitude: scene.centerLatitude,
+                longitude: scene.centerLongitude
+            ),
+            zoomLevel: scene.zoom,
+            animated: false
+        )
     }
 
     @objc private func close() {
         finish("")
     }
 
+    @objc private func showGyms() {
+        let chooser = UIAlertController(title: "Choose a gym", message: nil, preferredStyle: .alert)
+        for gym in scene.gyms {
+            chooser.addAction(UIAlertAction(title: gym.name, style: .default) { _ in
+                self.finish(gym.id)
+            })
+        }
+        chooser.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(chooser, animated: true)
+    }
+
     private func finish(_ gymID: String) {
         guard !completed else { return }
         completed = true
-        dismiss(animated: true) {
+        (navigationController ?? self).dismiss(animated: true) {
             self.completion(gymID)
         }
     }
 
     func mapView(_: MLNMapView, annotationCanShowCallout _: MLNAnnotation) -> Bool {
         true
+    }
+
+    func mapView(
+        _: MLNMapView,
+        shouldChangeFrom _: MLNMapCamera,
+        to _: MLNMapCamera
+    ) -> Bool {
+        // A gesture means the user's chosen view now takes precedence over a
+        // device-location update that may still be resolving.
+        centeredOnUser = true
+        return true
+    }
+
+    func mapView(_ mapView: MLNMapView, didUpdate userLocation: MLNUserLocation?) {
+        guard !centeredOnUser, let location = userLocation?.location else { return }
+        centeredOnUser = true
+        mapView.setCenter(
+            location.coordinate,
+            zoomLevel: scene.locationZoom,
+            animated: true
+        )
     }
 
     func mapView(

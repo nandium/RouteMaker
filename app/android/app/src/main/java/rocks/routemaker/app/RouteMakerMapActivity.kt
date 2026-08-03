@@ -1,12 +1,15 @@
 package rocks.routemaker.app
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Gravity
-import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -15,10 +18,14 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
-import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
-import org.maplibre.android.geometry.LatLngBounds
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.OnLocationCameraTransitionListener
+import org.maplibre.android.location.engine.LocationEngineRequest
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
+import org.maplibre.android.maps.Style
 import org.maplibre.android.style.layers.CircleLayer
 import org.maplibre.android.style.layers.PropertyFactory.circleColor
 import org.maplibre.android.style.layers.PropertyFactory.circleRadius
@@ -32,6 +39,8 @@ import org.maplibre.geojson.Point
 class RouteMakerMapActivity : Activity() {
     private lateinit var mapView: MapView
     private lateinit var scene: MapScene
+    private var map: MapLibreMap? = null
+    private var style: Style? = null
     private val dark get() = scene.theme == "dark"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +61,8 @@ class RouteMakerMapActivity : Activity() {
 
         mapView.getMapAsync { map ->
             map.setStyle(scene.style) { style ->
+                this.map = map
+                this.style = style
                 val features = scene.gyms.map { gym ->
                     Feature.fromGeometry(Point.fromLngLat(gym.longitude, gym.latitude)).apply {
                         addStringProperty(GYM_ID, gym.id)
@@ -78,25 +89,78 @@ class RouteMakerMapActivity : Activity() {
                         true
                     }
                 }
-                when (scene.gyms.size) {
-                    0 -> map.cameraPosition = CameraPosition.Builder()
-                        .target(LatLng(scene.centerLatitude, scene.centerLongitude))
-                        .zoom(scene.zoom)
-                        .build()
-                    1 -> map.cameraPosition = CameraPosition.Builder()
-                        .target(LatLng(scene.gyms[0].latitude, scene.gyms[0].longitude))
-                        .zoom(scene.zoom)
-                        .build()
-                    else -> mapView.post {
-                        val bounds = LatLngBounds.Builder().apply {
-                            scene.gyms.forEach { include(LatLng(it.latitude, it.longitude)) }
-                        }.build()
-                        map.animateCamera(
-                            CameraUpdateFactory.newLatLngBounds(bounds, dp(MAP_PADDING)),
-                        )
+                map.cameraPosition = CameraPosition.Builder()
+                    .target(LatLng(scene.centerLatitude, scene.centerLongitude))
+                    .zoom(scene.zoom)
+                    .build()
+                requestLocation()
+            }
+        }
+    }
+
+    private fun requestLocation() {
+        if (
+            checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            showUserLocation()
+            return
+        }
+        requestPermissions(
+            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+            LOCATION_PERMISSION_REQUEST,
+        )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun showUserLocation() {
+        val currentMap = map ?: return
+        val currentStyle = style ?: return
+        val location = currentMap.locationComponent
+        if (!location.isLocationComponentActivated) {
+            val request = LocationEngineRequest.Builder(LOCATION_UPDATE_INTERVAL_MS)
+                .setFastestInterval(LOCATION_UPDATE_INTERVAL_MS)
+                .setPriority(LocationEngineRequest.PRIORITY_LOW_POWER)
+                .build()
+            location.activateLocationComponent(
+                LocationComponentActivationOptions.builder(this, currentStyle)
+                    .locationEngineRequest(request)
+                    .useDefaultLocationEngine(true)
+                    .build(),
+            )
+        }
+        location.isLocationComponentEnabled = true
+        // MapLibre dismisses tracking when the user pans, so location centers
+        // the initial view without fighting later map exploration.
+        location.setCameraMode(
+            CameraMode.TRACKING,
+            LOCATION_CAMERA_TRANSITION_MS,
+            scene.locationZoom,
+            null,
+            null,
+            object : OnLocationCameraTransitionListener {
+                override fun onLocationCameraTransitionFinished(cameraMode: Int) {
+                    if (currentMap.cameraPosition.zoom != scene.locationZoom) {
+                        location.zoomWhileTracking(scene.locationZoom)
                     }
                 }
-            }
+
+                override fun onLocationCameraTransitionCanceled(cameraMode: Int) = Unit
+            },
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (
+            requestCode == LOCATION_PERMISSION_REQUEST &&
+            grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+        ) {
+            showUserLocation()
         }
     }
 
@@ -117,16 +181,32 @@ class RouteMakerMapActivity : Activity() {
             setTextColor(if (dark) Color.WHITE else INK)
             gravity = Gravity.CENTER
         }, LinearLayout.LayoutParams(0, dp(48), 1f))
-        addView(View(context), LinearLayout.LayoutParams(dp(72), 1))
+        addView(Button(context).apply {
+            text = "Gyms"
+            isEnabled = scene.gyms.isNotEmpty()
+            setTextColor(if (dark) Color.WHITE else INK)
+            setBackgroundColor(Color.TRANSPARENT)
+            setOnClickListener { showGyms() }
+        })
     }
 
     private fun hint() = TextView(this).apply {
-        text = "Tap a marker to open the gym."
+        text = "Tap a marker or choose Gyms above."
         textSize = 14f
         gravity = Gravity.CENTER
         setTextColor(if (dark) Color.WHITE else INK)
         setPadding(dp(16), dp(12), dp(16), dp(12))
         background = rounded(if (dark) 0xEE17201D.toInt() else 0xEEF3F4EF.toInt())
+    }
+
+    private fun showGyms() {
+        AlertDialog.Builder(this)
+            .setTitle("Choose a gym")
+            .setItems(scene.gyms.map { it.label }.toTypedArray()) { _, index ->
+                finishWithGym(scene.gyms[index].id)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun finishWithGym(gymId: String) {
@@ -201,7 +281,9 @@ class RouteMakerMapActivity : Activity() {
         const val SCENE = "scene"
         const val GYM_ID = "gymId"
 
-        private const val MAP_PADDING = 72
+        private const val LOCATION_PERMISSION_REQUEST = 42
+        private const val LOCATION_CAMERA_TRANSITION_MS = 750L
+        private const val LOCATION_UPDATE_INTERVAL_MS = 10_000L
         private const val INK = 0xFF17201D.toInt()
         private const val MARKER_LIGHT = 0xFF1261A0.toInt()
         private const val MARKER_DARK = 0xFF73B7E8.toInt()
@@ -215,23 +297,34 @@ class RouteMakerMapActivity : Activity() {
                 for (index in 0 until items.length()) {
                     val item = items.optJSONObject(index) ?: continue
                     val id = item.optString("id")
+                    val name = item.optString("name").ifBlank { "Gym ${index + 1}" }
+                    val address = item.optString("address")
                     val latitude = item.optDouble("latitude", Double.NaN)
                     val longitude = item.optDouble("longitude", Double.NaN)
                     if (id.isBlank() || !latitude.isFinite() || !longitude.isFinite()) {
                         continue
                     }
-                    add(GymLocation(id, latitude, longitude))
+                    add(
+                        GymLocation(
+                            id,
+                            listOf(name, address).filter { it.isNotBlank() }.joinToString(", "),
+                            latitude,
+                            longitude,
+                        ),
+                    )
                 }
             }
             val style = scene.optString("style")
             val centerLatitude = scene.optDouble("centerLatitude", Double.NaN)
             val centerLongitude = scene.optDouble("centerLongitude", Double.NaN)
             val zoom = scene.optDouble("zoom", Double.NaN)
+            val locationZoom = scene.optDouble("locationZoom", Double.NaN)
             if (
                 style.isBlank() ||
                 !centerLatitude.isFinite() ||
                 !centerLongitude.isFinite() ||
-                !zoom.isFinite()
+                !zoom.isFinite() ||
+                !locationZoom.isFinite()
             ) {
                 return null
             }
@@ -242,6 +335,7 @@ class RouteMakerMapActivity : Activity() {
                 centerLatitude,
                 centerLongitude,
                 zoom,
+                locationZoom,
             )
         }
     }
@@ -253,10 +347,12 @@ class RouteMakerMapActivity : Activity() {
         val centerLatitude: Double,
         val centerLongitude: Double,
         val zoom: Double,
+        val locationZoom: Double,
     )
 
     data class GymLocation(
         val id: String,
+        val label: String,
         val latitude: Double,
         val longitude: Double,
     )
