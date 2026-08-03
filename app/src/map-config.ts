@@ -1,5 +1,5 @@
 import type { ColorScheme } from './appearance.js';
-import type { Gym } from './client-contract.js';
+import type { Gym, MapLocation } from './client-contract.js';
 
 export const MAP_STYLES = {
   light: 'https://tiles.openfreemap.org/styles/liberty',
@@ -12,7 +12,14 @@ export const DEFAULT_MAP_VIEW = {
   zoom: 10.5,
 } as const;
 
-export function nativeMapScene(gyms: Gym[], theme: ColorScheme) {
+export const USER_LOCATION_ZOOM = 13;
+
+export function nativeMapScene(
+  gyms: Gym[],
+  theme: ColorScheme,
+  approximateLocation: MapLocation | null
+) {
+  const center = approximateLocation ?? gyms[0] ?? DEFAULT_MAP_VIEW;
   return {
     gyms: gyms.map(({ id, name, address, latitude, longitude }) => ({
       id,
@@ -23,8 +30,9 @@ export function nativeMapScene(gyms: Gym[], theme: ColorScheme) {
     })),
     theme,
     style: MAP_STYLES[theme],
-    centerLatitude: DEFAULT_MAP_VIEW.latitude,
-    centerLongitude: DEFAULT_MAP_VIEW.longitude,
+    centerLatitude: center.latitude,
+    centerLongitude: center.longitude,
     zoom: DEFAULT_MAP_VIEW.zoom,
+    locationZoom: USER_LOCATION_ZOOM,
   };
 }

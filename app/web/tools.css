@@ -298,11 +298,122 @@ button.secondary {
   color: var(--rm-danger);
 }
 
+.map-shell {
+  margin-top: 18px;
+  position: relative;
+}
+
 .map {
   border-radius: var(--rm-panel-radius);
   height: min(62vh, 620px);
-  margin-top: 18px;
   overflow: hidden;
+}
+
+.map-search {
+  left: 12px;
+  max-width: calc(100% - 24px);
+  position: absolute;
+  top: 12px;
+  width: 360px;
+  z-index: 2;
+}
+
+.map-search__bar {
+  background: var(--rm-paper);
+  border-radius: var(--rm-control-radius);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 16%);
+  display: flex;
+  overflow: hidden;
+}
+
+.map-search input {
+  background: transparent;
+  border: 0;
+  color: var(--rm-ink);
+  flex: 1;
+  font: inherit;
+  min-width: 0;
+  padding: 12px 14px;
+}
+
+.map-search input:focus {
+  outline: 0;
+}
+
+.map-search__bar:focus-within {
+  outline: 3px solid var(--rm-focus);
+  outline-offset: 2px;
+}
+
+.map-search__bar > button {
+  align-items: center;
+  border-radius: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  width: 46px;
+}
+
+.map-search__bar > button svg {
+  height: 18px;
+  width: 18px;
+}
+
+.map-search__results {
+  background: var(--rm-paper);
+  border-radius: var(--rm-control-radius);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 16%);
+  margin-top: 6px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+.map-search__result {
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: var(--rm-ink);
+  display: block;
+  padding: 9px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.map-search__result:hover {
+  background: var(--rm-background);
+  opacity: 1;
+}
+
+.map-search__result strong,
+.map-search__result span {
+  display: block;
+}
+
+.map-search__result span {
+  color: var(--rm-muted);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 3px;
+}
+
+.map-search__results .tool-status {
+  margin: 8px 10px;
+}
+
+.map-search__count {
+  color: var(--rm-muted);
+  font-size: 12px;
+  margin: 5px 10px;
+}
+
+.map-search__attribution {
+  color: var(--rm-muted);
+  font-size: 11px;
+  margin: 5px 10px 7px;
+}
+
+.map-search__attribution a {
+  color: inherit;
 }
 
 .map-marker {
@@ -354,6 +465,14 @@ button.secondary {
 
 .map .maplibregl-popup-tip {
   display: none;
+}
+
+.map .maplibregl-ctrl-group {
+  background: var(--rm-paper);
+}
+
+[data-theme='dark'] .map .maplibregl-ctrl-icon {
+  filter: invert(1);
 }
 
 .tool-map-card {

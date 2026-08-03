@@ -108,6 +108,8 @@ export function App() {
   const [adminLoading, setAdminLoading] = useState(false);
   const initialRouteHandled = useRef(false);
   const authGeneration = useRef(0);
+  const mapOpening = useRef(false);
+  const mapOpenGeneration = useRef(0);
   const [sessionReady, setSessionReady] = useState(false);
   const [themePreference, setThemePreference] = useState<ThemePreference | null>(
     initialThemePreference
@@ -116,6 +118,15 @@ export function App() {
   const [wideLayout, setWideLayout] = useState(initialWideLayout);
   const colorScheme = resolveColorScheme(themePreference, systemTheme);
   const themeClass = ` theme-${colorScheme}`;
+
+  const cancelPendingMap = () => {
+    mapOpenGeneration.current += 1;
+    mapOpening.current = false;
+  };
+  const changeScreen = (next: Screen) => {
+    cancelPendingMap();
+    setScreen(next);
+  };
 
   useLynxGlobalEventListener(LAYOUT_CHANGE_EVENT, (value: unknown) => {
     if (typeof value === 'boolean') setWideLayout(value);
@@ -187,7 +198,7 @@ export function App() {
     notify('error', text);
     setPostLoginPath(next);
     setAuthMode('login');
-    setScreen('account');
+    changeScreen('account');
     navigation.push(loginPath(next));
   };
 
@@ -240,6 +251,7 @@ export function App() {
 
   const chooseGym = (gym: Gym, syncHistory = true) => {
     if (busyRef.current) return;
+    cancelPendingMap();
     setRoutesLoading(true);
     void attempt(async () => {
       setSelectedGym(gym);
@@ -261,7 +273,7 @@ export function App() {
       setSelectedRoute(detail);
       setGrade(detail.public_grade);
       setComments([]);
-      setScreen('route');
+      changeScreen('route');
       if (syncHistory) navigation.push(WEB_PATHS.route(routeId));
       try {
         setComments(await api.comments(routeId));
@@ -284,7 +296,7 @@ export function App() {
       const profile = await api.profile(username, token);
       setSelectedProfile(profile);
       setRoutes(await api.routes(token, { authorId: profile.id }));
-      setScreen('profile');
+      changeScreen('profile');
       if (syncHistory) navigation.push(WEB_PATHS.profile(username));
     }).finally(() => setRoutesLoading(false));
   };
@@ -311,12 +323,12 @@ export function App() {
   };
   const backFromProfile = () => {
     if (navigation.back(pathForScreen(profileOrigin))) return;
-    setScreen(profileOrigin);
+    changeScreen(profileOrigin);
     restoreList(profileOrigin);
   };
   const backFromRoute = () => {
     if (navigation.back(pathForScreen(routeOrigin))) return;
-    setScreen(routeOrigin);
+    changeScreen(routeOrigin);
     restoreList(routeOrigin);
   };
 
@@ -332,20 +344,38 @@ export function App() {
   };
 
   const openTool = (tool: 'map' | 'editor', replace = false) => {
-    if (
-      tool === 'map' &&
-      openNativeMap(gyms, colorScheme, (gymId) => {
-        const gym = gyms.find((candidate) => candidate.id === gymId);
-        if (gym) chooseGym(gym);
-      })
-    ) {
+    if (tool === 'map') {
+      if (mapOpening.current) return;
+      mapOpening.current = true;
+      const generation = ++mapOpenGeneration.current;
+      void openNativeMap(
+        gyms,
+        colorScheme,
+        api.location,
+        () => generation === mapOpenGeneration.current,
+        (gymId) => {
+          if (generation !== mapOpenGeneration.current) return;
+          mapOpening.current = false;
+          const gym = gyms.find((candidate) => candidate.id === gymId);
+          if (gym) chooseGym(gym);
+        }
+      )
+        .then((result) => {
+          if (generation !== mapOpenGeneration.current) return;
+          mapOpening.current = false;
+          if (result === 'unavailable') {
+            openBrowserPath(WEB_PATHS.gymMap, 'gym map', replace);
+          }
+        })
+        .catch(() => {
+          if (generation !== mapOpenGeneration.current) return;
+          mapOpening.current = false;
+          notify('error', 'Could not open the gym map. Try again.');
+        });
       return;
     }
-    openBrowserPath(
-      tool === 'map' ? WEB_PATHS.gymMap : WEB_PATHS.newRoute,
-      tool === 'map' ? 'gym map' : 'route editor',
-      replace
-    );
+    cancelPendingMap();
+    openBrowserPath(WEB_PATHS.newRoute, 'route editor', replace);
   };
 
   const login = () => {
@@ -375,12 +405,12 @@ export function App() {
       }
       if (nextPath === WEB_PATHS.admin) {
         if (result.user.role !== 'admin') {
-          setScreen('account');
+          changeScreen('account');
           navigation.replace(WEB_PATHS.account);
           notify('error', 'Administrator access is required.');
           return;
         }
-        setScreen('admin');
+        changeScreen('admin');
         navigation.replace(WEB_PATHS.admin);
         setAdminLoading(true);
         try {
@@ -390,7 +420,7 @@ export function App() {
         }
         return;
       }
-      setScreen('feed');
+      changeScreen('feed');
       navigation.replace(WEB_PATHS.feed());
     }).finally(() => setSessionReady(true));
   };
@@ -454,7 +484,7 @@ export function App() {
         setSelectedProfile(null);
         setFollowingFeed(false);
         setAuthMode('login');
-        setScreen('account');
+        changeScreen('account');
         navigation.replace(WEB_PATHS.login);
       }
     });
@@ -491,7 +521,7 @@ export function App() {
 
   const showExplore = () => {
     if (busyRef.current) return;
-    setScreen('explore');
+    changeScreen('explore');
     setSelectedGym(null);
     setSelectedRoute(null);
     setSelectedProfile(null);
@@ -538,22 +568,22 @@ export function App() {
       return;
     }
     if (initialRoute.name === 'feed') {
-      setScreen('feed');
+      changeScreen('feed');
       void loadFeed(initialRoute.following);
       return;
     }
     if (initialRoute.name === 'admin') {
       if (user?.role === 'admin') {
-        setScreen('admin');
+        changeScreen('admin');
         loadAdmin();
       } else if (user) {
-        setScreen('account');
+        changeScreen('account');
         navigation.replace(WEB_PATHS.account);
         notify('error', 'Administrator access is required.');
       } else {
         setPostLoginPath(WEB_PATHS.admin);
         setAuthMode('login');
-        setScreen('account');
+        changeScreen('account');
         navigation.replace(loginPath(WEB_PATHS.admin));
       }
       return;
@@ -569,7 +599,7 @@ export function App() {
         initialRoute.name === 'signup' ||
         initialRoute.name === 'forgot-password')
     ) {
-      setScreen('account');
+      changeScreen('account');
       navigation.replace(WEB_PATHS.account);
     }
   }, [sessionReady, gymsLoading]);
@@ -601,7 +631,7 @@ export function App() {
             setSelectedGym(null);
             setSelectedRoute(null);
             setSelectedProfile(null);
-            setScreen('feed');
+            changeScreen('feed');
             navigation.push(WEB_PATHS.feed());
             void loadFeed(false);
           }}
@@ -616,7 +646,7 @@ export function App() {
             direction={navItemDirection}
             onTap={() => {
               if (busyRef.current) return;
-              setScreen('admin');
+              changeScreen('admin');
               navigation.push(WEB_PATHS.admin);
               loadAdmin();
             }}
@@ -630,7 +660,7 @@ export function App() {
         onTap={() => {
           if (busyRef.current) return;
           setPostLoginPath(undefined);
-          setScreen('account');
+          changeScreen('account');
           navigation.push(user ? WEB_PATHS.account : WEB_PATHS.login);
         }}
       >
@@ -1070,14 +1100,16 @@ export function App() {
           </Stack>
         ) : (
           <Stack className="tool-links" direction={wideLayout ? 'row' : 'column'}>
-            <ToolLink
-              colorScheme={colorScheme}
-              icon="map"
-              title="Gym map"
-              detail="Browse gyms by location"
-              grow={wideLayout}
-              onTap={() => openTool('map')}
-            />
+            {!gymsLoading && !gymsFailed && (
+              <ToolLink
+                colorScheme={colorScheme}
+                icon="map"
+                title="Gym map"
+                detail="Browse gyms by location"
+                grow={wideLayout}
+                onTap={() => openTool('map')}
+              />
+            )}
             <ToolLink
               colorScheme={colorScheme}
               icon="plus"

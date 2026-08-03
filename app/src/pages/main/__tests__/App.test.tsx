@@ -43,6 +43,7 @@ vi.mock('../../../api.js', () => ({
   },
   api: {
     gyms: vi.fn(async () => [gym]),
+    location: vi.fn(async () => null),
     routes: vi.fn(async () => [route]),
     route: vi.fn(async () => route),
     comments: vi.fn(async () => [
@@ -213,15 +214,42 @@ test('reports tool navigation failures without asking users to open a raw URL', 
   expect(queries.queryByText(/Open http/)).not.toBeInTheDocument();
 });
 
+test('offers the native map only after gyms finish loading', async () => {
+  let resolveGyms: ((gyms: [typeof gym]) => void) | undefined;
+  vi.mocked(api.gyms).mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolveGyms = resolve;
+      })
+  );
+  render(<App />);
+  const queries = getQueriesForElement(elementTree.root!);
+
+  expect(queries.queryByText('Gym map')).not.toBeInTheDocument();
+  resolveGyms?.([gym]);
+
+  expect(await queries.findByText('Gym map')).toBeInTheDocument();
+});
+
 test('opens the native map and follows a selected gym', async () => {
+  let resolveLocation: ((location: { latitude: number; longitude: number }) => void) | undefined;
+  vi.mocked(api.location).mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolveLocation = resolve;
+      })
+  );
   const push = vi.fn();
+  const openExternal = vi.fn(() => true);
   let mapScene: unknown;
+  let mapOpenCount = 0;
   let selectGym: ((gymId: string) => void) | undefined;
   globalThis.NativeModules = {
     ...baselineNativeModules,
-    RouteMakerNavigation: { push, replace: vi.fn(), back: vi.fn() },
+    RouteMakerNavigation: { push, replace: vi.fn(), back: vi.fn(), openExternal },
     RouteMakerMap: {
       open: (scene: string, callback: (gymId: string) => void) => {
+        mapOpenCount += 1;
         mapScene = JSON.parse(scene);
         selectGym = callback;
       },
@@ -230,17 +258,57 @@ test('opens the native map and follows a selected gym', async () => {
   render(<App />);
   const queries = getQueriesForElement(elementTree.root!);
 
+  await queries.findByText('Gym map');
+  expect(api.location).not.toHaveBeenCalled();
   await tapText(queries, 'Gym map');
-  expect(mapScene).toMatchObject({
-    gyms: [{ id: 'central', latitude: 1.3, longitude: 103.8 }],
-    style: MAP_STYLES.light,
-    theme: 'light',
+  await tapText(queries, 'Gym map');
+  resolveLocation?.({
+    latitude: 51.5072,
+    longitude: -0.1276,
   });
+  await vi.waitFor(() =>
+    expect(mapScene).toMatchObject({
+      gyms: [{ id: 'central', latitude: 1.3, longitude: 103.8 }],
+      style: MAP_STYLES.light,
+      theme: 'light',
+      centerLatitude: 51.5072,
+      centerLongitude: -0.1276,
+    })
+  );
+  expect(api.location).toHaveBeenCalledOnce();
+  expect(mapOpenCount).toBe(1);
   selectGym?.('central');
 
   expect(await queries.findByText('Blue Moon')).toBeInTheDocument();
   expect(push).toHaveBeenCalledWith('/gyms/central');
 });
+
+test.each(['Add a route', 'Feed', 'Central Bloc'])(
+  'does not present a pending native map after navigating to %s',
+  async (destination) => {
+    let resolveLocation: ((location: null) => void) | undefined;
+    vi.mocked(api.location).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveLocation = resolve;
+        })
+    );
+    const open = vi.fn();
+    globalThis.NativeModules = {
+      ...baselineNativeModules,
+      RouteMakerMap: { open },
+    };
+    render(<App />);
+    const queries = getQueriesForElement(elementTree.root!);
+
+    await tapText(queries, 'Gym map');
+    await tapText(queries, destination);
+    resolveLocation?.(null);
+
+    await vi.waitFor(() => expect(api.location).toHaveBeenCalledOnce());
+    expect(open).not.toHaveBeenCalled();
+  }
+);
 
 test('applies and persists an explicit color theme', async () => {
   const setPreference = vi.fn();

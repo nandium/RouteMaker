@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { STORAGE_KEYS } from '../client-contract.js';
+import { API_PATHS, STORAGE_KEYS } from '../client-contract.js';
 import { browserRequest } from '../../web/http.js';
 
 describe('browser host seams', () => {
@@ -53,5 +53,11 @@ describe('browser host seams', () => {
       vi.fn(async () => ({ ok: true, status: 204, json: vi.fn() }))
     );
     await expect(browserRequest('/logout', { method: 'POST' })).resolves.toBeUndefined();
+  });
+
+  it('limits place-search bias to map-level precision', () => {
+    expect(API_PATHS.places('Boulder+', 1.352123, 103.819812)).toBe(
+      '/places?q=Boulder%2B&lat=1.352&lon=103.820'
+    );
   });
 });
