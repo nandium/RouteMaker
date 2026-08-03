@@ -10,6 +10,7 @@ import {
 } from "./shared";
 import { handleAuth } from "./auth";
 import { adminApi } from "./admin";
+import { approximateLocation, placeSearch } from "./places";
 import { media, routesApi } from "./routes";
 async function handleApi(req: Request, env: Env, path: string) {
   const method = req.method,
@@ -36,6 +37,8 @@ async function handleApi(req: Request, env: Env, path: string) {
       max_image_bytes: MAX_IMAGE_BYTES,
       max_image_dimension: MAX_IMAGE_DIMENSION,
     });
+  if (path === "/places" && method === "GET") return placeSearch(req);
+  if (path === "/location" && method === "GET") return approximateLocation(req);
   return routesApi(req, env, path);
 }
 

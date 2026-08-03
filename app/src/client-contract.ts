@@ -1,7 +1,14 @@
-/** The small set of data shapes, paths, and constants shared by app and browser clients. */
+/** The small contract shared by the Lynx app, browser tools, and Worker boundaries. */
 export const APP_NAME = 'ROUTEMAKER';
 export const LAYOUT_CHANGE_EVENT = 'routemaker:layout-change';
 export const SYSTEM_THEME_EVENT = 'routemaker:system-theme-change';
+export const MAP_COORDINATE_LIMITS = { latitude: 90, longitude: 180 } as const;
+export const PLACE_SEARCH = {
+  minQueryLength: 3,
+  maxQueryLength: 100,
+  resultLimit: 5,
+  biasDecimals: 3,
+} as const;
 
 export type User = {
   id: string;
@@ -20,6 +27,18 @@ export type Gym = {
   latitude: number;
   longitude: number;
   status: string;
+};
+
+export type Place = {
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type MapLocation = {
+  latitude: number;
+  longitude: number;
 };
 
 export type Annotation = {
@@ -83,6 +102,9 @@ export const STORAGE_KEYS = {
 
 export const API_PATHS = {
   gyms: '/gyms',
+  location: '/location',
+  places: (query: string, latitude: number, longitude: number) =>
+    `/places?q=${encodeURIComponent(query)}&lat=${latitude.toFixed(PLACE_SEARCH.biasDecimals)}&lon=${longitude.toFixed(PLACE_SEARCH.biasDecimals)}`,
   routes: '/routes',
   route: (id: string) => `/routes/${id}`,
   comments: (routeId: string) => `/routes/${routeId}/comments`,

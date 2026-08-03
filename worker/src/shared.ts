@@ -50,7 +50,7 @@ export const json = (
   });
 export const noContent = () => new Response(null, { status: 204 });
 export const fail = (status: number, detail: string) =>
-  json({ detail }, status);
+  json({ detail }, status, { "cache-control": "no-store" });
 /** Validate bounded text without coercing non-string JSON/FormData values. */
 export function requiredText(
   value: unknown,

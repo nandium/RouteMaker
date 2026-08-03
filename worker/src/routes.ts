@@ -1,3 +1,4 @@
+import { MAP_COORDINATE_LIMITS } from "../../app/src/client-contract";
 import {
   Env,
   all,
@@ -51,12 +52,10 @@ export function validateGymCoordinates(
   if (
     typeof latitude !== "number" ||
     !Number.isFinite(latitude) ||
-    latitude < -90 ||
-    latitude > 90 ||
+    Math.abs(latitude) > MAP_COORDINATE_LIMITS.latitude ||
     typeof longitude !== "number" ||
     !Number.isFinite(longitude) ||
-    longitude < -180 ||
-    longitude > 180
+    Math.abs(longitude) > MAP_COORDINATE_LIMITS.longitude
   )
     throw fail(422, "Invalid gym details");
   return [latitude, longitude];

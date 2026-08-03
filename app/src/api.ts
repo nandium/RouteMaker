@@ -1,4 +1,12 @@
-export type { Comment, Gym, PublicProfile, Report, Route, User } from './client-contract.js';
+export type {
+  Comment,
+  Gym,
+  MapLocation,
+  PublicProfile,
+  Report,
+  Route,
+  User,
+} from './client-contract.js';
 import { API_PATHS } from './client-contract.js';
 import type {
   AuthSession,
@@ -7,6 +15,7 @@ import type {
   FollowResponse,
   GradeResponse,
   Gym,
+  MapLocation,
   PublicProfile,
   Report,
   Route,
@@ -70,6 +79,9 @@ export const api = {
   },
   gyms() {
     return request<Gym[]>(API_PATHS.gyms);
+  },
+  location() {
+    return request<MapLocation | null>(API_PATHS.location);
   },
   routes(token: string | null, filters: RouteFilters = {}) {
     const values: string[] = [];

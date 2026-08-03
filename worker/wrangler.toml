@@ -1,6 +1,7 @@
 name = "routemaker-worker"
 main = "src/index.ts"
 compatibility_date = "2026-07-29"
+compatibility_flags = ["enable_request_signal"]
 
 [assets]
 directory = "../app/web/dist"
