@@ -3,6 +3,9 @@ export const APP_NAME = 'ROUTEMAKER';
 export const LAYOUT_CHANGE_EVENT = 'routemaker:layout-change';
 export const SYSTEM_THEME_EVENT = 'routemaker:system-theme-change';
 export const MAP_COORDINATE_LIMITS = { latitude: 90, longitude: 180 } as const;
+export const CLIMBING_GRADES = Array.from({ length: 18 }, (_, index) => `V${index}`);
+export const MAX_COMMENT_LENGTH = 500;
+export const MAX_ROUTE_NAME_LENGTH = 80;
 export const PLACE_SEARCH = {
   minQueryLength: 3,
   maxQueryLength: 100,
@@ -39,13 +42,6 @@ export type Place = {
 export type MapLocation = {
   latitude: number;
   longitude: number;
-};
-
-export type Annotation = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
 };
 
 export type Route = {
