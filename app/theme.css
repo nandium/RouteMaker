@@ -1,0 +1,105 @@
+:root,
+.theme-light {
+  --rm-accent: #b74425;
+  --rm-accent-soft: #f8d7cb;
+  --rm-accent-ink: #7d2d1c;
+  --rm-background: #f3f4ef;
+  --rm-ink: #17201d;
+  --rm-line: #d8dfd9;
+  --rm-muted: #64716b;
+  --rm-paper: #fffef9;
+  --rm-danger: #a63c2a;
+  --rm-danger-soft: #fff1e8;
+  --rm-danger-line: #f1c6b5;
+  --rm-success: #39704e;
+  --rm-success-soft: #e8f3e9;
+  --rm-success-line: #b7d5bd;
+  --rm-focus: #2563eb;
+  --rm-route-selection: #0b6fe8;
+  --rm-route-selection-edge: #111111;
+  --rm-route-selection-soft: rgb(11 111 232 / 16%);
+  --rm-route-label-background: #ffffff;
+  --rm-route-label-ink: #111111;
+  --rm-route-tape: #080808;
+  --rm-route-tape-edge: #ffffff;
+  --rm-font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --rm-content-width: 880px;
+  --rm-workspace-width: 1080px;
+  --rm-header-height: 68px;
+  --rm-desktop-gutter: 32px;
+  --rm-mobile-gutter: 18px;
+  --rm-mobile-footer-space: 90px;
+  --rm-control-radius: 8px;
+  --rm-panel-radius: 12px;
+  --rm-type-caption: 13px;
+  --rm-type-control: 14px;
+  --rm-type-body: 16px;
+  --rm-type-lede: 17px;
+  --rm-type-title: 18px;
+  --rm-type-display: 44px;
+  --rm-leading-body: 22px;
+  --rm-leading-lede: 27px;
+}
+
+.theme-dark {
+  --rm-accent: #e07a55;
+  --rm-accent-soft: #44271f;
+  --rm-accent-ink: #ffc2ab;
+  --rm-background: #111714;
+  --rm-ink: #edf2ec;
+  --rm-line: #35413b;
+  --rm-muted: #a4b0aa;
+  --rm-paper: #19221e;
+  --rm-danger: #ff9a7b;
+  --rm-danger-soft: #3b211b;
+  --rm-danger-line: #704033;
+  --rm-success: #8dc89e;
+  --rm-success-soft: #1c3024;
+  --rm-success-line: #395744;
+  --rm-focus: #7aa8ff;
+}
+
+.appearance-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 2px;
+}
+
+.appearance-toggle__icon {
+  display: block;
+  flex-shrink: 0;
+  height: 17px;
+  width: 17px;
+}
+
+.appearance-toggle__icon svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.appearance-toggle__track {
+  background: var(--rm-line);
+  border-radius: 14px;
+  height: 26px;
+  padding: 3px;
+  width: 48px;
+}
+
+.appearance-toggle__thumb {
+  background: var(--rm-paper);
+  border-radius: 10px;
+  display: block;
+  height: 20px;
+  transition: margin-left 160ms ease;
+  width: 20px;
+}
+
+.appearance-toggle--dark .appearance-toggle__thumb {
+  margin-left: 22px;
+}

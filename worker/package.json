@@ -1,0 +1,26 @@
+{
+  "name": "routemaker-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "format": "prettier --write src test *.json *.ts",
+    "format:check": "prettier --check src test *.json *.ts",
+    "check": "npm run format:check && npm run typecheck && npm test -- --run && npm run deploy:dry",
+    "build:web": "npm --prefix ../app run build:web",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "dev": "npm run build:web && npm run migrate:local && wrangler dev",
+    "bootstrap": "npm run build:web && wrangler deploy && wrangler d1 migrations apply DB --remote && wrangler deploy",
+    "deploy": "npm run build:web && wrangler d1 migrations apply DB --remote && wrangler deploy",
+    "deploy:dry": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.19.0",
+    "@cloudflare/workers-types": "^5.20260729.1",
+    "prettier": "^3.9.6",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.68.0"
+  }
+}

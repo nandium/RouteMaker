@@ -1,3 +1,9 @@
 * text=auto
 
 *.ipynb linguist-detectable=false
+*.jar binary
+*.jpg binary
+*.onnx binary
+*.onnx.data binary
+*.png binary
+*.webp binary

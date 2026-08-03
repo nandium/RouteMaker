@@ -1,0 +1,118 @@
+PODS:
+  - libwebp (1.6.0):
+    - libwebp/demux (= 1.6.0)
+    - libwebp/mux (= 1.6.0)
+    - libwebp/sharpyuv (= 1.6.0)
+    - libwebp/webp (= 1.6.0)
+  - libwebp/demux (1.6.0):
+    - libwebp/webp
+  - libwebp/mux (1.6.0):
+    - libwebp/demux
+  - libwebp/sharpyuv (1.6.0)
+  - libwebp/webp (1.6.0):
+    - libwebp/sharpyuv
+  - Lynx (4.0.1):
+    - Lynx/Framework (= 4.0.1)
+  - Lynx/Framework (4.0.1):
+    - Lynx/ReleaseResource
+    - LynxBase/Framework
+    - LynxServiceAPI
+    - PrimJS/napi/env
+    - PrimJS/napi/jsc
+    - PrimJS/napi/quickjs
+    - PrimJS/quickjs (= 4.0.0)
+  - Lynx/ReleaseResource (4.0.1)
+  - LynxBase (4.0.1):
+    - LynxBase/Framework (= 4.0.1)
+  - LynxBase/Framework (4.0.1):
+    - LynxServiceAPI/Core
+  - LynxService/Http (4.0.1):
+    - Lynx (= 4.0.1)
+    - LynxServiceAPI (= 4.0.1)
+  - LynxService/Image (4.0.1):
+    - Lynx (= 4.0.1)
+    - LynxServiceAPI (= 4.0.1)
+    - SDWebImage (= 5.15.5)
+    - SDWebImageWebPCoder (= 0.11.0)
+  - LynxService/Log (4.0.1):
+    - Lynx (= 4.0.1)
+    - LynxBase (= 4.0.1)
+    - LynxServiceAPI (= 4.0.1)
+  - LynxServiceAPI (4.0.1):
+    - LynxServiceAPI/Core (= 4.0.1)
+  - LynxServiceAPI/Core (4.0.1)
+  - PrimJS/log (4.0.0)
+  - PrimJS/napi/core (4.0.0)
+  - PrimJS/napi/env (4.0.0):
+    - PrimJS/napi/core
+  - PrimJS/napi/jsc (4.0.0):
+    - PrimJS/log
+    - PrimJS/napi/core
+    - PrimJS/quickjs
+  - PrimJS/napi/quickjs (4.0.0):
+    - PrimJS/napi/core
+    - PrimJS/quickjs
+  - PrimJS/quickjs (4.0.0):
+    - PrimJS/log
+  - SDWebImage (5.15.5):
+    - SDWebImage/Core (= 5.15.5)
+  - SDWebImage/Core (5.15.5)
+  - SDWebImageWebPCoder (0.11.0):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.15)
+  - ServalSVG (0.1.1)
+  - XElement/Input (4.0.1):
+    - Lynx (= 4.0.1)
+  - XElement/SVG (4.0.1):
+    - Lynx (= 4.0.1)
+    - ServalSVG (>= 0.0.17)
+
+DEPENDENCIES:
+  - "Lynx/Framework (from `{http: \"https://github.com/lynx-family/lynx/releases/download/4.0.1/Lynx-4.0.1.zip\"}`)"
+  - "LynxService/Http (from `{http: \"https://github.com/lynx-family/lynx/releases/download/4.0.1/LynxService-4.0.1.zip\"}`)"
+  - "LynxService/Image (from `{http: \"https://github.com/lynx-family/lynx/releases/download/4.0.1/LynxService-4.0.1.zip\"}`)"
+  - "LynxService/Log (from `{http: \"https://github.com/lynx-family/lynx/releases/download/4.0.1/LynxService-4.0.1.zip\"}`)"
+  - "XElement/Input (from `{http: \"https://github.com/lynx-family/lynx/releases/download/4.0.1/XElement-4.0.1.zip\"}`)"
+  - "XElement/SVG (from `{http: \"https://github.com/lynx-family/lynx/releases/download/4.0.1/XElement-4.0.1.zip\"}`)"
+
+SPEC REPOS:
+  trunk:
+    - libwebp
+    - LynxBase
+    - LynxServiceAPI
+    - PrimJS
+    - SDWebImage
+    - SDWebImageWebPCoder
+    - ServalSVG
+
+EXTERNAL SOURCES:
+  Lynx:
+    :http: https://github.com/lynx-family/lynx/releases/download/4.0.1/Lynx-4.0.1.zip
+  LynxService:
+    :http: https://github.com/lynx-family/lynx/releases/download/4.0.1/LynxService-4.0.1.zip
+  XElement:
+    :http: https://github.com/lynx-family/lynx/releases/download/4.0.1/XElement-4.0.1.zip
+
+CHECKOUT OPTIONS:
+  Lynx:
+    :http: https://github.com/lynx-family/lynx/releases/download/4.0.1/Lynx-4.0.1.zip
+  LynxService:
+    :http: https://github.com/lynx-family/lynx/releases/download/4.0.1/LynxService-4.0.1.zip
+  XElement:
+    :http: https://github.com/lynx-family/lynx/releases/download/4.0.1/XElement-4.0.1.zip
+
+SPEC CHECKSUMS:
+  libwebp: af5937a13536ef73f3784d69cc342b98961acf33
+  Lynx: ccabb2322b26f64a8d9ce4b8d7ae9871cda6c441
+  LynxBase: 5ca5092517e6460e0df6ad9b49fca76396c058d8
+  LynxService: f447c67687d3ea66eec94e10b7564996e67c06dc
+  LynxServiceAPI: 67ae06f77e45c80f0ecaa6705d126ac3b4b8dff4
+  PrimJS: f048efc0923e73cde312466a110516f56b70834d
+  SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
+  SDWebImageWebPCoder: 295a6573c512f54ad2dd58098e64e17dcf008499
+  ServalSVG: 6990830fdd5c1e7d545fc8c842a98bea6007dd86
+  XElement: 50941fbc1f7bb98be8f0e28577c257d2a70ef739
+
+PODFILE CHECKSUM: ae49b78e71f91e940059b9fe15c2400e4dac7308
+
+COCOAPODS: 1.16.2

@@ -1,0 +1,16 @@
+name = "routemaker-worker"
+main = "src/index.ts"
+compatibility_date = "2026-07-29"
+compatibility_flags = ["enable_request_signal"]
+
+[assets]
+directory = "../app/web/dist"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/media/*"]
+
+[[d1_databases]]
+binding = "DB"
+migrations_dir = "migrations"
+database_name = "routemaker-worker"
+database_id = "b5b7f075-1c06-4073-b5f3-4994c108ffad"
+# The ID is versioned so every deployment targets the same production database.

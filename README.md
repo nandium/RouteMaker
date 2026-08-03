@@ -1,19 +1,113 @@
-<img src="https://raw.githubusercontent.com/nandium/RouteMaker/main/docs/favicon-lightmode-name.svg" width="200" />
+# RouteMaker
 
-![GitHub](https://img.shields.io/github/license/nandium/RouteMaker?style=flat-square) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/nandium/RouteMaker?style=flat-square)
+RouteMaker lets climbers mark holds on a wall photo, publish the route to a
+gym, and discuss, vote on, and grade it together.
 
-## Features
+The revival has two runtime parts:
 
-### Drawing Board for Routes
+- `app/` — one ReactLynx product UI for Android, iOS, and the web. MapLibre
+  renders native maps in both shells and the browser map; Canvas and the
+  browser-local ONNX detector are loaded only by the web route editor.
+- `worker/` — one TypeScript Cloudflare Worker serving the website and API,
+  with one D1 database for product data and tightly compressed route photos.
 
-In rock climbing/ bouldering, seasoned climbers tend to make routes for one another with unrelated handholds in the gym. One route can be as long as ordered/ unordered 10-30 moves which can include memorization of both handholds and footholds. One way is to draw them out on handphone but it is difficult to point out the exact holds with fat fingers. Labeling the exact order of moves can be troublesome too.
+Firebase Authentication owns passwords, verification mail, and password-reset
+mail. The Worker keeps profiles, roles, and revocable app sessions, so Firebase
+does not spread through the product code.
 
-By utilizing Object Detection, this application takes in :camera: pictures of climbing walls and provides the handholds as interactable buttons to make the route creation process easier.
+There is no Python service, model server, container, compatibility API, or
+legacy AWS/Ionic runtime.
 
-### Route Sharing System
+## Run locally
 
-Users can upload the routes that they created so that other climbers in the same gyms can try out too. Since climbing grades have subjective aspects to them, people can also grade each other's routes to produce a more accurate assessment. Fun and interesting routes can be upvoted so that more people will take notice. If there are interesting betas to a problem, users can mention them in the comments too.
+Use Node 22.12 or newer.
 
-## Contributing
+```sh
+cd app
+npm ci
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Refer to [CONTRIBUTING.md](CONTRIBUTING.md) for PR and local setup instructions.
+cd ../worker
+npm ci
+npm run dev
+```
+
+Open <http://127.0.0.1:8787>. The local command applies the D1 migration,
+builds the website, and starts the Worker. Put a Firebase Web API key in
+`worker/.dev.vars` first:
+
+```text
+FIREBASE_API_KEY=your-key
+ADMIN_EMAIL=you@example.com
+```
+
+Gym maps use OpenFreeMap's public OpenStreetMap-based styles and tiles. No map
+account, token, or build-time environment variable is required. Place search is
+proxied through the Worker to Photon's public OpenStreetMap geocoder, so the
+clients share one small response contract and the provider remains replaceable.
+Map centering prefers optional device location and otherwise uses Cloudflare's
+coarse request location when available; coordinates are neither cached nor
+persisted by RouteMaker. Approved gym coordinates are product data and remain in
+D1. The public search relay intentionally has no app-level state or rate-limit
+store; the free Worker request allowance is its cost boundary.
+
+Web navigation uses resource paths such as `/gyms`, `/routes/:id`, and
+`/users/:username`; account and tool pages have their own paths too. Cloudflare
+falls back to the app shell for these paths so shared links and browser refresh
+work without a second web server. Native screens keep the same state flow and
+ignore the optional browser-history bridge.
+
+Enable Email/Password sign-in in the Firebase project. In Authentication →
+Templates, set the action URL for verification and reset mail to the deployed
+RouteMaker `/auth/action` URL. The web shell handles both links and revokes old
+app sessions only after a password is changed.
+
+## Deploy
+
+Cloudflare hosts the static site, Worker, and D1 database as one project.
+Firebase Spark supplies authentication and account email. Create the production
+D1 database once, then copy its name and ID into the `[[d1_databases]]` entry in
+`worker/wrangler.toml` (both `database_name` and `database_id` are required for
+remote migrations and deploys):
+
+```sh
+cd worker
+npx wrangler login
+npx wrangler d1 create routemaker-worker
+# Add the returned database_name and database_id to worker/wrangler.toml.
+npx wrangler secret put FIREBASE_API_KEY
+npx wrangler secret put ADMIN_EMAIL
+npm run deploy
+```
+
+`ADMIN_EMAIL` is the account that becomes the first administrator. Restrict the
+Firebase key to the Identity Toolkit API. Later releases need only:
+
+```sh
+cd worker
+npm run deploy
+```
+
+Cloudflare's free Worker and D1 plans stop serving writes or requests at their
+free limits rather than creating metered overage. Firebase Spark also has daily
+authentication/email quotas.
+
+Route photos are raw JPEG BLOBs in D1, never Base64. The browser compresses
+them to at most 512 KiB and 1600 px; accounts may retain 20 photos and publish
+three routes per day. Uploads accept baseline Huffman JPEGs, the format emitted
+by the browser canvas. The site accepts at most 200 photos, which creates a
+hard 100 MiB photo ceiling inside D1's 500 MB Free-plan database limit.
+
+## Verify
+
+```sh
+cd app
+npm run check
+cd android && ./gradlew assembleDebug
+
+cd ../../worker
+npm run check
+```
+
+The ONNX model and its WASM runtime are both below Cloudflare's 25 MiB
+per-static-asset limit. Detection runs locally in a dedicated browser worker;
+photos stored in D1 are already resized, annotated JPEGs.

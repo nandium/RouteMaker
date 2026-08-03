@@ -1,0 +1,298 @@
+import type { ReactNode } from 'react';
+import type { ViewProps } from '@lynx-js/types/element';
+
+import type { Route } from '../../api.js';
+import type { ColorScheme } from '../../appearance.js';
+import { iconColor, iconSvg, type IconName } from '../../icons.js';
+
+type LayoutDirection = 'column' | 'row';
+
+function linearStyle(direction: LayoutDirection, grow = false) {
+  return {
+    display: 'linear' as const,
+    linearDirection: direction,
+    ...(grow ? { linearWeight: 1 } : {}),
+  };
+}
+
+// FIXME(lynx-web): Remove Stack and the inline direction/grow plumbing once
+// Lynx Web refreshes style-reactive fallbacks after StyleInfo is installed.
+// Restore these structural layouts to App.css when that upstream fix ships.
+export function Stack({
+  children,
+  direction,
+  grow = false,
+  ...props
+}: Omit<ViewProps, 'style'> & {
+  children: ReactNode;
+  direction: LayoutDirection;
+  grow?: boolean;
+}) {
+  return (
+    <view {...props} style={linearStyle(direction, grow)}>
+      {children}
+    </view>
+  );
+}
+
+export function Icon({
+  name,
+  color,
+  className,
+}: {
+  name: IconName;
+  color: string;
+  className?: string;
+}) {
+  return (
+    <svg
+      key={`${name}-${color}`}
+      className={className ? `icon ${className}` : 'icon'}
+      content={iconSvg(name, color)}
+    />
+  );
+}
+
+export function Pressable({
+  children,
+  label,
+  onTap,
+  className,
+  selected,
+  direction,
+  grow = false,
+}: {
+  children: ReactNode;
+  label: string;
+  onTap: () => void;
+  className?: string;
+  selected?: boolean;
+  direction?: LayoutDirection;
+  grow?: boolean;
+}) {
+  const selectedProps =
+    selected === undefined
+      ? {}
+      : {
+          'aria-pressed': selected,
+          'accessibility-value': selected ? 'Selected' : 'Not selected',
+        };
+  return (
+    <view
+      className={className ? `pressable ${className}` : 'pressable'}
+      style={direction ? linearStyle(direction, grow) : undefined}
+      {...({ 'aria-label': label, role: 'button', tabindex: '0', ...selectedProps } as object)}
+      bindtap={onTap}
+      accessibility-element
+      accessibility-traits={selected ? 'selected' : 'button'}
+      accessibility-role-description="button"
+      accessibility-label={label}
+      focusable
+    >
+      {children}
+    </view>
+  );
+}
+
+export function Field({
+  label,
+  value,
+  onInput,
+  onConfirm,
+  maxLength,
+  type = 'text',
+}: {
+  label: string;
+  value: string;
+  onInput: (value: string) => void;
+  onConfirm?: () => void;
+  maxLength?: number;
+  type?: 'text' | 'email' | 'password';
+}) {
+  return (
+    <view className="field">
+      <text className="field__label" accessibility-element accessibility-label={label}>
+        {label}
+      </text>
+      <input
+        className="field__input"
+        accessibility-element
+        accessibility-label={label}
+        type={type}
+        confirm-type={onConfirm ? 'done' : undefined}
+        max-length={maxLength}
+        value={value}
+        placeholder={label}
+        bindinput={(event) => onInput(event.detail.value)}
+        bindconfirm={onConfirm}
+      />
+    </view>
+  );
+}
+
+export function Action({
+  children,
+  onTap,
+  quiet = false,
+  selected,
+}: {
+  children: string;
+  onTap: () => void;
+  quiet?: boolean;
+  selected?: boolean;
+}) {
+  return (
+    <Pressable
+      className={quiet ? 'action action--quiet' : 'action'}
+      label={children}
+      onTap={onTap}
+      selected={selected}
+    >
+      <text className={quiet ? 'action__text action__text--quiet' : 'action__text'}>
+        {children}
+      </text>
+    </Pressable>
+  );
+}
+
+export function AppearanceToggle({
+  value,
+  onToggle,
+}: {
+  value: ColorScheme;
+  onToggle: () => void;
+}) {
+  const nextTheme = value === 'light' ? 'dark' : 'light';
+  return (
+    <Pressable
+      className={
+        value === 'dark' ? 'appearance-toggle appearance-toggle--dark' : 'appearance-toggle'
+      }
+      label={`Switch to ${nextTheme} theme`}
+      onTap={onToggle}
+      direction="row"
+    >
+      <Icon name="sun" color={iconColor(value, 'sun')} className="appearance-toggle__icon" />
+      <view className="appearance-toggle__track">
+        <view className="appearance-toggle__thumb" />
+      </view>
+      <Icon name="moon" color={iconColor(value, 'moon')} className="appearance-toggle__icon" />
+    </Pressable>
+  );
+}
+
+export function NavItem({
+  active,
+  accessibilityLabel,
+  colorScheme,
+  icon,
+  label,
+  direction,
+  onTap,
+}: {
+  active: boolean;
+  accessibilityLabel?: string;
+  colorScheme: ColorScheme;
+  icon: IconName;
+  label: string;
+  direction: LayoutDirection;
+  onTap: () => void;
+}) {
+  return (
+    <Pressable
+      className="nav__link"
+      label={accessibilityLabel ?? label}
+      onTap={onTap}
+      selected={active}
+      direction={direction}
+    >
+      <Icon
+        name={icon}
+        color={iconColor(colorScheme, active ? 'active' : 'base')}
+        className="nav__icon"
+      />
+      <text className={active ? 'nav__item nav__item--active' : 'nav__item'}>{label}</text>
+    </Pressable>
+  );
+}
+
+export function ToolLink({
+  colorScheme,
+  icon,
+  title,
+  detail,
+  direction = 'row',
+  grow = false,
+  onTap,
+}: {
+  colorScheme: ColorScheme;
+  icon: IconName;
+  title: string;
+  detail: string;
+  direction?: LayoutDirection;
+  grow?: boolean;
+  onTap: () => void;
+}) {
+  return (
+    <Pressable
+      className="tool-link"
+      label={`${title}: ${detail}`}
+      onTap={onTap}
+      direction={direction}
+      grow={grow}
+    >
+      <view className="tool-link__symbol">
+        <Icon name={icon} color={iconColor(colorScheme, 'active')} />
+      </view>
+      <view className="tool-link__copy">
+        <text className="tool-link__title">{title}</text>
+        <text className="tool-link__detail">{detail}</text>
+      </view>
+      <Icon
+        name="arrowRight"
+        color={iconColor(colorScheme, 'active')}
+        className="tool-link__arrow"
+      />
+    </Pressable>
+  );
+}
+
+export function RouteList({
+  routes,
+  chooseRoute,
+  loading = false,
+}: {
+  routes: Route[];
+  chooseRoute: (route: Route) => void;
+  loading?: boolean;
+}) {
+  if (loading) return <text className="muted loading">Loading routes…</text>;
+  if (!routes.length) return <text className="empty">No routes here yet.</text>;
+  return (
+    <view className="route-list">
+      {routes.map((route, index) => (
+        <Pressable
+          className="route-card"
+          key={route.id}
+          onTap={() => chooseRoute(route)}
+          label={`Open route ${index + 1}, ${route.name}`}
+          direction="row"
+        >
+          <text className="route-card__index">{String(index + 1).padStart(2, '0')}</text>
+          <Stack className="route-card__copy" direction="column" grow>
+            <text className="card__title">{route.name}</text>
+            <text className="card__body">
+              {route.gym.name} · {route.author.display_name}
+            </text>
+          </Stack>
+          <view className="route-card__right">
+            <text className="grade">{route.public_grade || 'Unrated'}</text>
+            <text className="route-card__stats">
+              {route.votes} votes · {route.comment_count} notes
+            </text>
+          </view>
+        </Pressable>
+      ))}
+    </view>
+  );
+}

@@ -1,0 +1,452 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7A6D5E4C3B2A190800000001 /* MapLibre in Frameworks */ = {isa = PBXBuildFile; productRef = 7A6D5E4C3B2A190800000003 /* MapLibre */; };
+		903208242ED9629900167236 /* main.lynx.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 903208232ED9629900167236 /* main.lynx.bundle */; };
+		CEAB8C5202B26CF8F0BE5581 /* Pods_RouteMaker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B00F0DF4C89E15C31BC93A3 /* Pods_RouteMaker.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		44B59A872DE9041F00A05B89 /* RouteMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RouteMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B00F0DF4C89E15C31BC93A3 /* Pods_RouteMaker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RouteMaker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CA3C88BC922913EC94B79D5 /* Pods-RouteMaker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RouteMaker.release.xcconfig"; path = "Target Support Files/Pods-RouteMaker/Pods-RouteMaker.release.xcconfig"; sourceTree = "<group>"; };
+		903208232ED9629900167236 /* main.lynx.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; path = ../dist/main.lynx.bundle; sourceTree = "<group>"; };
+		E28DB50001F3EFBF06162E18 /* Pods-RouteMaker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RouteMaker.debug.xcconfig"; path = "Target Support Files/Pods-RouteMaker/Pods-RouteMaker.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		44B59A892DE9041F00A05B89 /* RouteMaker */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = RouteMaker;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		44B59A842DE9041F00A05B89 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A6D5E4C3B2A190800000001 /* MapLibre in Frameworks */,
+				CEAB8C5202B26CF8F0BE5581 /* Pods_RouteMaker.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2C26194B87B073C85741772F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4B00F0DF4C89E15C31BC93A3 /* Pods_RouteMaker.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		44B59A7E2DE9041F00A05B89 = {
+			isa = PBXGroup;
+			children = (
+				903208232ED9629900167236 /* main.lynx.bundle */,
+				44B59A892DE9041F00A05B89 /* RouteMaker */,
+				44B59A882DE9041F00A05B89 /* Products */,
+				ADC955934F105445573B90AE /* Pods */,
+				2C26194B87B073C85741772F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		44B59A882DE9041F00A05B89 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				44B59A872DE9041F00A05B89 /* RouteMaker.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ADC955934F105445573B90AE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E28DB50001F3EFBF06162E18 /* Pods-RouteMaker.debug.xcconfig */,
+				8CA3C88BC922913EC94B79D5 /* Pods-RouteMaker.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		44B59A862DE9041F00A05B89 /* RouteMaker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44B59AAC2DE9042100A05B89 /* Build configuration list for PBXNativeTarget "RouteMaker" */;
+			buildPhases = (
+				9C984960EF9A3261DC49D691 /* [CP] Check Pods Manifest.lock */,
+				A3F1A7B42E3D4C5B8F9012A3 /* Validate release API endpoint */,
+				44B59A832DE9041F00A05B89 /* Sources */,
+				44B59A842DE9041F00A05B89 /* Frameworks */,
+				44B59A852DE9041F00A05B89 /* Resources */,
+				51F49D3A4032A6DD15914B92 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				44B59A892DE9041F00A05B89 /* RouteMaker */,
+			);
+			name = RouteMaker;
+			packageProductDependencies = (
+				7A6D5E4C3B2A190800000003 /* MapLibre */,
+			);
+			productName = RouteMaker;
+			productReference = 44B59A872DE9041F00A05B89 /* RouteMaker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		44B59A7F2DE9041F00A05B89 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					44B59A862DE9041F00A05B89 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+				};
+			};
+			buildConfigurationList = 44B59A822DE9041F00A05B89 /* Build configuration list for PBXProject "RouteMaker" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 44B59A7E2DE9041F00A05B89;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7A6D5E4C3B2A190800000002 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 44B59A882DE9041F00A05B89 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				44B59A862DE9041F00A05B89 /* RouteMaker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		44B59A852DE9041F00A05B89 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				903208242ED9629900167236 /* main.lynx.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		51F49D3A4032A6DD15914B92 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RouteMaker/Pods-RouteMaker-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RouteMaker/Pods-RouteMaker-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RouteMaker/Pods-RouteMaker-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9C984960EF9A3261DC49D691 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RouteMaker-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A3F1A7B42E3D4C5B8F9012A3 /* Validate release API endpoint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Validate release API endpoint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ]; then\n    case \"$ROUTEMAKER_API_BASE_URL\" in\n        https://*) ;;\n        *)\n            echo \"error: Release builds require ROUTEMAKER_API_BASE_URL=https://...\" >&2\n            exit 1\n            ;;\n    esac\n    endpoint=\"${ROUTEMAKER_API_BASE_URL#https://}\"\n    authority=\"${endpoint%%[/?#]*}\"\n    case \"$authority\" in\n        \"\"|:*|*[!A-Za-z0-9.:-]*)\n            echo \"error: Release API URL must use a normal hostname\" >&2\n            exit 1\n            ;;\n    esac\n    host=\"$authority\"\n    port=\"\"\n    case \"$authority\" in\n        *:*)\n            host=\"${authority%%:*}\"\n            port=\"${authority#*:}\"\n            case \"$port\" in\n                \"\"|*[!0-9]*)\n                    echo \"error: Release API URL port must be numeric\" >&2\n                    exit 1\n                    ;;\n            esac\n            if [ \"$port\" -lt 1 ] 2>/dev/null || [ \"$port\" -gt 65535 ] 2>/dev/null; then\n                echo \"error: Release API URL port must be between 1 and 65535\" >&2\n                exit 1\n            fi\n            ;;\n    esac\n    old_ifs=\"$IFS\"\n    IFS=.\n    for label in $host; do\n        case \"$label\" in\n            \"\"|[-]*|*[-])\n                echo \"error: Release API URL must use a normal hostname\" >&2\n                IFS=\"$old_ifs\"\n                exit 1\n                ;;\n        esac\n    done\n    IFS=\"$old_ifs\"\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		44B59A832DE9041F00A05B89 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7A6D5E4C3B2A190800000002 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/maplibre/maplibre-gl-native-distribution";
+			requirement = {
+				kind = exactVersion;
+				version = 6.28.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7A6D5E4C3B2A190800000003 /* MapLibre */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A6D5E4C3B2A190800000002 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			productName = MapLibre;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCBuildConfiguration section */
+		44B59AAA2DE9042100A05B89 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/RouteMaker/RouteMaker/Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		44B59AAB2DE9042100A05B89 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/RouteMaker/RouteMaker/Bridging-Header.h";
+			};
+			name = Release;
+		};
+		44B59AAD2DE9042100A05B89 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E28DB50001F3EFBF06162E18 /* Pods-RouteMaker.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RL87M95CBB;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rocks.routemaker.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				ROUTEMAKER_API_BASE_URL = "http://127.0.0.1:8787";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/RouteMaker/RouteMaker/Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		44B59AAE2DE9042100A05B89 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8CA3C88BC922913EC94B79D5 /* Pods-RouteMaker.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RL87M95CBB;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rocks.routemaker.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				ROUTEMAKER_API_BASE_URL = "";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/RouteMaker/RouteMaker/Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		44B59A822DE9041F00A05B89 /* Build configuration list for PBXProject "RouteMaker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44B59AAA2DE9042100A05B89 /* Debug */,
+				44B59AAB2DE9042100A05B89 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		44B59AAC2DE9042100A05B89 /* Build configuration list for PBXNativeTarget "RouteMaker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44B59AAD2DE9042100A05B89 /* Debug */,
+				44B59AAE2DE9042100A05B89 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 44B59A7F2DE9041F00A05B89 /* Project object */;
+}
