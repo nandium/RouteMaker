@@ -1,658 +1,295 @@
-import { MAP_COORDINATE_LIMITS } from "../../app/src/client-contract";
+import { ROUTE_FORM, type LikeResponse, type Route } from '../../app/src/client-contract';
+import { all, first, newId, now, run, stmt } from './db';
+import type { Env } from './env';
+import { fail, formBody, json, noContent, type Handler, type Params } from './http';
+import { isBaselineJpeg } from './jpeg';
 import {
-  Env,
-  all,
-  body,
-  fail,
-  formBody,
-  first,
-  id,
-  isUniqueViolation,
-  json,
-  now,
-  MAX_IMAGE_DIMENSION,
-  MAX_IMAGE_BYTES,
   DAILY_ROUTE_LIMIT,
+  DAILY_WINDOW_SECONDS,
+  ID_LENGTH,
+  LIST_LIMIT,
   MAX_SITE_IMAGES,
   MAX_USER_IMAGES,
-  MAX_ROUTE_NAME_LENGTH,
-  MAX_GYM_NAME_LENGTH,
-  MAX_GYM_ADDRESS_LENGTH,
-  MAX_COMMENT_LENGTH,
-  MAX_REPORT_REASON_LENGTH,
-  MAX_ID_LENGTH,
-  MAX_PENDING_GYMS_PER_USER,
-  ROUTE_WINDOW_SECONDS,
-  FEED_LIMIT,
-  requiredText,
-  GRADES,
-} from "./shared";
-import { current } from "./auth";
+  PHOTO,
+  ROUTE_NAME_LENGTH,
+  THUMBNAIL,
+  type JpegSpec,
+} from './limits';
+import { resolveReportsStmt } from './reports';
+import { requireUser, sessionUser, unauthenticated } from './session';
+import { grade, requiredText } from './validate';
 
-const ROUTE_SELECT =
-  "routes.id,routes.name,routes.owner_grade,users.username,users.display_name,gyms.name AS gym_name";
-const routeVisibility = "routes.status='visible' AND users.disabled=0";
-async function ensureActive(db: Env["DB"], userId: string) {
-  if (
-    !(await first(db, "SELECT id FROM users WHERE id=? AND disabled=0", userId))
-  )
-    throw fail(403, "Account is not available");
+type AuthorRow = { username: string; display_name: string };
+
+export const authorOf = (row: AuthorRow) => ({
+  username: row.username,
+  display_name: row.display_name,
+});
+
+// Routes with their social counts in one query; D1's Free plan allows only 50
+// queries per request. Likes and ascents of disabled users are ignored; their
+// routes are not listed because disabling takes those down (see disableUser).
+// Public grade: the most-voted grade among sends, the easier grade on ties, the
+// setter's when nobody graded. `?1` binds the viewer (NULL when anonymous);
+// callers append conditions to the WHERE clause.
+const ROUTES_SQL = `
+  SELECT r.id, r.name, r.created_at, g.id AS gym_id, g.name AS gym_name,
+    u.username, u.display_name,
+    COALESCE(
+      (SELECT ascents.grade FROM ascents JOIN users climber ON climber.id = ascents.user_id
+        WHERE ascents.route_id = r.id AND ascents.sent = 1
+          AND ascents.grade IS NOT NULL AND climber.disabled = 0
+        GROUP BY ascents.grade
+        ORDER BY COUNT(*) DESC, CAST(substr(ascents.grade, 2) AS INTEGER)
+        LIMIT 1),
+      r.owner_grade) AS public_grade,
+    (SELECT COUNT(*) FROM likes JOIN users fan ON fan.id = likes.user_id
+      WHERE likes.route_id = r.id AND fan.disabled = 0) AS likes,
+    EXISTS (SELECT 1 FROM likes WHERE route_id = r.id AND user_id = ?1) AS liked,
+    (SELECT COUNT(*) FROM ascents JOIN users climber ON climber.id = ascents.user_id
+      WHERE ascents.route_id = r.id AND ascents.sent = 1 AND climber.disabled = 0) AS sends,
+    mine.sent AS my_sent, mine.grade AS my_grade, mine.note AS my_note,
+    mine.updated_at AS my_updated_at
+  FROM routes r
+  JOIN users u ON u.id = r.author_id
+  JOIN gyms g ON g.id = r.gym_id
+  LEFT JOIN ascents mine ON mine.route_id = r.id AND mine.user_id = ?1
+  WHERE r.status = 'visible'`;
+
+type RouteRow = AuthorRow & {
+  id: string;
+  name: string;
+  created_at: number;
+  gym_id: string;
+  gym_name: string;
+  public_grade: string;
+  likes: number;
+  liked: number;
+  sends: number;
+  my_sent: number | null;
+  my_grade: string | null;
+  my_note: string | null;
+  my_updated_at: number | null;
+};
+
+const toRoute = (row: RouteRow): Route => ({
+  id: row.id,
+  name: row.name,
+  public_grade: row.public_grade,
+  likes: row.likes,
+  liked: !!row.liked,
+  sends: row.sends,
+  my_ascent:
+    row.my_sent === null
+      ? null
+      : {
+          sent: !!row.my_sent,
+          grade: row.my_grade,
+          note: row.my_note,
+          updated_at: row.my_updated_at!,
+        },
+  image_url: `/media/${row.id}`,
+  thumb_url: `/media/${row.id}/thumb`,
+  created_at: row.created_at,
+  author: authorOf(row),
+  gym: { id: row.gym_id, name: row.gym_name },
+});
+
+/** A public route as `viewerId` sees it, or null. */
+export async function findRoute(env: Env, id: string, viewerId: string | null) {
+  const row = await first<RouteRow>(env.DB, `${ROUTES_SQL} AND r.id = ?2`, viewerId, id);
+  return row && toRoute(row);
 }
-export function validateGrade(g: any) {
-  if (typeof g !== "string") throw fail(422, "Invalid grade");
-  const x = g.toUpperCase();
-  if (!GRADES.includes(x))
-    throw fail(422, `Grade must be between ${GRADES[0]} and ${GRADES.at(-1)}`);
-  return x;
+
+export async function requireRoute(env: Env, id: string, viewerId: string | null) {
+  const route = await findRoute(env, id, viewerId);
+  if (!route) throw fail(404, 'Route not found');
+  return route;
 }
-export function validateGymCoordinates(
-  latitude: unknown,
-  longitude: unknown,
-): [number, number] {
-  if (
-    typeof latitude !== "number" ||
-    !Number.isFinite(latitude) ||
-    Math.abs(latitude) > MAP_COORDINATE_LIMITS.latitude ||
-    typeof longitude !== "number" ||
-    !Number.isFinite(longitude) ||
-    Math.abs(longitude) > MAP_COORDINATE_LIMITS.longitude
-  )
-    throw fail(422, "Invalid gym details");
-  return [latitude, longitude];
-}
-/** Validate the baseline Huffman JPEG emitted by the browser canvas. */
-export function validateBaselineJpeg(raw: Uint8Array) {
-  if (
-    raw.length < 12 ||
-    raw[0] !== 0xff ||
-    raw[1] !== 0xd8 ||
-    raw.at(-2) !== 0xff ||
-    raw.at(-1) !== 0xd9
-  )
-    return false;
-  const startOfFrame = 0xc0;
-  const frameMarkers = new Set([
-    0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce,
-    0xcf,
-  ]);
-  let hasFrame = false;
-  let hasQuantizationTable = false;
-  let hasHuffmanTable = false;
-  for (let offset = 2; offset + 3 < raw.length;) {
-    if (raw[offset++] !== 0xff) return false;
-    while (raw[offset] === 0xff) offset++;
-    const marker = raw[offset++];
-    if (marker === 0xd9) return false;
-    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) continue;
-    const length = (raw[offset] << 8) | raw[offset + 1];
-    if (length < 2 || offset + length > raw.length) return false;
-    if (marker === 0xdb) hasQuantizationTable = true;
-    if (marker === 0xc4) hasHuffmanTable = true;
-    if (marker === startOfFrame) {
-      if (length < 7) return false;
-      const height = (raw[offset + 3] << 8) | raw[offset + 4];
-      const width = (raw[offset + 5] << 8) | raw[offset + 6];
-      if (
-        width <= 0 ||
-        height <= 0 ||
-        width > MAX_IMAGE_DIMENSION ||
-        height > MAX_IMAGE_DIMENSION
-      )
-        return false;
-      hasFrame = true;
-    }
-    if (frameMarkers.has(marker) && marker !== startOfFrame) return false;
-    if (marker === 0xda) {
-      if (length < 6 || !hasFrame || !hasQuantizationTable || !hasHuffmanTable)
-        return false;
-      offset += length;
-      let hasScanData = false;
-      while (offset + 1 < raw.length) {
-        if (raw[offset] !== 0xff) {
-          hasScanData = true;
-          offset++;
-          continue;
-        }
-        const next = raw[offset + 1];
-        if (next === 0x00) {
-          hasScanData = true;
-          offset += 2;
-          continue;
-        }
-        if (next >= 0xd0 && next <= 0xd7) {
-          offset += 2;
-          continue;
-        }
-        return next === 0xd9 && offset === raw.length - 2 && hasScanData;
-      }
-      return false;
-    }
-    offset += length;
-  }
-  return false;
-}
-async function routeRow(env: Env, rid: string) {
-  const r = await first(
+
+export async function listRoutes(req: Request, env: Env) {
+  const viewer = await sessionUser(req, env);
+  const query = new URL(req.url).searchParams;
+  const following = query.get('following') === 'true';
+  if (following && !viewer) throw unauthenticated();
+  const rows = await all<RouteRow>(
     env.DB,
-    `SELECT ${ROUTE_SELECT} FROM routes JOIN users ON users.id=routes.user_id JOIN gyms ON gyms.id=routes.gym_id WHERE routes.id=? AND ${routeVisibility}`,
-    rid,
+    `${ROUTES_SQL}
+       AND (?2 IS NULL OR r.gym_id = ?2)
+       AND (?3 IS NULL OR r.author_id = ?3)
+       AND (NOT ?4 OR r.author_id IN (SELECT followed_id FROM follows WHERE follower_id = ?1))
+     ORDER BY r.created_at DESC LIMIT ?5`,
+    viewer?.id ?? null,
+    query.get('gym_id') || null,
+    query.get('author_id') || null,
+    following ? 1 : 0,
+    LIST_LIMIT
   );
-  if (!r) throw fail(404, "Route not found");
-  return r;
+  return json(rows.map(toRoute));
 }
-async function routePayload(env: Env, r: any, viewer?: string) {
-  const grades = await all(
-    env.DB,
-    `SELECT grades.grade FROM grades JOIN users ON users.id=grades.user_id WHERE route_id=? AND users.disabled=0`,
-    r.id,
-  );
-  let pg = r.owner_grade;
-  if (grades.length) {
-    const counts = new Map<string, number>();
-    for (const g of grades) counts.set(g.grade, (counts.get(g.grade) || 0) + 1);
-    pg = [...counts.entries()].sort(
-      (a, b) => b[1] - a[1] || GRADES.indexOf(a[0]) - GRADES.indexOf(b[0]),
-    )[0][0];
-  }
-  const votes =
-    (
-      await first(
-        env.DB,
-        `SELECT COUNT(*) total FROM votes JOIN users ON users.id=votes.user_id WHERE route_id=? AND users.disabled=0`,
-        r.id,
-      )
-    )?.total || 0;
-  const cc =
-    (
-      await first(
-        env.DB,
-        `SELECT COUNT(*) total FROM comments JOIN users ON users.id=comments.user_id WHERE route_id=? AND hidden=0 AND users.disabled=0`,
-        r.id,
-      )
-    )?.total || 0;
+
+export async function getRoute(req: Request, env: Env, { id }: Params) {
+  const viewer = await sessionUser(req, env);
+  return json(await requireRoute(env, id, viewer?.id ?? null));
+}
+
+/** The bytes of a multipart JPEG field, checked for size and structure. */
+async function jpegUpload(form: FormData, { field, label, maxBytes, maxDimension }: JpegSpec) {
+  const file = form.get(field);
+  if (!(file instanceof File)) throw fail(422, `${label} is required`);
+  if (file.size > maxBytes) throw fail(413, `${label} exceeds the ${maxBytes / 1024} KiB limit`);
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (!isBaselineJpeg(bytes, maxDimension))
+    throw fail(415, `${label} must be a baseline JPEG up to ${maxDimension}px`);
+  return bytes;
+}
+
+type NewRoute = {
+  name: string;
+  gymId: string;
+  grade: string;
+  image: Uint8Array;
+  thumb: Uint8Array;
+};
+
+async function readRouteForm(form: FormData): Promise<NewRoute> {
   return {
-    id: r.id,
-    name: r.name,
-    public_grade: pg,
-    votes,
-    voted: !!(
-      viewer &&
-      (await first(
-        env.DB,
-        "SELECT 1 FROM votes WHERE route_id=? AND user_id=?",
-        r.id,
-        viewer,
-      ))
-    ),
-    comment_count: cc,
-    image_url: `/media/${r.id}`,
-    author: {
-      username: r.username,
-      display_name: r.display_name,
-    },
-    gym: { name: r.gym_name },
+    name: requiredText(form.get(ROUTE_FORM.name), ROUTE_NAME_LENGTH, 'Route name is required'),
+    gymId: requiredText(form.get(ROUTE_FORM.gym_id), ID_LENGTH, 'Choose an approved gym'),
+    grade: grade(form.get(ROUTE_FORM.owner_grade)),
+    image: await jpegUpload(form, PHOTO),
+    thumb: await jpegUpload(form, THUMBNAIL),
   };
 }
-async function createRoute(req: Request, env: Env, user: any) {
-  // formBody enforces the multipart request limit from actual stream bytes;
-  // Content-Length may be omitted or inaccurate by a proxy.
-  const f = await formBody(req);
-  const name = requiredText(
-      f.get("name"),
-      1,
-      MAX_ROUTE_NAME_LENGTH,
-      "Route name is required",
-    ),
-    gym = requiredText(
-      f.get("gym_id"),
-      1,
-      MAX_ID_LENGTH,
-      "Choose an approved gym",
-    ),
-    grade = validateGrade(f.get("owner_grade"));
-  const g = await first(
+
+/**
+ * Publishing is capped per day, per account and per site. The caps are checked
+ * inside the INSERT: a check followed by an insert would let concurrent
+ * uploads from one account burst past them. False when a cap is full.
+ *
+ * Photos cross as hex text: D1 hands BLOBs back as JSON number arrays, and
+ * parsing half a million of them takes milliseconds of the Free plan's 10 ms
+ * CPU limit.
+ */
+async function insertWithinCaps(
+  env: Env,
+  id: string,
+  authorId: string,
+  route: NewRoute,
+  timestamp: number
+) {
+  const inserted = await run(
     env.DB,
-    "SELECT id FROM gyms WHERE id=? AND status='approved'",
-    gym,
+    `INSERT INTO routes(id, author_id, gym_id, name, owner_grade, created_at, image, thumb)
+     SELECT ?1, ?2, ?3, ?4, ?5, ?6, unhex(?7), unhex(?8)
+     WHERE (SELECT COUNT(*) FROM routes WHERE author_id = ?2 AND created_at > ?9) < ?10
+       AND (SELECT COUNT(*) FROM routes WHERE author_id = ?2 AND image IS NOT NULL) < ?11
+       AND (SELECT COUNT(*) FROM routes WHERE image IS NOT NULL) < ?12`,
+    id,
+    authorId,
+    route.gymId,
+    route.name,
+    route.grade,
+    timestamp,
+    route.image.toHex(),
+    route.thumb.toHex(),
+    timestamp - DAILY_WINDOW_SECONDS,
+    DAILY_ROUTE_LIMIT,
+    MAX_USER_IMAGES,
+    MAX_SITE_IMAGES
   );
-  if (!g) throw fail(422, "Choose an approved gym");
-  const image = f.get("image");
-  if (!(image instanceof File)) throw fail(422, "Image is required");
-  if (image.size > MAX_IMAGE_BYTES)
-    throw fail(413, `Image exceeds the ${MAX_IMAGE_BYTES / 1024} KiB limit`);
-  if (image.type !== "image/jpeg") throw fail(415, "JPEG image required");
-  const raw = new Uint8Array(await image.arrayBuffer());
-  // Dimensions are checked without decoding so malformed or oversized images
-  // cannot move expensive work into storage or downstream clients.
-  if (!validateBaselineJpeg(raw))
-    throw fail(415, "Baseline Huffman JPEG image required");
-  const rid = id(),
-    t = now();
-  const result = await env.DB.prepare(
-    `INSERT INTO routes(id,user_id,gym_id,name,owner_grade,image,status,created_at)
-     SELECT ?,?,?,?,?,?,'visible',?
-     WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0)
-       AND (SELECT COUNT(*) FROM routes WHERE user_id=? AND created_at>?) < ?
-       AND (SELECT COUNT(*) FROM routes WHERE user_id=? AND image IS NOT NULL) < ?
-       AND (SELECT COUNT(*) FROM routes WHERE image IS NOT NULL) < ?`,
+  return inserted.meta.changes > 0;
+}
+
+/** Which cap refused an upload. */
+async function capReached(env: Env, authorId: string, timestamp: number) {
+  const usage = await first<{ recent: number; mine: number }>(
+    env.DB,
+    `SELECT (SELECT COUNT(*) FROM routes WHERE author_id = ?1 AND created_at > ?2) AS recent,
+            (SELECT COUNT(*) FROM routes WHERE author_id = ?1 AND image IS NOT NULL) AS mine`,
+    authorId,
+    timestamp - DAILY_WINDOW_SECONDS
+  );
+  if (usage!.recent >= DAILY_ROUTE_LIMIT) return fail(429, 'Daily route limit reached');
+  if (usage!.mine >= MAX_USER_IMAGES) return fail(429, 'Account photo limit reached');
+  // Neither of the author's caps is full, so the site's is.
+  return fail(507, 'Site photo limit reached');
+}
+
+export async function createRoute(req: Request, env: Env) {
+  const user = await requireUser(req, env);
+  const route = await readRouteForm(await formBody(req));
+  if (
+    !(await first(env.DB, "SELECT 1 FROM gyms WHERE id = ? AND status = 'approved'", route.gymId))
   )
-    .bind(
-      rid,
-      user.id,
-      gym,
-      name,
-      grade,
-      raw.buffer as ArrayBuffer,
-      t,
-      user.id,
-      user.id,
-      t - ROUTE_WINDOW_SECONDS,
-      DAILY_ROUTE_LIMIT,
-      user.id,
-      MAX_USER_IMAGES,
-      MAX_SITE_IMAGES,
-    )
-    .run();
-  if (!result.meta?.changes) {
-    const limits = await first(
-      env.DB,
-      `SELECT disabled,
-         (SELECT COUNT(*) FROM routes WHERE user_id=? AND created_at>?) recent,
-         (SELECT COUNT(*) FROM routes WHERE user_id=? AND image IS NOT NULL) user_images,
-         (SELECT COUNT(*) FROM routes WHERE image IS NOT NULL) site_images
-       FROM users WHERE id=?`,
-      user.id,
-      t - ROUTE_WINDOW_SECONDS,
-      user.id,
-      user.id,
-    );
-    if (!limits || limits.disabled) throw fail(403, "Account is not available");
-    if (limits.recent >= DAILY_ROUTE_LIMIT)
-      throw fail(429, "Daily route limit reached");
-    if (limits.user_images >= MAX_USER_IMAGES)
-      throw fail(429, "Account photo limit reached");
-    if (limits.site_images >= MAX_SITE_IMAGES)
-      throw fail(507, "Site photo limit reached");
-    throw fail(409, "Route could not be published");
-  }
-  return routePayload(env, await routeRow(env, rid), user.id);
+    throw fail(422, 'Choose an approved gym');
+
+  const id = newId();
+  const timestamp = now();
+  if (!(await insertWithinCaps(env, id, user.id, route, timestamp)))
+    throw await capReached(env, user.id, timestamp);
+  return json(await requireRoute(env, id, user.id), 201);
 }
 
-export async function routesApi(req: Request, env: Env, path: string) {
-  const method = req.method,
-    db = env.DB;
-  if (path === "/reports" && method === "POST") {
-    const u = await current(req, env),
-      b = await body(req),
-      typ = b?.target_type,
-      tid = b?.target_id,
-      reason = b?.reason;
-    if (
-      typeof typ !== "string" ||
-      typeof tid !== "string" ||
-      !tid.trim() ||
-      !["route", "comment", "user"].includes(typ) ||
-      typeof reason !== "string"
-    )
-      throw fail(422, "Invalid report");
-    const cleanReason = requiredText(
-      reason,
-      3,
-      MAX_REPORT_REASON_LENGTH,
-      "Invalid report",
-    );
-    const targetId = requiredText(tid, 1, MAX_ID_LENGTH, "Invalid report");
-    const valid =
-      typ === "route"
-        ? await first(
-            db,
-            `SELECT routes.id FROM routes JOIN users ON users.id=routes.user_id WHERE routes.id=? AND ${routeVisibility}`,
-            targetId,
-          )
-        : typ === "comment"
-          ? await first(
-              db,
-              "SELECT comments.id FROM comments JOIN routes ON routes.id=comments.route_id JOIN users ON users.id=comments.user_id JOIN users owner ON owner.id=routes.user_id WHERE comments.id=? AND comments.hidden=0 AND users.disabled=0 AND routes.status='visible' AND owner.disabled=0",
-              targetId,
-            )
-          : await first(
-              db,
-              "SELECT id FROM users WHERE id=? AND disabled=0",
-              targetId,
-            );
-    if (!valid) throw fail(404, "Reported content not found");
-    const rid = id();
-    try {
-      const values = [rid, typ, targetId, u.id, cleanReason, now(), u.id];
-      const result =
-        typ === "route"
-          ? await db
-              .prepare(
-                "INSERT INTO reports(id,target_type,target_id,user_id,reason,status,resolved_by,created_at) SELECT ?,?,?,?,?, 'open',NULL,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM routes JOIN users owner ON owner.id=routes.user_id WHERE routes.id=? AND routes.status='visible' AND owner.disabled=0)",
-              )
-              .bind(...values, targetId)
-              .run()
-          : typ === "comment"
-            ? await db
-                .prepare(
-                  "INSERT INTO reports(id,target_type,target_id,user_id,reason,status,resolved_by,created_at) SELECT ?,?,?,?,?, 'open',NULL,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM comments JOIN users ON users.id=comments.user_id JOIN routes ON routes.id=comments.route_id JOIN users owner ON owner.id=routes.user_id WHERE comments.id=? AND comments.hidden=0 AND users.disabled=0 AND routes.status='visible' AND owner.disabled=0)",
-                )
-                .bind(...values, targetId)
-                .run()
-            : await db
-                .prepare(
-                  "INSERT INTO reports(id,target_type,target_id,user_id,reason,status,resolved_by,created_at) SELECT ?,?,?,?,?, 'open',NULL,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0)",
-                )
-                .bind(...values, targetId)
-                .run();
-      if (!result.meta?.changes) {
-        await ensureActive(db, u.id);
-        throw fail(409, "Reported content is no longer available");
-      }
-    } catch (error) {
-      if (!isUniqueViolation(error)) throw error;
-      throw fail(409, "You already reported this content");
-    }
-    return json({ id: rid, status: "open" }, 201);
-  }
-  if (path === "/gyms" && method === "GET") {
-    return json(
-      await all(
-        db,
-        "SELECT id,country_code,name,address,latitude,longitude,status FROM gyms WHERE status='approved' ORDER BY name",
-      ),
-    );
-  }
-  if (path === "/gyms" && method === "POST") {
-    const u = await current(req, env),
-      b = await body(req);
-    if (!b || typeof b !== "object" || Array.isArray(b))
-      throw fail(422, "Invalid gym details");
-    const n = requiredText(
-        b?.name,
-        2,
-        MAX_GYM_NAME_LENGTH,
-        "Invalid gym details",
-      ),
-      a = requiredText(
-        b?.address,
-        3,
-        MAX_GYM_ADDRESS_LENGTH,
-        "Invalid gym details",
-      ),
-      countryCode = requiredText(b?.country_code, 2, 2, "Invalid gym details"),
-      cc = countryCode.toUpperCase(),
-      latitude = b?.latitude,
-      longitude = b?.longitude;
-    const [validatedLatitude, validatedLongitude] = validateGymCoordinates(
-      latitude,
-      longitude,
-    );
-    if (!/^[A-Z]{2}$/.test(cc)) throw fail(422, "Invalid gym details");
-    const gid = id();
-    const result = await db
-      .prepare(
-        "INSERT INTO gyms(id,country_code,name,address,latitude,longitude,status,requested_by,created_at) SELECT ?,?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND (SELECT COUNT(*) FROM gyms WHERE requested_by=? AND status='pending') < ?",
-      )
-      .bind(
-        gid,
-        cc,
-        n,
-        a,
-        validatedLatitude,
-        validatedLongitude,
-        "pending",
-        u.id,
-        now(),
-        u.id,
-        u.id,
-        MAX_PENDING_GYMS_PER_USER,
-      )
-      .run();
-    if (!result.meta?.changes) {
-      await ensureActive(db, u.id);
-      throw fail(429, "Pending gym limit reached");
-    }
-    return json({ id: gid, status: "pending" }, 201);
-  }
-  if (path === "/routes" && method === "GET") {
-    const u = await current(req, env, false),
-      url = new URL(req.url),
-      clauses = [routeVisibility],
-      args: any[] = [];
-    if (url.searchParams.get("gym_id")) {
-      clauses.push("routes.gym_id=?");
-      args.push(url.searchParams.get("gym_id"));
-    }
-    if (url.searchParams.get("author_id")) {
-      clauses.push("routes.user_id=?");
-      args.push(url.searchParams.get("author_id"));
-    }
-    if (url.searchParams.get("following") === "true") {
-      if (!u) throw fail(401, "Authentication required");
-      clauses.push(
-        "routes.user_id IN (SELECT followed_id FROM follows WHERE follower_id=?)",
-      );
-      args.push(u.id);
-    }
-    const rows = await all(
+/**
+ * Take a route down: its photo and thumbnail are deleted and its open reports
+ * resolved, together. Idempotent. Used by authors, admins and moderation.
+ */
+export async function hideRoute(db: D1Database, routeId: string, actorId: string) {
+  await db.batch([
+    stmt(
       db,
-      `SELECT ${ROUTE_SELECT} FROM routes JOIN users ON users.id=routes.user_id JOIN gyms ON gyms.id=routes.gym_id WHERE ${clauses.join(" AND ")} ORDER BY routes.created_at DESC LIMIT ?`,
-      ...args,
-      FEED_LIMIT,
-    );
-    return json(
-      await Promise.all(rows.map((r) => routePayload(env, r, u?.id))),
-    );
-  }
-  if (path === "/routes" && method === "POST") {
-    return json(await createRoute(req, env, await current(req, env)), 201);
-  }
-  const m = path.match(/^\/routes\/([^/]+)(?:\/(vote|grade|comments))?$/);
-  if (m) {
-    const rid = m[1],
-      sub = m[2];
-    if (!sub && method === "GET") {
-      const u = await current(req, env, false);
-      return json(await routePayload(env, await routeRow(env, rid), u?.id));
-    }
-    if (sub === "vote" && method === "POST") {
-      const u = await current(req, env),
-        b = await body(req);
-      if (typeof b?.active !== "boolean")
-        throw fail(422, "Vote active state is required");
-      await routeRow(env, rid);
-      if (b.active)
-        await db
-          .prepare(
-            "INSERT OR IGNORE INTO votes(route_id,user_id) SELECT ?,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM routes r JOIN users owner ON owner.id=r.user_id WHERE r.id=? AND r.status='visible' AND owner.disabled=0)",
-          )
-          .bind(rid, u.id, u.id, rid)
-          .run();
-      else
-        await db
-          .prepare(
-            "DELETE FROM votes WHERE route_id=? AND user_id=? AND EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0)",
-          )
-          .bind(rid, u.id, u.id)
-          .run();
-      await ensureActive(db, u.id);
-      await routeRow(env, rid);
-      const c = await first(
-        db,
-        "SELECT COUNT(*) total FROM votes JOIN users ON users.id=votes.user_id WHERE route_id=? AND users.disabled=0",
-        rid,
-      );
-      return json({ voted: b.active, votes: c?.total || 0 });
-    }
-    if (sub === "grade" && method === "PUT") {
-      const u = await current(req, env),
-        b = await body(req);
-      await routeRow(env, rid);
-      const g = validateGrade(b?.grade);
-      await db
-        .prepare(
-          "INSERT INTO grades(route_id,user_id,grade) SELECT ?,?,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM routes r JOIN users owner ON owner.id=r.user_id WHERE r.id=? AND r.status='visible' AND owner.disabled=0) ON CONFLICT(route_id,user_id) DO UPDATE SET grade=excluded.grade",
-        )
-        .bind(rid, u.id, g, u.id, rid)
-        .run();
-      await ensureActive(db, u.id);
-      const p = await routePayload(env, await routeRow(env, rid), u.id);
-      return json({ public_grade: p.public_grade });
-    }
-    if (sub === "comments" && method === "GET") {
-      await routeRow(env, rid);
-      const rs = await all(
-        db,
-        "SELECT comments.*,users.username,users.display_name FROM comments JOIN users ON users.id=comments.user_id WHERE route_id=? AND hidden=0 AND users.disabled=0 ORDER BY comments.created_at",
-        rid,
-      );
-      return json(
-        rs.map((x) => ({
-          id: x.id,
-          body: x.body,
-          author: {
-            username: x.username,
-            display_name: x.display_name,
-          },
-        })),
-      );
-    }
-    if (sub === "comments" && method === "POST") {
-      const u = await current(req, env),
-        b = await body(req),
-        text = requiredText(
-          b?.body,
-          1,
-          MAX_COMMENT_LENGTH,
-          "Comment is required",
-        );
-      await routeRow(env, rid);
-      const cid = id();
-      const createdAt = now();
-      try {
-        const result = await db
-          .prepare(
-            "INSERT INTO comments(id,route_id,user_id,body,hidden,created_at) SELECT ?,?,?,?,0,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM routes r JOIN users owner ON owner.id=r.user_id WHERE r.id=? AND r.status='visible' AND owner.disabled=0)",
-          )
-          .bind(cid, rid, u.id, text, createdAt, u.id, rid)
-          .run();
-        if (!result.meta?.changes) {
-          await ensureActive(db, u.id);
-          throw fail(409, "Comment could not be created");
-        }
-        await ensureActive(db, u.id);
-        await routeRow(env, rid);
-      } catch (error) {
-        if (error instanceof Response) throw error;
-        if (!isUniqueViolation(error)) throw error;
-        throw fail(409, "You already commented on this route");
-      }
-      return json(
-        {
-          id: cid,
-          body: text,
-          author: {
-            username: u.username,
-            display_name: u.display_name,
-          },
-        },
-        201,
-      );
-    }
-  }
-  const pf = path.match(/^\/users\/([^/]+)$/);
-  if (pf && method === "GET") {
-    const u = await current(req, env, false),
-      target = await first(
-        db,
-        "SELECT * FROM users WHERE username=? COLLATE NOCASE AND disabled=0",
-        (() => {
-          try {
-            return decodeURIComponent(pf[1]);
-          } catch {
-            throw fail(400, "Invalid user path");
-          }
-        })(),
-      );
-    if (!target) throw fail(404, "User not found");
-    const followers = await first(
-        db,
-        "SELECT COUNT(*) total FROM follows JOIN users f ON f.id=follows.follower_id WHERE followed_id=? AND f.disabled=0",
-        target.id,
-      ),
-      following = await first(
-        db,
-        "SELECT COUNT(*) total FROM follows JOIN users f ON f.id=follows.followed_id WHERE follower_id=? AND f.disabled=0",
-        target.id,
-      );
-    return json({
-      id: target.id,
-      username: target.username,
-      display_name: target.display_name,
-      followers: followers?.total || 0,
-      following: following?.total || 0,
-      followed: !!(
-        u &&
-        (await first(
-          db,
-          "SELECT 1 FROM follows WHERE follower_id=? AND followed_id=?",
-          u.id,
-          target.id,
-        ))
-      ),
-    });
-  }
-  const ff = path.match(/^\/users\/([^/]+)\/follow$/);
-  if (ff && method === "POST") {
-    const u = await current(req, env),
-      b = await body(req),
-      uid = ff[1];
-    if (typeof b?.active !== "boolean")
-      throw fail(422, "Follow active state is required");
-    if (uid === u.id) throw fail(422, "You cannot follow yourself");
-    if (
-      !(await first(db, "SELECT id FROM users WHERE id=? AND disabled=0", uid))
-    )
-      throw fail(404, "User not found");
-    if (b.active)
-      await db
-        .prepare(
-          "INSERT OR IGNORE INTO follows(follower_id,followed_id,created_at) SELECT ?,?,? WHERE EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0)",
-        )
-        .bind(u.id, uid, now(), u.id, uid)
-        .run();
-    else
-      await db
-        .prepare(
-          "DELETE FROM follows WHERE follower_id=? AND followed_id=? AND EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0) AND EXISTS (SELECT 1 FROM users WHERE id=? AND disabled=0)",
-        )
-        .bind(u.id, uid, u.id, uid)
-        .run();
-    await ensureActive(db, u.id);
-    return json({
-      followed: !!(await first(
-        db,
-        "SELECT 1 FROM follows WHERE follower_id=? AND followed_id=?",
-        u.id,
-        uid,
-      )),
-    });
-  }
+      "UPDATE routes SET status = 'hidden', image = NULL, thumb = NULL WHERE id = ?",
+      routeId
+    ),
+    resolveReportsStmt(db, 'route', routeId, actorId),
+  ]);
+}
 
-  return fail(404, "Not found");
-}
-export async function media(env: Env, routeId: string) {
-  const r = await first(
+export async function removeRoute(req: Request, env: Env, { id }: Params) {
+  const user = await requireUser(req, env);
+  const route = await first<{ author_id: string }>(
     env.DB,
-    `SELECT routes.image FROM routes JOIN users ON users.id=routes.user_id WHERE routes.id=? AND ${routeVisibility}`,
-    routeId,
+    "SELECT author_id FROM routes WHERE id = ? AND status = 'visible'",
+    id
   );
-  if (!r?.image) return fail(404, "Not found");
-  return new Response(Uint8Array.from(r.image as number[]), {
-    headers: {
-      "content-type": "image/jpeg",
-      "cache-control": "no-store",
-    },
-  });
+  if (!route) throw fail(404, 'Route not found');
+  if (route.author_id !== user.id && user.role !== 'admin')
+    throw fail(403, 'Only the author or an administrator can remove a route');
+  await hideRoute(env.DB, id, user.id);
+  return noContent();
 }
+
+async function setLike(req: Request, env: Env, id: string, liked: boolean) {
+  const user = await requireUser(req, env);
+  await requireRoute(env, id, user.id);
+  if (liked)
+    await run(env.DB, 'INSERT OR IGNORE INTO likes(route_id, user_id) VALUES (?, ?)', id, user.id);
+  else await run(env.DB, 'DELETE FROM likes WHERE route_id = ? AND user_id = ?', id, user.id);
+  const { likes } = await requireRoute(env, id, user.id);
+  return json({ liked, likes } satisfies LikeResponse);
+}
+
+export const likeRoute: Handler = (req, env, { id }) => setLike(req, env, id, true);
+export const unlikeRoute: Handler = (req, env, { id }) => setLike(req, env, id, false);
+
+/** Hidden routes lose their photos, but browsers keep copies; keep the window short. */
+const MEDIA_CACHE = 'private, max-age=3600';
+
+const mediaHandler =
+  (column: 'image' | 'thumb'): Handler =>
+  async (_req, env, { id }) => {
+    const row = await first<{ data: string }>(
+      env.DB,
+      // Hex text, not a BLOB: see insertWithinCaps.
+      `SELECT hex(${column}) AS data FROM routes WHERE id = ? AND status = 'visible'`,
+      id
+    );
+    if (!row) throw fail(404, 'Image not found');
+    return new Response(Uint8Array.fromHex(row.data), {
+      headers: { 'content-type': 'image/jpeg', 'cache-control': MEDIA_CACHE },
+    });
+  };
+
+export const getImage = mediaHandler('image');
+export const getThumbnail = mediaHandler('thumb');

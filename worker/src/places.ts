@@ -1,10 +1,11 @@
-import {
-  MAP_COORDINATE_LIMITS,
-  PLACE_SEARCH,
-} from "../../app/src/client-contract";
-import { fail, json, requiredText } from "./shared";
+import { PLACE_SEARCH, type Place } from '../../app/src/client-contract';
+import type { Env } from './env';
+import { fail, json } from './http';
+import { GYM_ADDRESS_LENGTH, GYM_NAME_LENGTH, PLACE_SEARCH_PER_CLIENT } from './limits';
+import { throttleClient } from './throttle';
+import { latLon, requiredText } from './validate';
 
-const PHOTON_API_URL = "https://photon.komoot.io/api/";
+const PHOTON_API_URL = 'https://photon.komoot.io/api/';
 const PLACE_SEARCH_TIMEOUT_MS = 8_000;
 const COARSE_LOCATION_DECIMALS = 2;
 
@@ -13,161 +14,88 @@ type PhotonFeature = {
   properties?: Record<string, unknown>;
 };
 
-const text = (value: unknown) =>
-  typeof value === "string" && value.trim() ? value.trim() : "";
+const clean = (value: unknown) => (typeof value === 'string' ? value.trim() : '');
 
-function coordinate(value: string | null, limit: number, name: string) {
-  const parsed = value?.trim() ? Number(value) : Number.NaN;
-  if (!Number.isFinite(parsed) || Math.abs(parsed) > limit) {
-    throw fail(422, `Invalid ${name}`);
-  }
-  return parsed;
-}
+/** At most `max` characters, so a place always fits a gym's name and address. */
+const clip = (text: string, max: number) => [...text].slice(0, max).join('');
 
-function optionalCoordinate(value: unknown, limit: number) {
-  if (typeof value !== "string" && typeof value !== "number") return null;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && Math.abs(parsed) <= limit ? parsed : null;
-}
+/** Blank or missing is NaN, not 0, so latLon rejects it. */
+const toNumber = (value: unknown) =>
+  typeof value === 'string' && value.trim() ? Number(value) : Number.NaN;
 
-function unique(values: string[]) {
-  return values.filter(
-    (value, index) =>
-      value && values.findIndex((candidate) => candidate === value) === index,
-  );
-}
+const unique = (values: string[]) => [...new Set(values.filter(Boolean))];
 
-function normalizePlace(value: unknown) {
-  if (!value || typeof value !== "object") return null;
+function normalizePlace(value: unknown): Place | null {
+  if (!value || typeof value !== 'object') return null;
   const feature = value as PhotonFeature;
   const coordinates = feature.geometry?.coordinates;
   if (!Array.isArray(coordinates)) return null;
-  const [longitude, latitude] = coordinates;
-  if (
-    typeof latitude !== "number" ||
-    typeof longitude !== "number" ||
-    !Number.isFinite(latitude) ||
-    !Number.isFinite(longitude) ||
-    Math.abs(latitude) > MAP_COORDINATE_LIMITS.latitude ||
-    Math.abs(longitude) > MAP_COORDINATE_LIMITS.longitude
-  ) {
-    return null;
-  }
+  const location = latLon(coordinates[1], coordinates[0]);
+  if (!location) return null;
 
   const properties = feature.properties ?? {};
-  const street = unique([
-    text(properties.housenumber),
-    text(properties.street),
-  ]).join(" ");
+  const street = unique([clean(properties.housenumber), clean(properties.street)]).join(' ');
   const name =
-    text(properties.name) ||
-    street ||
-    text(properties.city) ||
-    text(properties.country);
+    clean(properties.name) || street || clean(properties.city) || clean(properties.country);
   if (!name) return null;
   const address = unique([
     street,
-    text(properties.locality),
-    text(properties.district),
-    text(properties.city),
-    text(properties.state),
-    text(properties.country),
+    clean(properties.locality),
+    clean(properties.district),
+    clean(properties.city),
+    clean(properties.state),
+    clean(properties.country),
   ])
     .filter((part) => part !== name)
-    .join(", ");
-  return { name, address, latitude, longitude };
+    .join(', ');
+  return {
+    name: clip(name, GYM_NAME_LENGTH[1]),
+    address: clip(address, GYM_ADDRESS_LENGTH[1]),
+    ...location,
+  };
 }
 
-/** Keep the public provider behind one small, replaceable response contract. */
-export async function placeSearch(req: Request) {
-  const requestUrl = new URL(req.url);
+/** Photon search, reshaped to Place[]. */
+export async function searchPlaces(req: Request, env: Env) {
+  await throttleClient(req, env, 'places', PLACE_SEARCH_PER_CLIENT);
+  const params = new URL(req.url).searchParams;
   const query = requiredText(
-    requestUrl.searchParams.get("q"),
-    PLACE_SEARCH.minQueryLength,
-    PLACE_SEARCH.maxQueryLength,
-    `Search must be ${PLACE_SEARCH.minQueryLength}-${PLACE_SEARCH.maxQueryLength} characters`,
+    params.get('q'),
+    [PLACE_SEARCH.minQueryLength, PLACE_SEARCH.maxQueryLength],
+    `Search must be ${PLACE_SEARCH.minQueryLength}-${PLACE_SEARCH.maxQueryLength} characters`
   );
-  const latitude = coordinate(
-    requestUrl.searchParams.get("lat"),
-    MAP_COORDINATE_LIMITS.latitude,
-    "latitude",
-  );
-  const longitude = coordinate(
-    requestUrl.searchParams.get("lon"),
-    MAP_COORDINATE_LIMITS.longitude,
-    "longitude",
-  );
+  const center = latLon(toNumber(params.get('lat')), toNumber(params.get('lon')));
+  if (!center) throw fail(422, 'Invalid map center');
   const providerUrl = new URL(PHOTON_API_URL);
-  providerUrl.searchParams.set("q", query);
-  providerUrl.searchParams.set("limit", String(PLACE_SEARCH.resultLimit));
-  providerUrl.searchParams.set(
-    "lat",
-    latitude.toFixed(PLACE_SEARCH.biasDecimals),
-  );
-  providerUrl.searchParams.set(
-    "lon",
-    longitude.toFixed(PLACE_SEARCH.biasDecimals),
-  );
+  providerUrl.searchParams.set('q', query);
+  providerUrl.searchParams.set('limit', String(PLACE_SEARCH.resultLimit));
+  providerUrl.searchParams.set('lat', center.latitude.toFixed(PLACE_SEARCH.biasDecimals));
+  providerUrl.searchParams.set('lon', center.longitude.toFixed(PLACE_SEARCH.biasDecimals));
 
-  let response: Response;
-  try {
-    response = await fetch(providerUrl, {
-      cache: "no-store",
-      headers: { accept: "application/geo+json, application/json" },
-      signal: AbortSignal.any([
-        req.signal,
-        AbortSignal.timeout(PLACE_SEARCH_TIMEOUT_MS),
-      ]),
-    });
-  } catch {
-    throw fail(502, "Place search is temporarily unavailable");
-  }
-  if (!response.ok) throw fail(502, "Place search is temporarily unavailable");
+  const response = await fetch(providerUrl, {
+    cache: 'no-store',
+    headers: { accept: 'application/geo+json, application/json' },
+    signal: AbortSignal.timeout(PLACE_SEARCH_TIMEOUT_MS),
+  }).catch(() => null);
+  const payload = response?.ok
+    ? await response.json<{ features?: unknown }>().catch(() => null)
+    : null;
+  if (!Array.isArray(payload?.features)) throw fail(502, 'Place search is temporarily unavailable');
 
-  let payload: unknown;
-  try {
-    payload = await response.json();
-  } catch {
-    throw fail(502, "Place search returned an invalid response");
-  }
-  if (
-    !payload ||
-    typeof payload !== "object" ||
-    !Array.isArray((payload as { features?: unknown }).features)
-  ) {
-    throw fail(502, "Place search returned an invalid response");
-  }
-  const places: NonNullable<ReturnType<typeof normalizePlace>>[] = [];
-  const labels = new Set<string>();
-  for (const feature of (payload as { features: PhotonFeature[] }).features) {
+  const places = new Map<string, Place>();
+  for (const feature of payload.features) {
     const place = normalizePlace(feature);
     if (!place) continue;
     const label = `${place.name}\n${place.address}`;
-    if (labels.has(label)) continue;
-    labels.add(label);
-    places.push(place);
-    if (places.length === PLACE_SEARCH.resultLimit) break;
+    if (!places.has(label)) places.set(label, place);
   }
-  return json(places, 200, { "cache-control": "no-store" });
+  return json([...places.values()].slice(0, PLACE_SEARCH.resultLimit));
 }
 
 /** Return Cloudflare's coarse connection location without retaining it. */
-export function approximateLocation(req: Request) {
-  const latitude = optionalCoordinate(
-    req.cf?.latitude,
-    MAP_COORDINATE_LIMITS.latitude,
-  );
-  const longitude = optionalCoordinate(
-    req.cf?.longitude,
-    MAP_COORDINATE_LIMITS.longitude,
-  );
-  const rounded = (coordinate: number) =>
-    Number(coordinate.toFixed(COARSE_LOCATION_DECIMALS));
-  return json(
-    latitude === null || longitude === null
-      ? null
-      : { latitude: rounded(latitude), longitude: rounded(longitude) },
-    200,
-    { "cache-control": "no-store" },
-  );
+export function getLocation(req: Request) {
+  const location = latLon(toNumber(req.cf?.latitude), toNumber(req.cf?.longitude));
+  const rounded = (coordinate: number) => Number(coordinate.toFixed(COARSE_LOCATION_DECIMALS));
+  if (!location) return json(null);
+  return json({ latitude: rounded(location.latitude), longitude: rounded(location.longitude) });
 }
