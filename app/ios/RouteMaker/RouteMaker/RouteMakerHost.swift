@@ -14,15 +14,6 @@ class RouteMakerModule: NSObject {
     }
 }
 
-extension UIColor {
-    // Assets.xcassets follows the light and dark pages of app/theme.css: the page, nav, on-nav
-    // and brand-1 colors. Keep them in step.
-    static let page = UIColor(named: "Page") ?? .systemBackground
-    static let nav = UIColor(named: "Nav") ?? .label
-    static let onNav = UIColor(named: "OnNav") ?? .systemBackground
-    static let marker = UIColor(named: "Marker") ?? .systemBlue
-}
-
 extension Bundle {
     /// The site's origin from the ROUTEMAKER_API_BASE_URL build setting, without a trailing slash.
     var apiBaseURL: String {
