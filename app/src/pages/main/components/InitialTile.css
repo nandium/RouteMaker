@@ -1,0 +1,35 @@
+/* ---------- initial tile ---------- */
+.tile {
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 3px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--r-2);
+  background-color: var(--c-wall);
+  background-image: var(--bg-tile);
+}
+.tile-letter {
+  color: var(--c-on-wall);
+}
+.tile-s {
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 4px;
+}
+.tile-l {
+  min-width: 76px;
+  min-height: 76px;
+  border: 3px solid var(--c-on-wall);
+}
+.tile-country {
+  min-width: 52px;
+  min-height: 52px;
+}
+.tile-country .tile-letter {
+  letter-spacing: 0.6px;
+}
+.tile-bordered {
+  border: 3px solid var(--c-on-wall);
+}

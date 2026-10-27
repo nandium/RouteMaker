@@ -1,0 +1,45 @@
+/* ---------- moderation items ---------- */
+.admin-item {
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 2px solid var(--c-line);
+}
+.wide .admin-item {
+  padding: 16px 12px;
+}
+.admin-reason {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.admin-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.admin-account {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.quote {
+  gap: 2px;
+  padding: 10px 12px;
+  background-color: var(--c-sunk);
+  border-radius: var(--r-2);
+}
+.confirm {
+  gap: 10px;
+  padding: 12px 14px;
+  background-color: var(--c-danger-bg);
+  border: 2px solid var(--c-danger);
+  border-radius: var(--r-2);
+}
+.confirm-text {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+}
+.confirm-consequence {
+  flex: 1 1 0;
+}

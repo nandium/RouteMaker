@@ -1,0 +1,17 @@
+/* ---------- gym detail ---------- */
+.gym-head {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.wide .gym-head {
+  flex: 1 1 0;
+}
+.gym-head-failed {
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.route-total {
+  align-items: flex-end;
+}

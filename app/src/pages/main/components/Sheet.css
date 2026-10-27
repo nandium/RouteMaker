@@ -1,0 +1,119 @@
+/* ---------- sheets ---------- */
+/* The scrim and sheet sit above anything a screen sticks to its top, such as the filter bar. */
+.scrim {
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--c-scrim);
+}
+.sheet {
+  z-index: 11;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  gap: 12px;
+  max-height: 90%;
+  padding: 12px 16px 20px;
+  background-color: var(--c-surface);
+  border-top: 4px solid var(--c-ink);
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  animation: rm-sheet var(--dur-base) var(--ease-out) both;
+}
+.sheet > .sheet-grab,
+.sheet > text {
+  flex-shrink: 0;
+}
+.sheet-grab {
+  align-self: center;
+  width: 44px;
+  height: 5px;
+  border-radius: 3px;
+  background-color: var(--c-edge);
+}
+.sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 12px;
+}
+.sheet-body > view,
+.sheet-body > text {
+  flex-shrink: 0;
+}
+.sheet-choices {
+  gap: 8px;
+}
+.sheet-actions {
+  gap: 8px;
+}
+
+.choice {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-edge);
+  border-radius: var(--r-2);
+}
+.choice.is-on {
+  background-color: var(--c-sunk);
+  border-color: var(--c-ink);
+}
+.choice-copy {
+  flex: 1 1 0;
+}
+.radio {
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--c-edge);
+  border-radius: 11px;
+}
+.choice.is-on .radio {
+  border-color: var(--c-ink);
+}
+.radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: var(--c-ink);
+}
+
+/* On wide screens the sheet is a dialog in the middle. */
+.wide .sheet {
+  left: 50%;
+  right: auto;
+  bottom: 80px;
+  width: 480px;
+  margin-left: -240px;
+  border: 2px solid var(--c-ink);
+  border-radius: 14px;
+}
+.wide .sheet > .sheet-grab,
+.sheet > text {
+  flex-shrink: 0;
+}
+.sheet-grab {
+  display: none;
+}
+
+@keyframes rm-sheet {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+.rm .sheet {
+  animation: none;
+}

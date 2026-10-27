@@ -1,45 +1,38 @@
-import type { ColorScheme } from './appearance.js';
 import type { Gym, MapLocation } from './client-contract.js';
-import { nativeMapScene } from './map-config.js';
-import { getNativeModule } from './native-module.js';
+import type { ColorScheme } from './host-contract.js';
+import { DEFAULT_MAP_VIEW, MAP_STYLES, USER_LOCATION_ZOOM } from './map-config.js';
 
-const LOCATION_WAIT_MS = 1_500;
+export const LOCATION_WAIT_MS = 1_500;
 
-type NativeMapBridge = {
-  open(scene: string, callback: (gymId: string) => void): void;
-};
-
-export type NativeMapOpenResult = 'opened' | 'unavailable' | 'cancelled';
-
-/**
- * Let each native shell render the map while ReactLynx continues to own gym
- * data and navigation. Location is loaded here so merely opening the app never
- * requests it, and the bounded wait keeps an unavailable hint from delaying
- * the map indefinitely.
- */
-export async function openNativeMap(
-  gyms: Gym[],
-  theme: ColorScheme,
-  loadApproximateLocation: () => Promise<MapLocation | null>,
-  shouldOpen: () => boolean,
-  chooseGym: (gymId: string) => void
-): Promise<NativeMapOpenResult> {
-  const bridge = getNativeModule<NativeMapBridge>('RouteMakerMap');
-  if (!bridge) return 'unavailable';
-  const approximateLocation = await new Promise<MapLocation | null>((resolve) => {
-    const timeout = setTimeout(() => resolve(null), LOCATION_WAIT_MS);
-    loadApproximateLocation().then(
-      (location) => {
-        clearTimeout(timeout);
+/** A coarse location, or null if it fails or takes longer than the map is worth waiting for. */
+export function approximateLocation(load: () => Promise<MapLocation | null>) {
+  return new Promise<MapLocation | null>((resolve) => {
+    const timer = setTimeout(resolve, LOCATION_WAIT_MS, null);
+    load()
+      .catch(() => null)
+      .then((location) => {
+        clearTimeout(timer);
         resolve(location);
-      },
-      () => {
-        clearTimeout(timeout);
-        resolve(null);
-      }
-    );
+      });
   });
-  if (!shouldOpen()) return 'cancelled';
-  bridge.open(JSON.stringify(nativeMapScene(gyms, theme, approximateLocation)), chooseGym);
-  return 'opened';
+}
+
+/** What the native map needs to draw: the gyms, the theme, and where to look first. */
+export function nativeMapScene(gyms: Gym[], theme: ColorScheme, location: MapLocation | null) {
+  const center = location ?? gyms[0] ?? DEFAULT_MAP_VIEW;
+  return {
+    gyms: gyms.map(({ id, name, address, latitude, longitude }) => ({
+      id,
+      name,
+      address,
+      latitude,
+      longitude,
+    })),
+    theme,
+    style: MAP_STYLES[theme],
+    centerLatitude: center.latitude,
+    centerLongitude: center.longitude,
+    zoom: DEFAULT_MAP_VIEW.zoom,
+    locationZoom: USER_LOCATION_ZOOM,
+  };
 }

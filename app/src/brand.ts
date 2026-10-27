@@ -3,6 +3,9 @@ export const BRAND_PALETTE = {
   dark: { background: '#111714', primary: '#d9e0dd', secondary: '#608ba4' },
 } as const;
 
+/** The logo mark's drawing area; its aspect ratio sizes the mark wherever it is shown. */
+export const LOGO_MARK_SIZE = { width: 348, height: 399 } as const;
+
 export const LOGO_MARK_SEGMENTS = [
   { path: 'M14.98 20.76 64.88 72.52 209.61 20.76Z', tone: 'primary' },
   { path: 'M217.28 20.76 338.46 152.71 126.46 54.77Z', tone: 'primary' },
@@ -20,5 +23,5 @@ export function logoMarkPaths(secondary: string) {
 }
 
 export function logoMarkSvg(palette: (typeof BRAND_PALETTE)[keyof typeof BRAND_PALETTE]) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 348 399" fill="${palette.primary}" aria-hidden="true" focusable="false">${logoMarkPaths(palette.secondary)}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${LOGO_MARK_SIZE.width} ${LOGO_MARK_SIZE.height}" fill="${palette.primary}" aria-hidden="true" focusable="false">${logoMarkPaths(palette.secondary)}</svg>`;
 }

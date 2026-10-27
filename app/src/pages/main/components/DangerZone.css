@@ -1,0 +1,10 @@
+/* ---------- danger zone ---------- */
+.zone {
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid var(--c-danger);
+  border-radius: var(--r-3);
+}
+.zone-title {
+  color: var(--c-danger);
+}

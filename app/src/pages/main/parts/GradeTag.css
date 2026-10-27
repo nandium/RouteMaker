@@ -1,0 +1,108 @@
+/* ---------- grade tag ---------- */
+.tag {
+  overflow: visible;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  flex-shrink: 0;
+}
+.tag-num {
+  letter-spacing: 0.2px;
+}
+.tag-s {
+  min-width: 36px;
+  min-height: 26px;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.tag-m {
+  min-width: 52px;
+  min-height: 40px;
+  padding: 2px 8px;
+}
+.tag-l {
+  min-width: 76px;
+  min-height: 60px;
+  padding: 2px 10px;
+}
+.tag-xl {
+  min-width: 104px;
+  min-height: 80px;
+  padding: 2px 14px;
+  border-width: 3px;
+}
+
+/* Each tier is its fill with a diagonal of its shade (--g1 to --g6 and their gradients). */
+.g1 {
+  background-color: var(--g1);
+  background-image: var(--bg-g1);
+}
+.g2 {
+  background-color: var(--g2);
+  background-image: var(--bg-g2);
+}
+.g3 {
+  background-color: var(--g3);
+  background-image: var(--bg-g3);
+}
+.g4 {
+  background-color: var(--g4);
+  background-image: var(--bg-g4);
+}
+.g5 {
+  background-color: var(--g5);
+  background-image: var(--bg-g5);
+}
+.g6 {
+  background-color: var(--g6);
+  background-image: var(--bg-g6);
+}
+.g1 .tag-num {
+  color: var(--g1-ink);
+}
+.g2 .tag-num {
+  color: var(--g2-ink);
+}
+.g3 .tag-num {
+  color: var(--g3-ink);
+}
+.g4 .tag-num {
+  color: var(--g4-ink);
+}
+.g5 .tag-num {
+  color: var(--g5-ink);
+}
+.g6 .tag-num {
+  color: var(--g6-ink);
+}
+.g0 {
+  background-color: var(--c-sunk);
+  border-style: dashed;
+}
+.g0 .tag-num {
+  color: var(--c-ink-2);
+}
+
+.tag-ring {
+  box-shadow: 0 0 0 3px var(--c-bg);
+}
+.tag-pin {
+  box-shadow: var(--el-hard) var(--c-ink);
+}
+.tag-stamp {
+  animation: rm-stamp var(--dur-slow) var(--ease-snap) both;
+}
+@keyframes rm-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.5) rotate(-6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+.rm .tag-stamp {
+  animation: none;
+}

@@ -1,0 +1,12 @@
+/* ---------- stat ---------- */
+.stat {
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  min-height: 20px;
+}
+.stat-n {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.43;
+}

@@ -1,0 +1,80 @@
+/* ---------- notes ---------- */
+.notes {
+  gap: 12px;
+}
+/* Notes run to the screen's edges, like list rows. */
+.note-list,
+.note-skeletons {
+  margin: 0 -16px;
+}
+.wide .note-list,
+.wide .note-skeletons {
+  margin: 0;
+}
+.note {
+  gap: 6px;
+  padding: 14px 16px 16px;
+  border-bottom: 2px solid var(--c-line);
+}
+.wide .note {
+  padding: 16px 0 18px;
+}
+.note.is-mine {
+  background-color: var(--c-sunk);
+}
+.note-top {
+  align-items: flex-start;
+}
+.note-head {
+  flex: 1 1 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  min-height: var(--hit-min);
+}
+.note-time {
+  font-size: 12px;
+  line-height: 1.33;
+  color: var(--c-ink-3);
+}
+.note-meta,
+.note-grade {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.note-meta {
+  flex-wrap: wrap;
+}
+.note-body {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.note-skeleton {
+  gap: 8px;
+  padding: 14px 16px;
+}
+
+.inline-note {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background-color: var(--c-sunk);
+  border-radius: var(--r-2);
+}
+.inline-note.is-error {
+  background-color: var(--c-danger-bg);
+}
+.inline-note-body {
+  flex: 1 1 0;
+  gap: 8px;
+}
+.inline-note > .inline-note-text {
+  flex: 1 1 0;
+}
+.inline-note-text {
+  font-size: 14px;
+  line-height: 1.43;
+}

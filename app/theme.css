@@ -1,105 +1,256 @@
-:root,
-.theme-light {
-  --rm-accent: #b74425;
-  --rm-accent-soft: #f8d7cb;
-  --rm-accent-ink: #7d2d1c;
-  --rm-background: #f3f4ef;
-  --rm-ink: #17201d;
-  --rm-line: #d8dfd9;
-  --rm-muted: #64716b;
-  --rm-paper: #fffef9;
-  --rm-danger: #a63c2a;
-  --rm-danger-soft: #fff1e8;
-  --rm-danger-line: #f1c6b5;
-  --rm-success: #39704e;
-  --rm-success-soft: #e8f3e9;
-  --rm-success-line: #b7d5bd;
-  --rm-focus: #2563eb;
-  --rm-route-selection: #0b6fe8;
-  --rm-route-selection-edge: #111111;
-  --rm-route-selection-soft: rgb(11 111 232 / 16%);
-  --rm-route-label-background: #ffffff;
-  --rm-route-label-ink: #111111;
-  --rm-route-tape: #080808;
-  --rm-route-tape-edge: #ffffff;
-  --rm-font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --rm-content-width: 880px;
-  --rm-workspace-width: 1080px;
-  --rm-header-height: 68px;
-  --rm-desktop-gutter: 32px;
-  --rm-mobile-gutter: 18px;
-  --rm-mobile-footer-space: 90px;
-  --rm-control-radius: 8px;
-  --rm-panel-radius: 12px;
-  --rm-type-caption: 13px;
-  --rm-type-control: 14px;
-  --rm-type-body: 16px;
-  --rm-type-lede: 17px;
-  --rm-type-title: 18px;
-  --rm-type-display: 44px;
-  --rm-leading-body: 22px;
-  --rm-leading-lede: 27px;
+/* Design tokens, shared by the Lynx app and the website. Light is the :root default; hosts add
+   .theme-dark to the root to switch. Lynx svg content and gradients cannot read these, so the
+   icon colors in icons.ts and the gradients in the app's stylesheets repeat the values they
+   need, and theme.test.ts keeps them in step. */
+
+:root {
+  /* colour - light (default) */
+  --c-bg: #f3f4ef;
+  --c-surface: #fcfcf9;
+  --c-sunk: #e6e9e0;
+  --c-ink: #17201d;
+  --c-ink-2: #45514b;
+  --c-ink-3: #586560;
+  --c-line: #d2d7cd;
+  --c-edge: #6c7872;
+  --c-wall: #2e5c78;
+  --c-wall-2: #3b7295;
+  --c-wall-3: #1f4258;
+  --c-on-wall: #f3f4ef;
+  --c-on-wall-2: #e6f0f6;
+  --c-link: #2e5c78;
+  --c-action: #17201d;
+  --c-on-action: #f3f4ef;
+  --c-action-edge: #2e5c78;
+  --c-focus: #17201d;
+  --c-scrim: rgba(10, 16, 13, 0.56);
+  --c-nav: #17201d;
+  --c-on-nav: #f3f4ef;
+  --c-on-nav-2: #a9b7b0;
+  --c-nav-mark: #7fb6d8;
+  --c-accent: #2e5c78;
+  --c-on-danger: #ffffff;
+  --c-danger: #b3261e;
+  --c-danger-bg: #fbe4df;
+  --c-success: #1b6a42;
+  --c-success-bg: #dbf0e2;
+  --c-on-success: #ffffff;
+  --sh-hard: #17201d;
+  --sh-soft: 0 10px 28px rgba(10, 16, 13, 0.22);
+  --map-water: #cfe0ea;
+  --map-land: #ecefe6;
+  --map-road: #ffffff;
+  --map-road-edge: #d3d8cd;
+  --map-park: #d6e6cd;
+  --map-label: #3c4943;
+
+  /* colour - grade tiers (theme independent: same in light and dark) */
+  --g1: #ffe08a;
+  --g1-shade: #f6cc5a;
+  --g1-ink: #17201d;
+  --g2: #ffb020;
+  --g2-shade: #ee9a00;
+  --g2-ink: #17201d;
+  --g3: #ff6b2c;
+  --g3-shade: #ee561a;
+  --g3-ink: #17201d;
+  --g4: #d92b45;
+  --g4-shade: #bf1f39;
+  --g4-ink: #ffffff;
+  --g5: #a8268f;
+  --g5-shade: #8d1d77;
+  --g5-ink: #ffffff;
+  --g6: #2b1b5a;
+  --g6-shade: #1d1142;
+  --g6-ink: #ffffff;
+
+  /* colour - photo-safe marking palette (theme independent, burned into published JPEGs) */
+  --m-hand: #3ccbff;
+  --m-foot: #ffd43b;
+  --m-any: #ffffff;
+  --m-start: #2bd97c;
+  --m-finish: #ff3d8b;
+  --m-halo: #0b100e;
+  --m-candidate: #ffffff;
+
+  /* gradients: the diagonal facets of the wall and of the grade tags. Lynx is not known to resolve
+     var() inside a gradient, so each is written out with literal colors, once, here; a var() holding
+     the whole gradient is all a stylesheet needs. theme.test.ts keeps them in step with the colors above. */
+  --bg-wall: linear-gradient(
+    112deg,
+    #2e5c78 0%,
+    #2e5c78 54%,
+    #3b7295 54%,
+    #3b7295 78%,
+    #1f4258 78%,
+    #1f4258 100%
+  );
+  --bg-shard-1: linear-gradient(
+    210deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    #1f4258 50%,
+    #1f4258 100%
+  );
+  --bg-shard-2: linear-gradient(
+    30deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 54%,
+    #3b7295 54%,
+    #3b7295 100%
+  );
+  --bg-cut: linear-gradient(
+    176deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    #f3f4ef 50%,
+    #f3f4ef 100%
+  );
+  --bg-cut-wide: linear-gradient(
+    178.6deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    #f3f4ef 50%,
+    #f3f4ef 100%
+  );
+  --bg-tile: linear-gradient(150deg, #2e5c78 0%, #2e5c78 60%, #1f4258 60%, #1f4258 100%);
+  --bg-art-wall: linear-gradient(135deg, #2e5c78 0%, #2e5c78 50%, #1f4258 50%, #1f4258 100%);
+  --bg-art-shard: linear-gradient(
+    200deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 46%,
+    #3b7295 46%,
+    #3b7295 100%
+  );
+  --bg-g1: linear-gradient(150deg, #ffe08a 0%, #ffe08a 62%, #f6cc5a 62%, #f6cc5a 100%);
+  --bg-g2: linear-gradient(150deg, #ffb020 0%, #ffb020 62%, #ee9a00 62%, #ee9a00 100%);
+  --bg-g3: linear-gradient(150deg, #ff6b2c 0%, #ff6b2c 62%, #ee561a 62%, #ee561a 100%);
+  --bg-g4: linear-gradient(150deg, #d92b45 0%, #d92b45 62%, #bf1f39 62%, #bf1f39 100%);
+  --bg-g5: linear-gradient(150deg, #a8268f 0%, #a8268f 62%, #8d1d77 62%, #8d1d77 100%);
+  --bg-g6: linear-gradient(150deg, #2b1b5a 0%, #2b1b5a 62%, #1d1142 62%, #1d1142 100%);
+
+  /* typography */
+  --ff-display:
+    'RM Display', 'Big Shoulders Display', 'Avenir Next Condensed', 'Roboto Condensed',
+    'sans-serif-condensed', 'Arial Narrow', sans-serif;
+  --ff-text:
+    -apple-system, 'SF Pro Text', system-ui, Roboto, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+  /* radii */
+  --r-1: 2px;
+  --r-2: 6px;
+  --r-3: 12px;
+  --r-pill: 999px;
+
+  /* elevation: hard "sticker" edges for controls, one soft shadow for floating layers */
+  --el-hard: 0 3px 0 0;
+  --el-hard-press: 0 1px 0 0;
+  --el-focus: 0 0 0 2px var(--c-bg), 0 0 0 5px var(--c-focus);
+
+  /* sizes */
+  --hit-min: 44px;
+  --control-h: 52px;
+  --control-h-sm: 44px;
+  --tabbar-h: 60px;
+  --topbar-h: 56px;
+  --topbar-h-wide: 72px;
+  --content-max: 1120px;
+
+  /* motion */
+  --dur-press: 90ms;
+  --dur-quick: 140ms;
+  --dur-base: 220ms;
+  --dur-slow: 360ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .theme-dark {
-  --rm-accent: #e07a55;
-  --rm-accent-soft: #44271f;
-  --rm-accent-ink: #ffc2ab;
-  --rm-background: #111714;
-  --rm-ink: #edf2ec;
-  --rm-line: #35413b;
-  --rm-muted: #a4b0aa;
-  --rm-paper: #19221e;
-  --rm-danger: #ff9a7b;
-  --rm-danger-soft: #3b211b;
-  --rm-danger-line: #704033;
-  --rm-success: #8dc89e;
-  --rm-success-soft: #1c3024;
-  --rm-success-line: #395744;
-  --rm-focus: #7aa8ff;
-}
+  /* colour - dark (overrides only what differs) */
+  --c-bg: #111714;
+  --c-surface: #1a2320;
+  --c-sunk: #0b100e;
+  --c-ink: #d9e0dd;
+  --c-ink-2: #aab6b1;
+  --c-ink-3: #92a09a;
+  --c-line: #26312c;
+  --c-edge: #708079;
+  --c-wall: #1d3a4d;
+  --c-wall-2: #274a60;
+  --c-wall-3: #142b39;
+  --c-on-wall: #d9e0dd;
+  --c-on-wall-2: #a9c3d3;
+  --c-link: #86b3cd;
+  --c-action: #d9e0dd;
+  --c-on-action: #111714;
+  --c-action-edge: #608ba4;
+  --c-focus: #d9e0dd;
+  --c-scrim: rgba(0, 0, 0, 0.64);
+  --c-nav: #1a2320;
+  --c-on-nav: #d9e0dd;
+  --c-on-nav-2: #9aa8a2;
+  --c-nav-mark: #608ba4;
+  --c-accent: #608ba4;
+  --c-on-danger: #1d0f0c;
+  --c-danger: #ff9486;
+  --c-danger-bg: #3b1f1b;
+  --c-success: #7ad8a5;
+  --c-success-bg: #173325;
+  --c-on-success: #0b1f14;
+  --sh-hard: #608ba4;
+  --sh-soft: 0 10px 28px rgba(0, 0, 0, 0.55);
+  --map-water: #1b2c3a;
+  --map-land: #18211e;
+  --map-road: #2a3732;
+  --map-road-edge: #202b27;
+  --map-park: #1a2a22;
+  --map-label: #9fb0a9;
 
-.appearance-toggle {
-  align-items: center;
-  background: transparent;
-  border: 0;
-  display: flex;
-  flex-shrink: 0;
-  gap: 6px;
-  min-height: 44px;
-  padding: 0 2px;
-}
-
-.appearance-toggle__icon {
-  display: block;
-  flex-shrink: 0;
-  height: 17px;
-  width: 17px;
-}
-
-.appearance-toggle__icon svg {
-  display: block;
-  height: 100%;
-  width: 100%;
-}
-
-.appearance-toggle__track {
-  background: var(--rm-line);
-  border-radius: 14px;
-  height: 26px;
-  padding: 3px;
-  width: 48px;
-}
-
-.appearance-toggle__thumb {
-  background: var(--rm-paper);
-  border-radius: 10px;
-  display: block;
-  height: 20px;
-  transition: margin-left 160ms ease;
-  width: 20px;
-}
-
-.appearance-toggle--dark .appearance-toggle__thumb {
-  margin-left: 22px;
+  --bg-wall: linear-gradient(
+    112deg,
+    #1d3a4d 0%,
+    #1d3a4d 54%,
+    #274a60 54%,
+    #274a60 78%,
+    #142b39 78%,
+    #142b39 100%
+  );
+  --bg-shard-1: linear-gradient(
+    210deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    #142b39 50%,
+    #142b39 100%
+  );
+  --bg-shard-2: linear-gradient(
+    30deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 54%,
+    #274a60 54%,
+    #274a60 100%
+  );
+  --bg-cut: linear-gradient(
+    176deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    #111714 50%,
+    #111714 100%
+  );
+  --bg-cut-wide: linear-gradient(
+    178.6deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 50%,
+    #111714 50%,
+    #111714 100%
+  );
+  --bg-tile: linear-gradient(150deg, #1d3a4d 0%, #1d3a4d 60%, #142b39 60%, #142b39 100%);
+  --bg-art-wall: linear-gradient(135deg, #1d3a4d 0%, #1d3a4d 50%, #142b39 50%, #142b39 100%);
+  --bg-art-shard: linear-gradient(
+    200deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 46%,
+    #274a60 46%,
+    #274a60 100%
+  );
 }

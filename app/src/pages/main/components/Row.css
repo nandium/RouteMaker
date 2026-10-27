@@ -1,0 +1,44 @@
+/* ---------- list rows ---------- */
+.row-item {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background-color: var(--c-bg);
+  border-bottom: 2px solid var(--c-line);
+}
+.row-item:active {
+  background-color: var(--c-sunk);
+}
+.row-copy {
+  flex: 1 1 0;
+  gap: 4px;
+}
+.row-title {
+  font-size: 22px;
+  line-height: 1.09;
+  letter-spacing: 0.3px;
+  /* The clip would otherwise take the overhang of the last glyph. */
+  padding-right: 2px;
+}
+.wide .row-item {
+  padding: 16px 12px;
+}
+.row-item.row-flush,
+.wide .row-item.row-flush {
+  padding-left: 0;
+  padding-right: 0;
+}
+/* Rows grow with the text; at the largest sizes the content stacks above its text. */
+.fs-xl .row-item {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.fs-xl .row-item > .row-copy {
+  flex: 0 0 auto;
+  align-self: stretch;
+}
+.fs-xl .row-item > .icon {
+  display: none;
+}

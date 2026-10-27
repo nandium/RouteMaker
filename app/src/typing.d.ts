@@ -1,22 +1,32 @@
-// Copyright (c) 2025 TikTok Pte. Ltd.
-// Licensed under the Apache License Version 2.0 that can be found in the
-// LICENSE file in the root directory of this source tree.
-import type { ColorScheme, ThemePreference } from './appearance.js';
-import type { AppRoute } from './web-routes.js';
+import type { ColorScheme, ThemePreference } from './host-contract.js';
+import type { Page } from './web-pages.js';
 
 declare module '@lynx-js/types' {
   interface GlobalProps {
     apiBaseUrl?: string;
-    initialRoute?: AppRoute;
     webHost?: boolean;
-    wideLayout?: boolean;
-    themePreference?: ThemePreference;
+    initialPage?: Page;
+    /** The visitor's choice; `system` while nothing is saved, so the device's theme applies. */
+    themePreference: ThemePreference;
     systemTheme?: ColorScheme;
+    wideLayout?: boolean;
+    fontScale?: number;
+    reducedMotion?: boolean;
+  }
+
+  interface Lynx {
+    /** Has a screen reader speak `content`; absent on the web host, whose pages use live regions. */
+    accessibilityAnnounce?(options: { content: string }): void;
+  }
+
+  interface StandardProps {
+    // Lynx Web needs these for keyboard activation; native ignores them.
+    role?: string;
+    tabindex?: string;
   }
 
   interface InputProps {
-    // RouteMaker relies on XElement's runtime-supported controlled value;
-    // Lynx 4.0's public InputProps declaration does not expose it.
+    // XElement input supports a controlled `value` at runtime; Lynx's InputProps omits it.
     value?: string;
   }
 }

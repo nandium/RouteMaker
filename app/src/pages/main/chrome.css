@@ -1,0 +1,249 @@
+/* ---------- the frame: top bar, navigation, notice ---------- */
+/* Lynx puts an absolute child above its siblings by z-index only within a parent that has one, so
+   the root and the screen each start a stacking context for the sheet, notice and sticky bar. */
+.app {
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--c-bg);
+}
+/* The screen scrolls between the bars; its children keep their size instead of shrinking to fit. */
+.screen {
+  z-index: 0;
+  flex: 1 1 0;
+  min-height: 0;
+}
+.screen > view {
+  flex-shrink: 0;
+}
+/* On wide screens, content sits in a centered column. */
+.page {
+  width: 100%;
+  align-self: center;
+}
+.wide .page {
+  max-width: var(--content-max);
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.topbar {
+  flex-shrink: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--topbar-h);
+  padding: 0 8px 0 16px;
+  background-color: var(--c-bg);
+}
+.wide .topbar {
+  min-height: var(--topbar-h-wide);
+  padding: 0 24px 0 32px;
+}
+.topbar-spacer {
+  flex: 1 1 0;
+}
+.brand {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--hit-min);
+}
+.wordmark {
+  letter-spacing: 2.4px;
+}
+.busy-text {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.33;
+  color: var(--c-ink-2);
+}
+.busy-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  overflow: hidden;
+}
+.busy-run {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 36%;
+  height: 4px;
+  background-color: var(--c-accent);
+  animation: rm-busy 1.1s var(--ease-in-out) infinite;
+}
+@keyframes rm-busy {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(280%);
+  }
+}
+.fs-xl .wordmark {
+  display: none;
+}
+
+/* ---------- navigation on wide screens ---------- */
+.wide-nav {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  margin-left: 24px;
+}
+.wide-nav-item {
+  min-height: var(--hit-min);
+  padding: 0 14px;
+  justify-content: center;
+  border-bottom: 4px solid rgba(0, 0, 0, 0);
+}
+.wide-nav-item.is-on {
+  border-bottom-color: var(--c-ink);
+}
+.wide-nav-item:active {
+  background-color: var(--c-sunk);
+}
+.wide-nav-label {
+  letter-spacing: 0.3px;
+  color: var(--c-ink-2);
+}
+.wide-nav-item.is-on .wide-nav-label {
+  color: var(--c-ink);
+}
+.account-chip {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--hit-min);
+  padding: 0 12px 0 4px;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+}
+.account-chip.is-on {
+  background-color: var(--c-sunk);
+}
+
+/* ---------- navigation on compact screens: the kickboard ---------- */
+.tabbar {
+  flex-shrink: 0;
+  flex-direction: row;
+  padding: 0 8px;
+  background-color: var(--c-nav);
+}
+.tab {
+  flex: 1 1 0;
+  min-height: var(--tabbar-h);
+  padding: 6px 0;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.tab:active {
+  opacity: 0.7;
+}
+.tab-marker {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 32px;
+  height: 4px;
+  margin-left: -16px;
+  background-color: var(--c-nav-mark);
+}
+.tab.is-on .tab-marker {
+  display: flex;
+}
+.tab-label {
+  font-weight: 700;
+  text-align: center;
+  color: var(--c-on-nav-2);
+}
+.tab.is-on .tab-label {
+  color: var(--c-on-nav);
+}
+.tab-avatar {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 3px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-1);
+  background-color: var(--c-on-nav-2);
+}
+.tab.is-on .tab-avatar {
+  background-color: var(--c-on-nav);
+}
+.tab-avatar-initial {
+  color: var(--c-nav);
+}
+
+/* ---------- notice ---------- */
+/* Just under the top bar: its height (--topbar-h, or --topbar-h-wide) and a little more. */
+.notice-slot {
+  z-index: 12;
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 64px;
+}
+.wide .notice-slot {
+  left: 50%;
+  right: auto;
+  top: 84px;
+  width: 560px;
+  margin-left: -280px;
+}
+.notice {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 4px 12px 14px;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-3);
+  box-shadow: var(--sh-soft);
+  animation: rm-drop var(--dur-base) var(--ease-out) both;
+}
+.notice.is-error {
+  background-color: var(--c-danger-bg);
+  border-color: var(--c-danger);
+}
+.notice.is-success {
+  background-color: var(--c-success-bg);
+  border-color: var(--c-success);
+}
+.notice-body {
+  flex: 1 1 0;
+  padding-top: 2px;
+}
+.notice-text {
+  font-size: 15px;
+  line-height: 1.47;
+}
+.notice .ibtn {
+  margin: -10px 0;
+}
+.fs-xl .notice {
+  flex-wrap: wrap;
+}
+@keyframes rm-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.rm .busy-run,
+.rm .notice {
+  animation: none;
+}

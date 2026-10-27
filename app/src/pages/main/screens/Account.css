@@ -1,0 +1,27 @@
+/* ---------- account ---------- */
+.account-id {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+.account-stack {
+  gap: 32px;
+  padding: 24px 16px 40px;
+}
+.account-section {
+  gap: 16px;
+}
+.account-heading {
+  gap: 4px;
+}
+.account-columns {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 56px;
+  padding-top: 24px;
+  padding-bottom: 56px;
+}
+.account-column {
+  flex: 1 1 0;
+  gap: 32px;
+}

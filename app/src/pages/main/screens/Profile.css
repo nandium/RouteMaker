@@ -1,0 +1,42 @@
+/* ---------- profile ---------- */
+.profile-head {
+  gap: 16px;
+}
+.wide .profile-head {
+  flex: 1 1 0;
+}
+.profile-id {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+.profile-counts {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 24px;
+}
+.profile-count {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* The grade spread: one bar, each tier as wide as its share of the routes. */
+.spread-section {
+  padding: 0 16px 14px;
+  gap: 8px;
+}
+.wide .spread-section {
+  padding: 0 12px 14px;
+}
+.spread {
+  flex-direction: row;
+  height: 18px;
+  overflow: hidden;
+  border: 2px solid var(--c-ink);
+  border-radius: 4px;
+}
+.spread-part {
+  height: 14px;
+}

@@ -1,0 +1,26 @@
+/* ---------- moderation ---------- */
+/* On wide screens, the three lists sit side by side as a board with their counts in the hero. */
+.admin-totals {
+  flex-direction: row;
+  gap: 24px;
+}
+.admin-total {
+  align-items: flex-end;
+}
+.admin-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  align-items: flex-start;
+  padding-top: 32px;
+  padding-bottom: 56px;
+}
+.admin-column {
+  gap: 8px;
+}
+.admin-column-head {
+  align-items: baseline;
+}
+.admin-list {
+  border-top: 3px solid var(--c-ink);
+}

@@ -1,0 +1,12 @@
+/* ---------- gym list ---------- */
+.gym-order {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+/* On wide screens the gyms are two columns. */
+.gym-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 32px;
+}

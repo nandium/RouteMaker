@@ -1,0 +1,56 @@
+/* ---------- grade picker ---------- */
+.picker-scroll {
+  flex-direction: row;
+}
+.picker {
+  overflow: visible;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 10px;
+  padding: 8px 4px 10px;
+}
+.wide .picker {
+  flex-wrap: wrap;
+  padding: 6px 0 10px;
+}
+.fs-lg .picker {
+  gap: 12px;
+}
+.picker-item {
+  overflow: visible;
+  align-items: center;
+  gap: 4px;
+  min-width: 56px;
+  flex-shrink: 0;
+}
+.picker-box {
+  overflow: visible;
+  min-width: 56px;
+  min-height: 56px;
+}
+.tag.picker-tile {
+  min-width: 56px;
+  min-height: 56px;
+}
+.picker-item.is-on .tag {
+  box-shadow:
+    0 0 0 3px var(--c-bg),
+    0 0 0 6px var(--c-ink);
+}
+.picker-caption {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.17;
+  color: var(--c-ink-2);
+}
+.picker-check {
+  position: absolute;
+  right: -6px;
+  top: -8px;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background-color: var(--c-ink);
+}

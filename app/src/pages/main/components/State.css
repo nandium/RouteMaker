@@ -1,0 +1,115 @@
+/* ---------- empty, failed, loading ---------- */
+.state {
+  align-items: center;
+  gap: 12px;
+  padding: 36px 24px 40px;
+}
+.state-title {
+  text-align: center;
+}
+.state-body {
+  max-width: 320px;
+  text-align: center;
+  color: var(--c-ink-2);
+}
+.state-actions {
+  align-self: stretch;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* The illustration: a shard of wall with a hold on it, dashed while there is nothing yet. */
+.state-art {
+  width: 132px;
+  height: 100px;
+  margin-bottom: 4px;
+}
+.art-wall {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 92px;
+  height: 90px;
+  background-color: var(--c-wall);
+  background-image: var(--bg-art-wall);
+}
+.art-shard {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 74px;
+  height: 64px;
+  background-image: var(--bg-art-shard);
+}
+.art-hold {
+  position: absolute;
+  left: 62px;
+  top: 44px;
+  width: 46px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  border: 3px dashed var(--c-ink);
+  background-color: var(--c-bg);
+}
+.state-art.is-failed .art-hold {
+  border-style: solid;
+  border-color: var(--c-danger);
+}
+
+.skel {
+  background-color: var(--c-line);
+  border-radius: var(--r-1);
+  animation: rm-skel 1.3s ease-in-out infinite;
+}
+.skel-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--c-line);
+}
+.skel-thumb {
+  width: 88px;
+  height: 88px;
+}
+.skel-tile {
+  width: 52px;
+  height: 52px;
+}
+.skel-copy {
+  flex: 1 1 0;
+  gap: 8px;
+}
+.skel-title {
+  width: 70%;
+  height: 22px;
+}
+.skel-line {
+  width: 50%;
+  height: 14px;
+}
+.skel-short {
+  width: 30%;
+}
+@keyframes rm-skel {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.rm .skel {
+  animation: none;
+}
+
+/* A placeholder on the wall's color, as in a hero. */
+.skel-on-wall {
+  height: 56px;
+  background-color: rgba(255, 255, 255, 0.18);
+}

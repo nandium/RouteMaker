@@ -1,10 +1,10 @@
 import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { copyFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { BRAND_PALETTE, LOGO_MARK_SEGMENTS, logoMarkPaths } from '../src/brand.ts';
+import { brandSourceDigest, digest } from './brand-digest.mjs';
 
 const variants = [
   ['app_icon', BRAND_PALETTE.light],
@@ -120,9 +120,8 @@ const generatedAssets = [
   ]),
 ];
 const appRoot = new URL('../', import.meta.url);
-const digest = (value) => createHash('sha256').update(value).digest('hex');
 const manifest = {
-  source: digest(`${JSON.stringify(BRAND_PALETTE)}${JSON.stringify(LOGO_MARK_SEGMENTS)}`),
+  source: brandSourceDigest(),
   files: Object.fromEntries(
     generatedAssets.map((path) => [path, digest(readFileSync(new URL(path, appRoot)))])
   ),

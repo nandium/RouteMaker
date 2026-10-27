@@ -1,0 +1,196 @@
+/* ---------- buttons ---------- */
+.btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 20px;
+  border-radius: var(--r-2);
+  border: 2px solid rgba(0, 0, 0, 0);
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    box-shadow var(--dur-press) var(--ease-out),
+    background-color var(--dur-quick) var(--ease-out);
+}
+.btn-md {
+  min-height: 48px;
+}
+.btn-lg {
+  min-height: var(--control-h);
+  padding: 0 24px;
+}
+.btn-sm {
+  min-height: var(--control-h-sm);
+  padding: 0 14px;
+}
+.btn-block {
+  align-self: stretch;
+}
+.btn-label {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.14;
+  letter-spacing: 0.4px;
+}
+.btn-sm .btn-label {
+  font-size: 19px;
+}
+.btn-primary {
+  background-color: var(--c-action);
+  border-color: var(--c-action);
+  box-shadow: var(--el-hard) var(--c-action-edge);
+}
+.btn-primary .btn-label {
+  color: var(--c-on-action);
+}
+.btn-secondary {
+  background-color: var(--c-surface);
+  border-color: var(--c-ink);
+  box-shadow: var(--el-hard) var(--sh-hard);
+}
+.btn-secondary .btn-label {
+  color: var(--c-ink);
+}
+.btn-wall {
+  background-color: var(--c-on-wall);
+  border-color: var(--c-on-wall);
+  box-shadow: var(--el-hard) var(--c-wall-3);
+}
+.btn-wall .btn-label {
+  color: var(--c-wall-3);
+}
+.btn-wall-line {
+  background-color: rgba(0, 0, 0, 0);
+  border-color: var(--c-on-wall);
+}
+.btn-wall-line .btn-label {
+  color: var(--c-on-wall);
+}
+.btn-danger {
+  background-color: var(--c-danger);
+  border-color: var(--c-danger);
+  box-shadow: var(--el-hard) var(--c-ink);
+}
+.btn-danger .btn-label {
+  color: var(--c-on-danger);
+}
+.btn-quiet,
+.btn-quiet-danger {
+  align-self: flex-start;
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
+}
+.btn-quiet .btn-label,
+.btn-quiet-danger .btn-label {
+  font-family: var(--ff-text);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.33;
+  letter-spacing: 0;
+}
+.btn-quiet .btn-label {
+  color: var(--c-link);
+}
+.btn-quiet-danger .btn-label {
+  color: var(--c-danger);
+}
+
+/* Pressing sinks the button onto its edge. */
+.btn-primary:active,
+.btn-secondary:active,
+.btn-wall:active,
+.btn-danger:active {
+  transform: translateY(2px);
+  box-shadow: var(--el-hard-press) var(--c-ink);
+}
+.btn-primary:active {
+  box-shadow: var(--el-hard-press) var(--c-action-edge);
+}
+.btn-wall:active {
+  box-shadow: var(--el-hard-press) var(--c-wall-3);
+}
+.btn-quiet:active,
+.btn-quiet-danger:active {
+  background-color: var(--c-sunk);
+}
+.btn.is-disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+/* A busy button is the one working, so it keeps its strength; the Pressable ignores its taps. */
+.btn.is-busy {
+  box-shadow: none;
+}
+
+.spin {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  border: 3px solid rgba(127, 127, 127, 0.35);
+  border-top-color: var(--c-on-action);
+  animation: rm-spin 0.8s linear infinite;
+}
+.btn-secondary .spin,
+.btn-quiet .spin,
+.btn-quiet-danger .spin {
+  border-top-color: var(--c-ink);
+}
+@keyframes rm-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.ibtn {
+  width: var(--hit-min);
+  height: var(--hit-min);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-2);
+}
+.ibtn:active {
+  background-color: var(--c-sunk);
+}
+
+.link {
+  flex-direction: row;
+  align-items: center;
+  min-height: var(--hit-min);
+  padding: 0 4px;
+}
+.link-label {
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.33;
+  color: var(--c-link);
+  text-decoration: underline;
+}
+
+/* Buttons that sit side by side share the width, and stack at large text sizes. */
+.btn-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.btn-row > view {
+  flex: 1 1 140px;
+}
+.fs-lg .btn-row {
+  flex-direction: column;
+  align-items: stretch;
+}
+.fs-lg .btn-row > view {
+  flex: 0 0 auto;
+}
+
+/* Reduced motion: the host sets .rm on the root. */
+.rm .btn {
+  transition: none;
+}
+.rm .spin {
+  animation: none;
+}

@@ -1,0 +1,43 @@
+/* ---------- sign in, sign up, reset ---------- */
+.auth-form {
+  gap: 20px;
+  padding: 20px 16px 40px;
+}
+.auth-links {
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: -4px;
+}
+.auth-step {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.auth-step-text {
+  flex: 1 1 0;
+}
+
+/* On wide screens the wall takes a panel beside the form. */
+.auth-split {
+  flex-direction: row;
+  min-height: 100%;
+}
+.auth-side {
+  flex: 1 1 0;
+  align-items: center;
+  padding: 0 24px;
+}
+.auth-side .auth-form {
+  width: 100%;
+  max-width: 420px;
+  padding: 56px 0;
+}
+.auth-perks {
+  gap: 12px;
+  margin-top: 16px;
+}
+.auth-perk {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}

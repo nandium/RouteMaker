@@ -1,0 +1,36 @@
+/* ---------- what surrounds a form control ---------- */
+.field {
+  gap: 6px;
+}
+.field-label {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.29;
+}
+.field-error {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 6px;
+}
+.field-error-text {
+  flex: 1 1 0;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.38;
+  color: var(--c-danger);
+}
+.field-foot {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 12px;
+}
+.field-hint {
+  flex: 1 1 0;
+  font-size: 13px;
+  line-height: 1.38;
+  color: var(--c-ink-2);
+}
+.fs-xl .field-foot {
+  flex-direction: column;
+  gap: 2px;
+}
