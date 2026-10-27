@@ -119,7 +119,9 @@ describe('static headers', () => {
   });
 
   it('let only the map reach the tile server', () => {
-    const reaching = [...TOOL_PAGES, MAP_WORKER].filter((pattern) => csp(pattern).includes(TILES));
+    const connectsToTiles = (pattern: string) =>
+      (directives(csp(pattern)).get('connect-src') ?? []).some((source) => source === TILES);
+    const reaching = [...TOOL_PAGES, MAP_WORKER].filter(connectsToTiles);
 
     expect(reaching).toEqual([WEB_PATHS.gymMap, MAP_WORKER]);
   });
