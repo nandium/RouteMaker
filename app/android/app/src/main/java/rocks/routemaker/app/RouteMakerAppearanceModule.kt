@@ -4,49 +4,35 @@ import android.content.Context
 import android.content.res.Configuration
 import com.lynx.jsbridge.LynxMethod
 import com.lynx.jsbridge.LynxModule
-import com.lynx.tasm.LynxColorScheme
 
 object RouteMakerAppearance {
-    const val SYSTEM_THEME_EVENT = "routemaker:system-theme-change"
+    private const val PREFERENCE = "routemaker.theme"
 
-    private const val PREFERENCES = "routemaker.appearance"
-    private const val THEME = "theme"
-
+    /** The saved "light" or "dark", or null when the system's theme applies. */
     fun preference(context: Context): String? =
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .getString(THEME, null)
+        context.routeMakerPreferences().getString(PREFERENCE, null)
 
-    fun systemTheme(context: Context): String =
-        systemTheme(context.resources.configuration)
+    /** Saves "light" or "dark"; "system" forgets the choice so the system's theme applies. */
+    fun save(context: Context, preference: String) {
+        val editor = context.routeMakerPreferences().edit()
+        if (preference == "system") editor.remove(PREFERENCE) else editor.putString(PREFERENCE, preference)
+        editor.apply()
+    }
 
     fun systemTheme(configuration: Configuration): String =
-        if (
-            configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-            Configuration.UI_MODE_NIGHT_YES
-        ) {
+        if ((configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
             "dark"
         } else {
             "light"
         }
-
-    fun lynxColorScheme(configuration: Configuration): LynxColorScheme =
-        if (systemTheme(configuration) == "dark") LynxColorScheme.DARK else LynxColorScheme.LIGHT
-
-    fun save(context: Context, preference: String) {
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .edit()
-            .putString(THEME, preference)
-            .apply()
-    }
 }
 
 class RouteMakerAppearanceModule(context: Context) : LynxModule(context) {
-    private val hostContext = context
 
     @LynxMethod
     fun setPreference(preference: String) {
-        if (preference == "light" || preference == "dark") {
-            RouteMakerAppearance.save(hostContext, preference)
-        }
+        RouteMakerAppearance.save(mContext, preference)
+        val activity = mContext.mainActivity()
+        activity.runOnUiThread { activity.applyWindowTheme() }
     }
 }

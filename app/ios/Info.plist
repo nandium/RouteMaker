@@ -28,17 +28,22 @@
 	<string>RouteMaker uses your location to start the gym map nearby.</string>
 	<key>ROUTEMAKER_API_BASE_URL</key>
 	<string>$(ROUTEMAKER_API_BASE_URL)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>RMDisplay-800.ttf</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
+		<false/>
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>
-	<dict/>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleDefault</string>
+	<dict>
+		<key>UIColorName</key>
+		<string>Page</string>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

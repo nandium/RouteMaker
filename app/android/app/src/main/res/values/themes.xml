@@ -1,0 +1,5 @@
+<resources>
+    <style name="Theme.RouteMaker" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/background_light</item>
+    </style>
+</resources>

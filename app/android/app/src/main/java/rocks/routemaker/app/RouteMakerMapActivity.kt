@@ -4,18 +4,31 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.RectF
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
-import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import org.json.JSONArray
-import org.json.JSONObject
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.IntentCompat
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
@@ -36,102 +49,128 @@ import org.maplibre.geojson.Feature
 import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.Point
 
-class RouteMakerMapActivity : Activity() {
-    private lateinit var mapView: MapView
+private const val EXTRA_SCENE = "scene"
+private const val EXTRA_GYM_ID = "gymId"
+
+/** Shows the map for a scene and returns the chosen gym's id, or null when it is dismissed. */
+class PickGym : ActivityResultContract<MapScene, String?>() {
+    override fun createIntent(context: Context, input: MapScene) =
+        Intent(context, RouteMakerMapActivity::class.java).putExtra(EXTRA_SCENE, input)
+
+    override fun parseResult(resultCode: Int, intent: Intent?) =
+        if (resultCode == Activity.RESULT_OK) intent?.getStringExtra(EXTRA_GYM_ID) else null
+}
+
+class RouteMakerMapActivity : ComponentActivity() {
     private lateinit var scene: MapScene
+    private lateinit var mapView: MapView
     private var map: MapLibreMap? = null
-    private var style: Style? = null
-    private val dark get() = scene.theme == "dark"
+
+    private val locationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) showUserLocation()
+        }
+
+    private fun color(light: Int, dark: Int) = getColor(if (scene.dark) dark else light)
+    private val page get() = color(R.color.background_light, R.color.background_dark)
+    private val nav get() = color(R.color.nav_light, R.color.nav_dark)
+    private val onNav get() = color(R.color.on_nav_light, R.color.on_nav_dark)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Only PickGym starts this activity, and it always supplies a scene.
+        scene = checkNotNull(IntentCompat.getSerializableExtra(intent, EXTRA_SCENE, MapScene::class.java))
+        // The page color shows through the top inset; the bottom bar below paints its own.
+        enableEdgeToEdge(
+            SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { scene.dark },
+            SystemBarStyle.dark(Color.TRANSPARENT),
+        )
         super.onCreate(savedInstanceState)
-        scene = parseScene(intent.getStringExtra(SCENE).orEmpty()) ?: run {
-            finish()
-            return
-        }
         MapLibre.getInstance(this)
+        window.setBackgroundDrawable(ColorDrawable(page))
 
         mapView = MapView(this)
         mapView.onCreate(savedInstanceState)
-        setContentView(FrameLayout(this).apply {
-            addView(mapView, matchParent())
-            addView(toolbar(), toolbarLayout())
-            addView(hint(), hintLayout())
-        })
+        val screen = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(toolbar())
+            addView(mapView, LinearLayout.LayoutParams(MATCH_PARENT, 0, 1f))
+        }
+        setContentView(insetColumn(this, screen, View(this).apply { setBackgroundColor(nav) }))
 
         mapView.getMapAsync { map ->
+            this.map = map
+            map.addOnMapClickListener { point ->
+                val gymId = gymAt(map, point)
+                if (gymId != null) finishWithGym(gymId)
+                gymId != null
+            }
             map.setStyle(scene.style) { style ->
-                this.map = map
-                this.style = style
-                val features = scene.gyms.map { gym ->
-                    Feature.fromGeometry(Point.fromLngLat(gym.longitude, gym.latitude)).apply {
-                        addStringProperty(GYM_ID, gym.id)
-                    }
-                }
-                style.addSource(GeoJsonSource(GYM_SOURCE, FeatureCollection.fromFeatures(features)))
-                style.addLayer(
-                    CircleLayer(GYM_LAYER, GYM_SOURCE).withProperties(
-                        circleColor(if (dark) MARKER_DARK else MARKER_LIGHT),
-                        circleRadius(9f),
-                        circleStrokeColor(Color.WHITE),
-                        circleStrokeWidth(3f),
-                    ),
-                )
-                map.addOnMapClickListener { point ->
-                    val gymId = map.queryRenderedFeatures(
-                        map.projection.toScreenLocation(point),
-                        GYM_LAYER,
-                    ).firstOrNull()?.getStringProperty(GYM_ID)
-                    if (gymId.isNullOrBlank()) {
-                        false
-                    } else {
-                        finishWithGym(gymId)
-                        true
-                    }
-                }
+                addGymMarkers(style)
                 map.cameraPosition = CameraPosition.Builder()
                     .target(LatLng(scene.centerLatitude, scene.centerLongitude))
                     .zoom(scene.zoom)
                     .build()
-                requestLocation()
+                showUserLocationIfAllowed()
             }
         }
     }
 
-    private fun requestLocation() {
+    private fun addGymMarkers(style: Style) {
+        val features = scene.gyms.map { gym ->
+            Feature.fromGeometry(Point.fromLngLat(gym.longitude, gym.latitude)).apply {
+                addStringProperty(PROPERTY_GYM_ID, gym.id)
+            }
+        }
+        style.addSource(GeoJsonSource(GYM_SOURCE, FeatureCollection.fromFeatures(features)))
+        style.addLayer(
+            CircleLayer(GYM_LAYER, GYM_SOURCE).withProperties(
+                // A 30dp disc with a 3dp ring in the page color around it.
+                circleColor(color(R.color.marker_light, R.color.marker_dark)),
+                circleRadius(MARKER_RADIUS_DP),
+                circleStrokeColor(page),
+                circleStrokeWidth(MARKER_RING_DP),
+            ),
+        )
+    }
+
+    /** The id of the marker under [point]; the search area is a 44dp square, wider than the marker. */
+    private fun gymAt(map: MapLibreMap, point: LatLng): String? {
+        val touch = map.projection.toScreenLocation(point)
+        val slop = dp(TAP_SLOP_DP).toFloat()
+        val area = RectF(touch.x - slop, touch.y - slop, touch.x + slop, touch.y + slop)
+        return map.queryRenderedFeatures(area, GYM_LAYER)
+            .firstOrNull()?.getStringProperty(PROPERTY_GYM_ID)
+    }
+
+    private fun showUserLocationIfAllowed() {
         if (
             checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED
         ) {
             showUserLocation()
-            return
+        } else {
+            locationPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
-        requestPermissions(
-            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-            LOCATION_PERMISSION_REQUEST,
-        )
     }
 
     @SuppressLint("MissingPermission")
     private fun showUserLocation() {
-        val currentMap = map ?: return
-        val currentStyle = style ?: return
-        val location = currentMap.locationComponent
+        val map = map ?: return
+        val style = map.style ?: return
+        val location = map.locationComponent
         if (!location.isLocationComponentActivated) {
             val request = LocationEngineRequest.Builder(LOCATION_UPDATE_INTERVAL_MS)
                 .setFastestInterval(LOCATION_UPDATE_INTERVAL_MS)
                 .setPriority(LocationEngineRequest.PRIORITY_LOW_POWER)
                 .build()
             location.activateLocationComponent(
-                LocationComponentActivationOptions.builder(this, currentStyle)
+                LocationComponentActivationOptions.builder(this, style)
                     .locationEngineRequest(request)
-                    .useDefaultLocationEngine(true)
                     .build(),
             )
         }
         location.isLocationComponentEnabled = true
-        // MapLibre dismisses tracking when the user pans, so location centers
-        // the initial view without fighting later map exploration.
+        // MapLibre drops TRACKING on pan, so this only centers the first view.
         location.setCameraMode(
             CameraMode.TRACKING,
             LOCATION_CAMERA_TRANSITION_MS,
@@ -140,9 +179,7 @@ class RouteMakerMapActivity : Activity() {
             null,
             object : OnLocationCameraTransitionListener {
                 override fun onLocationCameraTransitionFinished(cameraMode: Int) {
-                    if (currentMap.cameraPosition.zoom != scene.locationZoom) {
-                        location.zoomWhileTracking(scene.locationZoom)
-                    }
+                    location.zoomWhileTracking(scene.locationZoom)
                 }
 
                 override fun onLocationCameraTransitionCanceled(cameraMode: Int) = Unit
@@ -150,210 +187,124 @@ class RouteMakerMapActivity : Activity() {
         )
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (
-            requestCode == LOCATION_PERMISSION_REQUEST &&
-            grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
-        ) {
-            showUserLocation()
-        }
-    }
-
+    // The toolbar grows with the system text size: it wraps its content below a minimum height.
     private fun toolbar() = LinearLayout(this).apply {
         gravity = Gravity.CENTER_VERTICAL
-        orientation = LinearLayout.HORIZONTAL
-        setPadding(dp(12), dp(8), dp(12), dp(8))
-        background = rounded(if (dark) 0xEE17201D.toInt() else 0xEEF3F4EF.toInt())
-        addView(Button(context).apply {
-            text = "Close"
-            setTextColor(if (dark) Color.WHITE else INK)
+        minimumHeight = dp(52)
+        setPadding(dp(8), 0, dp(8), 0)
+        setBackgroundColor(nav)
+        addView(ImageButton(context).apply {
+            setImageResource(R.drawable.ic_close)
+            imageTintList = ColorStateList.valueOf(onNav)
+            contentDescription = getString(R.string.map_close)
             setBackgroundColor(Color.TRANSPARENT)
+            minimumWidth = dp(MIN_TOUCH_DP)
+            minimumHeight = dp(MIN_TOUCH_DP)
             setOnClickListener { finish() }
         })
         addView(TextView(context).apply {
-            text = "Gym map"
-            textSize = 18f
-            setTextColor(if (dark) Color.WHITE else INK)
+            setText(R.string.map_title)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
+            setTypeface(typeface, Typeface.BOLD)
+            setTextColor(onNav)
             gravity = Gravity.CENTER
-        }, LinearLayout.LayoutParams(0, dp(48), 1f))
+        }, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
         addView(Button(context).apply {
-            text = "Gyms"
+            setText(R.string.map_gyms)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            setTypeface(typeface, Typeface.BOLD)
+            isAllCaps = false
+            setTextColor(nav)
+            background = GradientDrawable().apply {
+                setColor(onNav)
+                cornerRadius = dp(6).toFloat()
+            }
+            minHeight = dp(MIN_TOUCH_DP)
+            minWidth = dp(MIN_TOUCH_DP)
+            setPadding(dp(14), 0, dp(14), 0)
             isEnabled = scene.gyms.isNotEmpty()
-            setTextColor(if (dark) Color.WHITE else INK)
-            setBackgroundColor(Color.TRANSPARENT)
+            alpha = if (isEnabled) 1f else DISABLED_ALPHA
             setOnClickListener { showGyms() }
         })
     }
 
-    private fun hint() = TextView(this).apply {
-        text = "Tap a marker or choose Gyms above."
-        textSize = 14f
-        gravity = Gravity.CENTER
-        setTextColor(if (dark) Color.WHITE else INK)
-        setPadding(dp(16), dp(12), dp(16), dp(12))
-        background = rounded(if (dark) 0xEE17201D.toInt() else 0xEEF3F4EF.toInt())
-    }
-
     private fun showGyms() {
-        AlertDialog.Builder(this)
-            .setTitle("Choose a gym")
-            .setItems(scene.gyms.map { it.label }.toTypedArray()) { _, index ->
-                finishWithGym(scene.gyms[index].id)
+        val dialogTheme = if (scene.dark) {
+            android.R.style.Theme_DeviceDefault_Dialog_Alert
+        } else {
+            android.R.style.Theme_DeviceDefault_Light_Dialog_Alert
+        }
+        val gyms = gymsNearestFirst()
+        AlertDialog.Builder(this, dialogTheme)
+            .setTitle(R.string.map_choose_gym)
+            .setItems(gyms.map { it.label }.toTypedArray()) { _, index ->
+                finishWithGym(gyms[index].id)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.map_cancel, null)
             .show()
     }
 
+    /** The scene's order when the user's location is not known (no permission, or no fix yet). */
+    private fun gymsNearestFirst(): List<GymLocation> {
+        val location = map?.locationComponent
+            ?.takeIf { it.isLocationComponentActivated }?.lastKnownLocation
+            ?: return scene.gyms
+        val here = LatLng(location.latitude, location.longitude)
+        return scene.gyms.sortedBy { LatLng(it.latitude, it.longitude).distanceTo(here) }
+    }
+
     private fun finishWithGym(gymId: String) {
-        setResult(RESULT_OK, Intent().putExtra(GYM_ID, gymId))
+        setResult(RESULT_OK, Intent().putExtra(EXTRA_GYM_ID, gymId))
         finish()
-    }
-
-    private fun rounded(color: Int) = GradientDrawable().apply {
-        setColor(color)
-        cornerRadius = dp(14).toFloat()
-    }
-
-    private fun matchParent() = FrameLayout.LayoutParams(
-        FrameLayout.LayoutParams.MATCH_PARENT,
-        FrameLayout.LayoutParams.MATCH_PARENT,
-    )
-
-    private fun toolbarLayout() = FrameLayout.LayoutParams(
-        FrameLayout.LayoutParams.MATCH_PARENT,
-        FrameLayout.LayoutParams.WRAP_CONTENT,
-    ).apply {
-        gravity = Gravity.TOP
-        setMargins(dp(12), dp(12), dp(12), 0)
-    }
-
-    private fun hintLayout() = FrameLayout.LayoutParams(
-        FrameLayout.LayoutParams.MATCH_PARENT,
-        FrameLayout.LayoutParams.WRAP_CONTENT,
-    ).apply {
-        gravity = Gravity.BOTTOM
-        setMargins(dp(20), 0, dp(20), dp(24))
     }
 
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
 
     override fun onStart() {
         super.onStart()
-        if (::mapView.isInitialized) mapView.onStart()
+        mapView.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        if (::mapView.isInitialized) mapView.onResume()
+        mapView.onResume()
     }
 
     override fun onPause() {
-        if (::mapView.isInitialized) mapView.onPause()
+        mapView.onPause()
         super.onPause()
     }
 
     override fun onStop() {
-        if (::mapView.isInitialized) mapView.onStop()
+        mapView.onStop()
         super.onStop()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        if (::mapView.isInitialized) mapView.onLowMemory()
+        mapView.onLowMemory()
     }
 
     override fun onDestroy() {
-        if (::mapView.isInitialized) mapView.onDestroy()
+        mapView.onDestroy()
         super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (::mapView.isInitialized) mapView.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
     }
 
-    companion object {
-        const val SCENE = "scene"
-        const val GYM_ID = "gymId"
-
-        private const val LOCATION_PERMISSION_REQUEST = 42
-        private const val LOCATION_CAMERA_TRANSITION_MS = 750L
-        private const val LOCATION_UPDATE_INTERVAL_MS = 10_000L
-        private const val INK = 0xFF17201D.toInt()
-        private const val MARKER_LIGHT = 0xFF1261A0.toInt()
-        private const val MARKER_DARK = 0xFF73B7E8.toInt()
-        private const val GYM_SOURCE = "gyms"
-        private const val GYM_LAYER = "gym-markers"
-
-        private fun parseScene(value: String): MapScene? {
-            val scene = runCatching { JSONObject(value) }.getOrNull() ?: return null
-            val items = scene.optJSONArray("gyms") ?: JSONArray()
-            val gyms = buildList {
-                for (index in 0 until items.length()) {
-                    val item = items.optJSONObject(index) ?: continue
-                    val id = item.optString("id")
-                    val name = item.optString("name").ifBlank { "Gym ${index + 1}" }
-                    val address = item.optString("address")
-                    val latitude = item.optDouble("latitude", Double.NaN)
-                    val longitude = item.optDouble("longitude", Double.NaN)
-                    if (id.isBlank() || !latitude.isFinite() || !longitude.isFinite()) {
-                        continue
-                    }
-                    add(
-                        GymLocation(
-                            id,
-                            listOf(name, address).filter { it.isNotBlank() }.joinToString(", "),
-                            latitude,
-                            longitude,
-                        ),
-                    )
-                }
-            }
-            val style = scene.optString("style")
-            val centerLatitude = scene.optDouble("centerLatitude", Double.NaN)
-            val centerLongitude = scene.optDouble("centerLongitude", Double.NaN)
-            val zoom = scene.optDouble("zoom", Double.NaN)
-            val locationZoom = scene.optDouble("locationZoom", Double.NaN)
-            if (
-                style.isBlank() ||
-                !centerLatitude.isFinite() ||
-                !centerLongitude.isFinite() ||
-                !zoom.isFinite() ||
-                !locationZoom.isFinite()
-            ) {
-                return null
-            }
-            return MapScene(
-                gyms,
-                scene.optString("theme"),
-                style,
-                centerLatitude,
-                centerLongitude,
-                zoom,
-                locationZoom,
-            )
-        }
+    private companion object {
+        const val LOCATION_CAMERA_TRANSITION_MS = 750L
+        const val LOCATION_UPDATE_INTERVAL_MS = 10_000L
+        const val MIN_TOUCH_DP = 44
+        const val TAP_SLOP_DP = MIN_TOUCH_DP / 2
+        const val MARKER_RADIUS_DP = 15f
+        const val MARKER_RING_DP = 3f
+        const val DISABLED_ALPHA = 0.45f
+        const val GYM_SOURCE = "gyms"
+        const val GYM_LAYER = "gym-markers"
+        const val PROPERTY_GYM_ID = "gymId"
     }
-
-    data class MapScene(
-        val gyms: List<GymLocation>,
-        val theme: String,
-        val style: String,
-        val centerLatitude: Double,
-        val centerLongitude: Double,
-        val zoom: Double,
-        val locationZoom: Double,
-    )
-
-    data class GymLocation(
-        val id: String,
-        val label: String,
-        val latitude: Double,
-        val longitude: Double,
-    )
 }

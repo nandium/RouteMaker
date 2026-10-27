@@ -5,13 +5,14 @@ import com.lynx.jsbridge.LynxMethod
 import com.lynx.jsbridge.LynxModule
 import com.lynx.react.bridge.Callback
 
+// Plain private preferences are enough here: the app sandbox protects them and
+// allowBackup="false" keeps them out of backups.
 class RouteMakerSessionModule(context: Context) : LynxModule(context) {
-    private val preferences =
-        context.getSharedPreferences("routemaker.session", Context.MODE_PRIVATE)
+    private val preferences = context.routeMakerPreferences()
 
     @LynxMethod
     fun getToken(callback: Callback) {
-        callback.invoke(preferences.getString(TOKEN, "") ?: "")
+        callback.invoke(preferences.getString(TOKEN, "").orEmpty())
     }
 
     @LynxMethod
@@ -25,6 +26,6 @@ class RouteMakerSessionModule(context: Context) : LynxModule(context) {
     }
 
     private companion object {
-        const val TOKEN = "token"
+        const val TOKEN = "routemaker.session"
     }
 }
