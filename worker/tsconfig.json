@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+    "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
-    "types": ["@cloudflare/workers-types"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "types": ["./worker-configuration.d.ts", "@cloudflare/vitest-plugin/types"],
     "noEmit": true,
     "skipLibCheck": true
   },
