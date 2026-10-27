@@ -6,31 +6,138 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
+# Superseded PR runs are cancelled; main runs are serialised so deploys never overlap or land out of order.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  verify:
-    runs-on: ubuntu-latest
+  check:
+    name: Web and worker
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 24
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: |
-            app/package-lock.json
-            worker/package-lock.json
-      - uses: actions/setup-java@v5
+      - run: npm ci
+      - run: npm run check
+
+  android:
+    name: Android debug build
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # Gradle runs on JDK 25; the app itself compiles to Java 17 bytecode.
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: 25
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
 
       - run: npm ci
-        working-directory: app
-      - run: npm run check
-        working-directory: app
-      - run: ./gradlew assembleDebug --no-daemon
+      # Native builds embed app/dist/main.lynx.bundle.
+      - run: npm run build
+      - run: ./gradlew :app:assembleDebug :app:testDebugUnitTest
         working-directory: app/android
 
+  ios:
+    name: iOS simulator build
+    if: github.event_name == 'pull_request'
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a # v1.329.0
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: app
+
       - run: npm ci
-        working-directory: worker
-      - run: npm run check
-        working-directory: worker
+      # Native builds embed app/dist/main.lynx.bundle.
+      - run: npm run build
+      - run: bundle exec pod install
+        working-directory: app/ios
+      # Lynx compiles from source, so one simulator architecture halves the build.
+      - run: >-
+          xcodebuild build -quiet
+          -onlyUsePackageVersionsFromResolvedFile
+          -workspace RouteMaker.xcworkspace
+          -scheme RouteMaker
+          -configuration Debug
+          -destination 'generic/platform=iOS Simulator'
+          ARCHS=arm64
+          CODE_SIGNING_ALLOWED=NO
+        working-directory: app/ios
+
+  # Lints workflow changes, including Dependabot's, for injection and permission issues.
+  workflows:
+    name: Workflow security
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1
+        with:
+          advanced-security: false
+
+  dependencies:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          fail-on-scopes: runtime, development
+
+  # Only check gates production; mobile builds don't change the deployed Worker.
+  # Secrets are set on the last step only, so install and build never see them.
+  deploy:
+    name: Deploy to Cloudflare
+    if: github.event_name == 'push'
+    needs: check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci
+      - run: npm run build
+      - run: npm run deploy -w worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # Fails the run if the new Worker or its database schema is not serving.
+      - run: curl --fail --silent --show-error --retry 5 --retry-delay 5 --retry-all-errors https://routemaker-worker.nandium.workers.dev/api/health
