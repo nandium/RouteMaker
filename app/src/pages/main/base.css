@@ -1,0 +1,91 @@
+@import '../../../theme.css';
+
+/* Lynx lays out views as flex columns here, so a row is the exception. */
+page {
+  background-color: var(--c-bg);
+}
+view,
+scroll-view {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0;
+}
+/* Nothing in Lynx inherits a text color, so every text starts from these. */
+text {
+  min-width: 0;
+  font-family: var(--ff-text);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--c-ink);
+}
+.icon {
+  flex-shrink: 0;
+}
+
+/* A row whose two ends are pushed apart; at large text sizes the ends wrap onto separate lines. */
+.split-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.fs-lg .split-row {
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+
+/* ---------- type ---------- */
+/* The display face is for headlines and numerals; its sizes are set where it is used, so that they
+   can stop growing with the system text size. */
+.display {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+.t-title {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.33;
+}
+.t-body {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.t-body-s {
+  font-size: 14px;
+  line-height: 1.43;
+}
+.t-label {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.29;
+}
+.t-cap {
+  font-size: 12px;
+  line-height: 1.33;
+}
+.t-cap-b {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.33;
+}
+/* A color comes after the type class that it modifies, so it wins at equal specificity. */
+.c-ink-2 {
+  color: var(--c-ink-2);
+}
+.c-ink-3 {
+  color: var(--c-ink-3);
+}
+.c-link {
+  color: var(--c-link);
+}
+.c-on-wall {
+  color: var(--c-on-wall);
+}
+/* Truncation to a number of lines is the text-maxline attribute; this shows the ellipsis. */
+.clamp {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

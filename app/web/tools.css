@@ -1,0 +1,673 @@
+/*
+ * What every browser tool page shares, in the "gym wall" look: chalk and ink surfaces, hard
+ * under-edges on controls, the display face for titles and buttons. The map, the route editor
+ * and the email actions add their own stylesheets. Colours and sizes are the tokens in
+ * theme.css. Text and icons are in rem, so browser text size reflows the page; layout space
+ * (gutters, padding) and decorative tiles are capped in px with min(), so very large text
+ * does not squeeze the content away. The wide layout starts at 760px, as WIDE_LAYOUT_MIN_WIDTH
+ * in lynx-host.ts does for the app.
+ */
+
+:root {
+  --gutter: min(1rem, 16px);
+  --wall-tile: linear-gradient(
+    150deg,
+    var(--c-wall) 0%,
+    var(--c-wall) 58%,
+    var(--c-wall-3) 58%,
+    var(--c-wall-3) 100%
+  );
+}
+
+/* ---------- base ---------- */
+
+[hidden] {
+  display: none !important;
+}
+
+.tool-page,
+.web-header {
+  color: var(--c-ink);
+  font-family: var(--ff-text);
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+fieldset,
+legend {
+  margin: 0;
+  overflow-wrap: anywhere;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* Double ring: page colour, then ink, so it shows on any background. */
+.tool-page :focus-visible,
+.web-header :focus-visible {
+  box-shadow: var(--el-focus);
+  outline: none;
+}
+
+/* A text field shows focus on its box, not on the bare control. */
+.field__input:focus-visible,
+.select-box__control:focus-visible,
+.map-search__input:focus-visible {
+  box-shadow: none;
+}
+
+.tool-page,
+.web-header {
+  --icon-size: min(1.375rem, 33px);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* An icon is as large as its nearest `--icon-size`, so a container sets the size it wants. */
+.icon svg {
+  display: block;
+  height: var(--icon-height, var(--icon-size));
+  width: var(--icon-size);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- type: the display face at four sizes, capped near 150% text ---------- */
+
+.display {
+  font-family: var(--ff-display);
+  font-weight: 800;
+}
+
+.display--xl {
+  font-size: min(2.75rem, 66px);
+  line-height: 1;
+}
+
+.display--lg {
+  font-size: min(1.75rem, 42px);
+  line-height: 1.07;
+}
+
+.display--md {
+  font-size: min(1.5rem, 36px);
+  line-height: 1.08;
+}
+
+.display--sm {
+  font-size: min(1.375rem, 33px);
+  line-height: 1.09;
+}
+
+@media (min-width: 760px) {
+  .display--xl {
+    font-size: min(4rem, 96px);
+    line-height: 0.97;
+  }
+}
+
+/* ---------- header ---------- */
+
+.web-header {
+  align-items: center;
+  background: var(--c-bg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  min-height: 3.75rem;
+  padding: 0.5rem 0.5rem 0.5rem var(--gutter);
+}
+
+.web-header__brand {
+  align-items: center;
+  color: var(--c-ink);
+  display: flex;
+  gap: 0.625rem;
+  min-height: var(--hit-min);
+  text-decoration: none;
+}
+
+.web-header__mark {
+  --icon-height: auto;
+  --icon-size: 1.875rem;
+}
+
+.web-header__wordmark {
+  font-size: 1.625rem;
+  letter-spacing: 0.15rem;
+  line-height: 1.75rem;
+  text-transform: uppercase;
+}
+
+.theme-toggle {
+  margin-left: auto;
+}
+
+.web-header__nav {
+  background: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  display: flex;
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin: 0 0.5rem 0.25rem 0;
+  order: 3;
+  padding: 3px;
+}
+
+.web-header__link {
+  align-items: center;
+  border-radius: 3px;
+  color: var(--c-ink);
+  display: flex;
+  flex: 1 1 max-content;
+  font-size: 1.3125rem;
+  gap: 0.5rem;
+  justify-content: center;
+  letter-spacing: 0.02rem;
+  line-height: 1.5rem;
+  min-height: var(--hit-min);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.web-header__link:hover {
+  background: var(--c-sunk);
+}
+
+.web-header__link[aria-current='page'] {
+  background: var(--c-ink);
+  color: var(--c-bg);
+}
+
+@media (min-width: 760px) {
+  .web-header {
+    min-height: 4.5rem;
+    padding: 0 1.5rem 0 2rem;
+  }
+
+  .web-header__nav {
+    flex: 0 0 auto;
+    margin: 0 0 0 1.5rem;
+    min-width: 18.75rem;
+    order: 0;
+  }
+}
+
+/* About 175% text on a 390px phone: keep the mark, drop the wordmark. */
+@media (max-width: 14rem) {
+  .web-header__wordmark {
+    display: none;
+  }
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  background-color: var(--c-wall);
+  background-image: var(--bg-wall);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: min(1.25rem, 20px) var(--gutter) min(2.75rem, 44px);
+  position: relative;
+}
+
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  position: relative;
+}
+
+.hero__title {
+  color: var(--c-on-wall);
+  letter-spacing: 0.01rem;
+}
+
+.hero__sub {
+  color: var(--c-on-wall-2);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.hero__shard,
+.hero__cut {
+  pointer-events: none;
+  position: absolute;
+}
+
+.hero__shard {
+  background-image: linear-gradient(
+    210deg,
+    transparent 0%,
+    transparent 50%,
+    var(--c-wall-3) 50%,
+    var(--c-wall-3) 100%
+  );
+  height: 9.375rem;
+  right: -1.875rem;
+  top: -1.25rem;
+  width: 10.625rem;
+}
+
+.hero__shard--lit {
+  background-image: linear-gradient(
+    30deg,
+    transparent 0%,
+    transparent 54%,
+    var(--c-wall-2) 54%,
+    var(--c-wall-2) 100%
+  );
+  bottom: 0.5rem;
+  height: 5.625rem;
+  right: 2.5rem;
+  top: auto;
+  width: 7.5rem;
+}
+
+.hero__cut {
+  background-image: linear-gradient(
+    176deg,
+    transparent 0%,
+    transparent 50%,
+    var(--c-bg) 50%,
+    var(--c-bg) 100%
+  );
+  bottom: -1px;
+  height: 1.75rem;
+  left: 0;
+  right: 0;
+}
+
+@media (min-width: 760px) {
+  .hero {
+    padding: min(2.25rem, 36px) 0 min(4rem, 64px);
+  }
+
+  .hero__inner {
+    align-self: center;
+    box-sizing: border-box;
+    max-width: var(--content-max);
+    padding: 0 min(2rem, 32px);
+    width: 100%;
+  }
+
+  .hero__shard {
+    height: 15rem;
+    right: 12%;
+    top: -2.5rem;
+    width: 17.5rem;
+  }
+
+  .hero__shard--lit {
+    bottom: 0.875rem;
+    height: 8.125rem;
+    right: 3%;
+    top: auto;
+    width: 12.5rem;
+  }
+
+  .hero__cut {
+    background-image: linear-gradient(
+      178.6deg,
+      transparent 0%,
+      transparent 50%,
+      var(--c-bg) 50%,
+      var(--c-bg) 100%
+    );
+    height: 2.75rem;
+  }
+}
+
+/* ---------- page layout ---------- */
+
+.tool-main {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin: 0 auto;
+  max-width: var(--content-max);
+  padding: min(1.25rem, 20px) var(--gutter) min(2.5rem, 40px);
+  width: 100%;
+}
+
+@media (min-width: 760px) {
+  .tool-main {
+    padding: min(1.75rem, 28px) min(2rem, 32px) min(4rem, 64px);
+  }
+}
+
+/* ---------- buttons ---------- */
+
+.btn {
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: var(--r-2);
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--ff-display);
+  font-size: 1.3125rem;
+  font-weight: 800;
+  gap: 0.625rem;
+  justify-content: center;
+  letter-spacing: 0.025rem;
+  line-height: 1.5rem;
+  max-width: 100%;
+  min-height: 48px;
+  padding: 0 1.25rem;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    box-shadow var(--dur-press) var(--ease-out),
+    background-color var(--dur-quick) var(--ease-out);
+}
+
+.btn--lg {
+  min-height: var(--control-h);
+  padding: 0 1.5rem;
+}
+
+.btn--sm {
+  font-size: 1.1875rem;
+  min-height: var(--control-h-sm);
+  padding: 0 0.875rem;
+}
+
+.btn--primary {
+  background: var(--c-action);
+  border-color: var(--c-action);
+  box-shadow: var(--el-hard) var(--c-action-edge);
+  color: var(--c-on-action);
+}
+
+.btn--secondary {
+  background: var(--c-surface);
+  border-color: var(--c-ink);
+  box-shadow: var(--el-hard) var(--sh-hard);
+  color: var(--c-ink);
+}
+
+.btn--quiet {
+  background: transparent;
+  color: var(--c-link);
+  font-family: var(--ff-text);
+  font-size: 0.9375rem;
+  letter-spacing: 0;
+  line-height: 1.25rem;
+}
+
+/* A lighter ink on the action fill reads as a hover in light and in dark. */
+.btn--primary:hover:not(:disabled) {
+  background: var(--c-ink-2);
+  border-color: var(--c-ink-2);
+}
+
+.btn--secondary:hover:not(:disabled),
+.btn--quiet:hover:not(:disabled) {
+  background-color: var(--c-sunk);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.btn--primary:active:not(:disabled) {
+  box-shadow: var(--el-hard-press) var(--c-action-edge);
+}
+
+.btn--secondary:active:not(:disabled) {
+  box-shadow: var(--el-hard-press) var(--sh-hard);
+}
+
+.btn:disabled {
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* While busy, a spinner takes the icon's place; the button is working, not dead. */
+.btn.is-busy:disabled {
+  cursor: progress;
+  opacity: 1;
+}
+
+.btn.is-busy .icon {
+  display: none;
+}
+
+.btn.is-busy::before {
+  animation: spin 0.8s linear infinite;
+  border: 3px solid rgb(127 127 127 / 35%);
+  border-radius: 50%;
+  border-top-color: currentcolor;
+  content: '';
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.icon-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-2);
+  color: var(--c-ink);
+  cursor: pointer;
+  display: inline-flex;
+  height: var(--hit-min);
+  justify-content: center;
+  padding: 0;
+  width: var(--hit-min);
+}
+
+.icon-button:hover:not(:disabled) {
+  background: var(--c-sunk);
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.link {
+  align-items: center;
+  color: var(--c-link);
+  display: inline-flex;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  min-height: var(--hit-min);
+  padding: 0 0.25rem;
+}
+
+/* ---------- fields ---------- */
+
+.field {
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.field__label {
+  color: var(--c-ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.125rem;
+}
+
+/* A legend does not take part in its fieldset's gap. */
+.field__label--legend {
+  margin-bottom: 0.375rem;
+}
+
+.input-box,
+.select-box {
+  align-items: center;
+  background: var(--c-surface);
+  border: 2px solid var(--c-edge);
+  border-radius: var(--r-2);
+  box-sizing: border-box;
+  display: flex;
+  gap: 0.5rem;
+  min-height: var(--control-h);
+  padding: 0 min(0.875rem, 14px);
+}
+
+.input-box:focus-within,
+.select-box:focus-within {
+  border-color: var(--c-ink);
+  box-shadow: var(--el-focus);
+}
+
+.input-box.is-error,
+.input-box.is-error:focus-within {
+  border-color: var(--c-danger);
+}
+
+.input-box:has(:disabled) {
+  background: var(--c-sunk);
+}
+
+.field__input,
+.select-box__control {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: var(--c-ink);
+  flex: 1 1 0;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  min-height: 48px;
+  min-width: 0;
+  outline: none;
+}
+
+.select-box__control {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 0.5rem;
+}
+
+.field__input::placeholder {
+  color: var(--c-ink-3);
+  opacity: 1;
+}
+
+.field__foot {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.field__hint,
+.field__counter {
+  color: var(--c-ink-2);
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
+.field__counter {
+  font-size: 0.75rem;
+  margin-left: auto;
+}
+
+.field__error {
+  --icon-size: 1rem;
+  align-items: flex-start;
+  color: var(--c-danger);
+  display: flex;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  gap: 0.375rem;
+  line-height: 1.125rem;
+}
+
+/* ---------- status ---------- */
+
+.status {
+  align-items: flex-start;
+  background: var(--c-sunk);
+  border: 2px solid transparent;
+  border-radius: var(--r-2);
+  box-sizing: border-box;
+  display: flex;
+  gap: 0.625rem;
+  min-height: 48px;
+  padding: min(0.75rem, 12px) min(0.875rem, 14px);
+}
+
+.status--error {
+  background: var(--c-danger-bg);
+  border-color: var(--c-danger);
+}
+
+.status--success {
+  background: var(--c-success-bg);
+  border-color: var(--c-success);
+}
+
+.status__icon {
+  color: var(--c-ink-2);
+  display: flex;
+}
+
+.status--error .status__icon {
+  color: var(--c-danger);
+}
+
+.status--success .status__icon {
+  color: var(--c-success);
+}
+
+.status__text {
+  flex: 1 1 0;
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  min-width: 0;
+}
+
+/* Rem media queries follow the browser's text size: 14rem is about 175% on a 390px phone. */
+
+/* ---------- reduced motion (last, so it outranks the rules above) ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn.is-busy::before {
+    animation: none;
+    border-top-color: currentcolor;
+  }
+}

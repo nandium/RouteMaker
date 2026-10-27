@@ -1,0 +1,51 @@
+# Cloudflare static-asset headers; the Worker sets its own for /api, /media and shared routes.
+
+# Lynx pages: web-core evaluates the app bundle (unsafe-eval), builds blob: modules and styles,
+# and bootstraps its sandbox iframe with an inline script (the sha256, checked by headers.test.ts).
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), usb=(), serial=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=()
+  Cross-Origin-Opener-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' 'sha256-jRMGyyS9ZQKlh3Jf5wqkvDxFe4RAk7bBflr8m7gc9nc=' blob:; style-src 'self' 'unsafe-inline' blob:; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob:; worker-src 'self' blob:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+# Tool and email-action pages never load the Lynx runtime, so they get no eval, and each policy
+# allows only what its page uses. The paths are exact (main.ts sends any other spelling to the
+# canonical one), so no gym or route id that merely starts with "map" or "new" can land on one.
+
+# MapLibre draws on a canvas, parses tiles in a worker it builds from a blob, and reads the style,
+# tiles and glyphs from OpenFreeMap. It is the only page that asks for the device's location.
+/gyms/map
+  ! Content-Security-Policy
+  ! Permissions-Policy
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=(), usb=(), serial=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=()
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://tiles.openfreemap.org; worker-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+# Tiles are fetched inside MapLibre's worker, and a worker follows the policy of its own script,
+# not of the page that starts it.
+/static/assets/maplibre-gl-worker.*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; connect-src https://tiles.openfreemap.org
+
+# /routes/new is the route-marking tool, served straight from the assets: the Worker skips it
+# (run_worker_first in worker/wrangler.toml), so this strict policy applies. Every other
+# /routes/<id> goes through the Worker, which serves the app shell with the /* headers above.
+# The hold detector is a worker from this origin; its own scripts carry the /* policy, which is
+# what lets it compile WebAssembly. The photo preview is a blob: image.
+/routes/new
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+# Email links only call the API.
+/auth/action
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'
+
+# Hashed build output never changes.
+/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# An unknown extension gets no content type, and Cloudflare does not compress those.
+/main.web.bundle
+  Content-Type: text/plain

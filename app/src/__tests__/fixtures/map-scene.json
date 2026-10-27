@@ -1,0 +1,24 @@
+{
+  "gyms": [
+    {
+      "id": "gym-1",
+      "name": "Gravity Yard",
+      "address": "12 Kallang Way, Singapore",
+      "latitude": 1.3093,
+      "longitude": 103.8717
+    },
+    {
+      "id": "gym-2",
+      "name": "Boulder Hut",
+      "address": "",
+      "latitude": 51.5072,
+      "longitude": -0.1276
+    }
+  ],
+  "theme": "dark",
+  "style": "https://tiles.openfreemap.org/styles/fiord",
+  "centerLatitude": 1.3,
+  "centerLongitude": 103.8,
+  "zoom": 10.5,
+  "locationZoom": 13
+}

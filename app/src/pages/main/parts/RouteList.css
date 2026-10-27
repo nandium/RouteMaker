@@ -1,0 +1,14 @@
+/* ---------- route list ---------- */
+/* On wide screens, routes are photo tiles in a grid. */
+.route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px 24px;
+  padding: 8px 0 40px;
+}
+.show-more {
+  padding: 20px 16px 28px;
+}
+.wide .show-more {
+  padding: 0 0 40px;
+}

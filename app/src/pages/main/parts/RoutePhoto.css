@@ -1,0 +1,53 @@
+/* ---------- route photo ---------- */
+/* The box takes the photo's proportions; its minimum height keeps it visible where the host does
+   not honor aspect-ratio. */
+.det-photo {
+  overflow: visible;
+  width: 100%;
+  min-height: 240px;
+  background-color: var(--c-sunk);
+  border-bottom: 3px solid var(--c-ink);
+}
+.wide .det-photo {
+  border: 3px solid var(--c-ink);
+  border-radius: var(--r-1);
+}
+.det-photo-image,
+.det-photo-wait,
+.det-photo-failed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+.det-photo-wait {
+  border-radius: 0;
+}
+.det-photo-failed {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  background-color: var(--c-sunk);
+}
+/* The back button is a plain tile so it reads on any photo. */
+.det-back {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  background-color: var(--c-bg);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  box-shadow: var(--el-hard) var(--sh-hard);
+}
+.det-tag {
+  position: absolute;
+  left: 16px;
+  bottom: -36px;
+}
+.wide .det-tag {
+  left: -12px;
+  top: -12px;
+  bottom: auto;
+}

@@ -1,0 +1,9 @@
+/* ---------- card ---------- */
+.card {
+  gap: 14px;
+  padding: 16px;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-3);
+  box-shadow: var(--el-hard) var(--sh-hard);
+}

@@ -1,0 +1,109 @@
+/* ---------- filter and sort ---------- */
+.filter-bar {
+  gap: 10px;
+  padding: 12px 0 10px;
+  background-color: var(--c-bg);
+}
+.wide .filter-bar {
+  padding: 16px 0 12px;
+}
+.chips-scroll {
+  flex-direction: row;
+}
+.chips {
+  flex-direction: row;
+  gap: 8px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+.wide .chips {
+  flex-wrap: wrap;
+  padding: 0;
+}
+.chip {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--hit-min);
+  padding: 0 12px 0 8px;
+  flex-shrink: 0;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-edge);
+  border-radius: var(--r-2);
+}
+.chip:active {
+  background-color: var(--c-sunk);
+}
+.chip.is-on {
+  background-color: var(--c-sunk);
+  border-color: var(--c-ink);
+  box-shadow: 0 0 0 1px var(--c-ink);
+}
+.chip-swatch {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--c-ink);
+  border-radius: 4px;
+}
+.chip-label {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.29;
+}
+.fs-xl .chip-swatch {
+  width: 32px;
+  height: 32px;
+}
+
+.tally-line {
+  min-height: 28px;
+  padding: 4px 16px 6px;
+}
+.wide .tally-line {
+  padding: 4px 12px 8px;
+}
+/* The count and "Clear filter" wrap as a whole, rather than one splitting inside its words. */
+.tally {
+  flex: 1 1 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 12px;
+}
+.fs-xl .tally-line {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sort-button {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--hit-min);
+  padding: 0 12px 0 14px;
+  flex-shrink: 0;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  box-shadow: var(--el-hard) var(--sh-hard);
+}
+.sort-button:active {
+  transform: translateY(2px);
+  box-shadow: var(--el-hard-press) var(--sh-hard);
+}
+.sort-label {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.29;
+}
+.fs-xl .sort-button {
+  align-self: flex-start;
+}
+
+/* Sticky where the host supports it; elsewhere the bar simply scrolls with the routes. */
+.filter-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--c-bg);
+}

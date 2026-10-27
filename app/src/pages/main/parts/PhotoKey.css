@@ -1,0 +1,33 @@
+/* ---------- photo key ---------- */
+.photo-key {
+  gap: 12px;
+}
+.key-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+.key-item {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+.key-glyph {
+  width: 46px;
+  height: 28px;
+}
+/* A number or letter set in the chip the svg draws at the top right of the swatch. */
+.key-chip {
+  position: absolute;
+  left: 28px;
+  top: 1px;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+}
+.key-digit {
+  text-align: center;
+  color: var(--m-halo);
+}

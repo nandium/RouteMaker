@@ -1,7 +1,0 @@
-{
-  "name": "ionic_user_interface",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "vue"
-}

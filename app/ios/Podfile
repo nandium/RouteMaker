@@ -1,0 +1,61 @@
+IOS_DEPLOYMENT_TARGET = '15.6'
+
+platform :ios, IOS_DEPLOYMENT_TARGET
+
+LYNX_VERSION = '4.1.0'
+LYNX_RELEASE = "https://github.com/lynx-family/lynx/releases/download/#{LYNX_VERSION}"
+
+# Lynx podspecs ship inside the release archives and reach CocoaPods trunk late
+# (LynxService requires LynxServiceAPI and LynxBase at exactly the Lynx version),
+# so every Lynx pod comes from its archive. The digests pin those archives; to refresh
+# one, run `curl -sL <archive url> | shasum -a 256` for the new release.
+LYNX_ARCHIVE_SHA256 = {
+  'Lynx' => '4fb128aa541ba59c390d1d2fc1a921fe1d2237d077645647eb9fc740f175ba2c',
+  'LynxBase' => '862fa26ca20780dfa46f14e24caf398b31627e152feed75e5914faf3c56dd08c',
+  'LynxService' => 'd2270501bc3a134b84241f8edb9c0cd6f783f30caa71c718e8f668f5bfb0525c',
+  'LynxServiceAPI' => 'cf61260e84997a6a83aa56edabc88b3faf405711304414d4b4781d883e7b857f',
+  'XElement' => 'a4be69d79654f8480cedfae19f0ffd715ef626a15e4108cfcc3546d9a5d04d51',
+}.freeze
+
+def lynx_pod(name, subspecs = [])
+  options = {
+    :http => "#{LYNX_RELEASE}/#{name}-#{LYNX_VERSION}.zip",
+    :sha256 => LYNX_ARCHIVE_SHA256.fetch(name),
+  }
+  options[:subspecs] = subspecs unless subspecs.empty?
+  pod name, options
+end
+
+use_frameworks!
+target 'RouteMaker' do
+  lynx_pod 'Lynx', ['Framework']
+  lynx_pod 'LynxBase'
+  lynx_pod 'LynxServiceAPI'
+  lynx_pod 'LynxService', ['Image', 'Log', 'Http']
+
+  # The official <input> and <svg> elements.
+  lynx_pod 'XElement', ['Input', 'SVG']
+
+  # XElement only requires ServalSVG >= 0.0.17, and CocoaPods re-resolves
+  # dependencies of archive pods on every install, so the version is pinned here.
+  pod 'ServalSVG', '0.2.4'
+end
+
+# Lynx's core target compiles with -Werror, which fails on APIs that Xcode 26
+# deprecates (UIApplication.keyWindow). Relax that for the upstream target only.
+post_install do |installer|
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        # The Lynx podspecs declare iOS 10, which Xcode 26 no longer builds for.
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET
+        next unless target.name == 'Lynx'
+
+        ['OTHER_CFLAGS', 'OTHER_CPLUSPLUSFLAGS'].each do |key|
+          config.build_settings[key] = ['$(inherited)', '-Wno-deprecated-declarations',
+                                        '-Wno-deprecated-implementations']
+        end
+      end
+    end
+  end
+end

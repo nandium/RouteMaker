@@ -1,0 +1,925 @@
+/* The route editor: a form in three numbered steps, the last of which is the workbench. */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.step {
+  border-top: 3px solid var(--c-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  min-width: 0;
+  padding: min(1.25rem, 20px) 0 0.5rem;
+}
+
+.step__head {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.step__number {
+  align-items: center;
+  background: var(--c-ink);
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: var(--c-bg);
+  display: flex;
+  font-size: min(1.5rem, 31px);
+  justify-content: center;
+  min-height: 2.25rem;
+  min-width: 2.25rem;
+  padding: 0 0.25rem;
+}
+
+@media (min-width: 760px) {
+  .step--details {
+    column-gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .step--details > .step__head,
+  .step--details > .grade-picker {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- grade tags ---------- */
+
+.tag {
+  align-items: center;
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  position: relative;
+}
+
+.tag__number {
+  font-size: min(1.5rem, 31px);
+  letter-spacing: 0.01rem;
+}
+
+.tag--large {
+  min-height: 3.75rem;
+  min-width: 4.75rem;
+}
+
+.tag--large .tag__number {
+  font-size: min(2.5rem, 52px);
+  line-height: 1.05;
+}
+
+.tag--pinned {
+  box-shadow: var(--el-hard) var(--c-ink);
+}
+
+.g1 {
+  background: linear-gradient(150deg, var(--g1) 0 62%, var(--g1-shade) 62% 100%);
+  color: var(--g1-ink);
+}
+
+.g2 {
+  background: linear-gradient(150deg, var(--g2) 0 62%, var(--g2-shade) 62% 100%);
+  color: var(--g2-ink);
+}
+
+.g3 {
+  background: linear-gradient(150deg, var(--g3) 0 62%, var(--g3-shade) 62% 100%);
+  color: var(--g3-ink);
+}
+
+.g4 {
+  background: linear-gradient(150deg, var(--g4) 0 62%, var(--g4-shade) 62% 100%);
+  color: var(--g4-ink);
+}
+
+.g5 {
+  background: linear-gradient(150deg, var(--g5) 0 62%, var(--g5-shade) 62% 100%);
+  color: var(--g5-ink);
+}
+
+.g6 {
+  background: linear-gradient(150deg, var(--g6) 0 62%, var(--g6-shade) 62% 100%);
+  color: var(--g6-ink);
+}
+
+.grade-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.grade-group__item {
+  cursor: pointer;
+  display: flex;
+  position: relative;
+}
+
+.grade-group__radio {
+  cursor: pointer;
+  height: 100%;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.grade-group .tag {
+  min-height: var(--hit-min);
+  min-width: 3rem;
+}
+
+/* Focus is the box-shadow ring; the chosen grade is an outline and a check, so the two never
+   replace each other. A chosen grade that is also focused keeps its outline outside the ring. */
+.grade-group__radio:focus-visible + .tag {
+  box-shadow: var(--el-focus);
+}
+
+.grade-group__radio:checked + .tag {
+  outline: 3px solid var(--c-ink);
+  outline-offset: 3px;
+}
+
+.grade-group__radio:checked:focus-visible + .tag {
+  outline-offset: 6px;
+}
+
+.grade-group__radio:checked + .tag::after {
+  background: var(--c-ink);
+  border-radius: 50%;
+  content: '';
+  height: 1.125rem;
+  position: absolute;
+  right: -0.375rem;
+  top: -0.5rem;
+  width: 1.125rem;
+}
+
+.grade-group__radio:checked + .tag::before {
+  border: solid var(--c-bg);
+  border-width: 0 0 2.5px 2.5px;
+  content: '';
+  height: 0.3125rem;
+  position: absolute;
+  right: -0.0625rem;
+  top: -0.1875rem;
+  transform: rotate(-45deg);
+  width: 0.5625rem;
+  z-index: 1;
+}
+
+/* ---------- the photo field ---------- */
+
+.photo-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.drop {
+  align-items: center;
+  background: var(--c-surface);
+  border: 3px dashed var(--c-edge);
+  border-radius: var(--r-3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: min(1.75rem, 28px) var(--gutter);
+  text-align: center;
+}
+
+.drop__icon {
+  --icon-size: min(2.25rem, 45px);
+  color: var(--c-ink-2);
+}
+
+.drop__text {
+  color: var(--c-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.file-chip {
+  align-items: center;
+  background: var(--c-sunk);
+  border-radius: var(--r-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+}
+
+.file-chip__icon {
+  color: var(--c-ink-2);
+}
+
+.file-chip__text {
+  display: flex;
+  flex: 1 1 10rem;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.file-chip__name {
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+}
+
+.file-chip__meta {
+  color: var(--c-ink-2);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.photo-picker.is-disabled .btn {
+  box-shadow: none;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* The file input is hidden, so its focus is shown on the button that stands in for it. */
+.photo-picker:has(.photo-picker__input:focus-visible) .btn {
+  box-shadow: var(--el-focus);
+}
+
+/* ---------- the workbench ---------- */
+
+.workbench {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* On a wide screen the side panel is one box. On a phone its parts join the workbench's column
+   and are ordered here, so the photo sits between the hint and the status. */
+@media (max-width: 759.98px) {
+  .workbench__side {
+    display: contents;
+  }
+
+  .workbench__side > .step__head {
+    order: 1;
+  }
+
+  .draft-bar {
+    order: 2;
+  }
+
+  .workbench__bar {
+    order: 3;
+  }
+
+  .workbench__hint {
+    order: 4;
+  }
+
+  .stage-empty,
+  .stage {
+    order: 5;
+  }
+
+  .workbench__side > .status {
+    order: 6;
+  }
+
+  .workbench__finished {
+    order: 7;
+  }
+
+  .dock {
+    order: 8;
+  }
+  .dock > .status {
+    min-height: 0;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .dock > .status .status__text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+/* Wide: the stage on the left, the side panel sticky on the right. */
+@media (min-width: 760px) {
+  .workbench {
+    align-items: start;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) 22.5rem;
+  }
+
+  .workbench__side {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 1rem;
+  }
+
+  .workbench__bar .btn {
+    flex: 0 0 auto;
+  }
+}
+
+.draft-bar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  justify-content: space-between;
+}
+
+.draft-note {
+  align-items: center;
+  color: var(--c-ink-2);
+  display: flex;
+  font-size: 0.75rem;
+  gap: 0.375rem;
+  line-height: 1rem;
+}
+
+.draft-note {
+  --icon-size: 1rem;
+}
+
+.draft-note .icon {
+  color: var(--c-success);
+}
+
+.draft-bar__discard {
+  color: var(--c-danger);
+}
+
+.workbench__bar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.workbench__bar .btn {
+  flex: 1 1 9.375rem;
+}
+
+.workbench__hint {
+  color: var(--c-ink-2);
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
+.switch {
+  align-items: center;
+  background: none;
+  border: 0;
+  color: var(--c-ink);
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  font-weight: 700;
+  gap: 0.25rem 0.625rem;
+  line-height: 1.125rem;
+  max-width: 100%;
+  min-height: var(--hit-min);
+  padding: 0;
+  text-align: left;
+}
+
+.switch:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.switch__track {
+  align-items: center;
+  background: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-pill);
+  box-sizing: border-box;
+  display: flex;
+  height: 1.875rem;
+  padding: 2px;
+  width: 3.25rem;
+}
+
+.switch__knob {
+  background: var(--c-ink);
+  border-radius: 50%;
+  height: 1.375rem;
+  transition: margin var(--dur-quick) var(--ease-out);
+  width: 1.375rem;
+}
+
+.switch[aria-checked='true'] .switch__track {
+  background: var(--c-ink);
+}
+
+.switch[aria-checked='true'] .switch__knob {
+  background: var(--c-bg);
+  margin-left: 1.375rem;
+}
+
+/* ---------- the photo and its markings ---------- */
+
+/* The stage has the photo's own aspect ratio, so the markings, which are drawn in photo units,
+   land exactly where they will be published. A swipe on it scrolls the page; a box is drawn
+   with the mouse, or after a short press (see TOUCH_DRAW_DELAY_MS in preview-layer.ts). */
+.stage {
+  background: var(--c-sunk);
+  box-sizing: border-box;
+  cursor: crosshair;
+  isolation: isolate; /* keeps its layers below the dock */
+  overflow: hidden;
+  position: relative;
+  touch-action: pan-y pinch-zoom;
+  width: 100%;
+}
+
+.stage::after {
+  border: 3px solid var(--c-ink);
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 6;
+}
+
+.stage.is-delete {
+  cursor: not-allowed;
+}
+
+.stage__photo,
+.stage__marks,
+.stage__hits {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.stage__photo {
+  display: block;
+  object-fit: fill;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.stage__marks,
+.stage__hits {
+  pointer-events: none;
+}
+
+.stage__hold,
+.stage__tape {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  min-height: var(--hit-min);
+  min-width: var(--hit-min);
+  padding: 0;
+  pointer-events: auto;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.stage__hold:disabled,
+.stage__tape:disabled {
+  cursor: inherit;
+}
+
+/* Marker focus is drawn on the photo's own palette, so it shows on any wall. */
+.stage__hold:focus-visible,
+.stage__tape:focus-visible {
+  box-shadow: 0 0 0 6px var(--m-halo);
+  outline: 3px solid var(--m-any);
+}
+
+.stage__cursor {
+  border: 3px solid var(--m-any);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px var(--m-halo);
+  display: none;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  pointer-events: none;
+  position: absolute;
+  width: 22px;
+  z-index: 3;
+}
+
+.stage:focus-visible .stage__cursor {
+  display: block;
+}
+
+.stage__draft {
+  background: color-mix(in srgb, var(--m-hand) 18%, transparent);
+  border: 3px dashed var(--m-any);
+  box-shadow: 0 0 0 2px var(--m-halo);
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+/* Locked (detecting, publishing): the wall dims and ignores the pointer. */
+.stage.is-locked::before {
+  background: color-mix(in srgb, var(--m-halo) 42%, transparent);
+  content: '';
+  inset: 0;
+  position: absolute;
+  z-index: 3;
+}
+
+.stage__scan {
+  display: none;
+}
+
+.stage.is-scanning .stage__scan {
+  animation: scan 2.4s ease-in-out infinite alternate;
+  background: var(--m-hand);
+  box-shadow: 0 0 22px 4px var(--m-hand);
+  display: block;
+  height: 6px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 4;
+}
+
+@keyframes scan {
+  from {
+    top: 0;
+  }
+
+  to {
+    top: calc(100% - 6px);
+  }
+}
+
+.stage-empty {
+  --icon-size: min(2.5rem, 50px);
+  align-items: center;
+  background: var(--c-sunk);
+  border: 3px solid var(--c-ink);
+  box-sizing: border-box;
+  color: var(--c-ink-2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+  min-height: min(11rem, 176px);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stage-empty__title {
+  color: var(--c-ink);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+
+@media (min-width: 760px) {
+  .stage-empty,
+  .stage {
+    grid-column: 1;
+    grid-row: 1;
+    max-width: 47.5rem;
+  }
+
+  .stage-empty {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ---------- the dock: modes, summary and publish ---------- */
+
+/* On a phone the dock is pinned to the bottom of the screen, with the status above the modes. */
+.dock {
+  background: var(--c-bg);
+  border-top: 3px solid var(--c-ink);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 0.5rem min(0.75rem, 12px) 0.625rem;
+  position: sticky;
+  z-index: 5;
+}
+
+/* A hint folds away after a few seconds so the dock stays short; it is still read out. */
+.dock > .status--info.is-idle {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.tools {
+  display: grid;
+  gap: 0.375rem;
+  grid-template-columns: repeat(auto-fit, minmax(3.375rem, 1fr));
+}
+
+.tool {
+  align-items: center;
+  background: var(--c-surface);
+  border: 2px solid var(--c-edge);
+  border-radius: var(--r-2);
+  box-sizing: border-box;
+  color: var(--c-ink);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  gap: 0.1875rem;
+  justify-content: center;
+  min-height: 3.875rem;
+  min-width: var(--hit-min);
+  overflow: hidden;
+  padding: 0.375rem 0.125rem 0.25rem;
+  position: relative;
+  text-align: center;
+}
+
+.tool:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* The chosen mode has a bar on its edge. It is not a shadow, so the focus ring is free. */
+.tool[aria-pressed='true'] {
+  background: var(--c-sunk);
+  border-color: var(--c-ink);
+}
+
+.tool[aria-pressed='true']::after {
+  background: var(--c-ink);
+  bottom: 0;
+  content: '';
+  height: 5px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.tool.is-full {
+  border-style: dashed;
+}
+
+.tool__glyph {
+  --icon-size: 100%;
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+.tool__short {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 0.875rem;
+}
+
+.tool[aria-pressed='true'] .tool__short,
+.tool[aria-pressed='true'] .tool__label {
+  font-weight: 800;
+}
+
+.tool__label,
+.tool__detail {
+  display: none;
+}
+
+.tool__count {
+  color: var(--c-ink-2);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 0.75rem;
+}
+
+.tool__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dock__foot {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem 0.75rem;
+  justify-content: space-between;
+}
+
+.dock__publish {
+  flex: 0 0 auto;
+}
+
+.dock__submit {
+  font-size: 1.1875rem;
+  min-height: var(--control-h-sm);
+  padding: 0 0.875rem;
+}
+
+/* "Publish" on a phone, "Publish route" where there is room. */
+.btn__more {
+  display: none;
+}
+@media (min-width: 760px) {
+  .dock {
+    background: none;
+    border-top: 0;
+    margin: 0;
+    padding: 0;
+    position: static;
+  }
+
+  .tools {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tool {
+    flex-direction: row;
+    gap: 0.75rem;
+    justify-content: flex-start;
+    min-height: 3.75rem;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+
+  .tool[aria-pressed='true']::after {
+    bottom: 0;
+    height: auto;
+    right: auto;
+    top: 0;
+    width: 5px;
+  }
+
+  .tool__text {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .tool__short {
+    display: none;
+  }
+
+  .tool__label,
+  .tool__detail {
+    display: block;
+  }
+
+  .tool__label {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.125rem;
+  }
+
+  .tool__detail {
+    color: var(--c-ink-2);
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+  }
+
+  .tool__count {
+    font-size: 0.8125rem;
+    line-height: 1rem;
+    margin-left: auto;
+  }
+
+  .tool__count::after {
+    content: ' used';
+  }
+
+  .dock__foot {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dock__publish {
+    flex: 1 1 auto;
+  }
+
+  .dock__submit {
+    font-size: 1.3125rem;
+    min-height: var(--control-h);
+    width: 100%;
+  }
+
+  .btn__more {
+    display: inline;
+  }
+}
+/* About 150% text on a 390px phone (a rem query follows the browser's text size): the dock would
+   cover the screen, so it scrolls with the page, and Publish takes its own row. */
+@media (max-width: 16.5rem) {
+  .dock {
+    position: static;
+  }
+
+  .dock__foot {
+    flex-wrap: wrap;
+  }
+
+  .dock__publish {
+    flex: 1 1 100%;
+  }
+
+  .dock__submit {
+    width: 100%;
+  }
+}
+
+.summary {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.875rem;
+}
+
+.summary__item {
+  align-items: baseline;
+  color: var(--c-ink-2);
+  display: flex;
+  font-size: 0.8125rem;
+  gap: 0.3125rem;
+  line-height: 1.125rem;
+}
+
+.summary__value {
+  color: var(--c-ink);
+}
+
+.workbench__finished {
+  background: var(--c-success-bg);
+  border: 3px solid var(--c-success);
+  border-radius: var(--r-3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem;
+}
+
+.workbench__finished:empty {
+  display: none;
+}
+
+.finished__head {
+  align-items: center;
+  display: flex;
+  gap: 0.875rem;
+}
+
+.finished__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.finished__actions .btn {
+  flex: 1 1 auto;
+}
+
+/* The panel is one box on a wide screen. On a phone its parts join the workbench's column and
+   are ordered here, so the photo sits between the hint and the status. */
+
+/* About 150% on a 390px phone: the dock would cover the screen, so it scrolls with the page,
+   and Publish takes its own row. */
+
+/* ---------- reduced motion (last, so it outranks the rules above) ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .switch__knob {
+    transition: none;
+  }
+
+  /* The dimmed wall and "Detecting…" say what is happening. */
+  .stage.is-scanning .stage__scan {
+    animation: none;
+    display: none;
+  }
+}

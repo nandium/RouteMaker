@@ -1,0 +1,454 @@
+/* The gym map tool: the map with its search, the request form and the gym directory. */
+
+.two-column,
+.two-column__main,
+.two-column__side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  min-width: 0;
+}
+
+.two-column__main {
+  gap: 0.75rem;
+}
+
+@media (min-width: 760px) {
+  .two-column {
+    align-items: start;
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: minmax(0, 1fr) 25rem;
+  }
+}
+
+.map-card {
+  background: var(--c-surface);
+  border: 3px solid var(--c-ink);
+  border-radius: var(--r-1);
+  overflow: hidden;
+}
+
+.map-card__header {
+  align-items: center;
+  background: var(--c-bg);
+  border-bottom: 3px solid var(--c-ink);
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+}
+
+.map-card__count {
+  color: var(--c-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.map-shell {
+  position: relative;
+}
+
+.map {
+  background: var(--map-water);
+  height: 23.75rem;
+}
+
+/* Rules for MapLibre's own elements carry `.map` so they outrank its stylesheet, which loads
+   later. */
+.map .maplibregl-ctrl-top-right {
+  top: 5rem;
+}
+
+.map .maplibregl-ctrl-group {
+  background: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0 0.625rem 0 0;
+}
+
+.map .maplibregl-ctrl-group button {
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  box-shadow: var(--el-hard) var(--sh-hard);
+  height: var(--hit-min);
+  width: var(--hit-min);
+}
+
+.map .maplibregl-ctrl-group button + button {
+  border-top: 2px solid var(--c-ink);
+}
+
+.theme-dark .map .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+
+.map .maplibregl-ctrl-attrib {
+  background: var(--c-surface);
+  color: var(--c-ink-2);
+  font-size: 0.75rem;
+}
+
+.map .maplibregl-ctrl-attrib a {
+  color: var(--c-link);
+}
+
+.map-marker {
+  align-items: flex-end;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  height: 46px;
+  justify-content: center;
+  padding: 0;
+  width: var(--hit-min);
+}
+
+.map-marker:focus-visible {
+  border-radius: var(--r-2);
+  box-shadow: none;
+  outline: 3px solid var(--c-ink);
+}
+
+.map-marker--selection {
+  pointer-events: none;
+}
+
+.pin__shadow {
+  fill: #000;
+  opacity: 0.25;
+}
+
+.pin__lit {
+  fill: var(--c-wall);
+}
+
+.pin__dark {
+  fill: var(--c-wall-3);
+}
+
+.pin__edge {
+  fill: none;
+  stroke: var(--c-on-wall);
+  stroke-linejoin: miter;
+  stroke-width: 2.4;
+}
+
+.pin__dot {
+  fill: var(--c-on-wall);
+}
+
+/* A requested location is told apart from a gym by its colour, and by its dot in the page's. */
+.map-marker--selection .pin__lit {
+  fill: var(--c-ink);
+}
+
+.map-marker--selection .pin__dark {
+  fill: var(--c-ink-2);
+}
+
+.map-marker--selection .pin__edge {
+  stroke: var(--c-bg);
+}
+
+.map-marker--selection .pin__dot {
+  fill: var(--c-bg);
+}
+
+.map .maplibregl-popup-content {
+  background: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  box-shadow: var(--el-hard) var(--sh-hard);
+  color: var(--c-ink);
+  font-family: var(--ff-text);
+  padding: 0.625rem 0.75rem 0.75rem;
+}
+
+.map .maplibregl-popup-close-button {
+  color: var(--c-ink);
+  font-size: 1.5rem;
+  height: var(--hit-min);
+  width: var(--hit-min);
+}
+
+.map .maplibregl-popup-tip {
+  display: none;
+}
+
+@media (min-width: 760px) {
+  .map {
+    height: 35rem;
+  }
+
+  .map .maplibregl-ctrl-top-right {
+    top: 0.625rem;
+  }
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: min(15.75rem, 70vw);
+}
+
+.popup__title {
+  padding-right: 1.75rem;
+}
+
+.popup__address {
+  color: var(--c-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.popup .btn {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+}
+
+/* ---------- search ---------- */
+
+.map-search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  left: 0.625rem;
+  position: absolute;
+  right: 0.625rem;
+  top: 0.625rem;
+  z-index: 6;
+}
+
+.map-search__bar {
+  align-items: center;
+  background: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  box-shadow: var(--sh-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+}
+
+.map-search__bar:focus-within {
+  box-shadow: var(--el-focus);
+}
+
+.map-search__input {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: var(--c-ink);
+  flex: 1 1 8rem;
+  font: inherit;
+  font-size: 1rem;
+  min-height: var(--hit-min);
+  min-width: 0;
+  outline: none;
+  padding: 0 0.5rem;
+}
+
+/* Escape clears the results; the browser's own clear mark is off the palette and too small. */
+.map-search__input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.map-search__results {
+  background: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  box-shadow: var(--sh-soft);
+  max-height: 22rem;
+  overflow: auto;
+}
+
+.map-search__header {
+  align-items: center;
+  background: var(--c-sunk);
+  display: flex;
+  font-size: 0.875rem;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+}
+
+.map-search__count {
+  color: var(--c-ink-2);
+  font-size: 0.75rem;
+}
+
+.map-search__result {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-top: 2px solid var(--c-line);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  width: 100%;
+}
+
+.map-search__result:hover,
+.map-search__result:focus-visible {
+  background: var(--c-sunk);
+}
+
+.map-search__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.map-search__name {
+  font-size: 0.9375rem;
+  line-height: 1.25rem;
+}
+
+.map-search__address {
+  color: var(--c-ink-2);
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
+.map-search__attribution {
+  border-top: 2px solid var(--c-line);
+  color: var(--c-ink-2);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.map-search__link {
+  color: var(--c-link);
+}
+
+@media (min-width: 760px) {
+  .map-search {
+    right: auto;
+    width: 26.25rem;
+  }
+}
+
+.badge {
+  align-items: center;
+  align-self: flex-start;
+  border: 2px solid var(--c-ink);
+  border-radius: 4px;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  gap: 0.25rem;
+  line-height: 1rem;
+  padding: 1px 0.4375rem 1px 0.3125rem;
+}
+
+.badge--gym {
+  background: var(--c-wall);
+  border-color: var(--c-wall);
+  color: var(--c-on-wall);
+}
+
+.badge__icon {
+  --icon-size: 0.875rem;
+}
+
+/* ---------- request a gym ---------- */
+
+.gym-request {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.lede {
+  color: var(--c-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+}
+
+.gym-request__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gym-request__coordinates {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+}
+
+.gym-request__form .btn {
+  align-self: stretch;
+}
+
+/* ---------- the gym directory ---------- */
+
+.gym-directory {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gym-directory__header {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+}
+
+.gym-directory__count {
+  color: var(--c-ink-2);
+  font-size: 0.875rem;
+}
+
+.gym-directory__list {
+  border-top: 3px solid var(--c-ink);
+  margin-top: 0.5rem;
+}
+
+.gym-row {
+  align-items: center;
+  border-bottom: 2px solid var(--c-line);
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+}
+
+.gym-row__tile {
+  align-items: center;
+  background: var(--wall-tile);
+  border-radius: var(--r-2);
+  color: var(--c-on-wall);
+  display: flex;
+  flex-shrink: 0;
+  font-size: min(1.25rem, 26px);
+  justify-content: center;
+  letter-spacing: 0.04rem;
+  min-height: var(--hit-min);
+  min-width: var(--hit-min);
+}
+
+.gym-row__text {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gym-row__detail {
+  color: var(--c-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}

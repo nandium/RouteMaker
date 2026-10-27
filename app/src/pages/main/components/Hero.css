@@ -1,0 +1,143 @@
+/* ---------- hero: the wall ---------- */
+/* The wall, its shards and the cut at its foot are gradients from theme.css. */
+.hero {
+  padding: 20px 16px 44px;
+  gap: 14px;
+  overflow: hidden;
+  background-color: var(--c-wall);
+  background-image: var(--bg-wall);
+}
+.hero-inner {
+  gap: 14px;
+}
+.shard-1 {
+  position: absolute;
+  right: -30px;
+  top: -20px;
+  width: 170px;
+  height: 150px;
+  pointer-events: none;
+  background-image: var(--bg-shard-1);
+}
+.shard-2 {
+  position: absolute;
+  right: 40px;
+  bottom: 8px;
+  width: 120px;
+  height: 90px;
+  pointer-events: none;
+  background-image: var(--bg-shard-2);
+}
+/* The page color rises in a diagonal over the bottom of the hero. */
+.hero-cut {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 28px;
+  pointer-events: none;
+  background-image: var(--bg-cut);
+}
+
+.hero-title {
+  color: var(--c-on-wall);
+}
+.hero-sub {
+  color: var(--c-on-wall-2);
+}
+
+.hero-row {
+  gap: 14px;
+}
+.hero-copy {
+  gap: 12px;
+}
+.hero-bar {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hero-bar > view {
+  flex: 0 1 auto;
+}
+.hero-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hero-actions > view {
+  flex: 1 1 150px;
+}
+.hero-actions .btn {
+  padding: 0 10px;
+  gap: 8px;
+}
+
+/* On wide screens the hero's content sits in the centered column, with its actions on the right. */
+.wide .hero {
+  padding: 36px 0 64px;
+}
+.wide .hero-cut {
+  height: 44px;
+  background-image: var(--bg-cut-wide);
+}
+.wide .hero-inner {
+  width: 100%;
+  max-width: var(--content-max);
+  padding: 0 32px;
+  align-self: center;
+}
+.wide .shard-1 {
+  right: 12%;
+  top: -40px;
+  width: 280px;
+  height: 240px;
+}
+.wide .shard-2 {
+  right: 3%;
+  bottom: 14px;
+  width: 200px;
+  height: 130px;
+}
+.wide .hero-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.wide .hero-actions > view {
+  flex: 0 0 auto;
+}
+.wide .hero-actions .btn {
+  padding: 0 24px;
+  gap: 10px;
+}
+
+/* A panel fills the side of a wide screen beside a form, so it is without the cut. */
+.hero-panel {
+  width: 46%;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 0;
+}
+.wide .hero-panel .hero-inner {
+  max-width: 480px;
+  align-self: flex-start;
+  padding: 0 56px;
+}
+
+/* At large text sizes the hero's buttons stack, and its foot takes more room for the cut. */
+.fs-lg .hero {
+  padding-bottom: 52px;
+}
+.fs-lg .hero-bar,
+.fs-lg .hero-actions {
+  flex-direction: column;
+  align-items: stretch;
+}
+.fs-lg .hero-bar > view,
+.fs-lg .hero-actions > view {
+  flex: 0 0 auto;
+}

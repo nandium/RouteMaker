@@ -1,0 +1,17 @@
+{
+  "name": "routemaker-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler d1 migrations apply DB --local && wrangler dev",
+    "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
+    "types": "wrangler types",
+    "typecheck": "npm run types && tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm test && wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.4.5",
+    "wrangler": "^4.151.2"
+  }
+}

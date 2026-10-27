@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RouteMaker</string>
+    <string name="map_title">Gym map</string>
+    <string name="map_close">Close</string>
+    <string name="map_gyms">Gyms</string>
+    <string name="map_choose_gym">Choose a gym</string>
+    <string name="map_cancel">Cancel</string>
+</resources>

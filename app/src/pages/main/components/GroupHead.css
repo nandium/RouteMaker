@@ -1,0 +1,7 @@
+/* ---------- group heading ---------- */
+.group-head {
+  padding: 18px 16px 8px;
+}
+.wide .group-head {
+  padding: 24px 12px 8px;
+}

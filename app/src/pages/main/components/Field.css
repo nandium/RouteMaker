@@ -1,0 +1,31 @@
+/* ---------- text input ---------- */
+.input-box {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--control-h);
+  padding: 0 14px;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-edge);
+  border-radius: var(--r-2);
+}
+.input-box.is-focus {
+  border-color: var(--c-ink);
+  box-shadow: var(--el-focus);
+}
+.input-box.is-error {
+  border-color: var(--c-danger);
+}
+.input-box.is-disabled {
+  background-color: var(--c-sunk);
+}
+.input {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 48px;
+  font-family: var(--ff-text);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--c-ink);
+  background-color: rgba(0, 0, 0, 0);
+}

@@ -1,0 +1,70 @@
+version: 2
+
+# Dependabot does not support CocoaPods: bump the Lynx pods in app/ios/Podfile by hand.
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    groups:
+      npm:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: build
+      include: scope
+
+  - package-ecosystem: gradle
+    directory: /app/android
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    groups:
+      gradle:
+        update-types: [minor, patch]
+    ignore:
+      # Lynx native versions must match Podfile LYNX_VERSION; bump both by hand.
+      - dependency-name: org.lynxsdk.lynx:*
+    commit-message:
+      prefix: build
+      include: scope
+
+  - package-ecosystem: bundler
+    directory: /app
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    commit-message:
+      prefix: build
+      include: scope
+
+  # Reads the Xcode project's Package.resolved (MapLibre).
+  - package-ecosystem: swift
+    directory: /app/ios
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    commit-message:
+      prefix: build
+      include: scope
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: ci
+      include: scope

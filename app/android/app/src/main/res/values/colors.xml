@@ -1,0 +1,11 @@
+<resources>
+    <!-- Keep in step with app/theme.css: the page, nav, on-nav and brand-1 colors. -->
+    <color name="background_light">#F3F4EF</color>
+    <color name="background_dark">#111714</color>
+    <color name="nav_light">#17201D</color>
+    <color name="nav_dark">#1A2320</color>
+    <color name="on_nav_light">#F3F4EF</color>
+    <color name="on_nav_dark">#D9E0DD</color>
+    <color name="marker_light">#2E5C78</color>
+    <color name="marker_dark">#D9E0DD</color>
+</resources>

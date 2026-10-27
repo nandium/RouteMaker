@@ -1,0 +1,76 @@
+@import '../theme.css';
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--ff-text);
+}
+
+/* The Lynx app fills the window. */
+body:has(lynx-view) #app {
+  height: 100vh;
+}
+
+lynx-view {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Asks before a link from the app signs this browser in; nothing else is on the page yet. */
+.handoff {
+  background: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-3);
+  box-shadow: var(--el-hard) var(--sh-hard);
+  box-sizing: border-box;
+  margin: 4rem auto 0;
+  max-width: 26rem;
+  padding: 1.5rem;
+  width: calc(100% - 2rem);
+}
+
+.handoff__question {
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+  margin: 0 0 0.75rem;
+}
+
+.handoff__detail {
+  color: var(--c-ink-2);
+  line-height: 1.5rem;
+  margin: 0 0 1.5rem;
+}
+
+.handoff__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.handoff__button {
+  background: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+  color: var(--c-ink);
+  cursor: pointer;
+  flex: 1 1 8rem;
+  font: inherit;
+  font-weight: 700;
+  min-height: var(--control-h);
+}
+
+.handoff__button--primary {
+  background: var(--c-action);
+  color: var(--c-on-action);
+}
+
+.handoff__button:focus-visible {
+  box-shadow: var(--el-focus);
+  outline: none;
+}

@@ -1,3 +1,5 @@
 * text=auto
 
-*.ipynb linguist-detectable=false
+*.jar binary
+*.onnx binary
+*.bat text eol=crlf

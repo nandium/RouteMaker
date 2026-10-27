@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- MapLibre also requests fine location and Wi-Fi state; neither is needed. -->
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        tools:node="remove" />
+
+    <application
+        android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
+        android:name="rocks.routemaker.app.RouteMakerApplication"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.RouteMaker">
+        <activity
+            android:name="rocks.routemaker.app.RouteMakerMapActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <!-- density stays out of configChanges: Lynx reads it once, so a change must recreate
+             the activity. -->
+        <activity
+            android:name="rocks.routemaker.app.MainActivity"
+            android:configChanges="uiMode|fontScale|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

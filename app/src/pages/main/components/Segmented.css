@@ -1,0 +1,56 @@
+/* ---------- segmented control ---------- */
+.seg {
+  flex-direction: row;
+  gap: 3px;
+  padding: 3px;
+  background-color: var(--c-surface);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-2);
+}
+.seg-item {
+  flex: 1 1 0;
+  min-height: var(--hit-min);
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 3px;
+}
+.seg-label {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.14;
+  letter-spacing: 0.3px;
+  color: var(--c-ink);
+}
+.seg-item:active {
+  background-color: var(--c-sunk);
+}
+.seg-item.is-on,
+.seg-item.is-on:active {
+  background-color: var(--c-ink);
+}
+.seg-item.is-on .seg-label {
+  color: var(--c-bg);
+}
+
+/* The compact variant sits beside other controls, so its items size to their labels. */
+.seg-s {
+  padding: 2px;
+}
+.seg-s .seg-item {
+  flex: 0 0 auto;
+  padding: 0 14px;
+}
+.seg-s .seg-label {
+  font-size: 19px;
+}
+
+/* Labels are wide display type, so from large text each choice gets a row of its own. */
+.fs-lg .seg {
+  flex-direction: column;
+}
+.fs-lg .seg > view {
+  flex: 0 0 auto;
+}

@@ -1,0 +1,26 @@
+name = "routemaker-worker"
+main = "src/index.ts"
+compatibility_date = "2026-10-19"
+
+[observability]
+enabled = true
+
+# Console logs stay; per-request logs would retain URLs, including place-search coordinates.
+[observability.logs]
+invocation_logs = false
+
+[assets]
+directory = "../app/web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+# The Worker serves /routes/:id itself, to add link-preview tags to the shell.
+# /routes/new is the route-marking tool, a static page whose strict CSP comes from
+# the _headers file; through the Worker it would get the shell's CSP instead.
+run_worker_first = ["/api/*", "/media/*", "/routes/*", "!/routes/new", "!/routes/new/"]
+
+[[d1_databases]]
+binding = "DB"
+migrations_dir = "migrations"
+database_name = "routemaker-worker"
+database_id = "b5b7f075-1c06-4073-b5f3-4994c108ffad"
+# Committed so every deployment targets the same database.

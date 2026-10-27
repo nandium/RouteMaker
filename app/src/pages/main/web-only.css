@@ -1,0 +1,41 @@
+/*
+ * Styling only the browser host needs; app/web/lynx-host.ts injects it into the Lynx view.
+ * Native hosts have no cursor, outline or hover.
+ */
+x-text {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.pressable {
+  cursor: pointer;
+}
+
+/* Keyboard focus is the double ring: the page color, then the focus color, so it shows on any fill. */
+.pressable:focus-visible {
+  outline: none;
+  box-shadow: var(--el-focus);
+}
+
+/* A text field shows its ring on its box (.is-focus), not on the input inside it. */
+.input:focus {
+  outline: none;
+}
+
+/* Hover only decorates; every state it hints at has a pressed or selected equivalent. */
+.btn-primary:hover,
+.btn-danger:hover {
+  filter: brightness(1.07);
+}
+.btn-secondary:hover,
+.btn-quiet:hover,
+.btn-quiet-danger:hover,
+.ibtn:hover,
+.row-item:hover,
+.chip:hover,
+.seg-item:not(.is-on):hover {
+  background-color: var(--c-sunk);
+}
+.link-label:hover {
+  text-decoration-thickness: 3px;
+}

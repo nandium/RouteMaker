@@ -1,0 +1,60 @@
+/* ---------- route rows and tiles ---------- */
+.thumb {
+  overflow: visible;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  background-color: var(--c-sunk);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-1);
+}
+.thumb-image,
+.thumb-failed {
+  width: 100%;
+  height: 100%;
+}
+.thumb-failed {
+  align-items: center;
+  justify-content: center;
+}
+/* The tag overlaps the photo's corner, so the photo must not clip its children. */
+.thumb-tag {
+  position: absolute;
+  left: -8px;
+  top: -8px;
+}
+.route-row {
+  padding-left: 22px;
+}
+.route-stats {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin-top: 4px;
+}
+
+/* On wide screens, routes are photo tiles. */
+.route-tile {
+  gap: 12px;
+}
+.route-tile:active {
+  opacity: 0.85;
+}
+/* A portrait photo; the minimum keeps the tile visible where aspect-ratio is not honored. */
+.tile-photo {
+  overflow: visible;
+  aspect-ratio: 4 / 5;
+  min-height: 240px;
+  background-color: var(--c-sunk);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-1);
+}
+.tile-copy {
+  gap: 4px;
+}
+
+.fs-xl .thumb {
+  width: 128px;
+  height: 128px;
+}
